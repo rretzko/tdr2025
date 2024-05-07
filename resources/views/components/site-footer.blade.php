@@ -3,13 +3,14 @@
         background-color: white;
         border-top: 1px solid rgba(0, 0, 0, 0.1);
         bottom: 0;
-        font-size: 0.8rem;
+        color: black;
+        font-size: 0.5rem;
         left: 0;
         margin-top: 1rem;
         padding-bottom: 0.25rem;
         position: fixed;
         width: 100%;
-        z-index: -1;
+
     }
 
     #footer-container #content-container {
@@ -18,8 +19,14 @@
         justify-content: space-between;
         margin: 0 1rem;
     }
+
+    @media (min-width: 768px) {
+        #footer-container {
+            font-size: 0.8rem;
+        }
+    }
 </style>
-<div id="footer-container">
+<div id="footer-container" class="md:text-xs">
     <div id="content-container">
 
         <div>
