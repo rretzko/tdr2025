@@ -38,7 +38,7 @@
         body {
             margin: 0;
             line-height: inherit;
-            background: url(" {{ asset('/build/assets/backgrounds/swirlGclef.png') }} ") no-repeat fixed center;
+            background: url(" https://auditionsuite-production.s3.amazonaws.com/backgrounds/swirlGclef.png ") no-repeat fixed center;
             background-size: contain;
         }
 

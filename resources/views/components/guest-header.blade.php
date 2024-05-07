@@ -15,7 +15,7 @@
         }
     }
 </style>
-<div class="bg-green-800">
+<div>
 
     <div id="header" style="font-size:2.5rem; text-align: center;">
         <a href="/">
