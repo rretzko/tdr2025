@@ -22,7 +22,7 @@
     </div>
 
     <div id="header" class="px-2 text-xl md:text-4xl text-center mb-2 md:w-full">
-        <a href="/">
+        <a href="@if(auth()->user()) home @else / @endif">
             TheDirectorsRoom.com
         </a>
     </div>

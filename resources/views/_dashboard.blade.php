@@ -13,23 +13,13 @@
                 <div class="flex flex-col justify-center sm:flex-row sm:space-x-2 sm:flex-wrap items-center space-y-2">
 
                     {{-- SCHOOLS --}}
-                    <div class="card w-3/4 md:w-1/4 md:min-h-64 border border-gray-300 p-2 rounded-lg mt-1">
-                        <a href="" class="space-y-2">
-                            <div class="text-indigo-600 mb-4">
-                                <x-heroicons.building/>
-                            </div>
-                            <h2 class="text-indigo-500 font-semibold">Schools</h2>
-                            <div class="text-xs">
-                                <p>
-                                    Add/Edit your schools including <b>ensembles</b>, <b>libraries</b>, and
-                                    even your private studio if you have one!
-                                </p>
-                                <p>
-                                    You can also grant/remove co-teacher access to your students.
-                                </p>
-                            </div>
-                        </a>
-                    </div>
+                    <x-cards.dashboardCard
+                        heroicon="building"
+                        label="schools"
+                        descr="<p>Add/Edit your schools including <b>ensembles</b>, <b>libraries</b>, and
+                        even your private studio if you have one!</p>
+                        <p>You can also grant/remove co-teacher access to your students.</p>"
+                    />
 
                     {{-- STUDENTS --}}
                     <div class="card w-3/4 md:w-1/4 md:min-h-64 border border-gray-300 p-2 rounded-lg">
