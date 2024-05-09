@@ -13,9 +13,16 @@ Breadcrumbs::for('home', function (BreadcrumbTrail $trail) {
     $trail->push('Home', route('home'));
 });
 
+// Profile
 Breadcrumbs::for('profile', function (BreadcrumbTrail $trail) {
     $trail->parent('home');
     $trail->push('Profile', route('profile.edit'));
+});
+
+// Unknown = ViewData not found for the calling controller::method
+Breadcrumbs::for('unknown', function (BreadcrumbTrail $trail) {
+    $trail->parent('home');
+    $trail->push('Unknown', route('home'));
 });
 
 // Home > Blog

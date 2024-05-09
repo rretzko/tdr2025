@@ -15,15 +15,25 @@ class ViewDataFactory extends aViewData
 
     private function init(): void
     {
-        $this->dto['pageName'] = 'pages.'.$this->viewPage->page_name.'Page';
-        $this->dto['header'] = $this->viewPage->header;
+        if ($this->viewPage->id) {
+            $this->dto['pageName'] = 'pages.'.$this->viewPage->page_name.'Page';
+            $this->dto['header'] = $this->viewPage->header;
 
-        foreach ($this->getComponents() as $component) {
+            //retrieve page components ex. cards
+            foreach ($this->getComponents() as $component) {
 
-            $method = 'get'.ucfirst($component);
+                $method = 'get'.ucfirst($component);
 
-            $this->dto[$component] = $this->$method();
+                $this->dto[$component] = $this->$method();
+            }
+        } else { //user default values
+
+            $this->dto['pageName'] = 'pages.dashboardPage';
+            $this->dto['header'] = 'unknown';
+            $this->dto['cards'] = [];
         }
+
+
     }
 
     private function getComponents(): array

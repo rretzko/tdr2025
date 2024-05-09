@@ -20,6 +20,10 @@ it('shows domain names', function () {
 
 it('checks if schools page is available', function () {
 
+    $user = \App\Models\User::factory()->create();
+
+    auth()->login($user);
+
     get('/schools')
         ->assertOk()
         ->assertSeeText('Schools');
