@@ -10,6 +10,7 @@
     "require": {
         "php": "^8.2",
         "diglactic/laravel-breadcrumbs": "^9.0",
+        "filament/filament": "3.2.57",
         "laravel/framework": "^11.0",
         "laravel/spark-stripe": "^5.0",
         "laravel/tinker": "^2.9",
@@ -42,7 +43,8 @@
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi"
+            "@php artisan package:discover --ansi",
+            "@php artisan filament:upgrade"
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
