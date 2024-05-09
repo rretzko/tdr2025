@@ -13,6 +13,11 @@ Breadcrumbs::for('home', function (BreadcrumbTrail $trail) {
     $trail->push('Home', route('home'));
 });
 
+Breadcrumbs::for('profile', function (BreadcrumbTrail $trail) {
+    $trail->parent('home');
+    $trail->push('Profile', route('profile.edit'));
+});
+
 // Home > Blog
 //Breadcrumbs::for('blog', function (BreadcrumbTrail $trail) {
 //    $trail->parent('home');

@@ -1,7 +1,7 @@
 <x-layouts.pages00>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Profile') }}
+            {{ \Diglactic\Breadcrumbs\Breadcrumbs::render( $dto['header']) }}
         </h2>
     </x-slot>
 

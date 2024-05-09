@@ -18,9 +18,9 @@
 
                 @unless($loop->last)
                     <li class="text-gray-500 px-2">
-                        /
+                        >
                     </li>
-                @endif
+                    @endif
 
             @endforeach
         </ol>
