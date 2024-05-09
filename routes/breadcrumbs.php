@@ -19,6 +19,12 @@ Breadcrumbs::for('profile', function (BreadcrumbTrail $trail) {
     $trail->push('Profile', route('profile.edit'));
 });
 
+// Schools
+Breadcrumbs::for('schools', function (BreadcrumbTrail $trail) {
+    $trail->parent('home');
+    $trail->push('Schools', route('schools'));
+});
+
 // Unknown = ViewData not found for the calling controller::method
 Breadcrumbs::for('unknown', function (BreadcrumbTrail $trail) {
     $trail->parent('home');

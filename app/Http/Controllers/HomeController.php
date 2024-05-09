@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Data\ViewDataFactory;
+use App\Services\HomeDashboardTestForSchoolsService;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -14,7 +15,11 @@ class HomeController extends Controller
     {
         $data = new ViewDataFactory(__METHOD__);
 
-        $dto = $data->dto();
+        //if user is a teacher with schools return all cards,
+        //else remove the students and events cardsphp
+        $service = new HomeDashboardTestForSchoolsService($data->dto());
+
+        $dto = $service->getDto();
 
         return view($dto['pageName'], compact('dto'));
     }

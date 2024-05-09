@@ -32,8 +32,6 @@ class ViewDataFactory extends aViewData
             $this->dto['header'] = 'unknown';
             $this->dto['cards'] = [];
         }
-
-
     }
 
     private function getComponents(): array
@@ -50,13 +48,34 @@ class ViewDataFactory extends aViewData
         return $this->dto;
     }
 
+    /**
+     * Static cards are stored in the database and accessed by query, otherwise
+     * Cards are created dynamically via Data/Cards/<$this->dto['header'].Card file ex: Data/Cards/SchoolsCard
+     *
+     * @return array
+     */
     private function getCards(): array
     {
-        return ViewCard::query()
+        if (ViewCard::query()
             ->where('header', $this->dto['header'])
             ->orderBy('order_by')
-            ->get()
-            ->toArray();
+            ->exists()) {
+
+            return ViewCard::query()
+                ->where('header', $this->dto['header'])
+                ->orderBy('order_by')
+                ->get()
+                ->toArray();
+        } else {
+
+            //ex: \App\Data\Cards\SchoolsCard
+            $model = '\App\Data\Cards\\'.$this->dto['header'].'Card';
+
+            $src = new $model();
+
+            return $src->getCards();
+        }
+
     }
 
 }
