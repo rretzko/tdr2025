@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(ViewPageSeeder::class);
         $this->call(ViewCardSeeder::class);
+        $this->call(UserSeeder::class);
 
     }
 }

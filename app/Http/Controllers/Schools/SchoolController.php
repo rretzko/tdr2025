@@ -13,6 +13,11 @@ class SchoolController extends Controller
         return School::all();
     }
 
+    public function create()
+    {
+
+    }
+
     public function store(SchoolRequest $request)
     {
         return School::create($request->validated());

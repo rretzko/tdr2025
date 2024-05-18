@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Schools\SchoolTeacher;
+use App\Models\Schools\Teacher;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -54,5 +56,29 @@ class User extends Authenticatable
     public function isFounder(): bool
     {
         return $this->email === 'rick@mfrholdings.com';
+    }
+
+    /**
+     * Returns true if user is a teacher with at least one school with a verified email address
+     * - $this->id is found in teachers' table
+     * - $this->id is found in school_teacher's table
+     * - row in school_teacher' table contains a work email address (email)
+     * - row in school_teacher' table contains a verified work email address (email_verified_at)
+     * @return bool
+     */
+    public function isTeacher(): bool
+    {
+//        dd(SchoolTeacher::query()
+//        ->join('teachers', 'teachers.id', '=', 'school_teacher.teacher_id')
+//        ->where('teachers.user_id', '=', $this->id)
+//        ->whereNotNull('school_teacher.email')
+//        ->whereNotNull('school_teacher.email_verified_at')
+//        ->exists());
+        return SchoolTeacher::query()
+            ->join('teachers', 'teachers.id', '=', 'school_teacher.teacher_id')
+            ->where('teachers.user_id', '=', $this->id)
+            ->whereNotNull('school_teacher.email')
+            ->whereNotNull('school_teacher.email_verified_at')
+            ->exists();
     }
 }

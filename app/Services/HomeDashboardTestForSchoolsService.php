@@ -23,6 +23,7 @@ class HomeDashboardTestForSchoolsService
 
     private function init(): void
     {
+
         if (!($this->isTeacher() || $this->hasSchools())) {
 
             //unset Students card

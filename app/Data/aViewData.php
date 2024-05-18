@@ -13,7 +13,7 @@ abstract class aViewData
 
     public function __construct(private readonly string $__method)
     {
-        //string $__method to constituent parts: controller and method
+        //strip $__method to constituent parts: controller and method
         $this->buildMethod($this->__method);
 
         //use controller and method to identify view target

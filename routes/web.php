@@ -21,6 +21,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //SCHOOLS
     Route::get('schools', \App\Http\Controllers\Schools\SchoolsController::class)
         ->name('schools');
+    Route::get('school/new', [\App\Http\Controllers\Schools\SchoolController::class, 'create'])
+        ->name('school.create');
 });
 
 require __DIR__.'/auth.php';

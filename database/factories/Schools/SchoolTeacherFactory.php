@@ -15,12 +15,13 @@ class SchoolTeacherFactory extends Factory
     public function definition(): array
     {
         return [
+            'school_id' => School::factory()->create(),
+            'teacher_id' => Teacher::factory()->create(),
+            'email' => $this->faker->email,
+            'email_verified_at' => Carbon::now(),
+            'active' => 1,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
-            'active' => $this->faker->boolean(),
-
-            'school_id' => School::factory(),
-            'teacher_id' => Teacher::factory(),
         ];
     }
 }

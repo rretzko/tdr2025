@@ -13,6 +13,8 @@ return new class extends Migration {
             $table->id();
             $table->foreignIdFor(School::class)->constrained('schools');
             $table->foreignIdFor(Teacher::class)->constrained('teachers');
+            $table->string('email')->comment('users work email')->nullable();
+            $table->timestamp('email_verified_at')->nullable();
             $table->boolean('active');
             $table->timestamps();
         });
