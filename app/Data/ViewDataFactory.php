@@ -62,7 +62,6 @@ class ViewDataFactory extends aViewData
 
         if (ViewCard::query()
             ->where('header', $this->dto['header'])
-            ->orderBy('order_by')
             ->exists()) {
 
             return ViewCard::query()

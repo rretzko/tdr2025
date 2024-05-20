@@ -16,6 +16,16 @@ class Teacher extends Model
         'user_id',
     ];
 
+    public function isVerified(): bool
+    {
+        return SchoolTeacher::query()
+            ->join('teachers', 'teachers.id', '=', 'school_teacher.teacher_id')
+            ->where('teachers.user_id', '=', $this->id)
+            ->whereNotNull('school_teacher.email')
+            ->whereNotNull('school_teacher.email_verified_at')
+            ->exists();
+    }
+
     public function schools(): BelongsToMany|null
     {
         return $this->belongsToMany(School::class)

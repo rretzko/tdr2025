@@ -18,7 +18,6 @@ abstract class aViewData
 
         //use controller and method to identify view target
         $this->viewPage = $this->getViewPage();
-
     }
 
     private function buildMethod($str): void

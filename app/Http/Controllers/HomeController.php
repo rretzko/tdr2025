@@ -21,7 +21,7 @@ class HomeController extends Controller
         }
 
         //display the school-create page if no schools exist
-        if (!auth()->user()->teacher->schools?->count()) {
+        if (!auth()->user()->teacher->isVerified()) {
 
             return redirect()->route('school.create');
         }

@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Schools;
 
 use App\Filament\Resources\Schools\SchoolTeacherResource\Pages;
 use App\Models\Schools\SchoolTeacher;
+use Faker\Core\DateTime;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
@@ -44,9 +45,16 @@ class SchoolTeacherResource extends Resource
                     ->searchable()
                     ->required(),
 
-                TextInput::make('teacher_id')
-                    ->required()
-                    ->integer(),
+                Select::make('teacher_id')
+                    ->relationship('teacher', 'id'),
+
+                TextInput::make('email')
+                    ->nullable()
+                    ->email(),
+
+                TextInput::make('email_verified_at')
+                    ->nullable()
+                    ->string(),
 
                 Checkbox::make('active'),
             ]);

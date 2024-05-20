@@ -12,7 +12,7 @@
             <div class="bg-white dark:bg-gray-800 py-2 mb-4 overflow-hidden shadow-sm sm:rounded-lg">
 
                 {{-- LIVEWIRE COMPONENT --}}
-                @livewire($dto['livewireComponent'],$dto)
+                @livewire($dto['livewireComponent'], ['dto' => $dto])
             </div>
         </div>
     </div>

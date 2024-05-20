@@ -140,7 +140,6 @@ it('returns successful school-create page if auth without linked school', functi
 
     get(route('school.create'))
         ->assertOK() //200 response
-        //->assertSeeText('Add School')
-        ->assertSeeText('The whole world belongs to you.');
+        ->assertSeeText('Add School');
 });
 

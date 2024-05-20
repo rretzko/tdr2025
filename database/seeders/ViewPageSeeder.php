@@ -26,6 +26,12 @@ class ViewPageSeeder extends Seeder
                 'livewire',
                 'new school'
             ],
+            [
+                'SchoolsController',
+                '__invoke',
+                'table',
+                'schools'
+            ],
         ];
 
         foreach ($seeds as $seed) {

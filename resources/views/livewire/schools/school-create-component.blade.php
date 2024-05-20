@@ -1,3 +1,4 @@
 <div>
-    The whole world belongs to you.
+    <h2>{{ $header }}</h2>
+    {!! $pageInstructions !!}
 </div>

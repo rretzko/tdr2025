@@ -68,17 +68,9 @@ class User extends Authenticatable
      */
     public function isTeacher(): bool
     {
-//        dd(SchoolTeacher::query()
-//        ->join('teachers', 'teachers.id', '=', 'school_teacher.teacher_id')
-//        ->where('teachers.user_id', '=', $this->id)
-//        ->whereNotNull('school_teacher.email')
-//        ->whereNotNull('school_teacher.email_verified_at')
-//        ->exists());
         return SchoolTeacher::query()
             ->join('teachers', 'teachers.id', '=', 'school_teacher.teacher_id')
             ->where('teachers.user_id', '=', $this->id)
-            ->whereNotNull('school_teacher.email')
-            ->whereNotNull('school_teacher.email_verified_at')
             ->exists();
     }
 
