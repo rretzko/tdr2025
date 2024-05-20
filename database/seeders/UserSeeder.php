@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Schools\SchoolTeacher;
+use App\Models\Schools\Teacher;
 use App\Models\User;
-use App\Models\ViewCard;
 use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -47,5 +48,17 @@ class UserSeeder extends Seeder
                 ]
             );
         }
+
+        //set Founder as Teacher for testing
+        Teacher::create(['id' => 368, 'user_id' => 368]);
+        SchoolTeacher::create(
+            [
+                'school_id' => 1,
+                'teacher_id' => 368,
+                'email' => 'rick@mfracademy.edu',
+                'email_verified_at' => Carbon::now(),
+                'active' => 1
+            ]
+        );
     }
 }

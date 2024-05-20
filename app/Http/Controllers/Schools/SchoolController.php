@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Schools;
 
+use App\Data\ViewDataFactory;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Schools\SchoolRequest;
 use App\Models\Schools\School;
@@ -15,7 +16,11 @@ class SchoolController extends Controller
 
     public function create()
     {
+        $data = new ViewDataFactory(__METHOD__);
 
+        $dto = $data->getDto();
+
+        return view($dto['pageName'], compact('dto'));
     }
 
     public function store(SchoolRequest $request)

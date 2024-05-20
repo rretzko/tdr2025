@@ -20,6 +20,12 @@ class ViewPageSeeder extends Seeder
                 'dashboard',
                 'home'
             ],
+            [
+                'SchoolController',
+                'create',
+                'livewire',
+                'new school'
+            ],
         ];
 
         foreach ($seeds as $seed) {

@@ -3,6 +3,7 @@
 namespace App\Data;
 
 use App\Models\ViewCard;
+use App\Models\ViewPage;
 
 class ViewDataFactory extends aViewData
 {
@@ -38,12 +39,13 @@ class ViewDataFactory extends aViewData
     {
         $components = [
             'dashboard' => ['cards'],
+            'livewire' => ['livewireComponent'],
         ];
 
         return $components[$this->viewPage->page_name];
     }
 
-    public function dto(): array
+    public function getDto(): array
     {
         return $this->dto;
     }
@@ -56,6 +58,8 @@ class ViewDataFactory extends aViewData
      */
     private function getCards(): array
     {
+        $default = []; //no cards
+
         if (ViewCard::query()
             ->where('header', $this->dto['header'])
             ->orderBy('order_by')
@@ -66,16 +70,26 @@ class ViewDataFactory extends aViewData
                 ->orderBy('order_by')
                 ->get()
                 ->toArray();
-        } else {
-
-            //ex: \App\Data\Cards\SchoolsCard
-            $model = '\App\Data\Cards\\'.$this->dto['header'].'Card';
-
-            $src = new $model();
-
-            return $src->getCards();
         }
+//        else {
 
+        //ex: \App\Data\Cards\SchoolsCard
+//            $model = '\App\Data\Cards\\'.$this->dto['header'].'Card';
+//
+//            $src = new $model();
+//
+//            return $src->getCards();
+//        }
+        return $default;
+    }
+
+    private function getLivewireComponent(): string
+    {
+        $components = [
+            'new school' => 'schools.school-create-component',
+        ];
+
+        return $components[$this->viewPage->header];
     }
 
 }

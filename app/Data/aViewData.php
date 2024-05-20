@@ -18,6 +18,7 @@ abstract class aViewData
 
         //use controller and method to identify view target
         $this->viewPage = $this->getViewPage();
+
     }
 
     private function buildMethod($str): void
@@ -44,8 +45,8 @@ abstract class aViewData
         );
     }
 
-    protected function dto()
-    {
-        return $this->dto;
-    }
+//    protected function getDto(): array
+//    {
+//        return $this->dto;
+//    }
 }

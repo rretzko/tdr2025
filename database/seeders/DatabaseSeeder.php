@@ -16,6 +16,9 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(ViewPageSeeder::class);
         $this->call(ViewCardSeeder::class);
+        $this->call(GeostateSeeder::class);
+        $this->call(CountySeeder::class);
+        $this->call(SchoolSeeder::class);
         $this->call(UserSeeder::class);
 
     }

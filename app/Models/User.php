@@ -81,4 +81,9 @@ class User extends Authenticatable
             ->whereNotNull('school_teacher.email_verified_at')
             ->exists();
     }
+
+    public function teacher(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Teacher::class);
+    }
 }

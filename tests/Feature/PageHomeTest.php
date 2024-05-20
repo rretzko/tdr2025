@@ -6,9 +6,16 @@ uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
 it('shows domain names', function () {
 
-    $user = \App\Models\User::factory()->create();
+    $teacher = \App\Models\Schools\Teacher::factory()->create();
+    $school = \App\Models\Schools\School::factory()->create();
+    \App\Models\Schools\SchoolTeacher::factory()->create(
+        [
+            'school_id' => $school->id,
+            'teacher_id' => $teacher->id,
+        ]
+    );
 
-    auth()->login($user);
+    auth()->login($teacher->user);
 
     get(route('home'))
         ->assertSeeText([
@@ -20,9 +27,18 @@ it('shows domain names', function () {
 
 it('checks if schools page is available', function () {
 
-    $user = \App\Models\User::factory()->create();
+    $this->withoutExceptionHandling();
 
-    auth()->login($user);
+    $teacher = \App\Models\Schools\Teacher::factory()->create();
+    $school = \App\Models\Schools\School::factory()->create();
+    \App\Models\Schools\SchoolTeacher::factory()->create(
+        [
+            'school_id' => $school->id,
+            'teacher_id' => $teacher->id,
+        ]
+    );
+
+    auth()->login($teacher->user);;
 
     get('/schools')
         ->assertOk()

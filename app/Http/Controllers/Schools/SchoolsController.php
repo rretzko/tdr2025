@@ -15,7 +15,7 @@ class SchoolsController extends Controller
     {
         $data = new ViewDataFactory(__METHOD__);
 
-        $dto = $data->dto();
+        $dto = $data->getDto();
 
         return view($dto['pageName'], compact('dto'));
     }

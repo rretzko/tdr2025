@@ -95,11 +95,27 @@ it('returns 403 if auth user is a teacher with UNVERIFIED work email', closure: 
 
 it('returns a successful home page response from auth', function () {
 
-    //$this->withoutExceptionHandling();
+    $this->withoutExceptionHandling();
 
-    $schoolTeacher = \App\Models\Schools\SchoolTeacher::factory()->create();
+    ViewPage::factory()->create(
+        [
+            'controller' => 'HomeController',
+            'method' => '__invoke',
+            'page_name' => 'dashboard',
+            'header' => 'home'
+        ],
+    );
 
-    auth()->login($schoolTeacher->teacher->user);
+    $teacher = \App\Models\Schools\Teacher::factory()->create();
+    $school = \App\Models\Schools\School::factory()->create();
+    \App\Models\Schools\SchoolTeacher::factory()->create(
+        [
+            'school_id' => $school->id,
+            'teacher_id' => $teacher->id,
+        ]
+    );
+
+    auth()->login($teacher->user);
 
     get(route('home'))
         ->assertOK(); //200 response
@@ -107,11 +123,24 @@ it('returns a successful home page response from auth', function () {
 
 it('returns successful school-create page if auth without linked school', function () {
 
+    $this->withoutExceptionHandling();
+
+    ViewPage::factory()->create(
+        [
+            'controller' => 'SchoolController',
+            'method' => 'create',
+            'page_name' => 'livewire',
+            'header' => 'new school'
+        ],
+    );
+
     $user = \App\Models\User::factory()->create();
 
     auth()->login($user);
 
     get(route('school.create'))
-        ->assertOK(); //200 response
+        ->assertOK() //200 response
+        //->assertSeeText('Add School')
+        ->assertSeeText('The whole world belongs to you.');
 });
 
