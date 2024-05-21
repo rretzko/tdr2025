@@ -2,6 +2,7 @@
 
 namespace App\Data;
 
+use App\Models\PageInstruction;
 use App\Models\ViewCard;
 use App\Models\ViewPage;
 
@@ -19,6 +20,9 @@ class ViewDataFactory extends aViewData
         if ($this->viewPage->id) {
             $this->dto['pageName'] = 'pages.'.$this->viewPage->page_name.'Page';
             $this->dto['header'] = $this->viewPage->header;
+            $this->dto['pageInstructions'] = $this->decodeInstructions(PageInstruction::where('header',
+                $this->dto['header'])->first()->instructions);
+            //dd(html$this->dto['pageInstructions']);
 
             //retrieve page components ex. cards
             foreach ($this->getComponents() as $component) {
@@ -29,6 +33,7 @@ class ViewDataFactory extends aViewData
             }
         } else { //user default values
 
+            $this->dto['pageInstructions'] = '';
             $this->dto['pageName'] = 'pages.dashboardPage';
             $this->dto['header'] = 'unknown';
             $this->dto['cards'] = [];
@@ -48,6 +53,16 @@ class ViewDataFactory extends aViewData
     public function getDto(): array
     {
         return $this->dto;
+    }
+
+    /**
+     * Decode instructions created through the FilamentPHP Rich Text object
+     * @param $encoded
+     * @return string
+     */
+    private function decodeInstructions($encoded): string
+    {
+        return html_entity_decode($encoded);
     }
 
     /**

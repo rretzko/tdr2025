@@ -1,4 +1,6 @@
-<div>
+<div class="px-4">
     <h2>{{ $header }}</h2>
-    {!! $pageInstructions !!}
+
+    <x-pageInstructions.instructions instructions="{!! $pageInstructions !!}"/>
+
 </div>
