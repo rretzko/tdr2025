@@ -2,6 +2,9 @@
 
 namespace App\Livewire\Schools;
 
+use App\Models\Schools\School;
+use App\ValueObjects\SchoolResultsValueObject;
+use Carbon\Carbon;
 use Livewire\Component;
 
 class SchoolCreateComponent extends Component
@@ -9,6 +12,8 @@ class SchoolCreateComponent extends Component
     public array $dto = [];
     public string $header = '';
     public string $pageInstructions = '';
+    public string $postalCode = '';
+    public string $resultsPostalCode = '';
 
     public function mount()
     {
@@ -22,6 +27,41 @@ class SchoolCreateComponent extends Component
             [
                 'pageInstructions' => $this->pageInstructions(),
             ]);
+    }
+
+    public function addSchool(int $schoolId): void
+    {
+        dd($schoolId);
+    }
+
+    public function updatedPostalCode(): void
+    {
+        $this->reset('resultsPostalCode');
+
+        $str = '<div>No schools found for "'.$this->postalCode.'".</div>';
+
+        if (strlen($this->postalCode) > 3) {
+
+            $schools = School::query()
+                ->where('postal_code', 'LIKE', $this->postalCode.'%')
+                ->orderBy('name')
+                ->orderBy('city')
+                ->get();
+
+            if ($schools->count()) {
+
+                $str = '';
+
+                foreach ($schools as $school) {
+
+                    $str .= '<button type="button" wire:click="addSchool('.$school->id.')" class="text-sm text-blue-500 ml-2">'
+                        .SchoolResultsValueObject::getVo($school) //"schoolName (city in county, state)"
+                        .'</button>';
+                }
+            }
+        }
+
+        $this->resultsPostalCode = $str;
     }
 
     private function pageInstructions(): string
