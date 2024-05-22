@@ -8,9 +8,9 @@
 ])
 <div class="flex flex-col">
     <label for="{{ $name }}" class="@if($required) required @endif">{{ ucwords($label) }}</label>
-    <input type="text"
-           class="narrow "
-           wire:model.live="{{ $name }}"
+    <input wire:model.live="{{ $name }}"
+           type="text"
+           class="wide"
            placeholder="{{ $placeholder }}"
            @if($autofocus) autofocus @endif
     />

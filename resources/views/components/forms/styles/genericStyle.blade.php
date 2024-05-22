@@ -3,8 +3,12 @@
         font-weight: bold;
     }
 
-    input.narrow {
-        width: 12rem;
+    input.narrow, select.narrow {
+        width: 10rem;
+    }
+
+    input.wide, select.wide {
+        width: 20rem;
     }
 
     label.required:after {
