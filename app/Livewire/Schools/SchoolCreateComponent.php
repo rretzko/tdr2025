@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Schools;
 
+use App\Models\PageView;
 use App\Models\Schools\School;
 use App\ValueObjects\SchoolResultsValueObject;
 use Carbon\Carbon;
@@ -10,6 +11,7 @@ use Livewire\Component;
 class SchoolCreateComponent extends Component
 {
     public array $dto = [];
+    public string $firstTimer = 'false';
     public string $header = '';
     public string $pageInstructions = '';
     public string $postalCode = '';
@@ -19,6 +21,7 @@ class SchoolCreateComponent extends Component
     {
         $this->header = 'Add '.ucwords($this->dto['header']);
         $this->pageInstructions = $this->dto['pageInstructions'];
+        $this->setFirstTimer();
     }
 
     public function render()
@@ -62,6 +65,34 @@ class SchoolCreateComponent extends Component
         }
 
         $this->resultsPostalCode = $str;
+    }
+
+    /** END OF PUBLIC FUNCTIONS **************************************************/
+
+    /**
+     * $firstTimer controls the default display of page instructions.
+     * if the user is seeing the page for the first time, page instructions is displayed ('hide' option is displayed)
+     * else, page instructions are hidden ('show' option is displayed)
+     * @return void
+     */
+    private function setFirstTimer(): void
+    {
+        $this->firstTimer = 'true';
+        $pageView = PageView::firstOrCreate(
+            [
+                'header' => $this->header,
+                'user_id' => auth()->id(),
+            ],
+            [
+                'view_count' => 0,
+            ]
+        );
+
+        $this->firstTimer = ($pageView->view_count) ? 'false' : 'true';
+
+        $pageView->update([
+            'view_count' => ($pageView->view_count + 1)
+        ]);
     }
 
     private function pageInstructions(): string

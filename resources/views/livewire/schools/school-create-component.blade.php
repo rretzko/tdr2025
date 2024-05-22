@@ -1,7 +1,7 @@
 <div class="px-4">
     <h2>{{ $header }}</h2>
 
-    <x-pageInstructions.instructions instructions="{!! $pageInstructions !!}"/>
+    <x-pageInstructions.instructions instructions="{!! $pageInstructions !!}" firstTimer="{{ $firstTimer }}"/>
 
     <form wire:submit="save" class="my-4 p-4 border border-gray-200 rounded-lg shadow-lg">
 
@@ -12,8 +12,11 @@
             <x-forms.elements.livewire.labeledInfoOnly label="Sys.Id" data="new"/>
 
             {{-- POSTAL CODE --}}
-            <x-forms.elements.livewire.inputTextNarrow label="zip code" name="postalCode" required
-                                                       :results="$resultsPostalCode"/>
+            <x-forms.elements.livewire.inputTextNarrow label="zip code"
+                                                       name="postalCode"
+                                                       required
+                                                       :results="$resultsPostalCode"
+            />
 
         </div>
 
