@@ -1,0 +1,21 @@
+@props([
+    'showSuccessIndicator' => false,
+    'message' => '',
+])
+<div
+    x-show="$wire.showSuccessIndicator"
+    x-transition.out.opacity.duration.2000ms
+    x-effect="if($wire.showSuccessIndicator) setTimeout(() => $wire.showSuccessIndicator = false, 3000)"
+    class="flex justify-start pt-4"
+>
+    <div class="flex gap-2 items-center text-green-500 text-sm font-medium">
+        {!! $message !!}
+
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+             class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+    </div>
+</div>
+

@@ -28,6 +28,8 @@ class SchoolCreateComponent extends Component
     public string $resultsCity = '';
     public string $resultsPostalCode = '';
     public string $resultsName = '';
+    public string $successMessage = '';
+    public bool $showSuccessIndicator = false;
 
     public function mount()
     {
@@ -52,7 +54,9 @@ class SchoolCreateComponent extends Component
 
     #[NoReturn] public function save(): void
     {
-        dd($this);
+        $this->successMessage = '"'.$this->name.'" has been saved to your Schools roster.';
+
+        $this->showSuccessIndicator = true;
     }
 
     public function updatedCity(): void

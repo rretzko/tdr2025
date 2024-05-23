@@ -96,10 +96,16 @@
 
         {{-- SUBMIT --}}
         <div class="flex flex-col mt-2 max-w-xs">
-            <button type="submit" class="bg-gray-800 text-white px-2 rounded-full">
+            <button type="submit"
+                    class="bg-gray-800 text-white px-2 rounded-full disabled:cursor-not-allowed disabled:opacity-50"
+            >
                 Submit
             </button>
         </div>
+
+        {{-- SUCCESS INDICATOR --}}
+        <x-forms.indicators.successIndicator :showSuccessIndicator="$showSuccessIndicator"
+                                             message="{{  $successMessage }}"/>
 
     </form>
 </div>
