@@ -9,8 +9,18 @@
     'required',
 ])
 <div class="flex flex-col">
-    <label for="county_id" class="required">{{ ucwords($label) }}</label>
-    <select wire:model.live="{{ $name }}" class="narrow">
+    <label for="{{ $name }}" class="{{ $required }}">{{ ucwords($label) }}</label>
+    <select wire:model.live="{{ $name }}"
+            @class([
+                'narrow',
+                'border border-red-600' => $errors->has($name),
+                ])
+            aria-label="{{ $label }}"
+            @error($name)
+            aria-invalid="true"
+            aria-description="{{ $message }}"
+        @enderror
+    >
         @if($option0)
             <option value="0">- select -</option>
         @endif
@@ -19,7 +29,6 @@
         @endforeach
     </select>
     @error($name)
-    <div class="mt-2 text-sm text-red-600">{{ $message }}</div>
-    @enderror
+    <x-input-error messages="{{ $message }}" aria-live="polite"/> @enderror
     <div class="mt-2 text-sm text-blue-600">{!! $advisory !!}</div>
 </div>

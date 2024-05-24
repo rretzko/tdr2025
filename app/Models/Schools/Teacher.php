@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\DB;
 
 class Teacher extends Model
 {
@@ -25,7 +26,6 @@ class Teacher extends Model
             ->whereNotNull('school_teacher.email_verified_at')
             ->exists();
     }
-
     public function schools(): BelongsToMany|null
     {
         return $this->belongsToMany(School::class)

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "79f835d7004ebf8bb0d00af1f97b511c",
+    "content-hash": "a7867d1b8fde563a66676340c8972e3b",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -128,16 +128,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.306.0",
+            "version": "3.308.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "dc228b55a4224fe3160a0a2ca430b80c5348d943"
+                "reference": "079dd48a0d500089eed09de836be0ce4dd6186c5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/dc228b55a4224fe3160a0a2ca430b80c5348d943",
-                "reference": "dc228b55a4224fe3160a0a2ca430b80c5348d943",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/079dd48a0d500089eed09de836be0ce4dd6186c5",
+                "reference": "079dd48a0d500089eed09de836be0ce4dd6186c5",
                 "shasum": ""
             },
             "require": {
@@ -217,9 +217,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.306.0"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.308.2"
             },
-            "time": "2024-05-06T18:11:49+00:00"
+            "time": "2024-05-23T18:06:59+00:00"
         },
         {
             "name": "blade-ui-kit/blade-heroicons",

@@ -13,7 +13,7 @@
 
             {{-- POSTAL CODE --}}
             <x-forms.elements.livewire.inputTextNarrow label="zip code"
-                                                       name="postalCode"
+                                                       name="form.postalCode"
                                                        required
                                                        autofocus
                                                        :results="$resultsPostalCode"
@@ -21,7 +21,7 @@
 
             {{-- SCHOOL NAME --}}
             <x-forms.elements.livewire.inputTextWide label="school name"
-                                                     name="name"
+                                                     name="form.name"
                                                      placeholder="Enter full name without abbreviations"
                                                      required
                                                      :results="$resultsName"
@@ -29,7 +29,7 @@
 
             {{-- CITY --}}
             <x-forms.elements.livewire.inputTextWide label="city"
-                                                     name="city"
+                                                     name="form.city"
                                                      placeholder=""
                                                      required
                                                      :results="$resultsCity"
@@ -38,52 +38,83 @@
             {{-- COUNTY --}}
             <x-forms.elements.livewire.selectNarrow advisory="{{{  $advisoryCountyId }}}"
                                                     label="county"
-                                                    name="countyId"
+                                                    name="form.countyId"
                                                     option0
                                                     :options="$counties"
-                                                    required
+                                                    required="required"
 
             />
 
             {{-- GRADES TAUGHT IN SCHOOL --}}
             <div class="flex flex-col">
                 <label for="" class="required">Grades Taught in School</label>
-                <div class="flex flex-row space-x-2">
+                <div
+                    @class([
+                     'flex flex-row space-x-2',
+                     'border border-red-600 px-2 py-1' => $errors->has('form.gradesTaught'),
+                     ])
+                    aria-label="grades taught"
+                    @error('form.gradesTaught')
+                    aria-invalid="true"
+                    aria-description="{{ $message }}"
+                    @enderror
+                >
                     @for($i=1; $i<13; $i++)
                         <div>
-                            <input wire:model="gradesTaught"
+                            <input wire:model.blur="form.gradesTaught"
                                    wire:key="gradesTaught{{ $i }}"
                                    type="checkbox"
                                    value="{{ $i }}"
+                                   aria-label="grade {{ $i }}"
                             />
                             <label>{{ $i }}</label>
                         </div>
                     @endfor
                 </div>
+                @error('form.gradesTaught')
+                <x-input-error messages="{{ $message }}" aria-live="polite"/>
+                @enderror
+
             </div>
 
             {{-- GRADES I TEACH IN SCHOOL --}}
             <div class="flex flex-col">
                 <label for="" class="required">Grades I Teach in School</label>
-                <div class="flex flex-row space-x-2">
+                <div
+                    @class([
+                     'flex flex-row space-x-2',
+                     'border border-red-600 px-2 py-1' => $errors->has('form.gradesITeach'),
+                     ])
+                    aria-label="grades i teach"
+                    @error('form.gradesITeach')
+                    aria-invalid="true"
+                    aria-description="{{ $message }}"
+                    @enderror
+                >
                     @for($i=1; $i<13; $i++)
                         <div>
-                            <input wire:model="gradesITeach"
+                            <input wire:model.blur="form.gradesITeach"
                                    wire:key="gradesITeach{{ $i }}"
                                    type="checkbox"
                                    value="{{ $i }}"
+                                   aria-label="grade {{ $i }}"
                             />
                             <label>{{ $i }}</label>
                         </div>
                     @endfor
                 </div>
+                @error('form.gradesITeach')
+                <x-input-error messages="{{ $message }}" aria-live="polite"/>
+                @enderror
+
             </div>
 
             {{-- WORK EMAIL --}}
             <div class="flex flex-col">
                 <x-forms.elements.livewire.inputTextWide label="work email"
-                                                         name="email"
+                                                         name="form.email"
                                                          required
+                                                         type="email"
                 />
                 @if($emailVerified)
                     <div class="mt-2 text-sm text-green-600">Verified</div>

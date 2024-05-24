@@ -2,29 +2,27 @@
 
 namespace App\Livewire\Schools;
 
+use App\Livewire\Forms\SchoolForm;
 use App\Models\County;
 use App\Models\PageView;
 use App\Models\Schools\School;
 use App\ValueObjects\SchoolResultsValueObject;
 use Carbon\Carbon;
 use JetBrains\PhpStorm\NoReturn;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
 
 class SchoolCreateComponent extends Component
 {
+    public SchoolForm $form;
     public string $advisoryCountyId = '';
-    public string $city = '';
-    public int $countyId = 0;
     public array $dto = [];
-    public string $email = '';
     public bool $emailVerified = false;
     public string $firstTimer = 'false';
-    public array $gradesITeach = [];
-    public array $gradesTaught = [];
+
+//    public array $gradesTaught = [];
     public string $header = '';
     public string $pageInstructions = '';
-    public string $name = '';
-    public string $postalCode = '';
     public string $resultsCity = '';
     public string $resultsPostalCode = '';
     public string $resultsName = '';
@@ -49,12 +47,17 @@ class SchoolCreateComponent extends Component
 
     #[NoReturn] public function addSchool(int $schoolId): void
     {
+
         dd($schoolId);
     }
 
     #[NoReturn] public function save(): void
     {
-        $this->successMessage = '"'.$this->name.'" has been saved to your Schools roster.';
+        $this->validate();
+
+        $this->form->update();
+
+        $this->successMessage = '"'.$this->form->name.'" has been saved to your Schools roster.';
 
         $this->showSuccessIndicator = true;
     }

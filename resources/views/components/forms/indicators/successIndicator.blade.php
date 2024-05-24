@@ -7,6 +7,7 @@
     x-transition.out.opacity.duration.2000ms
     x-effect="if($wire.showSuccessIndicator) setTimeout(() => $wire.showSuccessIndicator = false, 3000)"
     class="flex justify-start pt-4"
+    aria-live="polite"
 >
     <div class="flex gap-2 items-center text-green-500 text-sm font-medium">
         {!! $message !!}
