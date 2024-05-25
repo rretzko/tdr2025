@@ -2,9 +2,12 @@
 
 namespace App\Models\Schools;
 
+use App\Models\User;
+use App\ValueObjects\SchoolTeacherValueObject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Support\Facades\DB;
 
 class SchoolTeacher extends Model
@@ -21,6 +24,24 @@ class SchoolTeacher extends Model
         'teacher_id',
     ];
 
+    public function getGradesTaughtCsvAttribute(): string
+    {
+        return implode(', ', SchoolGrade::query()
+            ->where('school_id', $this->school_id)
+            ->pluck('grade')
+            ->toArray());
+    }
+
+    public function getSchoolVoAttribute(): string
+    {
+        return SchoolTeacherValueObject::getVo($this);
+    }
+
+    public function getUserAttribute(): User
+    {
+        return User::find($this->teacher_id);
+    }
+
     public function school(): BelongsTo
     {
         return $this->belongsTo(School::class);
@@ -30,6 +51,7 @@ class SchoolTeacher extends Model
     {
         return $this->belongsTo(Teacher::class);
     }
+
 
     public function updateGradesITeach(array $grades, int $schoolId): void
     {

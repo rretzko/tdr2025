@@ -17,6 +17,15 @@ class Teacher extends Model
         'user_id',
     ];
 
+    public function getGradesITeachCsv(School $school): string
+    {
+        return implode(', ', GradesITeach::query()
+            ->where('school_id', $school->id)
+            ->where('teacher_id', $this->id)
+            ->pluck('grade')
+            ->toArray());
+    }
+
     public function isVerified(): bool
     {
         return SchoolTeacher::query()
