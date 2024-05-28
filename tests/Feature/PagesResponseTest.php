@@ -121,6 +121,35 @@ it('returns a successful home page response from auth', function () {
         ->assertOK(); //200 response
 });
 
+//SCHOOLS
+it('returns a successful schools response from auth dashboard', function () {
+
+    $this->withoutExceptionHandling();
+
+    ViewPage::factory()->create(
+        [
+            'controller' => 'SchoolsController',
+            'method' => '__invoke',
+            'page_name' => 'dashboard',
+            'header' => 'home'
+        ],
+    );
+
+    $teacher = \App\Models\Schools\Teacher::factory()->create();
+    $school = \App\Models\Schools\School::factory()->create();
+    \App\Models\Schools\SchoolTeacher::factory()->create(
+        [
+            'school_id' => $school->id,
+            'teacher_id' => $teacher->id,
+        ]
+    );
+
+    auth()->login($teacher->user);
+
+    get(route('schools'))
+        ->assertOK(); //200 response
+});
+
 it('returns successful school-create page if auth without linked school', function () {
 
     $this->withoutExceptionHandling();

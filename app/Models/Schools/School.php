@@ -20,6 +20,11 @@ class School extends Model
         'county_id',
     ];
 
+    public function getAddressAttribute(): string
+    {
+        return $this->city.' in '.$this->getCountyNameAttribute().', '.$this->postal_code;
+    }
+
     public function county(): BelongsTo
     {
         return $this->belongsTo(County::class);
@@ -35,7 +40,7 @@ class School extends Model
         return Geostate::find(County::find($this->county_id)->geostate_id)->abbr;
     }
 
-    public function getGradesAttributes(): array
+    public function getGradesAttribute(): array
     {
         return SchoolGrade::query()
             ->where('school_id', $this->id)
