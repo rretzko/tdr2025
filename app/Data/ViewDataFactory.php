@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Log;
 
 class ViewDataFactory extends aViewData
 {
-    public function __construct(public readonly string $__method)
+    public function __construct(public readonly string $__method, public readonly mixed $id = 0)
     {
         parent::__construct($this->__method);
 
@@ -21,6 +21,11 @@ class ViewDataFactory extends aViewData
 
     private function init(): void
     {
+        //if $id, ensure that $this->dto['id'] is an integer value
+        $this->dto['id'] = (($this->id) && (is_object($this->id)))
+            ? (int) $this->id->id
+            : (int) $this->id;
+
         if ($this->viewPage->id) {
             $this->dto['pageName'] = 'pages.'.$this->viewPage->page_name.'Page';
             $this->dto['header'] = $this->viewPage->header;
@@ -30,6 +35,7 @@ class ViewDataFactory extends aViewData
 //                Log::info('info: is_null('.$this->dto['header'].')');
 //                Log::error('error: is_null('.$this->dto['header'].')');
 //            }
+
             $this->dto['pageInstructions'] = $this->decodeInstructions(PageInstruction::where('header',
                 $this->dto['header'])->first()->instructions);
 
@@ -65,7 +71,7 @@ class ViewDataFactory extends aViewData
             //'schools' => ['name', 'address', 'grades', 'active?', 'email', 'verified', 'i teach',],
         ];
 
-        return $headers[$this->viewPage->header];
+        return array_key_exists($this->viewPage->header, $headers) ? $headers[$this->viewPage->header] : [];
     }
 
     private function getComponents(): array
@@ -121,6 +127,10 @@ class ViewDataFactory extends aViewData
         $components = [
             'new school' => 'schools.school-create-component',
             'schools' => 'schools.schools-table-component',
+            'school edit' => 'schools.school-edit-component',
+
+            'new student' => 'students.student-create-component',
+            'students' => 'students.students-table-component',
         ];
 
         return $components[$this->viewPage->header];
@@ -128,16 +138,18 @@ class ViewDataFactory extends aViewData
 
     private function getRows(): array
     {
-        $schools = Teacher::find(auth()->id())->schools->sortBy('name');
+        $rows = [];
 
-        foreach ($schools as $school) {
+//        $schools = Teacher::find(auth()->id())->schools->sortBy('name');
+//
+//        foreach ($schools as $school) {
+//
+//            $rows = [
+//                'schools' => $this->rowsSchools(),
+//            ];
+//        }
 
-            $rows = [
-                'schools' => $this->rowsSchools(),
-            ];
-        }
-
-        return $rows[$this->dto['header']];
+        return array_key_exists($this->dto['header'], $rows) ? $rows[$this->dto['header']] : [];
     }
 
 //    private function rowsSchools(): array

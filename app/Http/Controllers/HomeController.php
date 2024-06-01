@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Data\ViewDataFactory;
 use App\Models\Schools\SchoolTeacher;
+use App\Models\Schools\Teacher;
 use App\Services\HomeDashboardTestForSchoolsService;
 use Illuminate\Http\Request;
 
@@ -20,22 +21,27 @@ class HomeController extends Controller
             abort(403, 'You must be a teacher to use TheDirectorsRoom.com');
         }
 
-        //display the school-create page if no schools exist
-        if (!auth()->user()->teacher->isVerified()) {
+        //placeholder for possible action to take if teacher's email is unverified
+//        if (!auth()->user()->teacher->isVerified()) {
+//
+//            return redirect()->route('school.create');
+//        }
+
+        //if(auth()->user() has no schools, redirect to school.create,
+        //else continue to home.dashboard
+        if (!Teacher::find(auth()->id())->schools->count()) {
 
             return redirect()->route('school.create');
+
+        } else { //happy path
+
+            $data = new ViewDataFactory(__METHOD__);
+
+            $dto = $data->getDto();
+
+            return view($dto['pageName'], compact('dto'));
         }
 
-        $data = new ViewDataFactory(__METHOD__);
 
-        $dto = $data->getDto();
-
-        //if user is a teacher with school(s) return all cards,
-        //else display school creation form
-        //$service = new HomeDashboardTestForSchoolsService($data->getDto());
-
-        //$dto = $service->getDto();
-
-        return view($dto['pageName'], compact('dto'));
     }
 }

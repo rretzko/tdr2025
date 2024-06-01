@@ -23,6 +23,15 @@ class SchoolController extends Controller
         return view($dto['pageName'], compact('dto'));
     }
 
+    public function edit(School $school)
+    {
+        $data = new ViewDataFactory(__METHOD__, $school);
+
+        $dto = $data->getDto();
+
+        return view($dto['pageName'], compact('dto'));
+    }
+
     public function store(SchoolRequest $request)
     {
         return School::create($request->validated());

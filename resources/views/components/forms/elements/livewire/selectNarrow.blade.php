@@ -1,6 +1,7 @@
 @props([
-    'advisory' => 'advisory',
+    'advisory' => '',
     'autofocus' => false,
+    'disabled' => 0,
     'label',
     'name',
     'option0' => false,
@@ -19,6 +20,7 @@
             @error($name)
             aria-invalid="true"
             aria-description="{{ $message }}"
+            @if($disabled) disabled @endif
         @enderror
     >
         @if($option0)

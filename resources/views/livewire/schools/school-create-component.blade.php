@@ -16,7 +16,8 @@
                                                        name="form.postalCode"
                                                        required
                                                        autofocus
-                                                       :results="$resultsPostalCode"
+                                                       :results="$form->resultsPostalCode"
+                                                       hint="tab out to search..."
             />
 
             {{-- SCHOOL NAME --}}
@@ -24,7 +25,7 @@
                                                      name="form.name"
                                                      placeholder="Enter full name without abbreviations"
                                                      required
-                                                     :results="$resultsName"
+                                                     :results="$form->resultsName"
             />
 
             {{-- CITY --}}
@@ -32,11 +33,11 @@
                                                      name="form.city"
                                                      placeholder=""
                                                      required
-                                                     :results="$resultsCity"
+                                                     :results="$form->resultsCity"
             />
 
             {{-- COUNTY --}}
-            <x-forms.elements.livewire.selectNarrow advisory="{{{  $advisoryCountyId }}}"
+            <x-forms.elements.livewire.selectNarrow advisory="{{  $form->advisoryCountyId }}"
                                                     label="county"
                                                     name="form.countyId"
                                                     option0

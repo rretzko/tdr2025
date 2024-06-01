@@ -24,10 +24,29 @@ Breadcrumbs::for('schools', function (BreadcrumbTrail $trail) {
     $trail->parent('home');
     $trail->push('Schools', route('schools'));
 });
-//Schools.create
+
+//School.create
 Breadcrumbs::for('new school', function (BreadcrumbTrail $trail) {
-    $trail->parent('home');
+    $trail->parent('schools');
     $trail->push('New', route('school.create'));
+});
+
+//School.edit
+Breadcrumbs::for('school edit', function (BreadcrumbTrail $trail) {
+    $trail->parent('schools');
+    $trail->push('Edit', route('school.edit', ['school' => 1]));
+});
+
+// Students
+Breadcrumbs::for('students', function (BreadcrumbTrail $trail) {
+    $trail->parent('home');
+    $trail->push('Students', route('students'));
+});
+
+//Student.create
+Breadcrumbs::for('new student', function (BreadcrumbTrail $trail) {
+    $trail->parent('students');
+    $trail->push('New', route('student.create'));
 });
 
 // Unknown = ViewData not found for the calling controller::method

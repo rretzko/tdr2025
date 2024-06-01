@@ -17,6 +17,8 @@ return new class extends Migration {
             $table->timestamp('email_verified_at')->nullable();
             $table->boolean('active');
             $table->timestamps();
+            $table->softDeletes();
+            $table->unique(['school_id', 'teacher_id']);
         });
     }
 

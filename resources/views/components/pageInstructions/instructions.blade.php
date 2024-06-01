@@ -1,10 +1,10 @@
 @props([
-    'firstTimer' => 'true',
+    'firstTimer' => 'false',
     'instructions',
 ])
-<div class="px-1 py-2 mx-2 my-1 bg-gray-100 rounded-lg">
+<div class="w-full px-1 py-2 mx-2 my-1 bg-gray-100 rounded-lg">
 
-    <div id="hideShowHeader" class="px-2" x-data="{ expanded:{{ $firstTimer }} }">
+    <div id="hideShowHeader" class="px-2" x-data="{ expanded: false }" x-init="expanded = {{ $firstTimer === 'true' }}">
         <div class="flex flex-row justify-between">
             <div class="font-semibold">Page Instructions</div>
             <button type="button" x-on:click="expanded = ! expanded">

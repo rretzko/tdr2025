@@ -8,11 +8,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 
 class SchoolTeacher extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'school_teacher';
 
@@ -30,6 +31,11 @@ class SchoolTeacher extends Model
             ->where('school_id', $this->school_id)
             ->pluck('grade')
             ->toArray());
+    }
+
+    public function getSchoolNameAttribute(): string
+    {
+        return School::find($this->school_id)->name;
     }
 
     public function getSchoolVoAttribute(): string

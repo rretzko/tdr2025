@@ -23,6 +23,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('schools');
     Route::get('school/new', [\App\Http\Controllers\Schools\SchoolController::class, 'create'])
         ->name('school.create');
+    Route::get('school/edit/{school}', [\App\Http\Controllers\Schools\SchoolController::class, 'edit'])
+        ->name('school.edit');
+
+    //STUDENTS
+    Route::get('students', \App\Http\Controllers\Students\StudentsController::class)
+        ->name('students');
+    Route::get('student/new', [\App\Http\Controllers\Students\StudentController::class, 'create'])
+        ->name('student.create');
+//    Route::get('student/edit/{school}', [\App\Http\Controllers\Students\StudentController::class, 'edit'])
+//        ->name('student.edit');
 });
 
 require __DIR__.'/auth.php';

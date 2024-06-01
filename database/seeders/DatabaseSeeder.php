@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call(PageInstructionsSeeder::class);
         $this->call(ViewPageSeeder::class);
         $this->call(ViewCardSeeder::class);
         $this->call(GeostateSeeder::class);

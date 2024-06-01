@@ -1,15 +1,16 @@
 @props([
     'autofocus' => false,
+    'hint' => '',
     'label',
     'name',
     'placeholder' => '',
-    'required',
+    'required' => false,
     'results' => '',
     'type' => 'text',
 ])
 <div class="flex flex-col">
     <label for="{{ $name }}" class="@if($required) required @endif">{{ ucwords($label) }}</label>
-    <input wire:model.live="{{ $name }}"
+    <input wire:model.blur="{{ $name }}"
            type="{{ $type }}"
            @class([
              'wide',
@@ -23,7 +24,18 @@
            aria-description="{{ $message }}"
         @enderror
     />
+
+    {{-- HINT --}}
+    @if($hint)
+        <div class="text-xs ml-1 italic">
+            {{ $hint }}
+        </div>
+    @endif
+
+    {{-- RESULTS --}}
     <div>{!! $results !!}</div>
+
+    {{-- ERROR --}}
     @error($name)
     <x-input-error messages="{{ $message }}" aria-live="polite"/> @enderror
 </div>

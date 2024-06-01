@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Schools\Teacher;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -16,6 +17,7 @@ class RegisteredUserController extends Controller
 {
     /**
      * Handle an incoming registration request.
+     * A new user should be immediately directed to create a school link
      *
      * @throws \Illuminate\Validation\ValidationException
      */
@@ -33,11 +35,15 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        //set user as teacher
+        Teacher::create(['id' => $user->id, 'user_id' => $user->id]);
+
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect()->intended(route('home'));
+        //return redirect()->intended(route('home'));
+        return redirect()->intended(route('school.create'));
     }
 
     /**

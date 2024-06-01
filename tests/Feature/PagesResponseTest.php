@@ -172,3 +172,32 @@ it('returns successful school-create page if auth without linked school', functi
         ->assertSeeText('Add School');
 });
 
+//SCHOOLS
+it('returns a successful students response from auth dashboard', function () {
+
+    $this->withoutExceptionHandling();
+
+    ViewPage::factory()->create(
+        [
+            'controller' => 'StudentsController',
+            'method' => '__invoke',
+            'page_name' => 'livewire',
+            'header' => 'home'
+        ],
+    );
+
+    $teacher = \App\Models\Schools\Teacher::factory()->create();
+    $school = \App\Models\Schools\School::factory()->create();
+    \App\Models\Schools\SchoolTeacher::factory()->create(
+        [
+            'school_id' => $school->id,
+            'teacher_id' => $teacher->id,
+        ]
+    );
+
+    auth()->login($teacher->user);
+
+    get(route('students'))
+        ->assertOK(); //200 response
+});
+

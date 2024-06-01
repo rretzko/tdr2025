@@ -38,14 +38,9 @@ abstract class aViewData
 
     private function getViewPage(): ViewPage
     {
-        return ViewPage::firstOrNew(
-            ['controller' => $this->controller],
-            ['method' => $this->method]
-        );
+        return ViewPage::query()
+            ->where('controller', $this->controller)
+            ->where('method', $this->method)
+            ->first();
     }
-
-//    protected function getDto(): array
-//    {
-//        return $this->dto;
-//    }
 }

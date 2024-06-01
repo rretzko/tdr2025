@@ -29,7 +29,7 @@ class ViewPageSeeder extends Seeder
             [
                 'SchoolsController',
                 '__invoke',
-                'table',
+                'livewire',
                 'schools'
             ],
         ];
