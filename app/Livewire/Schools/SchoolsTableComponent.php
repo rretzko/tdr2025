@@ -20,6 +20,7 @@ class SchoolsTableComponent extends BasePage
 
     public function mount(): void
     {
+        parent::mount();
         $this->teacher = Teacher::find(auth()->id());
         $this->schools = $this->teacher->schools->sortBy('name');
     }
