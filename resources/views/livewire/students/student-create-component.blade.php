@@ -13,8 +13,10 @@
 
             <fieldset id="user-info">
 
+                {{-- NAMES --}}
                 <fieldset class="flex flex-col md:flex-row space-x-2" id="name-parts">
 
+                    {{-- NAME.FIRST --}}
                     <x-forms.elements.livewire.inputTextNarrow
                         label="first"
                         name="form.first"
@@ -22,17 +24,20 @@
                         autofocus
                     />
 
+                    {{-- NAME.MIDDLE --}}
                     <x-forms.elements.livewire.inputTextNarrow
                         label="middle"
                         name="form.middle"
                     />
 
+                    {{-- NAME.LAST --}}
                     <x-forms.elements.livewire.inputTextNarrow
                         label="last"
                         name="form.last"
                         required
                     />
 
+                    {{-- NAME.SUFFIX --}}
                     <x-forms.elements.livewire.inputTextNarrow
                         label="suffix"
                         name="form.suffix"
@@ -41,6 +46,7 @@
 
                 </fieldset>
 
+                {{-- EMAIL --}}
                 <x-forms.elements.livewire.inputTextWide
                     label="email"
                     name="form.email"
@@ -48,108 +54,87 @@
                     hint="Email used by the student to log into StudentFolder.info"
                 />
 
+                {{-- PREFERRED PRONOUN --}}
+                <x-forms.elements.livewire.selectWide
+                    label="preferred pronoun"
+                    name="form.pronounId"
+                    :options="$pronouns"
+                    required="required"
+                />
+
             </fieldset>
 
             <fieldset id="student-info">
 
-                <x-forms.elements.livewire.selectWide
-                    label="school"
-                    name="schoolId"
-                    option0
-                    :options="$schools"
-                    required="required"
-                />
+                {{-- SCHOOL --}}
+                @if($school->id)
+                    <x-forms.elements.livewire.labeledInfoOnly
+                        label="School"
+                        data="{{  $schoolName }}"
+                        wireModel="schoolName"
+                    />
+                @else
+                    <x-forms.elements.livewire.selectWide
+                        label="school"
+                        name="schoolId"
+                        option0
+                        :options="$schools"
+                        required="required"
+                    />
+                @endif
 
-                <x-forms.elements.livewire.selectNarrow
-                    label="grade"
-                    name="form.grade"
-                    option0
-                    :options="$grades"
-                    required="required"
-                />
+                <fieldset class="flex flex-col md:flex-row md:space-x-2">
+
+                    {{-- GRADE/CLASS_OF --}}
+                    <x-forms.elements.livewire.selectNarrow
+                        label="grade"
+                        name="form.classOf"
+                        :options="$grades"
+                        required="required"
+                        :hint="$hintClassOf"
+                    />
+
+                    {{-- HEIGHT --}}
+                    <x-forms.elements.livewire.selectNarrow
+                        label="height"
+                        name="form.heightInInches"
+                        option0
+                        :options="$heights"
+                        required="required"
+                    />
+
+                    {{-- BIRTHDAY --}}
+                    <x-forms.elements.livewire.inputTextNarrow
+                        label="birthday"
+                        name="form.birthday"
+                        type='date'
+                        :hint="$hintBirthday"
+                    />
+
+                    {{-- SHIRT SIZE --}}
+                    <x-forms.elements.livewire.selectNarrow
+                        label="shirt size"
+                        name="form.shirtSize"
+                        :options="$shirtSizes"
+                    />
+
+                </fieldset>
 
             </fieldset>
 
+            <fieldset id="phones">
 
-            {{--            --}}{{-- GRADES TAUGHT IN SCHOOL --}}
-            {{--            <div class="flex flex-col">--}}
-            {{--                <label for="" class="required">Grades Taught in School</label>--}}
-            {{--                <div--}}
-            {{--                    @class([--}}
-            {{--                     'flex flex-row space-x-2',--}}
-            {{--                     'border border-red-600 px-2 py-1' => $errors->has('form.gradesTaught'),--}}
-            {{--                     ])--}}
-            {{--                    aria-label="grades taught"--}}
-            {{--                    @error('form.gradesTaught')--}}
-            {{--                    aria-invalid="true"--}}
-            {{--                    aria-description="{{ $message }}"--}}
-            {{--                    @enderror--}}
-            {{--                >--}}
-            {{--                    @for($i=1; $i<13; $i++)--}}
-            {{--                        <div>--}}
-            {{--                            <input wire:model.blur="form.gradesTaught"--}}
-            {{--                                   wire:key="gradesTaught{{ $i }}"--}}
-            {{--                                   type="checkbox"--}}
-            {{--                                   value="{{ $i }}"--}}
-            {{--                                   aria-label="grade {{ $i }}"--}}
-            {{--                            />--}}
-            {{--                            <label>{{ $i }}</label>--}}
-            {{--                        </div>--}}
-            {{--                    @endfor--}}
-            {{--                </div>--}}
-            {{--                @error('form.gradesTaught')--}}
-            {{--                <x-input-error messages="{{ $message }}" aria-live="polite"/>--}}
-            {{--                @enderror--}}
+                {{-- PHONE.MOBILE --}}
+                <x-forms.elements.livewire.inputTextWide
+                    label="cell phone"
+                    name="form.phoneMobile"
+                />
 
-            {{--            </div>--}}
-
-            {{--            --}}{{-- GRADES I TEACH IN SCHOOL --}}
-            {{--            <div class="flex flex-col">--}}
-            {{--                <label for="" class="required">Grades I Teach in School</label>--}}
-            {{--                <div--}}
-            {{--                    @class([--}}
-            {{--                     'flex flex-row space-x-2',--}}
-            {{--                     'border border-red-600 px-2 py-1' => $errors->has('form.gradesITeach'),--}}
-            {{--                     ])--}}
-            {{--                    aria-label="grades i teach"--}}
-            {{--                    @error('form.gradesITeach')--}}
-            {{--                    aria-invalid="true"--}}
-            {{--                    aria-description="{{ $message }}"--}}
-            {{--                    @enderror--}}
-            {{--                >--}}
-            {{--                    @for($i=1; $i<13; $i++)--}}
-            {{--                        <div>--}}
-            {{--                            <input wire:model.blur="form.gradesITeach"--}}
-            {{--                                   wire:key="gradesITeach{{ $i }}"--}}
-            {{--                                   type="checkbox"--}}
-            {{--                                   value="{{ $i }}"--}}
-            {{--                                   aria-label="grade {{ $i }}"--}}
-            {{--                            />--}}
-            {{--                            <label>{{ $i }}</label>--}}
-            {{--                        </div>--}}
-            {{--                    @endfor--}}
-            {{--                </div>--}}
-            {{--                @error('form.gradesITeach')--}}
-            {{--                <x-input-error messages="{{ $message }}" aria-live="polite"/>--}}
-            {{--                @enderror--}}
-
-            {{--            </div>--}}
-
-            {{--            --}}{{-- WORK EMAIL --}}
-            {{--            <div class="flex flex-col">--}}
-            {{--                <x-forms.elements.livewire.inputTextWide label="work email"--}}
-            {{--                                                         name="form.email"--}}
-            {{--                                                         required--}}
-            {{--                                                         type="email"--}}
-            {{--                />--}}
-            {{--                @if($emailVerified)--}}
-            {{--                    <div class="mt-2 text-sm text-green-600">Verified</div>--}}
-            {{--                @else--}}
-            {{--                    <div class="mt-2 text-sm text-red-600">Unverified</div>--}}
-            {{--                @endif--}}
-            {{--            </div>--}}
-
-            {{--        </div>--}}
+                <x-forms.elements.livewire.inputTextWide
+                    label="home phone"
+                    name="form.phoneHome"
+                />
+            </fieldset>
 
             {{-- SUBMIT --}}
             <div class="flex flex-col mt-2 max-w-xs">

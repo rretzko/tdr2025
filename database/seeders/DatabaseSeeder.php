@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
         $this->call(GeostateSeeder::class);
         $this->call(CountySeeder::class);
         $this->call(SchoolSeeder::class);
+        $this->call(VoicePartSeeder::class);
         $this->call(UserSeeder::class);
 
     }

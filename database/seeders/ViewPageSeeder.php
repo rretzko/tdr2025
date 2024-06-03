@@ -37,7 +37,25 @@ class ViewPageSeeder extends Seeder
                 'edit',
                 'livewire',
                 'school edit',
-            ]
+            ],
+            [
+                'StudentsController',
+                '__invoke',
+                'livewire',
+                'students'
+            ],
+            [
+                'StudentController',
+                'create',
+                'livewire',
+                'new student',
+            ],
+            [
+                'StudentController',
+                'edit',
+                'livewire',
+                'student edit',
+            ],
         ];
 
         foreach ($seeds as $seed) {

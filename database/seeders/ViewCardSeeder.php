@@ -38,12 +38,30 @@ class ViewCardSeeder extends Seeder
             ],
             [
                 'header' => 'home',
+                'color' => 'blue',
+                'description' => '<p>Add and edit your performance ensembles.</p>',
+                'heroicon' => 'heroicons.userGroup',
+                'href' => 'ensembles',
+                'label' => 'ensembles',
+                'orderBy' => 3,
+            ],
+            [
+                'header' => 'home',
+                'color' => 'yellow',
+                'description' => '<p>Add and edit your music libraries.</p>',
+                'heroicon' => 'heroicons.bookOpen',
+                'href' => 'libraries',
+                'label' => 'libraries',
+                'orderBy' => 4,
+            ],
+            [
+                'header' => 'home',
                 'color' => 'red',
                 'description' => '<p>Update your student registration information for an upcoming auditioned event (ex. Region, All-State, etc.).</p><p>Open adjudication pages (when available).</p><p>Even create and manage an event of your own!</p>',
                 'heroicon' => 'heroicons.calendar',
                 'href' => 'events',
                 'label' => 'events',
-                'orderBy' => 3,
+                'orderBy' => 5,
             ],
         ];
     }

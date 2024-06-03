@@ -17,6 +17,7 @@ class SchoolCreateComponent extends BasePage
 {
     public SchoolForm $form;
     public bool $emailVerified = false;
+    public string $sysId = 'new';
 
     public function mount(): void
     {

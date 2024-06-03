@@ -2,12 +2,13 @@
     'advisory' => '',
     'autofocus' => false,
     'disabled' => 0,
+    'hint' => '',
     'label',
     'name',
     'option0' => false,
     'options',
     'placeholder' => '',
-    'required',
+    'required' => false,
 ])
 <div class="flex flex-col">
     <label for="{{ $name }}" class="{{ $required }}">{{ ucwords($label) }}</label>
@@ -30,7 +31,18 @@
             <option value="{{ $key }}">{{ $value }}</option>
         @endforeach
     </select>
+
+    {{-- HINT --}}
+    @if($hint)
+        <div class="text-xs ml-1 italic">
+            {{ $hint }}
+        </div>
+    @endif
+
+    {{-- ERROR --}}
     @error($name)
     <x-input-error messages="{{ $message }}" aria-live="polite"/> @enderror
+
+    {{-- ADVISORY --}}
     <div class="mt-2 text-sm text-blue-600">{!! $advisory !!}</div>
 </div>

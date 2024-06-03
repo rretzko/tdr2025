@@ -75,6 +75,18 @@ Commercial emails (gmail, hotmail, etc.) are automatically <strong>unverified</s
 <u>An unverified email will preclude you from viewing any student-entered information.</u>
  </p>'
             ],
+            [
+                'header' => 'students',
+                'instructions' => '<p>Students Table Page</p><p>Students Table page instructions...</p>'
+            ],
+            [
+                'header' => 'new student',
+                'instructions' => '<p>Add Student Page</p><p>Add Student page instructions...</p>'
+            ],
+            [
+                'header' => 'student edit',
+                'instructions' => '<p>Students Edit Page</p><p>Student Edit page instructions...</p>'
+            ],
         ];
     }
 

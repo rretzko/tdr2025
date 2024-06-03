@@ -9,7 +9,11 @@
             <x-forms.styles.genericStyle/>
 
             {{-- SYS ID --}}
-            <x-forms.elements.livewire.labeledInfoOnly label="Sys.Id" data="new"/>
+            <x-forms.elements.livewire.labeledInfoOnly
+                label="Sys.Id"
+                data="new"
+                wireModel="sysId"
+            />
 
             {{-- POSTAL CODE --}}
             <x-forms.elements.livewire.inputTextNarrow label="zip code"
