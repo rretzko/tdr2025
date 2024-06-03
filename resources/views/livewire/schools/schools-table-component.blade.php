@@ -99,9 +99,12 @@
                     <td class="text-center border border-gray-200">
                         <x-buttons.edit id="{{ $row->schoolId }}" livewire="1"/>
                     </td>
+
                     <td class="text-center border border-gray-200">
-                        <x-buttons.remove id="{{ $row->schoolId }}" livewire="1"
-                                          message="Are you sure you want to remove {{ $row->schoolName }} from your roster?"/>
+                        @if($schoolCount > 1)
+                            <x-buttons.remove id="{{ $row->schoolId }}" livewire="1"
+                                              message="Are you sure you want to remove {{ $row->schoolName }} from your roster?"/>
+                        @endif
                     </td>
                 </tr>
 

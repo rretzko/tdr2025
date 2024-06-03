@@ -1,7 +1,7 @@
 @props([
     'id' => 0,
     'livewire' => 0,
-    'message' => '',
+    'message' => 'Are you sure you want to remove this?',
 ])
 <button
     @if($livewire) wire:click="remove({{ $id }})" @endif

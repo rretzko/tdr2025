@@ -15,6 +15,7 @@ use Livewire\Component;
 
 class SchoolsTableComponent extends BasePage
 {
+    public int $schoolCount = 0;
     public Collection $schools;
     public Teacher $teacher;
 
@@ -23,6 +24,7 @@ class SchoolsTableComponent extends BasePage
         parent::mount();
         $this->teacher = Teacher::find(auth()->id());
         $this->schools = $this->teacher->schools->sortBy('name');
+        $this->schoolCount = $this->schools->count();
     }
 
     public function render()

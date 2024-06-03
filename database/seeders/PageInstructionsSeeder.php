@@ -48,6 +48,7 @@ class PageInstructionsSeeder extends Seeder
 </p>
 <p>Click the "Edit" button to edit the school information on that row.</p>
 <p>Click the "Remove" button to remove a school from your roster.<br />
+If you only have one school, the "Remove" button will not display.  All users of TheDirectorsRoom.com must have at least one school on their roster.<br />
 A school should be removed if it was added by mistake.  If you no longer work at a school on the roster, use the links under the "active?" column to change your status at that school.<br />
 If you remove a school by mistake, please click the "+" button to re-add that school to your roster.
 </p>',
@@ -67,7 +68,11 @@ If you remove a school by mistake, please click the "+" button to re-add that sc
  </ul>
  </p>
  <p>
-    The system will send a verification email to your <strong>work email address</strong> whenever the email is added or changed. A verification email will also be sent at least annually to ensure your active status at the school and to safeguard the privacy of student-entered information. Commercial emails (gmail, hotmail, etc.) are automatically <strong>unverified</strong> for these purposes.  <u>An unverified email will preclude you from viewing any student-entered information.</u>
+    The system will send a verification email to your <strong>work email address</strong> whenever the email is added or changed. <br />
+A verification email will also be sent at least annually to ensure your active status at the school and to safeguard the privacy of student-entered information. <br />
+Please check your <strong>spam folder</strong> if expected system-created emails are not being received.<br />
+Commercial emails (gmail, hotmail, etc.) are automatically <strong>unverified</strong> for these purposes.  <br />
+<u>An unverified email will preclude you from viewing any student-entered information.</u>
  </p>'
             ],
         ];
