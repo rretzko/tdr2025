@@ -14,6 +14,7 @@ return new class extends Migration {
         Schema::create('students', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(User::class)->constrained();
+            $table->foreignIdFor(\App\Models\Students\VoicePart::class)->default(1)->constrained();
             $table->unsignedSmallInteger('class_of');
             $table->unsignedTinyInteger('height')->default(30);
             $table->date('birthday')->nullable();

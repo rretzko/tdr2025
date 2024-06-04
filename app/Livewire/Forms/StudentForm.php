@@ -147,6 +147,7 @@ class StudentForm extends Form
         $student = new Student();
         $student->id = $user->id;
         $student->user_id = $user->id;
+        $student->voice_part_id = $this->voicePartId;
         $student->class_of = $this->classOf;
         $student->height = $this->heightInInches;
         $student->birthday = Carbon::parse($this->birthday)->format('Y-m-d');
