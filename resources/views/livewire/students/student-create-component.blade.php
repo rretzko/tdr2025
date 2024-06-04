@@ -94,6 +94,14 @@
                         :hint="$hintClassOf"
                     />
 
+                    {{-- VOICE PART --}}
+                    <x-forms.elements.livewire.selectNarrow
+                        label="voice part"
+                        name="form.voicePartId"
+                        :options="$voiceParts"
+                        required="required"
+                    />
+
                     {{-- HEIGHT --}}
                     <x-forms.elements.livewire.selectNarrow
                         label="height"

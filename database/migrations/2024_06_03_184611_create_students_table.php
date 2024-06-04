@@ -1,24 +1,30 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('students', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id');
+            $table->foreignIdFor(User::class)->constrained();
             $table->unsignedSmallInteger('class_of');
-            $table->unsignedTinyInteger('height');
-            $table->foreignId('birthday');
-            $table->enum('shirt_size', ['2xs', 'xs', 's', 'm', 'l', 'xl', '2xl', '3xl']);
+            $table->unsignedTinyInteger('height')->default(30);
+            $table->date('birthday')->nullable();
+            $table->enum('shirt_size', ['2xs', 'sx', 'sm', 'med', 'lg', 'xl', '2xl', '3xl', '4xl'])->default('med');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('students');

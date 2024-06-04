@@ -7,6 +7,7 @@ use App\Livewire\Forms\StudentForm;
 use App\Models\Pronoun;
 use App\Models\Schools\GradesITeach;
 use App\Models\Schools\School;
+use App\Models\Students\VoicePart;
 use App\Services\CalcClassOfFromGradeService;
 use App\Services\CalcGradeFromClassOfService;
 use Carbon\Carbon;
@@ -26,6 +27,7 @@ class StudentCreateComponent extends BasePage
         parent::mount();
 
         $this->form->setBirthday();
+        $this->form->setStudent();
 
         $this->hintBirthday = Carbon::parse($this->form->birthday)->age.' years old.';
 
@@ -36,6 +38,7 @@ class StudentCreateComponent extends BasePage
         if ($this->school->id) {
             $this->schoolName = $this->school->name;
             $this->hintClassOf = $this->setHintClassOf();
+            $this->form->setSchool($this->school);
         }
     }
 
@@ -63,9 +66,11 @@ class StudentCreateComponent extends BasePage
         $this->hintBirthday = Carbon::parse($this->form->birthday)->age.' years old';
     }
 
-    public function save(): void
+    public function save()
     {
-        $this->form->update();
+        return ($this->form->update())
+            ? redirect()->route('students')
+            : redirect()->back();
     }
 
     /** END OF PUBLIC FUNCTIONS **************************************************/

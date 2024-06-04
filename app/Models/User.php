@@ -7,6 +7,7 @@ use App\Models\Schools\SchoolTeacher;
 use App\Models\Schools\Teacher;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -59,6 +60,11 @@ class User extends Authenticatable
         return $this->email === 'rick@mfrholdings.com';
     }
 
+    public function isStudent(): bool
+    {
+        return false;
+    }
+
     /**
      * Returns true if user is a teacher with at least one school with a verified email address
      * - $this->id is found in teachers' table
@@ -73,6 +79,11 @@ class User extends Authenticatable
             ->join('teachers', 'teachers.id', '=', 'school_teacher.teacher_id')
             ->where('teachers.user_id', '=', $this->id)
             ->exists();
+    }
+
+    public function phoneNumbers(): HasMany
+    {
+        return $this->hasMany(PhoneNumber::class);
     }
 
     public function teacher(): \Illuminate\Database\Eloquent\Relations\HasOne
