@@ -15,6 +15,16 @@ class Student extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'id',
+        'user_id',
+        'voice_part_id',
+        'class_of',
+        'height',
+        'birthday',
+        'shirt_size'
+    ];
+
     public function schools(): BelongsToMany
     {
         return $this->belongsToMany(School::class)

@@ -13,6 +13,11 @@ class SchoolsTableService
         $this->init();
     }
 
+    public function getTableRows(): array
+    {
+        return $this->rows;
+    }
+
     /** END OF PUBLIC FUNCTIONS **************************************************/
 
     private function init(): void
@@ -32,15 +37,12 @@ class SchoolsTableService
                 'school_teacher.email',
                 'school_teacher.email_verified_at',
                 DB::raw('(SELECT GROUP_CONCAT(grade ORDER BY grade ASC SEPARATOR ",") FROM school_grades WHERE school_grades.school_id=schoolId) AS gradesTaught'),
-                DB::raw('(SELECT GROUP_CONCAT(grade ORDER BY grade ASC SEPARATOR ",") FROM grades_i_teaches WHERE grades_i_teaches.school_id=schoolId) AS gradesITeach')
+                DB::raw('(SELECT GROUP_CONCAT(grade ORDER BY grade ASC SEPARATOR ",") FROM grades_i_teaches WHERE grades_i_teaches.school_id=schoolId AND grades_i_teaches.teacher_id=school_teacher.teacher_id) AS gradesITeach')
             )
             ->get()
             ->toArray();
 
     }
 
-    public function getTableRows(): array
-    {
-        return $this->rows;
-    }
+
 }

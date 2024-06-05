@@ -24,6 +24,8 @@ class UserSeeder extends Seeder
             [
                 'id' => 368,
                 'name' => 'Rick Retzko',
+                'first_name' => 'Rick',
+                'last_name' => 'Retzko',
                 'email' => 'rick@mfrholdings.com',
                 'email_verified_at' => Carbon::now(),
                 'password' => bcrypt('45 Dayton Crescent*'),

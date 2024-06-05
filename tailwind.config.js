@@ -10,6 +10,8 @@ export default {
     ],
     safelist: [
         'text-yellow-600',
+        'bg-green-400',
+        'bg-green-600',
     ],
     theme: {
         extend: {

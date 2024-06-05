@@ -26,6 +26,11 @@ class ViewDataFactory extends aViewData
             ? (int) $this->id->id
             : (int) $this->id;
 
+        //include the count of schools to determine if the breadcrumbs should be included
+        //a newly registered user will have NO schools and should not be allowed to do
+        //anything else until a school is added
+        $this->dto['schoolCount'] = auth()->user()->teacher->schools->count();
+
         if ($this->viewPage->id) {
             $this->dto['pageName'] = 'pages.'.$this->viewPage->page_name.'Page';
             $this->dto['header'] = $this->viewPage->header;

@@ -144,6 +144,13 @@
                 />
             </fieldset>
 
+            {{-- DUPLICATE STUDENT ADVISORY --}}
+            @if($form->duplicateStudentAdvisory)
+                <div class="border border-red-600 p-2 text-red-600 w-1/2 rounded-lg">
+                    {!! $form->duplicateStudentAdvisory !!}
+                </div>
+            @endif
+
             {{-- SUBMIT --}}
             <div class="flex flex-col mt-2 max-w-xs">
                 <button type="submit"
@@ -152,6 +159,7 @@
                     Submit
                 </button>
             </div>
+
 
             {{-- SUCCESS INDICATOR --}}
             <x-forms.indicators.successIndicator :showSuccessIndicator="$showSuccessIndicator"

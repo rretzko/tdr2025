@@ -5,11 +5,15 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Schools\SchoolTeacher;
 use App\Models\Schools\Teacher;
+use App\Models\Students\Student;
+use App\Services\UserNameService;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Log;
 
 class User extends Authenticatable
 {
@@ -22,6 +26,11 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'prefix_name',
+        'first_name',
+        'middle_name',
+        'last_name',
+        'suffix_name',
         'email',
         'password',
         'pronoun_id',
@@ -50,6 +59,19 @@ class User extends Authenticatable
         ];
     }
 
+//    protected static function boot(): void
+//    {
+//        parent::boot();
+//
+//        static::created(function ($user) {
+//            app(UserNameService::class)->persistNameParts($user);
+//        });
+//
+//        static::updating(function ($user) {
+//            app(UserNameService::class)->persistNameParts($user);
+//        });
+//    }
+
     public function canAccessPanel(Panel $panel): bool
     {
         return str_ends_with($this->email, '@mfrholdings.com') && $this->hasVerifiedEmail();
@@ -62,7 +84,7 @@ class User extends Authenticatable
 
     public function isStudent(): bool
     {
-        return false;
+        return Student::where('user_id', $this->id)->exists();
     }
 
     /**
@@ -84,6 +106,11 @@ class User extends Authenticatable
     public function phoneNumbers(): HasMany
     {
         return $this->hasMany(PhoneNumber::class);
+    }
+
+    public function student(): HasOne
+    {
+        return $this->hasOne(Student::class);
     }
 
     public function teacher(): \Illuminate\Database\Eloquent\Relations\HasOne

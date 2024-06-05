@@ -59,7 +59,7 @@
                     </td>
                     <td wire:click="toggleActive({{ $row->schoolId }})"
                         @class([
-        'border border-gray-200 border-b-transparent px-1 flex justify-center items-center cursor-pointer',
+        'border border-gray-200 border-b-transparent border-t-transparent px-1 flex justify-center items-center cursor-pointer mt-4 xl:mt-0',
         'text-green-600' => $row->active,
         'text-red-500' => ! $row->active,
         ])
@@ -77,7 +77,7 @@
                         {{ $row->email }} {{-- work email --}}
                     </td>
                     <td @class([
-        'border border-gray-200 border-b-transparent px-1 flex justify-center items-center',
+        'border border-gray-200 border-b-transparent border-t-transparent px-1 flex justify-center items-center',
         'text-green-600' => $row->email_verified_at,
         'text-red-500' => ! $row->email_verified_at,
         ])

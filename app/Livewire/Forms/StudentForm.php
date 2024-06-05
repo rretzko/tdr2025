@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Services\FindMatchingStudentService;
 use App\Services\FormatPhoneService;
 use Carbon\Carbon;
+use Illuminate\Validation\Rule as ValidationRule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -18,13 +19,11 @@ use Livewire\Form;
 
 class StudentForm extends Form
 {
-    /**
-     * @var string
-     */
     #[Validate('nullable', 'date')]
     public string $birthday = '';
     #[Validate('required')]
     public int $classOf = 0;
+    public string $duplicateStudentAdvisory = '';
     #[Validate('email', message: 'An email address is required.')]
     public string $email;
     #[Validate('required', message: 'First name is required.')]
@@ -79,7 +78,9 @@ class StudentForm extends Form
 
     public function update(): bool
     {
-        $this->validate();
+        $this->validate([
+            'email' => (ValidationRule::unique('users', 'email')),
+        ]);
 
         //look for matching student email, name, and/or phoneMobile
         $service = new FindMatchingStudentService($this);
@@ -88,56 +89,61 @@ class StudentForm extends Form
         //display duplicates found advisory: email, phoneMobile
         if (count($matches)) {
 
-            dd('build Duplicates Found advisory');
+            $this->duplicateStudentAdvisory = 'At least '.count($matches).' student(s) were
+            found with matching name and grades.
+            <b>Please avoid creating duplicate student records.</b>
+            Do you want to continue?
+            <div class="mt-2 flex space-x-2">
+            <button class="bg-green-600 text-white text-xs rounded-full px-2">Continue</button>
+            <button class="bg-black text-white text-xs rounded-full px-2">Cancel</button>
+            </div>';
+
+            return false;
 
         } else {
-            //save user, student, phones, attach to school, attach to teacher
-            $user = User::create(
-                [
-                    'name' => $this->setFullName(),
-                    'email' => $this->email,
-                    'pronoun_id' => $this->pronounId,
-                    'password' => Hash::make($this->email),
-                ]
-            );
 
-            $this->addStudent($user);
-//            $student = new Student();
-//            $student->id = $user->id;
-//            $student->user_id = $user->id;
-//            $student->class_of = $this->classOf;
-//            $student->height = $this->heightInInches;
-//            $student->birthday = Carbon::parse($this->birthday)->format('Y-m-d');
-//            $student->shirt_size = $this->shirtSize;
-//            $student->updated_at = Carbon::now()->format('Y-m-d');
-//            $student->created_at = Carbon::now()->format('Y-m-d');
-
-//            Log::info('birthday: ' . $student->birthday);
-//            Log::info('updated_at: ' . $student->updated_at);
-//            Log::info('created_at: ' . $student->created_at);
-
-            //$student->save();
-
-            $service = new FormatPhoneService();
-
-            PhoneNumber::create(
-                [
-                    'user_id' => $user->id,
-                    'phone_type' => 'mobile',
-                    'phone_number' => $service->getPhoneNumber($this->phoneMobile),
-                ]
-            );
-
-            PhoneNumber::create(
-                [
-                    'user_id' => $user->id,
-                    'phone_type' => 'home',
-                    'phone_number' => $service->getPhoneNumber($this->phoneHome),
-                ]
-            );
+            $this->addNewStudent();
 
             return $this->properlyUpdated();
         }
+    }
+
+    private function addNewStudent(): void
+    {
+        //save user, student, phones, attach to school, attach to teacher
+        $user = User::create(
+            [
+                'name' => $this->setFullName(),
+                'prefix_name' => '',
+                'first_name' => $this->first,
+                'middle_name' => $this->middle,
+                'last_name' => $this->last,
+                'suffix_name' => $this->suffix,
+                'email' => $this->email,
+                'pronoun_id' => $this->pronounId,
+                'password' => Hash::make($this->email),
+            ]
+        );
+
+        $this->addStudent($user);
+
+        $service = new FormatPhoneService();
+
+        PhoneNumber::create(
+            [
+                'user_id' => $user->id,
+                'phone_type' => 'mobile',
+                'phone_number' => $service->getPhoneNumber($this->phoneMobile),
+            ]
+        );
+
+        PhoneNumber::create(
+            [
+                'user_id' => $user->id,
+                'phone_type' => 'home',
+                'phone_number' => $service->getPhoneNumber($this->phoneHome),
+            ]
+        );
     }
 
     private function addStudent(User $user): void
