@@ -12,6 +12,7 @@ use App\Services\CalcClassOfFromGradeService;
 use App\Services\CalcGradeFromClassOfService;
 use Carbon\Carbon;
 use Illuminate\Support\Number;
+use JetBrains\PhpStorm\NoReturn;
 use Livewire\Form;
 
 class StudentCreateComponent extends BasePage
@@ -59,6 +60,16 @@ class StudentCreateComponent extends BasePage
     {
         $service = new CalcGradeFromClassOfService();
         $this->hintClassOf = 'class of '.$this->form->classOf;
+    }
+
+    #[NoReturn] public function formCancel(): void
+    {
+        $this->form->resetDuplicateStudentAdvisory();
+    }
+
+    #[NoReturn] public function formContinue(): void
+    {
+        $this->form->updateWithoutDuplicateStudentCheck();
     }
 
     public function updatedFormBirthday(): void

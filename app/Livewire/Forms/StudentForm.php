@@ -43,11 +43,17 @@ class StudentForm extends Form
     #[Validate('required', 'string')]
     public School $school;
     public string $shirtSize;
+    public bool $skipDuplicateStudentCheck = false;
     #[Validate('nullable', 'string')]
     public string $suffix;
     public string $sysId = 'new';
     #[Validate('required', 'exists:voice_parts,id')]
     public int $voicePartId = 1; //default soprano
+
+    public function resetDuplicateStudentAdvisory()
+    {
+        $this->reset('duplicateStudentAdvisory');
+    }
 
     public function setBirthday(): void
     {
@@ -87,15 +93,16 @@ class StudentForm extends Form
         $matches = $service->getMatches();
 
         //display duplicates found advisory: email, phoneMobile
-        if (count($matches)) {
+        //unless user clicks the "continue" button on the duplicateStudentAdvisory
+        if ((!$this->skipDuplicateStudentCheck) && count($matches)) {
 
             $this->duplicateStudentAdvisory = 'At least '.count($matches).' student(s) were
             found with matching name and grades.
             <b>Please avoid creating duplicate student records.</b>
             Do you want to continue?
             <div class="mt-2 flex space-x-2">
-            <button class="bg-green-600 text-white text-xs rounded-full px-2">Continue</button>
-            <button class="bg-black text-white text-xs rounded-full px-2">Cancel</button>
+            <button type="button" wire:click="formContinue" class="bg-green-600 text-white text-xs rounded-full px-2">Continue</button>
+            <button type="button" wire:click="formCancel" class="bg-black text-white text-xs rounded-full px-2">Cancel</button>
             </div>';
 
             return false;
@@ -106,6 +113,13 @@ class StudentForm extends Form
 
             return $this->properlyUpdated();
         }
+    }
+
+    public function updateWithoutDuplicateStudentCheck(): void
+    {
+        $this->skipDuplicateStudentCheck = true;
+
+        $this->update();
     }
 
     private function addNewStudent(): void
