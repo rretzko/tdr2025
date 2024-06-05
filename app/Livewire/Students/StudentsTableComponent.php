@@ -61,6 +61,9 @@ class StudentsTableComponent extends BasePage
                 $join->on('users.id', '=', 'home.user_id')
                     ->where('home.phone_type', '=', 'home');
             })
+            ->orderBy('users.last_name')
+            ->orderBy('users.first_name')
+            ->orderBy('users.middle_name')
             ->select('users.name', 'schools.name AS schoolName', 'students.class_of AS classOf',
                 'students.height', 'students.birthday', 'students.shirt_size AS shirtSize', 'students.id AS studentId',
                 'voice_parts.descr AS voicePart', 'users.email', 'mobile.phone_number AS phoneMobile',

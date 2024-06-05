@@ -77,11 +77,24 @@ Commercial emails (gmail, hotmail, etc.) are automatically <strong>unverified</s
             ],
             [
                 'header' => 'students',
-                'instructions' => '<p>Students Table Page</p><p>Students Table page instructions...</p>'
+                'instructions' => '<p>Students Table Page</p>
+<p>Students are displayed in name-alpha order.</p>
+<p>If you have multiple schools and have previously selected a school, that school\'s students will be displayed by default.  Schools can be changed by clicking on the "Filter" button.</p>
+<p>Sortable columns are displayed with up/down arrows in the column headers</p>
+<p>You can search for name, email, class, and voice part by entering a value in the "Search" box.</p>
+<p>You can filter the results by clicking on the "Filter" button.  Filtering options are school (if you have multiple schools), class-of, and voice part.</p>'
             ],
             [
                 'header' => 'new student',
-                'instructions' => '<p>Add Student Page</p><p>Add Student page instructions...</p>'
+                'instructions' => '<p>Add Student Page</p>
+<p>Use this page to add a new student to your Students roster.<br />
+<br />All required fields are marked with a red asterisk "<span class="text-red-600">*</span>".</p>
+<p>The system will automatically check to see if the student information is duplicated.  If a likely duplicate is found, you will be given the option to "Continue" adding the student record, or "Cancel" to return to the form.  The entered student information will be maintained and you will not lose any of your work.</p>
+<p>The email on this page is the email address the student will use to log into StudentFolder.info. It must be unique and not shared with any other student or director. <b>Whenever possible, it is recommended that students use a commercial email address (google, icloud, hotmail, etc.).</b></p>
+<p>If your student does not have an email address, or uses a shared family email address, please create a proxy for the student (example: studentName@fake.com).  The student will not be able to receive system-generated emails to this fake address, but will be able to log into StudentFolder.info to maintain their information.</p>
+<p>Please note that students using a school email address will similarly be unable to receive system-generated emails (ex. password reset email) due to school email servers blocking external emails.  In these cases, students will be directed to contact you for any password reset needs.  Student passwords can be reset from the "Students" page by clicking  the "Edit" button on the student\'s row.</p>
+<p>Phone information can be entered in any format and will be re-formatted as "(###) ###-#### x###" for a consistent display.</p>
+<p>Additional student information (address, emergency contact) may be entered from the "Students" page by clicking on the "Edit" button.</p>'
             ],
             [
                 'header' => 'student edit',
