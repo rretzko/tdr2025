@@ -6,15 +6,26 @@
     'placeholder' => '',
     'required' => false,
     'results' => '',
+    'suppressLabel' => false,
     'type' => 'text',
 ])
 <div class="flex flex-col">
-    <label for="{{ $name }}" class="@if($required) required @endif">{{ ucwords($label) }}</label>
+
+    <label for="{{ $name }}"
+        @class([
+            'required' => $required,
+            'hidden' => $suppressLabel,
+            'mt-1' => $suppressLabel
+        ])
+    >
+        {{ ucwords($label) }}
+    </label>
     <input wire:model.blur="{{ $name }}"
            type="{{ $type }}"
            @class([
              'wide',
              'border border-red-600' => $errors->has($name),
+             'mt-1' => $suppressLabel,
              ])
            placeholder="{{ $placeholder }}"
            @if($autofocus) autofocus @endif

@@ -28,6 +28,17 @@ class StudentController extends Controller
         return view($dto['pageName'], compact('dto'));
     }
 
+    public function edit(Student $student)
+    {
+        $data = new ViewDataFactory(__METHOD__, $student->id);
+
+        $dto = $data->getDto();
+
+        $id = $student->id;
+
+        return view($dto['pageName'], compact('dto', 'id'));
+    }
+
     public function show(Student $student)
     {
         return $student;

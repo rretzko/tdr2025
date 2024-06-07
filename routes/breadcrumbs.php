@@ -32,9 +32,9 @@ Breadcrumbs::for('new school', function (BreadcrumbTrail $trail) {
 });
 
 //School.edit
-Breadcrumbs::for('school edit', function (BreadcrumbTrail $trail) {
+Breadcrumbs::for('school edit', function (BreadcrumbTrail $trail, int $id) {
     $trail->parent('schools');
-    $trail->push('Edit', route('school.edit', ['school' => 1]));
+    $trail->push('Edit', route('school.edit', ['school' => $id]));
 });
 
 // Students
@@ -47,6 +47,30 @@ Breadcrumbs::for('students', function (BreadcrumbTrail $trail) {
 Breadcrumbs::for('new student', function (BreadcrumbTrail $trail) {
     $trail->parent('students');
     $trail->push('New', route('student.create'));
+});
+
+//Student.edit
+Breadcrumbs::for('student edit', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('students');
+    $trail->push('Edit', route('student.edit', ['student' => $id]));
+});
+
+//Student.comms.edit
+Breadcrumbs::for('student comms edit', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('student edit', $id);
+    $trail->push('Comms Edit', route('student.comms.edit', ['student' => $id]));
+});
+
+//Student.ec.edit
+Breadcrumbs::for('student ec edit', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('student.edit', $id);
+    $trail->push('EC Edit', route('student.ec.edit', ['student' => $id]));
+});
+
+//Student.ec.reset
+Breadcrumbs::for('student reset edit', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('student.edit', $id);
+    $trail->push('Reset Password', route('student.reset.edit', ['student' => $id]));
 });
 
 // Unknown = ViewData not found for the calling controller::method

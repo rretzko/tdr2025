@@ -164,7 +164,7 @@
             {{-- SUCCESS INDICATOR --}}
             <x-forms.indicators.successIndicator :showSuccessIndicator="$showSuccessIndicator"
                                                  message="{{  $successMessage }}"/>
-
+        </div>
     </form>
 </div>
 

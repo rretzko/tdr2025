@@ -6,6 +6,7 @@ namespace App\Models;
 use App\Models\Schools\SchoolTeacher;
 use App\Models\Schools\Teacher;
 use App\Models\Students\Student;
+use App\Services\JoinNamePartsIntoNameService;
 use App\Services\UserNameService;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -116,5 +117,15 @@ class User extends Authenticatable
     public function teacher(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(Teacher::class);
+    }
+
+    /**
+     * This should be called whenever a name part is updated
+     */
+    public function updateName(): void
+    {
+        $service = new JoinNamePartsIntoNameService($this);
+
+        $this->update(['name' => $service->getName()]);
     }
 }

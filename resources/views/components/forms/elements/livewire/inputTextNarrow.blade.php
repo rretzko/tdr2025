@@ -40,5 +40,7 @@
 
     {{-- ERROR --}}
     @error($name)
-    <x-input-error messages="{{ $message }}" aria-live="polite"/> @enderror
+    <x-input-error messages="{{ $message }}" aria-live="polite"/>
+    @enderror
+
 </div>

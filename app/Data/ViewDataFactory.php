@@ -3,12 +3,7 @@
 namespace App\Data;
 
 use App\Models\PageInstruction;
-use App\Models\Schools\GradesITeach;
-use App\Models\Schools\SchoolTeacher;
-use App\Models\Schools\Teacher;
 use App\Models\ViewCard;
-use App\Models\ViewPage;
-use Illuminate\Support\Facades\Log;
 
 class ViewDataFactory extends aViewData
 {
@@ -136,6 +131,10 @@ class ViewDataFactory extends aViewData
 
             'new student' => 'students.student-create-component',
             'students' => 'students.students-table-component',
+            'student edit' => 'students.student-edit-component',
+            'student comms edit' => 'students.student-comms-edit-component',
+            'student ec edit' => 'students.student-ec-edit-component',
+            'student reset edit' => 'students.student-reset-password-component',
         ];
 
         return $components[$this->viewPage->header];

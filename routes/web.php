@@ -31,8 +31,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('students');
     Route::get('student/new', [\App\Http\Controllers\Students\StudentController::class, 'create'])
         ->name('student.create');
-//    Route::get('student/edit/{school}', [\App\Http\Controllers\Students\StudentController::class, 'edit'])
-//        ->name('student.edit');
+    Route::get('student/edit/{student}', [\App\Http\Controllers\Students\StudentController::class, 'edit'])
+        ->name('student.edit');
+    Route::get('student/comms/edit/{student}',
+        [\App\Http\Controllers\Students\StudentCommunicationsController::class, 'edit'])
+        ->name('student.comms.edit');
+    Route::get('student/ec/edit/{student}',
+        [\App\Http\Controllers\Students\StudentEmergencyContactController::class, 'edit'])
+        ->name('student.ec.edit');
+    Route::get('student/reset/edit/{student}',
+        [\App\Http\Controllers\Students\StudentResetPasswordController::class, 'edit'])
+        ->name('student.reset/edit');
 });
 
 require __DIR__.'/auth.php';

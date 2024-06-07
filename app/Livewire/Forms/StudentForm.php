@@ -19,8 +19,11 @@ use Livewire\Form;
 
 class StudentForm extends Form
 {
+    public string $address1 = '';
+    public string $address2 = '';
     #[Validate('nullable', 'date')]
     public string $birthday = '';
+    public string $city = '';
     #[Validate('required')]
     public int $classOf = 0;
     public string $duplicateStudentAdvisory = '';
@@ -28,6 +31,7 @@ class StudentForm extends Form
     public string $email;
     #[Validate('required', message: 'First name is required.')]
     public string $first;
+    public int $geostate_id = 37;
     #[Validate('required', 'min:30', 'max:80')]
     public int $heightInInches = 30; //minimum height
     #[Validate('required', message: 'Last name is required.')]
@@ -38,6 +42,7 @@ class StudentForm extends Form
     public string $phoneHome;
     #[Validate('nullable', 'string', 'min:10')]
     public string $phoneMobile;
+    public string $postalCode = '';
     #[Validate('required', 'int', 'exists:pronouns,id')]
     public int $pronounId;
     #[Validate('required', 'string')]
@@ -49,6 +54,8 @@ class StudentForm extends Form
     public string $sysId = 'new';
     #[Validate('required', 'exists:voice_parts,id')]
     public int $voicePartId = 1; //default soprano
+
+    private array $shirtSizes = [];
 
     public function resetDuplicateStudentAdvisory()
     {
@@ -65,21 +72,57 @@ class StudentForm extends Form
         $this->school = $school;
     }
 
-    public function setStudent(): void
+    public function setShirtSizes(array $shirtSizes): void
     {
-        $this->first = 'Bradley';
-        $this->middle = 'A.';
-        $this->last = 'Eckensberger';
-        $this->suffix = 'I';
-        $this->email = 'beckensberger@fake.com';
-        $this->pronounId = 2;
-        $this->classOf = 2028;
-        $this->voicePartId = 16;
-        $this->heightInInches = 72;
-        $this->birthday = '2010-06-04';
-        $this->shirtSize = 'xl';
-        $this->phoneMobile = '1234567890';
-        $this->phoneHome = '2345678901';
+        $this->shirtSizes = $shirtSizes;
+    }
+
+    public function setStudent(Student $student = null): void
+    {
+        if ($student) {
+
+            $this->first = $student->user->first_name;
+            $this->middle = $student->user->middle_name;
+            $this->last = $student->user->last_name;
+            $this->suffix = $student->user->suffix_name;
+            $this->email = $student->user->email;
+            $this->pronounId = $student->user->pronoun_id;
+            $this->classOf = $student->class_of;
+            $this->voicePartId = $student->voice_part_id;
+            $this->heightInInches = $student->height;
+            $this->birthday = $student->birthday;
+            $this->shirtSize = $student->shirt_size;
+            $this->phoneMobile = $student->phoneMobile ?? '';
+            $this->phoneHome = $student->phoneHome ?? '';
+
+            if ($student->address) {
+
+                $address = $student->address;
+
+                $this->address1 = $address->address1 ?? '';
+                $this->address2 = $address->address2 ?? '';
+                $this->city = $address->city ?? '';
+                $this->geostate_id = $address->geostate_id ?? 37;
+                $this->postalCode = $address->postal_code ?? '';
+
+            }
+
+        } else { //default for testing
+
+            $this->first = 'Bradley';
+            $this->middle = 'A.';
+            $this->last = 'Eckensberger';
+            $this->suffix = 'I';
+            $this->email = 'beckensberger@fake.com';
+            $this->pronounId = 2;
+            $this->classOf = 2028;
+            $this->voicePartId = 16;
+            $this->heightInInches = 72;
+            $this->birthday = '2010-06-04';
+            $this->shirtSize = 'xl';
+            $this->phoneMobile = '1234567890';
+            $this->phoneHome = '2345678901';
+        }
     }
 
     public function update(): bool

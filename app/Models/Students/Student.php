@@ -2,6 +2,8 @@
 
 namespace App\Models\Students;
 
+use App\Models\Address;
+use App\Models\PhoneNumber;
 use App\Models\Schools\School;
 use App\Models\Schools\Teacher;
 use App\Models\User;
@@ -24,6 +26,27 @@ class Student extends Model
         'birthday',
         'shirt_size'
     ];
+
+    public function address(): HasOne
+    {
+        return $this->hasOne(Address::class, 'user_id', 'user_id');
+    }
+
+    public function getPhoneHomeAttribute(): string
+    {
+        return PhoneNumber::query()
+            ->where('user_id', $this->user_id)
+            ->where('phone_type', 'home')
+            ->value('phone_number') ?? '';
+    }
+
+    public function getPhoneMobileAttribute(): string
+    {
+        return PhoneNumber::query()
+            ->where('user_id', $this->user_id)
+            ->where('phone_type', 'mobile')
+            ->value('phone_number') ?? '';
+    }
 
     public function schools(): BelongsToMany
     {

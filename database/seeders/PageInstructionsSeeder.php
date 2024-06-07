@@ -98,7 +98,17 @@ Commercial emails (gmail, hotmail, etc.) are automatically <strong>unverified</s
             ],
             [
                 'header' => 'student edit',
-                'instructions' => '<p>Students Edit Page</p><p>Student Edit page instructions...</p>'
+                'instructions' => '<p>Students Edit Page</p>
+<p>
+This page is divided into four tabs and allows you to edit your student information.  The tabs are:
+<ul>
+<li><strong>bio</strong>: containing name, etc.</li>
+<li><strong>comms</strong>: containing email, phone numbers, and home address,</li>
+<li><strong>emergency contact</strong>: containing the student emergency contact information, and </li>
+<li><strong>password reset</strong>: a single button allowing you to reset the student\'s password to their lower-case email address.</li>
+</ul>
+</p>
+<p>Please note that there is no "Submit" button.  Each section of the form will display a "success" message when a field is changed.</p>'
             ],
         ];
     }
