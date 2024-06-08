@@ -29,7 +29,9 @@ class SchoolController extends Controller
 
         $dto = $data->getDto();
 
-        return view($dto['pageName'], compact('dto'));
+        $id = $school->id;
+
+        return view($dto['pageName'], compact(['dto', 'id']));
     }
 
     public function store(SchoolRequest $request)

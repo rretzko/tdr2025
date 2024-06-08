@@ -110,6 +110,27 @@ This page is divided into four tabs and allows you to edit your student informat
 </p>
 <p>Please note that there is no "Submit" button.  Each section of the form will display a "success" message when a field is changed.</p>'
             ],
+            [
+                'header' => 'student comms edit',
+                'instructions' => '<p>Student Communications Edit page</p>
+<p>Use this page to edit the fields used to communicate with your students: email, phone, or snail mail.</p>
+<p>Note: There are no fields required by the system although some events may conditionally require this information for student registration.</p>'
+            ],
+            [
+                'header' => 'student ec edit',
+                'instructions' => '<p>Student Emergency Contact Edit page</p>
+<p>Use this page to add/edit your student\'s Emergency Contact information.</p>
+<p>Your student may have one or many emergency contacts listed.</p>
+<p>Note: The system does not require a student to have an Emergency Contact although some events may conditionally require this information for student registration.</p>'
+            ],
+            [
+                'header' => 'student reset password',
+                'instructions' => '<p>Student Reset Password page</p>
+<p>Use this page to reset your student\'s password.</p>
+<p>Clicking the button on this page will reset the password for <b>StudentFolder.info</b> to the lower-case version of your student\'s email address.
+Once logged into StudentFolder.info, the student should update their password using the "Change Password" link.</p>'
+            ],
+
         ];
     }
 

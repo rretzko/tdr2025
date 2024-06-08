@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use Illuminate\Database\Seeder;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,6 +15,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(PageInstructionsSeeder::class);
         $this->call(PronounSeeder::class);
+        $this->call(EmergencyContactTypeSeeder::class);
         $this->call(ViewPageSeeder::class);
         $this->call(ViewCardSeeder::class);
         $this->call(GeostateSeeder::class);

@@ -63,13 +63,13 @@ Breadcrumbs::for('student comms edit', function (BreadcrumbTrail $trail, int $id
 
 //Student.ec.edit
 Breadcrumbs::for('student ec edit', function (BreadcrumbTrail $trail, int $id) {
-    $trail->parent('student.edit', $id);
+    $trail->parent('student edit', $id);
     $trail->push('EC Edit', route('student.ec.edit', ['student' => $id]));
 });
 
 //Student.ec.reset
 Breadcrumbs::for('student reset edit', function (BreadcrumbTrail $trail, int $id) {
-    $trail->parent('student.edit', $id);
+    $trail->parent('student edit', $id);
     $trail->push('Reset Password', route('student.reset.edit', ['student' => $id]));
 });
 

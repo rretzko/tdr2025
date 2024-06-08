@@ -56,6 +56,24 @@ class ViewPageSeeder extends Seeder
                 'livewire',
                 'student edit',
             ],
+            [
+                'StudentCommunicationsController',
+                'edit',
+                'livewire',
+                'student comms edit'
+            ],
+            [
+                'StudentEmergencyContactController',
+                'edit',
+                'livewire',
+                'student ed edit'
+            ],
+            [
+                'StudentResetPasswordController',
+                'edit',
+                'livewire',
+                'student reset password'
+            ],
         ];
 
         foreach ($seeds as $seed) {

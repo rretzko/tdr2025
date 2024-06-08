@@ -115,8 +115,8 @@ class BasePageStudent extends BasePage
         $url = match ($value) {
             //'bio' => default
             'comms' => 'student/comms/edit/',
-            'emergency contact' => 'student/edit/',
-            'reset password' => 'student./edit/',
+            'emergency contact' => 'student/ec/edit/',
+            'reset password' => 'student/reset/',
             default => 'student/edit/',
         };
 

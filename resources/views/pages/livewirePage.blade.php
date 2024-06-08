@@ -3,7 +3,7 @@
     <x-slot name="header">
         @if($dto['schoolCount'] > 0)
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                {{ \Diglactic\Breadcrumbs\Breadcrumbs::render( $dto['header'], $id) }}
+                {{ \Diglactic\Breadcrumbs\Breadcrumbs::render( $dto['header'], $id ?? '' ) }}
             </h2>
         @endif
     </x-slot>
