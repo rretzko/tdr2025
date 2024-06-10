@@ -13,10 +13,10 @@ return new class extends Migration {
             $table->foreignId('emergency_contact_type_id');
             $table->string('name');
             $table->string('email');
-            $table->string('phoneHome');
-            $table->string('phoneMobile');
-            $table->string('phoneWork');
-            $table->enum('bestPhone', ['home', 'mobile', 'work']);
+            $table->string('phone_home');
+            $table->string('phone_mobile');
+            $table->string('phone_work');
+            $table->enum('best_phone', ['home', 'mobile', 'work']);
             $table->timestamps();
         });
     }

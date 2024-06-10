@@ -18,6 +18,11 @@ class StudentECEditComponent extends BasePageStudent
         $this->ecForm->setStudent($this->student);
     }
 
+    public function edit(EmergencyContact $emergencyContact)
+    {
+        $this->ecForm->setEmergencyContact($emergencyContact);
+    }
+
     public function render()
     {
         return view('livewire..students.student-e-c-edit-component',
@@ -26,6 +31,15 @@ class StudentECEditComponent extends BasePageStudent
                 'columnHeaders' => $this->getColumnHeaders(),
                 'rows' => $this->getEmergencyContacts(),
             ]);
+    }
+
+    public function remove(EmergencyContact $emergencyContact): void
+    {
+        $name = $emergencyContact->name;
+
+        $emergencyContact->delete();
+
+        $this->successMessage = 'Emergency Contact named: '.$name.' has been removed.';
     }
 
     public function save(): void

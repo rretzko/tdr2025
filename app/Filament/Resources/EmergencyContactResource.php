@@ -49,16 +49,16 @@ class EmergencyContactResource extends Resource
                 TextInput::make('email')
                     ->required(),
 
-                TextInput::make('phoneHome')
+                TextInput::make('phone_home')
                     ->required(),
 
-                TextInput::make('phoneMobile')
+                TextInput::make('phone_mobile')
                     ->required(),
 
-                TextInput::make('phoneWork')
+                TextInput::make('phone_work')
                     ->required(),
 
-                TextInput::make('bestPhone')
+                TextInput::make('best_phone')
                     ->required()
                     ->integer(),
             ]);
@@ -80,13 +80,13 @@ class EmergencyContactResource extends Resource
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('phoneHome'),
+                TextColumn::make('phone_home'),
 
-                TextColumn::make('phoneMobile'),
+                TextColumn::make('phone_mobile'),
 
-                TextColumn::make('phoneWork'),
+                TextColumn::make('phone_work'),
 
-                TextColumn::make('bestPhone'),
+                TextColumn::make('best_phone'),
             ])
             ->filters([
                 //

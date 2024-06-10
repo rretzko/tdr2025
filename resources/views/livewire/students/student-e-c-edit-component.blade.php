@@ -53,26 +53,26 @@
                                 <div
                                     @class([
                                         'text-gray-400',
-                                        'font-extrabold, text-green-600' => ($row['bestPhone'] === 'mobile')
+                                        'font-extrabold, text-green-600' => ($row['best_phone'] === 'mobile')
                                     ])
                                 >
-                                    {{ $row['phoneMobile'] ? $row['phoneMobile'] . ' (c)' : ''}}
+                                    {{ $row['phone_mobile'] ? $row['phone_mobile'] . ' (c)' : ''}}
                                 </div>
                                 <div
                                     @class([
                                         'text-gray-400',
-                                        'font-extrabold, text-green-600' => ($row['bestPhone'] === 'home')
+                                        'font-extrabold, text-green-600' => ($row['best_phone'] === 'home')
                                     ])
                                 >
-                                    {{ $row['phoneHome'] ? $row['phoneHome'] . ' (h)' : '' }}
+                                    {{ $row['phone_home'] ? $row['phone_home'] . ' (h)' : '' }}
                                 </div>
                                 <div
                                     @class([
                                         'text-gray-400',
-                                        'font-extrabold, text-green-600' => ($row['bestPhone'] === 'work')
+                                        'font-extrabold, text-green-600' => ($row['best_phone'] === 'work')
                                     ])
                                 >
-                                    {{ $row['phoneWork'] ? $row['phoneWork'] . ' (w)' : '' }}
+                                    {{ $row['phone_work'] ? $row['phone_work'] . ' (w)' : '' }}
                                 </
                                 >
                             </td>

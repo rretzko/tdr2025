@@ -14,10 +14,10 @@ class EmergencyContact extends Model
         'emergency_contact_type_id',
         'name',
         'email',
-        'phoneHome',
-        'phoneMobile',
-        'phoneWork',
-        'bestPhone',
+        'phone_home',
+        'phone_mobile',
+        'phone_work',
+        'best_phone',
     ];
 
     public function student(): BelongsTo
