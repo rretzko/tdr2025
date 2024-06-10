@@ -74,6 +74,24 @@ class ViewPageSeeder extends Seeder
                 'livewire',
                 'student reset password'
             ],
+            [
+                'EnsembleController',
+                'index',
+                'livewire',
+                'ensembles'
+            ],
+            [
+                'EnsembleController',
+                'edit',
+                'livewire',
+                'ensemble.edit'
+            ],
+            [
+                'EnsembleController',
+                'create',
+                'livewire',
+                'ensemble.create'
+            ],
         ];
 
         foreach ($seeds as $seed) {

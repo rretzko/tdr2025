@@ -13,6 +13,24 @@ Breadcrumbs::for('home', function (BreadcrumbTrail $trail) {
     $trail->push('Home', route('home'));
 });
 
+// Ensembles
+Breadcrumbs::for('ensembles', function (BreadcrumbTrail $trail) {
+    $trail->parent('home');
+    $trail->push('Ensembles', route('ensembles'));
+});
+
+// Ensemble.create
+Breadcrumbs::for('ensemble.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('ensembles');
+    $trail->push('Add Ensemble', route('ensemble.create'));
+});
+
+// Ensemble.edit
+Breadcrumbs::for('ensemble.edit', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('ensembles');
+    $trail->push('Edit Ensemble', route('ensemble.ensemble'));
+});
+
 // Profile
 Breadcrumbs::for('profile', function (BreadcrumbTrail $trail) {
     $trail->parent('home');

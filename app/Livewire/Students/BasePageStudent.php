@@ -35,8 +35,6 @@ class BasePageStudent extends BasePage
     public string $fullName;
     public string $hintClassOf;
     public string $hintBirthday;
-    public School $school;
-    public string $schoolName;
     public string $selectedTab = 'bio';
     public Student $student;
     public string $sysId = 'new';
@@ -46,12 +44,7 @@ class BasePageStudent extends BasePage
     {
         parent::mount();
 
-        $this->school = (auth()->user()->teacher->schools->count() === 1)
-            ? auth()->user()->teacher->schools->first()
-            : new School();
-
         if ($this->school->id) {
-            $this->schoolName = $this->school->name;
             $this->hintClassOf = $this->setHintClassOf();
             $this->form->setSchool($this->school);
         }

@@ -18,6 +18,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    //ENSEMBLES
+    Route::get('ensembles', [\App\Http\Controllers\Ensembles\EnsembleController::class, 'index'])
+        ->name('ensembles');
+    Route::get('ensemble/new', [\App\Http\Controllers\Ensembles\EnsembleController::class, 'create'])
+        ->name('ensemble.create');
+    Route::get('ensemble/edit/{ensemble}', [\App\Http\Controllers\Ensembles\EnsembleController::class, 'edit'])
+        ->name('ensemble.edit');
+    Route::get('ensemble/remove/{ensemble}', [\App\Http\Controllers\Ensembles\EnsembleController::class, 'delete'])
+        ->name('ensemble.delete');
+
+
     //SCHOOLS
     Route::get('schools', \App\Http\Controllers\Schools\SchoolsController::class)
         ->name('schools');

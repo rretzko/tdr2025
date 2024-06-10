@@ -135,6 +135,10 @@ class ViewDataFactory extends aViewData
             'student comms edit' => 'students.student-comms-edit-component',
             'student ec edit' => 'students.student-e-c-edit-component',
             'student reset password' => 'students.student-reset-password-component',
+
+            'ensembles' => 'ensembles.ensembles-table-component',
+            'ensemble.create' => 'ensembles.ensemble-create-component',
+            'ensemble.edit' => 'ensembles.ensemble-edit-component'
         ];
 
         return $components[$this->viewPage->header];

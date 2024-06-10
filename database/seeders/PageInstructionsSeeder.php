@@ -130,7 +130,16 @@ This page is divided into four tabs and allows you to edit your student informat
 <p>Clicking the button on this page will reset the student\'s password for <b>StudentFolder.info</b> to the lower-case version of your student\'s email address.
     Once logged into StudentFolder.info, the student should update their password using the "Change Password" link.</p>'
             ],
-
+            [
+                'header' => 'ensembles',
+                'instructions' => '<p>Ensembles Table page</p>
+<p>This page contains a table of your active and inactive ensembles.</p>'
+            ],
+            [
+                'header' => 'ensemble.create',
+                'instructions' => '<p>Add Ensemble page</p>
+<p>Use this page to add an ensemble to your roster.</p>'
+            ]
         ];
     }
 
