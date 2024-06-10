@@ -39,9 +39,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('student/ec/edit/{student}',
         [\App\Http\Controllers\Students\StudentEmergencyContactController::class, 'edit'])
         ->name('student.ec.edit');
-    Route::get('student/reset/edit/{student}',
-        [\App\Http\Controllers\Students\StudentResetPasswordController::class, 'edit'])
-        ->name('student.reset/edit');
+    Route::get('student/reset/{student}',
+        \App\Http\Controllers\Students\StudentResetPasswordController::class) //invokable
+    ->name('student.reset');
 });
 
 require __DIR__.'/auth.php';

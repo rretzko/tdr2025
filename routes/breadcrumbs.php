@@ -67,10 +67,10 @@ Breadcrumbs::for('student ec edit', function (BreadcrumbTrail $trail, int $id) {
     $trail->push('EC Edit', route('student.ec.edit', ['student' => $id]));
 });
 
-//Student.ec.reset
-Breadcrumbs::for('student reset edit', function (BreadcrumbTrail $trail, int $id) {
+//Student.reset
+Breadcrumbs::for('student reset password', function (BreadcrumbTrail $trail, int $id) {
     $trail->parent('student edit', $id);
-    $trail->push('Reset Password', route('student.reset.edit', ['student' => $id]));
+    $trail->push('Reset Password', route('student.reset', ['student' => $id]));
 });
 
 // Unknown = ViewData not found for the calling controller::method

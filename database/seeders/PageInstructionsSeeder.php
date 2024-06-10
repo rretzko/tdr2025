@@ -127,8 +127,8 @@ This page is divided into four tabs and allows you to edit your student informat
                 'header' => 'student reset password',
                 'instructions' => '<p>Student Reset Password page</p>
 <p>Use this page to reset your student\'s password.</p>
-<p>Clicking the button on this page will reset the password for <b>StudentFolder.info</b> to the lower-case version of your student\'s email address.
-Once logged into StudentFolder.info, the student should update their password using the "Change Password" link.</p>'
+<p>Clicking the button on this page will reset the student\'s password for <b>StudentFolder.info</b> to the lower-case version of your student\'s email address.
+    Once logged into StudentFolder.info, the student should update their password using the "Change Password" link.</p>'
             ],
 
         ];

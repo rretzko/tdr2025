@@ -29,7 +29,8 @@ class BasePageStudent extends BasePage
         '3xl' => '3xl',
         '4xl' => '4xl',
     ];
-    protected const TABS = ['bio', 'comms', 'emergency contact', 'password reset'];
+    protected const TABS = ['bio', 'comms', 'emergency contact', 'reset password'];
+
     public StudentForm $form;
     public string $fullName;
     public string $hintClassOf;

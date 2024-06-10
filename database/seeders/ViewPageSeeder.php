@@ -70,7 +70,7 @@ class ViewPageSeeder extends Seeder
             ],
             [
                 'StudentResetPasswordController',
-                'edit',
+                '__invode',
                 'livewire',
                 'student reset password'
             ],
