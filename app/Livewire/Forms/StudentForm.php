@@ -107,21 +107,21 @@ class StudentForm extends Form
 
             }
 
-        } else { //default for testing
+        } else { //uncomment for testing
 
-            $this->first = 'Bradley';
-            $this->middle = 'A.';
-            $this->last = 'Eckensberger';
-            $this->suffix = 'I';
-            $this->email = 'beckensberger@fake.com';
-            $this->pronounId = 2;
-            $this->classOf = 2028;
-            $this->voicePartId = 16;
-            $this->heightInInches = 72;
-            $this->birthday = '2010-06-04';
-            $this->shirtSize = 'xl';
-            $this->phoneMobile = '1234567890';
-            $this->phoneHome = '2345678901';
+//            $this->first = 'Bradley';
+//            $this->middle = 'A.';
+//            $this->last = 'Eckensberger';
+//            $this->suffix = 'I';
+//            $this->email = 'beckensberger@fake.com';
+//            $this->pronounId = 2;
+//            $this->classOf = 2028;
+//            $this->voicePartId = 16;
+//            $this->heightInInches = 72;
+//            $this->birthday = '2010-06-04';
+//            $this->shirtSize = 'xl';
+//            $this->phoneMobile = '1234567890';
+//            $this->phoneHome = '2345678901';
         }
     }
 
