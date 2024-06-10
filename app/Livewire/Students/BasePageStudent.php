@@ -46,24 +46,6 @@ class BasePageStudent extends BasePage
     {
         parent::mount();
 
-        if ($this->dto['id']) {
-
-            //set selected student
-            $this->student = Student::find($this->dto['id']);
-            $this->form->setStudent($this->student);
-            $this->fullName = $this->student->user->name;
-            $this->sysId = $this->student->id;
-        } else {
-
-            //set default student
-            $this->form->setStudent();
-        }
-
-        $this->form->setBirthday();
-        $this->form->setShirtSizes(self::SHIRTSIZES);
-
-        $this->hintBirthday = Carbon::parse($this->form->birthday)->age.' years old.';
-
         $this->school = (auth()->user()->teacher->schools->count() === 1)
             ? auth()->user()->teacher->schools->first()
             : new School();
@@ -74,14 +56,31 @@ class BasePageStudent extends BasePage
             $this->form->setSchool($this->school);
         }
 
+        if ($this->dto['id']) {
+
+            //set selected student
+            $this->student = Student::find($this->dto['id']);
+            $this->form->setStudent($this->getGradesITeach(), $this->student);
+            $this->fullName = $this->student->user->name;
+            $this->sysId = $this->student->id;
+        } else {
+
+            //set default student
+            $this->form->setStudent($this->getGradesITeach());
+
+        }
+
+        $this->form->setBirthday();
+        $this->form->setShirtSizes(self::SHIRTSIZES);
+
+        $this->hintBirthday = Carbon::parse($this->form->birthday)->age.' years old.';
+
         $this->tabs = self::TABS;
 
     }
 
     protected function setHintClassOf(): string
     {
-        $service = new CalcClassOfFromGradeService();
-
         return 'class of '.array_key_first($this->getGradesITeach());
     }
 
@@ -104,6 +103,7 @@ class BasePageStudent extends BasePage
 
             foreach ($grades as $grade) {
 
+                //ex [2028 => 9, 2027 => 10, 2026 => 11, 2025 => 12]
                 $a[$service->getClassOf($grade)] = $grade;
             }
         }

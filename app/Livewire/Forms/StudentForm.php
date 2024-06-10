@@ -4,6 +4,7 @@ namespace App\Livewire\Forms;
 
 use App\Models\PhoneNumber;
 use App\Models\Schools\School;
+use App\Models\Schools\Teacher;
 use App\Models\Students\Student;
 use App\Models\User;
 use App\Services\FindMatchingStudentService;
@@ -25,32 +26,32 @@ class StudentForm extends Form
     public string $birthday = '';
     public string $city = '';
     #[Validate('required')]
-    public int $classOf = 0;
+    public int $classOf = 2028; //9th grade in 2025
     public string $duplicateStudentAdvisory = '';
     #[Validate('email', message: 'An email address is required.')]
-    public string $email;
+    public string $email = '';
     #[Validate('required', message: 'First name is required.')]
-    public string $first;
+    public string $first = '';
     public int $geostate_id = 37;
     #[Validate('required', 'min:30', 'max:80')]
     public int $heightInInches = 30; //minimum height
     #[Validate('required', message: 'Last name is required.')]
-    public string $last;
+    public string $last = '';
     #[Validate('nullable', 'string')]
-    public string $middle;
+    public string $middle = '';
     #[Validate('nullable', 'string', 'min:10')]
-    public string $phoneHome;
+    public string $phoneHome = '';
     #[Validate('nullable', 'string', 'min:10')]
-    public string $phoneMobile;
+    public string $phoneMobile = '';
     public string $postalCode = '';
     #[Validate('required', 'int', 'exists:pronouns,id')]
-    public int $pronounId;
+    public int $pronounId = 1;
     #[Validate('required', 'string')]
     public School $school;
-    public string $shirtSize;
+    public string $shirtSize = 'med';
     public bool $skipDuplicateStudentCheck = false;
     #[Validate('nullable', 'string')]
-    public string $suffix;
+    public string $suffix = '';
     public string $sysId = 'new';
     #[Validate('required', 'exists:voice_parts,id')]
     public int $voicePartId = 1; //default soprano
@@ -77,7 +78,7 @@ class StudentForm extends Form
         $this->shirtSizes = $shirtSizes;
     }
 
-    public function setStudent(Student $student = null): void
+    public function setStudent(array $gradesITeach, Student $student = null): void
     {
         if ($student) {
 
@@ -108,6 +109,10 @@ class StudentForm extends Form
             }
 
         } else { //uncomment for testing
+
+            //set default class_of to lowest grade of user's gradesITeach
+            $teacher = Teacher::find(auth()->id());
+            $this->classOf = array_key_first($gradesITeach);
 
 //            $this->first = 'Bradley';
 //            $this->middle = 'A.';

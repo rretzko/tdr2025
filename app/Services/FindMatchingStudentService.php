@@ -49,12 +49,12 @@ class FindMatchingStudentService
         $a['first'] = $this->data->first;
         $a['heightInInches'] = $this->data->heightInInches;
         $a['last'] = $this->data->last;
-        $a['middle'] = $this->data->middle;
-        $a['phoneHome'] = $this->data->phoneHome;
-        $a['phoneMobile'] = $this->data->phoneMobile;
+        $a['middle'] = $this->data->middle ?? '';
+        $a['phoneHome'] = $this->data->phoneHome ?? '';
+        $a['phoneMobile'] = $this->data->phoneMobile ?? '';
         $a['pronounId'] = $this->data->pronounId;
         $a['shirtSize'] = $this->data->shirtSize;
-        $a['suffix'] = $this->data->suffix;
+        $a['suffix'] = $this->data->suffix ?? '';
         $a['sysId'] = $this->data->sysId;
         $a['voicePartId'] = $this->data->voicePartId;
 

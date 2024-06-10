@@ -133,7 +133,7 @@ class ViewDataFactory extends aViewData
             'students' => 'students.students-table-component',
             'student edit' => 'students.student-edit-component',
             'student comms edit' => 'students.student-comms-edit-component',
-            'student ec edit' => 'students.student-ec-edit-component',
+            'student ec edit' => 'students.student-e-c-edit-component',
             'student reset password' => 'students.student-reset-password-component',
         ];
 

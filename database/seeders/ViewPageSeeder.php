@@ -66,11 +66,11 @@ class ViewPageSeeder extends Seeder
                 'StudentEmergencyContactController',
                 'edit',
                 'livewire',
-                'student ed edit'
+                'student ec edit'
             ],
             [
                 'StudentResetPasswordController',
-                '__invode',
+                '__invoke',
                 'livewire',
                 'student reset password'
             ],
