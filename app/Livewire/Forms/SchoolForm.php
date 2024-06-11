@@ -46,11 +46,12 @@ class SchoolForm extends Form
         ];
     }
 
-    public function
-    setSchool(
-        School $school
-    ): void {
+    public function setSchool(School $school): void
+    {
         $this->school = $school;
+
+        //nullify 'deleted_at' property if exists
+        $this->restoreTrashedRow($school);
 
         $this->schoolTeacher = SchoolTeacher::firstOrCreate(
             [
@@ -64,6 +65,7 @@ class SchoolForm extends Form
             ]
         );
 
+        //set $this variables
         $this->setVars();
 
         //clear user search results

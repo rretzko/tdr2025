@@ -9,9 +9,11 @@
     </x-slot>
 
     <div class="py-0.5">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-row">
 
-            <div class="bg-white dark:bg-gray-800 py-2 mb-4 overflow-hidden shadow-sm sm:rounded-lg">
+            <x-sidebars.domains/>
+
+            <div class="bg-white dark:bg-gray-800 py-2 mb-4 overflow-hidden shadow-sm sm:rounded-lg w-full">
 
                 {{-- LIVEWIRE COMPONENT --}}
                 @livewire($dto['livewireComponent'], ['dto' => $dto])

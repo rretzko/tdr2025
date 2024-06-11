@@ -28,6 +28,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('ensemble/remove/{ensemble}', [\App\Http\Controllers\Ensembles\EnsembleController::class, 'delete'])
         ->name('ensemble.delete');
 
+    //EVENTS
+    Route::get('events', [\App\Http\Controllers\Events\EventController::class, 'index'])
+        ->name('events');
+
+    Route::get('libraries', [\App\Http\Controllers\Libraries\libraryController::class, 'index'])
+        ->name('libraries');
 
     //SCHOOLS
     Route::get('schools', \App\Http\Controllers\Schools\SchoolsController::class)

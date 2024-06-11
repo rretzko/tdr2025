@@ -26,7 +26,10 @@ class BasePage extends Component
         $this->pageInstructions = $this->dto['pageInstructions'];
         $this->setFirstTimer($this->dto['header']);
 
-        $this->schools = auth()->user()->teacher->schools->pluck('name', 'id')->toArray();
+        $this->schools = auth()->user()->teacher->schools
+            ->sortBy('name')
+            ->pluck('name', 'id')
+            ->toArray();
 
         $this->school = (count($this->schools) === 1)
             ? auth()->user()->teacher->schools->first()
