@@ -41,6 +41,9 @@ class SchoolResource extends Resource
                 TextInput::make('name')
                     ->required(),
 
+                TextInput::make('abbr')
+                    ->required(),
+
                 TextInput::make('postal_code')
                     ->required(),
 

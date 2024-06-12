@@ -6,6 +6,7 @@
     'placeholder' => '',
     'required' => false,
     'type' => 'text',
+    'value' => '1',
 ])
 <div class="flex flex-row mt-4 space-x-2">
     <input type="checkbox"
@@ -14,6 +15,7 @@
             'border border-red-600' => $errors->has($name),
             ])
            wire:model.blur="{{ $name }}"
+           value="{{ $value }}"
            aria-label="{{ $label }}"
            @error($name)
            aria-invalid="true"

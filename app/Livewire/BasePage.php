@@ -9,6 +9,7 @@ use Livewire\Component;
 class BasePage extends Component
 {
     public array $dto;
+    public Filters $filters;
     public string $firstTimer = 'false';
     public bool $hasFilters = false;
     public bool $hasSearch = false;
@@ -38,6 +39,8 @@ class BasePage extends Component
         $this->schoolName = ($this->school->id)
             ? $this->school->name
             : '';
+
+        $this->filters->init($this->dto['header']);
     }
 
     protected function setFirstTimer($header): void

@@ -5,6 +5,8 @@ namespace App\Models\Ensembles;
 use App\Models\Schools\School;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Ensemble extends Model
 {
@@ -16,6 +18,11 @@ class Ensemble extends Model
         'description',
         'active',
     ];
+
+    public function assets(): BelongsToMany
+    {
+        return $this->belongsToMany(Asset::class);
+    }
 
     public function school(): BelongsTo
     {

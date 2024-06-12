@@ -20,15 +20,15 @@ Breadcrumbs::for('ensembles', function (BreadcrumbTrail $trail) {
 });
 
 // Ensemble.create
-Breadcrumbs::for('ensemble.create', function (BreadcrumbTrail $trail) {
+Breadcrumbs::for('ensemble create', function (BreadcrumbTrail $trail) {
     $trail->parent('ensembles');
     $trail->push('Add Ensemble', route('ensemble.create'));
 });
 
 // Ensemble.edit
-Breadcrumbs::for('ensemble.edit', function (BreadcrumbTrail $trail, int $id) {
+Breadcrumbs::for('ensemble edit', function (BreadcrumbTrail $trail, int $id) {
     $trail->parent('ensembles');
-    $trail->push('Edit Ensemble', route('ensemble.ensemble'));
+    $trail->push('Edit Ensemble', route('ensemble.edit', ['ensemble' => $id]));
 });
 
 // Profile

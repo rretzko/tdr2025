@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->longText('description');
             $table->boolean('active');
             $table->timestamps();
+            $table->unique(['school_id', 'name']);
         });
     }
 

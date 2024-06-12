@@ -14,6 +14,7 @@ class School extends Model
     use HasFactory;
 
     protected $fillable = [
+        'abbr',
         'name',
         'postal_code',
         'city',

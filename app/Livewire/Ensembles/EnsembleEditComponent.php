@@ -2,12 +2,24 @@
 
 namespace App\Livewire\Ensembles;
 
-use App\Livewire\BasePage;
 
-class EnsembleEditComponent extends BasePage
+class EnsembleEditComponent extends BasePageEnsemble
 {
+    public function mount(): void
+    {
+        parent::mount();
+
+    }
+
     public function render()
     {
         return view('livewire..ensembles.ensemble-edit-component');
+    }
+
+    public function save()
+    {
+        $this->form->update();
+
+        return redirect()->route('ensembles');
     }
 }

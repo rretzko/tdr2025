@@ -136,9 +136,14 @@ This page is divided into four tabs and allows you to edit your student informat
 <p>This page contains a table of your active and inactive ensembles.</p>'
             ],
             [
-                'header' => 'ensemble.create',
+                'header' => 'ensemble create',
                 'instructions' => '<p>Add Ensemble page</p>
 <p>Use this page to add an ensemble to your roster.</p>'
+            ],
+            [
+                'header' => 'ensemble edit',
+                'instructions' => '<p>Edit Ensemble page</p>
+<p>Use this page to edit an ensemble on your roster.</p>'
             ]
         ];
     }

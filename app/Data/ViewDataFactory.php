@@ -46,6 +46,7 @@ class ViewDataFactory extends aViewData
 
                 $this->dto[$component] = $this->$method();
             }
+
         } else { //user default values
 
             $this->dto['pageInstructions'] = '';
@@ -137,8 +138,8 @@ class ViewDataFactory extends aViewData
             'student reset password' => 'students.student-reset-password-component',
 
             'ensembles' => 'ensembles.ensembles-table-component',
-            'ensemble.create' => 'ensembles.ensemble-create-component',
-            'ensemble.edit' => 'ensembles.ensemble-edit-component'
+            'ensemble create' => 'ensembles.ensemble-create-component',
+            'ensemble edit' => 'ensembles.ensemble-edit-component'
         ];
 
         return $components[$this->viewPage->header];

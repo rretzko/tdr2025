@@ -2,13 +2,14 @@
 
 namespace App\Livewire\Ensembles;
 
-use App\Livewire\Ensembles\BasePageEnsemble;
 use App\Livewire\Forms\EnsembleForm;
 use App\Models\Ensembles\Ensemble;
+use App\Models\UserFilter;
 
 class EnsemblesTableComponent extends BasePageEnsemble
 {
     public EnsembleForm $form;
+    public array $ensembleAssetsArray = [];
 
     public function mount(): void
     {
@@ -29,20 +30,55 @@ class EnsemblesTableComponent extends BasePageEnsemble
             ]);
     }
 
+    private function buildEnsembleAssetsCsvs(array $ensembles)
+    {
+        foreach ($ensembles as $schoolEnsembles) {
+
+            foreach ($schoolEnsembles as $ensemble) {
+
+                foreach ($ensemble['assets'] as $asset) {
+
+                    $this->ensembleAssetsArray[$ensemble['id']][] = $asset['name'];
+                }
+            }
+        }
+    }
+
     private function getColumnHeaders(): array
     {
         return [
-            'name/school', 'short name', 'abbr', 'description', 'active',
+            'name/school', 'short name', 'abbr', 'description', 'active', 'assets',
         ];
     }
 
     private function getEnsembles(): array
     {
-        return Ensemble::query()
-            ->where('school_id', $this->school->id)
-            ->orderBy('name')
-            ->get()
-            ->toArray();
+        $a = [];
+
+        foreach (array_flip($this->schools) as $schoolId) {
+
+            $a[] = Ensemble::query()
+                ->with([
+                    'assets' => function ($query) {
+                        $query->select('assets.id', 'assets.name');
+                    }
+                ])
+                ->join('schools', 'ensembles.school_id', '=', 'schools.id')
+                ->where('school_id', $schoolId)
+                ->tap(function ($query) {
+                    $this->filters->apply($query);
+                })
+                ->select('ensembles.*', 'schools.name AS schoolName')
+                ->get()
+                ->toArray();
+        }
+
+        $this->updateUserFiltersTable();
+
+        $this->buildEnsembleAssetsCsvs($a);
+
+        return $a;
+
     }
 
     private function getSchools(): array
@@ -50,5 +86,16 @@ class EnsemblesTableComponent extends BasePageEnsemble
         return auth()->user()->teacher->schools
             ->pluck('name', 'id')
             ->toArray();
+    }
+
+    private function updateUserFiltersTable(): void
+    {
+        UserFilter::create(
+            [
+                'user_id' => auth()->id(),
+                'header' => $this->dto['header'],
+                'schools' => json_encode($this->filters->schoolsSelectedIds)
+            ]
+        );
     }
 }

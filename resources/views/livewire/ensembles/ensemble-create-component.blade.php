@@ -8,68 +8,89 @@
         <div class="space-y-4">
             <x-forms.styles.genericStyle/>
 
-            {{-- SYS ID --}}
-            <x-forms.elements.livewire.labeledInfoOnly label="Sys.Id" :wireModel="$form->sysId"/>
+            <div class="flex flex-col sm:flex-row ">
 
-            <fieldset id="user-info">
+                {{-- ENSEMBLE DEFINITION FIELDS --}}
+                <div id="ensembleDefinition">
 
+                    {{-- SYS ID --}}
+                    <x-forms.elements.livewire.labeledInfoOnly label="Sys.Id" :wireModel="$form->sysId"/>
 
-                {{-- SCHOOL --}}
-                @if($school->id)
-                    <x-forms.elements.livewire.labeledInfoOnly
-                        label="School"
-                        data="{{  $schoolName }}"
-                        wireModel="schoolName"
+                    {{-- SCHOOL --}}
+                    @if($school->id)
+                        <x-forms.elements.livewire.labeledInfoOnly
+                            label="School"
+                            data="{{  $schoolName }}"
+                            wireModel="schoolName"
+                        />
+                    @else
+                        <x-forms.elements.livewire.selectWide
+                            label="school"
+                            name="form.schoolId"
+                            option0
+                            :options="$schools"
+                            required="required"
+                        />
+                    @endif
+
+                    {{-- NAME --}}
+                    <x-forms.elements.livewire.inputTextWide
+                        label="name"
+                        name="form.name"
+                        placeholder="High School Concert Choir"
+                        required
+                        autofocus
                     />
-                @else
-                    <x-forms.elements.livewire.selectWide
-                        label="school"
-                        name="schoolId"
-                        option0
-                        :options="$schools"
-                        required="required"
+
+                    {{-- SHORT NAME --}}
+                    <x-forms.elements.livewire.inputTextNarrow
+                        label="short name"
+                        name="form.shortName"
+                        placeholder="Concert Choir"
+                        required
                     />
-                @endif
 
-                {{-- NAME --}}
-                <x-forms.elements.livewire.inputTextWide
-                    label="name"
-                    name="form.name"
-                    placeholder="High School Concert Choir"
-                    required
-                    autofocus
-                />
+                    {{-- ABBREVIATION --}}
+                    <x-forms.elements.livewire.inputTextNarrow
+                        label="abbreviation"
+                        name="form.abbr"
+                        placeholder="CC"
+                        required
+                    />
 
-                {{-- SHORT NAME --}}
-                <x-forms.elements.livewire.inputTextNarrow
-                    label="short name"
-                    name="form.shortName"
-                    placeholder="Concert Choir"
-                    required
-                />
+                    {{-- DESCRIPTION --}}
+                    <x-forms.elements.livewire.inputTextArea
+                        label="description"
+                        name="form.description"
+                        required
+                    />
 
-                {{-- SHORT NAME --}}
-                <x-forms.elements.livewire.inputTextNarrow
-                    label="abbreviation"
-                    name="form.abbr"
-                    placeholder="CC"
-                    required
-                />
+                    {{-- ACTIVE --}}
+                    <x-forms.elements.livewire.inputCheckbox
+                        label="active"
+                        name="form.active"
+                    />
 
-                {{-- DESCRIPTION --}}
-                <x-forms.elements.livewire.inputTextArea
-                    label="description"
-                    name="form.description"
-                    required
-                />
+                </div>
 
-                {{-- ACTIVE --}}
-                <x-forms.elements.livewire.inputCheckbox
-                    label="active"
-                    name="form.active"
-                />
+                {{-- ENSEMBLE ASSET CHECKBOXES --}}
+                <div class="mt-4 sm:mt-0 sm:ml-4 sm:border border-white border-l-gray-200 sm:px-4">
+                    <h3 class="underline bold">Assets assigned to members</h3>
+                    @foreach($assets AS $asset)
 
-            </fieldset>
+                        <div wire:key="asset-{{ $asset->id }}" class="-mb-4">
+                            <x-forms.elements.livewire.inputCheckbox
+                                label="{{ $asset->name }}"
+                                name="form.ensembleAssets"
+                                value="{{ $asset->id }}"
+                            />
+                        </div>
+                    @endforeach
+
+                </div>
+
+            </div>
+
             {{--
                         <fieldset id="student-info">
 

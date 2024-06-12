@@ -2,8 +2,10 @@
 
 namespace App\Livewire\Forms;
 
+use App\Models\Ensembles\AssetEnsemble;
 use App\Models\Ensembles\Ensemble;
 use App\Models\Schools\School;
+use JetBrains\PhpStorm\NoReturn;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
 
@@ -15,6 +17,7 @@ class EnsembleForm extends Form
     public bool $active = false;
     #[Validate('required', message: 'A description is required.')]
     public string $description = '';
+    public array $ensembleAssets = [];
     #[Validate('required', message: 'The ensemble name is required.')]
     public string $name = '';
     public int $schoolId = 0;
@@ -32,6 +35,9 @@ class EnsembleForm extends Form
         $this->shortName = $ensemble->short_name;
         $this->sysId = $ensemble->id;
 
+        if ($ensemble->assets->isNotEmpty()) {
+            $this->ensembleAssets = $ensemble->assets->pluck('id')->toArray();
+        }
     }
 
     public function setSchool(School $school)
@@ -53,10 +59,10 @@ class EnsembleForm extends Form
 
         ($this->sysId === 'new')
             ? $this->add()
-            : $this->update();
+            : $this->updateEnsemble();
     }
 
-    public function add(): void
+    private function add(): void
     {
         $ensemble = Ensemble::create(
             [
@@ -68,5 +74,47 @@ class EnsembleForm extends Form
                 'active' => $this->active,
             ]
         );
+
+        $this->updateEnsembleAssets();
     }
+
+    private function deleteExistingAssetCategories(): void
+    {
+        AssetEnsemble::where('ensemble_id', $this->sysId)->delete();
+    }
+
+    #[NoReturn] private function updateEnsemble(): void
+    {
+        $ensemble = Ensemble::find($this->sysId);
+
+        $ensemble->update(
+            [
+                'school_id' => $this->schoolId,
+                'name' => $this->name,
+                'short_name' => $this->shortName,
+                'abbr' => $this->abbr,
+                'description' => $this->description,
+                'active' => $this->active,
+            ]
+        );
+
+        $this->updateEnsembleAssets();
+    }
+
+    private function updateEnsembleAssets(): void
+    {
+        if (is_numeric($this->sysId)) {
+
+            $this->deleteExistingAssetCategories();
+
+            $ensemble = Ensemble::find($this->sysId);
+
+            foreach ($this->ensembleAssets as $assetId) {
+
+                $ensemble->assets()->attach($assetId);
+            }
+
+        }
+    }
+
 }

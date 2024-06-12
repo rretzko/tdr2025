@@ -18,6 +18,17 @@ class EnsembleController extends Controller
         return view($dto['pageName'], compact('dto'));
     }
 
+    public function edit(Ensemble $ensemble)
+    {
+        $data = new ViewDataFactory(__METHOD__, $ensemble->id);
+
+        $dto = $data->getDto();
+
+        $id = $ensemble->id;
+
+        return view($dto['pageName'], compact('dto', 'id'));
+    }
+
     public function store(Request $request)
     {
         $data = $request->validate([
