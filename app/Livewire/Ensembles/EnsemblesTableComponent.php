@@ -36,6 +36,9 @@ class EnsemblesTableComponent extends BasePageEnsemble
 
             foreach ($schoolEnsembles as $ensemble) {
 
+                //clear previous array rows
+                $this->ensembleAssetsArray[$ensemble['id']] = [];
+
                 foreach ($ensemble['assets'] as $asset) {
 
                     $this->ensembleAssetsArray[$ensemble['id']][] = $asset['name'];
