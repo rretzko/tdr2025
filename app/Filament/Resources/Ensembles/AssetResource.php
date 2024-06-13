@@ -37,6 +37,9 @@ class AssetResource extends Resource
 
                 TextInput::make('name')
                     ->required(),
+
+                TextInput::make('user_id')
+                    ->nullable(),
             ]);
     }
 
@@ -45,6 +48,9 @@ class AssetResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('user_id')
                     ->searchable()
                     ->sortable(),
             ])

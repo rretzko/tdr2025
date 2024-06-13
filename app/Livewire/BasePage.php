@@ -21,6 +21,8 @@ class BasePage extends Component
     public bool $showSuccessIndicator = false;
     public string $successMessage = '';
 
+    public const ENSEMBLETABS = ['ensembles', 'members', 'assets', 'inventory'];
+
     public function mount(): void
     {
         $this->header = $this->dto['header'];

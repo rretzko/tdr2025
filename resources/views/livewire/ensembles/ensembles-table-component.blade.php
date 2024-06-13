@@ -29,69 +29,76 @@
                 </div>
             @endif
 
-            {{-- TABLE --}}
-            <table class="px-4 shadow-lg w-full">
-                <thead>
-                <tr>
-                    @foreach($columnHeaders AS $columnHeader)
-                        <th
-                            class="border border-gray-200 px-1 @if($columnHeader === 'active?') text-blue-500 @endif"
-                            title="@if($columnHeader === 'active?') Click to change... @endif"
-                        >
-                            {{ $columnHeader }}
+            {{-- TABS AND TABLE--}}
+            <div class="flex flex-col">
+
+                {{-- TABS --}}
+                <x-tabs.genericTabs :selectedTab="$selectedTab" :tabs="$tabs"/>
+
+                {{-- TABLE --}}
+                <table class="px-4 shadow-lg w-full">
+                    <thead>
+                    <tr>
+                        @foreach($columnHeaders AS $columnHeader)
+                            <th
+                                class="border border-gray-200 px-1 @if($columnHeader === 'active?') text-blue-500 @endif"
+                                title="@if($columnHeader === 'active?') Click to change... @endif"
+                            >
+                                {{ $columnHeader }}
+                            </th>
+                        @endforeach
+                        <th class="border border-transparent px-1 sr-only">
+                            edit
                         </th>
-                    @endforeach
-                    <th class="border border-transparent px-1 sr-only">
-                        edit
-                    </th>
-                    <th class="border border-gray-200 px-1 sr-only">
-                        remove
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                @forelse($rows AS $ensembles)
+                        <th class="border border-gray-200 px-1 sr-only">
+                            remove
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @forelse($rows AS $ensembles)
 
-                    @forelse($ensembles AS $row)
+                        @forelse($ensembles AS $row)
 
-                        <tr class=" odd:bg-green-100 ">
-                            <td class="border border-gray-200 px-1">
-                                <div>{{ $row['name'] }}</div> {{-- student name --}}
-                                <div class="ml-2 text-xs italic">{{ $row['schoolName'] }}</div>
-                            </td>
-                            <td class="border border-gray-200 px-1 text-center">
-                                {{ $row['short_name'] }}
-                            </td>
-                            <td class="border border-gray-200 px-1 text-center">
-                                {{ $row['abbr'] }}
-                            </td>
-                            <td class="border border-gray-200 px-1 text-center">
-                                {{ $row['description'] }}
-                            </td>
-                            <td class="border border-gray-200 px-1 text-center">
-                                {{ $row['active'] }}
-                            </td>
-                            <td class="border border-gray-200 px-1 text-center">
-                                {{ array_key_exists($row['id'], $ensembleAssetsArray) ? implode(', ', $ensembleAssetsArray[$row['id']]) : '' }}
-                            </td>
-                            <td class="text-center border border-gray-200">
-                                <x-buttons.edit id="{{ $row['id'] }}" route="ensemble.edit"/>
-                            </td>
-                            <td class="text-center border border-gray-200">
-                                <x-buttons.remove id="{{ $row['id'] }}" livewire="1"/>
-                            </td>
-                        </tr>
+                            <tr class=" odd:bg-green-100 ">
+                                <td class="border border-gray-200 px-1">
+                                    <div>{{ $row['name'] }}</div> {{-- student name --}}
+                                    <div class="ml-2 text-xs italic">{{ $row['schoolName'] }}</div>
+                                </td>
+                                <td class="border border-gray-200 px-1 text-center">
+                                    {{ $row['short_name'] }}
+                                </td>
+                                <td class="border border-gray-200 px-1 text-center">
+                                    {{ $row['abbr'] }}
+                                </td>
+                                <td class="border border-gray-200 px-1 text-center">
+                                    {{ $row['description'] }}
+                                </td>
+                                <td class="border border-gray-200 px-1 text-center">
+                                    {{ $row['active'] }}
+                                </td>
+                                <td class="border border-gray-200 px-1 text-center">
+                                    {{ array_key_exists($row['id'], $ensembleAssetsArray) ? implode(', ', $ensembleAssetsArray[$row['id']]) : '' }}
+                                </td>
+                                <td class="text-center border border-gray-200">
+                                    <x-buttons.edit id="{{ $row['id'] }}" route="ensemble.edit"/>
+                                </td>
+                                <td class="text-center border border-gray-200">
+                                    <x-buttons.remove id="{{ $row['id'] }}" livewire="1"/>
+                                </td>
+                            </tr>
+                        @empty
+                            {{--                    do nothing--}}
+                        @endforelse
+
                     @empty
-                        {{--                    do nothing--}}
+                        <td colspan="{{ count($columnHeaders) }}" class="border border-gray-200 text-center">
+                            No {{ $dto['header'] }} found.
+                        </td>
                     @endforelse
-
-                @empty
-                    <td colspan="{{ count($columnHeaders) }}" class="border border-gray-200 text-center">
-                        No {{ $dto['header'] }} found.
-                    </td>
-                @endforelse
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
 
         </div>
 

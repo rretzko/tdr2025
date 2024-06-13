@@ -34,6 +34,10 @@ class BasePageEnsemble extends BasePage
             $this->form->setEnsemble($this->ensemble);
         }
 
-        $this->assets = Asset::orderBy('name')->get();
+        $this->assets = Asset::query()
+            ->whereNull('user_id')
+            ->orWhere('user_id', auth()->id())
+            ->orderBy('name')
+            ->get();
     }
 }

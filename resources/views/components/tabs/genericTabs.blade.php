@@ -1,5 +1,5 @@
 @props([
-    'selectedTab' => 'bio',
+    'selectedTab',
     'tabs' => [],
 ])
 <div>

@@ -92,6 +92,12 @@ class ViewPageSeeder extends Seeder
                 'livewire',
                 'ensemble create'
             ],
+            [
+                'AssetController',
+                'index',
+                'livewire',
+                'assets'
+            ],
         ];
 
         foreach ($seeds as $seed) {

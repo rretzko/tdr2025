@@ -5,11 +5,14 @@ namespace App\Livewire\Ensembles;
 use App\Livewire\Forms\EnsembleForm;
 use App\Models\Ensembles\Ensemble;
 use App\Models\UserFilter;
+use Livewire\Features\SupportRedirects\Redirector;
 
 class EnsemblesTableComponent extends BasePageEnsemble
 {
     public EnsembleForm $form;
     public array $ensembleAssetsArray = [];
+    public string $selectedTab = 'ensembles';
+    public array $tabs = self::ENSEMBLETABS;
 
     public function mount(): void
     {
@@ -28,6 +31,15 @@ class EnsemblesTableComponent extends BasePageEnsemble
                 'columnHeaders' => $this->getColumnHeaders(),
                 'rows' => $this->getEnsembles(),
             ]);
+    }
+
+    public function updatedSelectedTab()
+    {
+        $uri = ($this->selectedTab === 'ensemble')
+            ? '/ensembles'
+            : '/ensembles/'.$this->selectedTab;
+
+        $this->redirect($uri);
     }
 
     private function buildEnsembleAssetsCsvs(array $ensembles)

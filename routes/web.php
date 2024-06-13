@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Livewire\Ensembles\Assets\AssetsTableComponent;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -27,6 +28,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('ensemble.edit');
     Route::get('ensemble/remove/{ensemble}', [\App\Http\Controllers\Ensembles\EnsembleController::class, 'delete'])
         ->name('ensemble.delete');
+
+    //ENSEMBLES:ASSETS
+    Route::get('ensembles/assets', [\App\Http\Controllers\Ensembles\Assets\AssetController::class, 'index'])
+        ->name('assets');
+    Route::get('ensembles/asset/edit/{asset}', [\App\Http\Controllers\Ensembles\Assets\AssetController::class, 'edit'])
+        ->name('asset.edit');
 
     //EVENTS
     Route::get('events', [\App\Http\Controllers\Events\EventController::class, 'index'])

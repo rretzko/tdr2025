@@ -31,6 +31,12 @@ Breadcrumbs::for('ensemble edit', function (BreadcrumbTrail $trail, int $id) {
     $trail->push('Edit Ensemble', route('ensemble.edit', ['ensemble' => $id]));
 });
 
+// Ensembles.Assets
+Breadcrumbs::for('assets', function (BreadcrumbTrail $trail) {
+    $trail->parent('ensembles');
+    $trail->push('Assets', route('assets'));
+});
+
 // Profile
 Breadcrumbs::for('profile', function (BreadcrumbTrail $trail) {
     $trail->parent('home');

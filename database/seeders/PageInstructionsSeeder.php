@@ -144,7 +144,11 @@ This page is divided into four tabs and allows you to edit your student informat
                 'header' => 'ensemble edit',
                 'instructions' => '<p>Edit Ensemble page</p>
 <p>Use this page to edit an ensemble on your roster.</p>'
-            ]
+            ],
+            [
+                'header' => 'assets',
+                'instructions' => '<p>Assets Table page instructions</p><p>This page contains all assets available to your ensembles.</p>'
+            ],
         ];
     }
 
