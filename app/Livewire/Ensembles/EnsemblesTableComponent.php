@@ -83,6 +83,8 @@ class EnsemblesTableComponent extends BasePageEnsemble
                 ->tap(function ($query) {
                     $this->filters->apply($query);
                 })
+                ->orderBy('ensembles.active')
+                ->orderBy('ensembles.name')
                 ->select('ensembles.*', 'schools.name AS schoolName')
                 ->get()
                 ->toArray();

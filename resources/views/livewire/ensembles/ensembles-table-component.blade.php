@@ -60,7 +60,12 @@
 
                         @forelse($ensembles AS $row)
 
-                            <tr class=" odd:bg-green-100 ">
+                            <tr
+                                @class([
+                                    'odd:bg-green-50',
+                                    'text-gray-400, bg-gray-50, odd:bg-gray-50' => (! $row['active']),
+                                ])
+                            >
                                 <td class="border border-gray-200 px-1">
                                     <div>{{ $row['name'] }}</div> {{-- student name --}}
                                     <div class="ml-2 text-xs italic">{{ $row['schoolName'] }}</div>
@@ -75,7 +80,7 @@
                                     {{ $row['description'] }}
                                 </td>
                                 <td class="border border-gray-200 px-1 text-center">
-                                    {{ $row['active'] }}
+                                    {{ $row['active'] ? 'Y' : 'N' }}
                                 </td>
                                 <td class="border border-gray-200 px-1 text-center">
                                     {{ array_key_exists($row['id'], $ensembleAssetsArray) ? implode(', ', $ensembleAssetsArray[$row['id']]) : '' }}
