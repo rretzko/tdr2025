@@ -75,6 +75,9 @@ class EnsembleForm extends Form
             ]
         );
 
+        //change systId from "new" to current id
+        $this->sysId = $ensemble->id;
+
         $this->updateEnsembleAssets();
     }
 

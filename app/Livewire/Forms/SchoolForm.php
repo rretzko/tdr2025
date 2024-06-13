@@ -15,6 +15,8 @@ use Livewire\Form;
 
 class SchoolForm extends Form
 {
+    #[Validate('required', 'string', 'min:1', 'max:6')]
+    public string $abbr = '';
     public string $advisoryCountyId = '';
     #[Validate('required', message: "A city is required.")]
     public string $city = '';
@@ -78,13 +80,14 @@ class SchoolForm extends Form
 
         if ($this->sysId === 'new') {
 
-            $this->school = $this->addSchool();
+            $this->school = $this->add();
             //link school to teacher
             $this->schoolTeacher = $this->addSchoolTeacher($this->school);
         } else {
 
             $this->school->update(
                 [
+                    'abbr' => $this->abbr,
                     'name' => $this->name,
                     'city' => $this->city,
                     'county_id' => $this->countyId,
@@ -226,7 +229,7 @@ class SchoolForm extends Form
 
     /** END OF PUBLIC FUNCTIONS **************************************************/
 
-    private function addSchool(): School
+    private function add(): School
     {
         return School::updateOrCreate(
             [
@@ -234,6 +237,7 @@ class SchoolForm extends Form
                 'postal_code' => $this->postalCode,
             ],
             [
+                'abbr' => $this->abbr,
                 'city' => $this->city,
                 'county_id' => $this->countyId,
             ]
@@ -280,26 +284,6 @@ class SchoolForm extends Form
         $emailDomain = substr(strrchr($this->email, "@"), 1);
 
         return in_array($emailDomain, $commercialDomains);
-
-//        $email = trim(strtolower($this->email));
-//        $parts = explode('@', $email);
-//
-//        if (count($parts) !== 2) {
-//            return true; //invalid email
-//        }
-//
-//        $domain = $parts[1];
-//        $domains = ['aol.', 'gmail.', 'hotmail.', 'icloud.', 'me.', 'msn.', 'outlook.', 'yahoo.',];
-//
-//        foreach ($domains as $commercialDomain) {
-//
-//            if (Str::contains($this->email, $commercialDomain)) {
-//
-//                return true;
-//            }
-//        }
-//
-//        return false;
     }
 
     private function restoreTrashedRow(School $school): void
@@ -323,6 +307,7 @@ class SchoolForm extends Form
 
     private function setVars(): void
     {
+        $this->abbr = $this->school->abbr;
         $this->city = $this->school->city;
         $this->countyId = $this->school->county_id;
         $this->email = $this->schoolTeacher->email;

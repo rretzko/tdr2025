@@ -84,13 +84,13 @@ class ViewPageSeeder extends Seeder
                 'EnsembleController',
                 'edit',
                 'livewire',
-                'ensemble.edit'
+                'ensemble edit'
             ],
             [
                 'EnsembleController',
                 'create',
                 'livewire',
-                'ensemble.create'
+                'ensemble create'
             ],
         ];
 

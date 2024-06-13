@@ -27,6 +27,13 @@
                                                      :results="$form->resultsName"
             />
 
+            {{-- ABBREVIATION --}}
+            <x-forms.elements.livewire.inputTextNarrow label="abbreviation"
+                                                       name="form.abbr"
+                                                       required
+                                                       hint="One to six characters..."
+            />
+
             {{-- CITY --}}
             <x-forms.elements.livewire.inputTextWide label="city"
                                                      name="form.city"
