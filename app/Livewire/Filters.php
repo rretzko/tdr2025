@@ -28,6 +28,11 @@ class Filters extends Form
         return $query->whereIn('ensembles.school_id', $this->schoolsSelectedIds);
     }
 
+    public function filterStudentsBySchools($query)
+    {
+        return $query->whereIn('school_student.school_id', $this->schoolsSelectedIds);
+    }
+
     public function schools(): array
     {
         return auth()->user()->teacher->schools->pluck('abbr', 'id')->toArray();

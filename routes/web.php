@@ -32,8 +32,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //ENSEMBLES:ASSETS
     Route::get('ensembles/assets', [\App\Http\Controllers\Ensembles\Assets\AssetController::class, 'index'])
         ->name('assets');
-    Route::get('ensembles/asset/edit/{asset}', [\App\Http\Controllers\Ensembles\Assets\AssetController::class, 'edit'])
-        ->name('asset.edit');
+//    Route::get('ensembles/asset/edit/{asset}', [\App\Http\Controllers\Ensembles\Assets\AssetController::class, 'edit'])
+//        ->name('asset.edit');
+
+    //ENSEMBLES:MEMBERS
+    Route::get('ensembles/members', [\App\Http\Controllers\Ensembles\Members\MemberController::class, 'index'])
+        ->name('members');
+    Route::get('ensembles/members/edit/{member}',
+        [\App\Http\Controllers\Ensembles\Members\MemberController::class, 'edit'])
+        ->name('schoolEnsembleMember.edit');
+    Route::get('ensembles/members/new', [\App\Http\Controllers\Ensembles\Members\MemberController::class, 'create'])
+        ->name('schoolEnsembleMember.create');
 
     //EVENTS
     Route::get('events', [\App\Http\Controllers\Events\EventController::class, 'index'])

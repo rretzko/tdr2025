@@ -3,40 +3,44 @@
 
     <x-pageInstructions.instructions instructions="{!! $pageInstructions !!}" firstTimer="{{ $firstTimer }}"/>
 
-    @if($hasFilters || $hasSearch)
-        <div class="flex flex-row justify-between px-4 w-full ">
-            @if($hasSearch)
-                <div class="w-1/2">
-                    <input class="w-3/4" type="text" placeholder="Search"/>
-                </div>
-            @endif
-
-            @if($hasFilters)
-                <div class="flex justify-end w-1/2">
-                    <div>
-                        Filters
-                    </div>
-                </div>
-            @endif
+    {{-- SEARCH --}}
+    @if($hasSearch)
+        <div class="px-4 w-11/12">
+            <input class="w-3/4" type="text" placeholder="Search"/>
         </div>
     @endif
 
+    {{-- PAGE CONTENT --}}
     <div class="w-11/12">
+
+        {{-- HEADER and ADD-NEW BUTTON --}}
         <div class="flex justify-between mb-1">
             <div>{{ ucwords($dto['header']) }}</div>
             <x-buttons.addNew route="student.create"/>
         </div>
-        <table class="px-4 shadow-lg w-full">
-            <thead>
-            <tr>
-                @foreach($columnHeaders AS $columnHeader)
-                    <th
-                        class="border border-gray-200 px-1 @if($columnHeader === 'active?') text-blue-500 @endif"
-                        title="@if($columnHeader === 'active?') Click to change... @endif"
-                    >
-                        {{ $columnHeader }}
-                    </th>
-                @endforeach
+
+        {{-- FILTERS and TABLE --}}
+        <div class="flex flex-row">
+
+            {{-- FILTERS --}}
+            @if($hasFilters)
+                <div class="flex justify-center">
+                    <x-sidebars.filters :filters="$filters" :methods="['schools']"/>
+                </div>
+            @endif
+
+            {{-- TABLE --}}
+            <table class="px-4 shadow-lg w-full">
+                <thead>
+                <tr>
+                    @foreach($columnHeaders AS $columnHeader)
+                        <th
+                            class="border border-gray-200 px-1 @if($columnHeader === 'active?') text-blue-500 @endif"
+                            title="@if($columnHeader === 'active?') Click to change... @endif"
+                        >
+                            {{ $columnHeader }}
+                        </th>
+                    @endforeach
                 <th class="border border-transparent px-1 sr-only">
                     edit
                 </th>
@@ -84,7 +88,9 @@
                 </td>
             @endforelse
             </tbody>
-        </table>
+            </table>
+
+        </div>
 
         {{-- SUCCESS INDICATOR --}}
         <x-forms.indicators.successIndicator :showSuccessIndicator="$showSuccessIndicator"

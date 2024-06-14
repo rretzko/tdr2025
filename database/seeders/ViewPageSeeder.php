@@ -98,6 +98,24 @@ class ViewPageSeeder extends Seeder
                 'livewire',
                 'assets'
             ],
+            [
+                'MemberController',
+                'index',
+                'livewire',
+                'members'
+            ],
+            [
+                'MemberController',
+                'edit',
+                'livewire',
+                'member edit'
+            ],
+            [
+                'MemberController',
+                'create',
+                'livewire',
+                'member create'
+            ],
         ];
 
         foreach ($seeds as $seed) {

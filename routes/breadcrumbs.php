@@ -37,6 +37,24 @@ Breadcrumbs::for('assets', function (BreadcrumbTrail $trail) {
     $trail->push('Assets', route('assets'));
 });
 
+// Ensembles.Members
+Breadcrumbs::for('members', function (BreadcrumbTrail $trail) {
+    $trail->parent('ensembles');
+    $trail->push('Members', route('members'));
+});
+
+// Ensembles.Members.Create
+Breadcrumbs::for('member create', function (BreadcrumbTrail $trail) {
+    $trail->parent('members');
+    $trail->push('Add Member', route('members'));
+});
+
+// Ensembles.Members.Edit
+Breadcrumbs::for('member edit', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('members');
+    $trail->push('Edit Member', route('members', ['member' => $id]));
+});
+
 // Profile
 Breadcrumbs::for('profile', function (BreadcrumbTrail $trail) {
     $trail->parent('home');

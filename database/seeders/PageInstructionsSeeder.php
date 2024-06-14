@@ -149,6 +149,20 @@ This page is divided into four tabs and allows you to edit your student informat
                 'header' => 'assets',
                 'instructions' => '<p>Assets Table page instructions</p><p>This page contains all assets available to your ensembles.</p>'
             ],
+            [
+                'header' => 'members',
+                'instructions' => '<p>Members Table page instructions</p><p>Use this page to review your ensemble member\'s information.</p>'
+            ],
+            [
+                'header' => 'member create',
+                'instructions' => '<p>School Ensemble Member create page instructions</p>
+<p>Use this page to add a school ensemble\'s member information</p>'
+            ],
+            [
+                'header' => 'member edit',
+                'instructions' => '<p>School Ensemble Member edit page instructions</p>
+<p>Use this page to edit a school ensemble\'s member information</p>'
+            ],
         ];
     }
 

@@ -14,7 +14,6 @@ use JetBrains\PhpStorm\NoReturn;
 
 class StudentCreateComponent extends BasePageStudent
 {
-
     public function mount(): void
     {
         parent::mount();
@@ -33,12 +32,6 @@ class StudentCreateComponent extends BasePageStudent
             ]);
     }
 
-    public function updatedFormClassOf(): void
-    {
-        $service = new CalcGradeFromClassOfService();
-        $this->hintClassOf = 'class of '.$this->form->classOf;
-    }
-
     #[NoReturn] public function formCancel(): void
     {
         $this->form->resetDuplicateStudentAdvisory();
@@ -47,6 +40,20 @@ class StudentCreateComponent extends BasePageStudent
     #[NoReturn] public function formContinue(): void
     {
         $this->form->updateWithoutDuplicateStudentCheck();
+    }
+
+    public function updatedFormClassOf(): void
+    {
+        $service = new CalcGradeFromClassOfService();
+        $this->hintClassOf = 'class of '.$this->form->classOf;
+    }
+
+    public function updatedFormSchoolId(): void
+    {
+        $this->school = School::find($this->form->schoolId);
+        $this->form->setSchool($this->school);
+        $this->hintClassOf = $this->setHintClassOf();
+        $this->form->setSchool($this->school);
     }
 
     public function updatedFormBirthday(): void

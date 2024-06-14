@@ -3,6 +3,7 @@
 namespace App\Livewire\Students;
 
 use App\Livewire\BasePage;
+use App\Models\Schools\School;
 use App\Models\Students\Student;
 use Carbon\Carbon;
 use Livewire\Component;
@@ -60,6 +61,9 @@ class StudentsTableComponent extends BasePage
             ->join('phone_numbers AS home', function ($join) {
                 $join->on('users.id', '=', 'home.user_id')
                     ->where('home.phone_type', '=', 'home');
+            })
+            ->tap(function ($query) {
+                $this->filters->filterStudentsBySchools($query);
             })
             ->orderBy('users.last_name')
             ->orderBy('users.first_name')

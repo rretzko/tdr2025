@@ -3,6 +3,7 @@
 namespace App\Livewire\Students;
 
 use App\Livewire\BasePage;
+use App\Livewire\Filters;
 use App\Livewire\Forms\StudentForm;
 use App\Models\Geostate;
 use App\Models\Pronoun;
@@ -31,6 +32,7 @@ class BasePageStudent extends BasePage
     ];
     protected const TABS = ['bio', 'comms', 'emergency contact', 'reset password'];
 
+    public Filters $filters;
     public StudentForm $form;
     public string $fullName;
     public string $hintClassOf;
@@ -69,7 +71,6 @@ class BasePageStudent extends BasePage
         $this->hintBirthday = Carbon::parse($this->form->birthday)->age.' years old.';
 
         $this->tabs = self::TABS;
-
     }
 
     protected function setHintClassOf(): string
@@ -88,7 +89,7 @@ class BasePageStudent extends BasePage
                 ->orderBy('grade')
                 ->pluck('grade')
                 ->toArray()
-            : [];
+            : [9]; //default value
 
         if (count($grades)) {
 

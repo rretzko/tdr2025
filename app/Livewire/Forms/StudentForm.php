@@ -48,6 +48,7 @@ class StudentForm extends Form
     public int $pronounId = 1;
     #[Validate('required', 'string')]
     public School $school;
+    public int $schoolId = 0;
     public string $shirtSize = 'med';
     public bool $skipDuplicateStudentCheck = false;
     #[Validate('nullable', 'string')]

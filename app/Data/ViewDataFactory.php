@@ -143,7 +143,11 @@ class ViewDataFactory extends aViewData
 
             'assets' => 'ensembles.assets.assets-table-component',
             'asset create' => 'ensembles.assets.asset-create-component',
-            'asset edit' => 'ensembles.assets.asset-edit-component'
+            'asset edit' => 'ensembles.assets.asset-edit-component',
+
+            'members' => 'ensembles.members.members-table-component',
+            'member create' => 'ensembles.members.member-create-component',
+            'member edit' => 'ensembles.members.member-edit-component',
         ];
 
         return $components[$this->viewPage->header];

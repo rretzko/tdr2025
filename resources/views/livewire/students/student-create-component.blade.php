@@ -9,9 +9,19 @@
             <x-forms.styles.genericStyle/>
 
             {{-- SYS ID --}}
-            <x-forms.elements.livewire.labeledInfoOnly label="Sys.Id" data="new"/>
+            <x-forms.elements.livewire.labeledInfoOnly label="Sys.Id" wireModel="form.sysId"/>
 
             <fieldset id="user-info">
+
+                {{-- SCHOOL --}}
+                <x-forms.elements.livewire.selectWide
+                    autofocus="true"
+                    label="school"
+                    name="form.schoolId"
+                    option0
+                    :options="$schools"
+                    required="required"
+                />
 
                 {{-- NAMES --}}
                 <fieldset class="flex flex-col md:flex-row space-x-2" id="name-parts">
@@ -21,7 +31,6 @@
                         label="first"
                         name="form.first"
                         required
-                        autofocus
                     />
 
                     {{-- NAME.MIDDLE --}}
@@ -67,21 +76,21 @@
             <fieldset id="student-info">
 
                 {{-- SCHOOL --}}
-                @if($school->id)
-                    <x-forms.elements.livewire.labeledInfoOnly
-                        label="School"
-                        data="{{  $schoolName }}"
-                        wireModel="schoolName"
-                    />
-                @else
-                    <x-forms.elements.livewire.selectWide
-                        label="school"
-                        name="schoolId"
-                        option0
-                        :options="$schools"
-                        required="required"
-                    />
-                @endif
+                {{--                @if($school->id)--}}
+                {{--                    <x-forms.elements.livewire.labeledInfoOnly--}}
+                {{--                        label="School"--}}
+                {{--                        data="{{  $schoolName }}"--}}
+                {{--                        wireModel="schoolName"--}}
+                {{--                    />--}}
+                {{--                @else--}}
+                {{--                    <x-forms.elements.livewire.selectWide--}}
+                {{--                        label="school"--}}
+                {{--                        name="schoolId"--}}
+                {{--                        option0--}}
+                {{--                        :options="$schools"--}}
+                {{--                        required="required"--}}
+                {{--                    />--}}
+                {{--                @endif--}}
 
                 <fieldset class="flex flex-col md:flex-row md:space-x-2">
 

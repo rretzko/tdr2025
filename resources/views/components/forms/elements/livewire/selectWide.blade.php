@@ -20,8 +20,9 @@
             @error($name)
             aria-invalid="true"
             aria-description="{{ $message }}"
+            @enderror
             @if($disabled) disabled @endif
-        @enderror
+            @if($autofocus) autofocus @endif
     >
         @if($option0)
             <option value="0">- select -</option>
