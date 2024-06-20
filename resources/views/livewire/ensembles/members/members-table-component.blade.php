@@ -25,7 +25,7 @@
             {{-- FILTERS --}}
             @if($hasFilters)
                 <div class="flex justify-center">
-                    <x-sidebars.filters :filters="$filters" :methods="['schools']"/>
+                    <x-sidebars.filters :filters="$filters" :methods="['schools', 'ensembles']"/>
                 </div>
             @endif
 
@@ -37,6 +37,7 @@
 
                 {{-- TABLE --}}
                 <table class="px-4 shadow-lg w-full">
+                    <caption>n={{ count($rows) }}</caption>
                     <thead>
                     <tr>
                         @foreach($columnHeaders AS $columnHeader)
@@ -62,39 +63,45 @@
                         <tr
                             @class([
                                 'odd:bg-green-50',
-                                'text-gray-400, bg-gray-50, odd:bg-gray-50' => (! $row['active']),
+                                'text-gray-400, bg-gray-50, odd:bg-gray-50' => (! ($row->status === 'active')),
                             ])
                         >
                             <td class="border border-gray-200 px-1">
-                                <div>{{ $row['name'] }}</div> {{-- student name --}}
-                                <div class="ml-2 text-xs italic">{{ $row['schoolName'] }}</div>
+                                <div>{{ $row->name }}</div>
+                                student name
+                                <div class="ml-2 text-xs italic">{{ $row->schoolName }}</div>
                             </td>
                             <td class="border border-gray-200 px-1 text-center">
-                                {{ $row['short_name'] }}
+                                {{ $row->ensembleName }}
                             </td>
                             <td class="border border-gray-200 px-1 text-center">
-                                {{ $row['abbr'] }}
+                                {{ $row->voicePartDescr }}
                             </td>
                             <td class="border border-gray-200 px-1 text-center">
-                                {{ $row['description'] }}
+                                {{ $row->class_of }}
                             </td>
                             <td class="border border-gray-200 px-1 text-center">
-                                {{ $row['active'] ? 'Y' : 'N' }}
+                                {{ $row->school_year }}
                             </td>
                             <td class="border border-gray-200 px-1 text-center">
-                                {{ array_key_exists($row['id'], $ensembleAssetsArray) ? implode(', ', $ensembleAssetsArray[$row['id']]) : '' }}
+                                {{ $row->status }}
+                            </td>
+                            <td class="border border-gray-200 px-1 text-center">
+                                {{ $row->office }}
                             </td>
                             <td class="text-center border border-gray-200">
-                                <x-buttons.edit id="{{ $row['id'] }}" route="ensemble.edit"/>
+                                <x-buttons.edit id="{{ $row->id }}" route="schoolEnsembleMember.edit"/>
                             </td>
                             <td class="text-center border border-gray-200">
-                                <x-buttons.remove id="{{ $row['id'] }}" livewire="1"/>
+                                <x-buttons.remove id="{{ $row->id }}" livewire="1"/>
                             </td>
                         </tr>
                     @empty
-                        <td colspan="{{ count($columnHeaders) }}" class="border border-gray-200 text-center">
-                            No {{ $dto['header'] }} found.
-                        </td>
+                        <tr>
+                            <td colspan="{{ count($columnHeaders) }}" class="border border-gray-200 text-center">
+                                No {{ $dto['header'] }} found.
+                            </td>
+                        </tr>
                     @endforelse
                     </tbody>
 

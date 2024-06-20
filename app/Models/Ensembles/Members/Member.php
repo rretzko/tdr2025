@@ -16,9 +16,12 @@ class Member extends Model
 
     protected $fillable = [
         'ensemble_id',
-        'student_id',
+        'office',
+        'school_id',
         'school_year',
         'status',
+        'student_id',
+        'voice_part_id',
     ];
 
     public function ensemble(): BelongsTo

@@ -13,7 +13,6 @@ return new class extends Migration {
             $table->foreignIdFor(\App\Models\Ensembles\Ensemble::class)->index()->constrained();
             $table->smallInteger('school_year');
             $table->foreignIdFor(\App\Models\Students\Student::class)->constrained();
-            $table->smallInteger('class_of');
             $table->foreignIdFor(\App\Models\Students\VoicePart::class)->constrained();
             $table->string('office')->comment('def: BasePageMember');
             $table->string('status')->comment('def: BasePageMember');

@@ -13,10 +13,19 @@ use JetBrains\PhpStorm\NoReturn;
 class BasePageMember extends BasePage
 {
     const OFFICES = [
-        'member', 'president', 'vice-president', 'treasurer', 'secretary', 'librarian',
-        'co-president', 'co-vice-president', 'co-treasurer', 'co-secretary',
-        'other',
+        'member' => 'member',
+        'president' => 'president',
+        'vice-president' => 'vice-president',
+        'treasurer' => 'treasurer',
+        'secretary' => 'secretary',
+        'librarian' => 'librarian',
+        'co-president' => 'co-president',
+        'co-vice-president' => 'co-vice-president',
+        'co-treasurer' => 'co-treasurer',
+        'co-secretary' => 'co-secretary',
+        'other' => 'other',
     ];
+
     const STATUSES = [
         'active', 'inactive', 'probationary', 'conditional', 'removed', 'withdrew', 'other'
     ];
@@ -40,7 +49,7 @@ class BasePageMember extends BasePage
             ->toArray();
     }
 
-    protected function updatedFormClassOfGrade(): void
+    public function updatedFormClassOfGrade(): void
     {
         ($this->form->classOfGrade < 13)
             ? $this->setFormClassOfFromGrade()

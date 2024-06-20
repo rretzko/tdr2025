@@ -8,13 +8,13 @@ class SplitNameIntoNamePartsService
 {
     private const PREFIXES = [
         'Dr', 'Dr.', 'Esq', 'Esq.', 'Hon', 'Hon.', 'Prof', 'Prof.', 'Professor',
-        'Mr', 'Mr.', 'Mrs', 'Mrs.', 'Ms', 'Ms.', 'Mx', 'Mx.',
+        'Miss', 'Mr', 'Mr.', 'Mrs', 'Mrs.', 'Ms', 'Ms.', 'Mx', 'Mx.',
         'Rev', 'Rev.', 'Sr', 'Sr.'
     ];
     private const SUFFIXES = [
         'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VII', 'IX', 'X',
         'Jr', 'Jr.', 'Sr', 'Sr.',
-        'Esq', 'Esq.'
+        'Esq', 'Esq.', 'DDS', 'DVM',
     ];
     private array $nameParts =
         [
@@ -28,6 +28,11 @@ class SplitNameIntoNamePartsService
     public function __construct(private readonly string $fullName)
     {
         $this->init();
+    }
+
+    public function getNameParts(): array
+    {
+        return $this->nameParts;
     }
 
     private function init(): void
@@ -114,8 +119,5 @@ class SplitNameIntoNamePartsService
         return false;
     }
 
-    public function getNameParts(): array
-    {
-        return $this->nameParts;
-    }
+
 }

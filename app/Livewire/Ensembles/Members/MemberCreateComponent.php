@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Ensembles\Members;
 
+use App\Models\Pronoun;
 use App\Models\Students\Student;
 use Livewire\Component;
 
@@ -17,6 +18,7 @@ class MemberCreateComponent extends BasePageMember
                 'ensembles' => $this->getEnsembles(),
                 'voiceParts' => $this->getVoiceParts(),
                 'offices' => self::OFFICES,
+                'pronouns' => Pronoun::orderBy('order_by')->pluck('descr', 'id'),
                 'statuses' => self::STATUSES,
             ]);
     }
@@ -24,6 +26,13 @@ class MemberCreateComponent extends BasePageMember
     public function save()
     {
         $this->form->update();
+
+        return redirect()->route('members');
+    }
+
+    public function setStudent(Student $student): void
+    {
+        $this->form->setStudentAsMember($student);
     }
 
     public function updatedFormName(): void
@@ -40,11 +49,15 @@ class MemberCreateComponent extends BasePageMember
 
         if ($names) {
 
-            $str = '<ul>';
+            $str = '<ul style="list-style-type: none;">';
 
             foreach ($names as $id => $name) {
 
-                $str .= '<li>'.$name.'</li>';
+                $str .= '<li>'
+                    .'<button type="button" wire:click="setStudent('.$id.')" class="text-blue-500">'
+                    .$name
+                    .'</button>'
+                    .'</li>';
             }
 
             $str .= '</ul>';

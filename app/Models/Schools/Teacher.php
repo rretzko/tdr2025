@@ -2,6 +2,7 @@
 
 namespace App\Models\Schools;
 
+use App\Models\Students\Student;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -47,10 +48,16 @@ class Teacher extends Model
             ->whereNotNull('school_teacher.email_verified_at')
             ->exists();
     }
+
     public function schools(): BelongsToMany|null
     {
         return $this->belongsToMany(School::class)
             ->withPivot('active');
+    }
+
+    public function students(): BelongsToMany
+    {
+        return $this->belongsToMany(Student::class);
     }
 
     public function user(): BelongsTo

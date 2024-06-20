@@ -25,5 +25,7 @@ class DatabaseSeeder extends Seeder
         $this->call(VoicePartSeeder::class);
         $this->call(UserSeeder::class);
 
+        $this->call(Teachers100Seeder::class);
+
     }
 }

@@ -1,5 +1,6 @@
 @props([
     'autofocus' => false,
+    'blur' => true,
     'error' => '',
     'hint' => '',
     'label',
@@ -16,7 +17,9 @@
             'narrow',
             'border border-red-600' => $errors->has($name),
             ])
-           wire:model.blur="{{ $name }}"
+           @if($blur)wire:model.blur @else
+               wire:model
+           @endif ="{{ $name }}"
            placeholder="{{ $placeholder }}"
            @if($autofocus) autofocus @endif
            aria-label="{{ $label }}"

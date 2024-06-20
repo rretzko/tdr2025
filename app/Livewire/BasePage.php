@@ -4,10 +4,14 @@ namespace App\Livewire;
 
 use App\Models\PageView;
 use App\Models\Schools\School;
+use App\Models\UserConfig;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class BasePage extends Component
 {
+    use WithPagination;
+
     public array $dto;
     public Filters $filters;
     public string $firstTimer = 'false';
@@ -15,10 +19,15 @@ class BasePage extends Component
     public bool $hasSearch = false;
     public string $header = 'header';
     public string $pageInstructions = "no instructions found...";
+    public int $recordsPerPage = 15;
     public School $school;
     public string $schoolName = '';
     public array $schools = [];
+    public string $search = '';
     public bool $showSuccessIndicator = false;
+    public bool $sortAsc = true;
+    public string $sortCol = '';
+    public string $sortColLabel = '';
     public string $successMessage = '';
 
     public const ENSEMBLETABS = ['ensembles', 'members', 'assets', 'inventory'];
@@ -43,6 +52,31 @@ class BasePage extends Component
             : '';
 
         $this->filters->init($this->dto['header']);
+
+        $this->recordsPerPage = UserConfig::query()
+            ->where('user_id', auth()->id())
+            ->where('header', $this->dto['header'])
+            ->where('property', 'recordsPerPage')
+            ->value('value') ?? 15;
+    }
+
+    public function updatedRecordsPerPage(): void
+    {
+        UserConfig::updateOrCreate(
+            [
+                'user_id' => auth()->id(),
+                'header' => $this->dto['header'],
+                'property' => 'recordsPerPage',
+            ],
+            [
+                'value' => $this->recordsPerPage,
+            ]
+        );
+    }
+
+    public function updatedSearch()
+    {
+        $this->resetPage();
     }
 
     protected function setFirstTimer($header): void

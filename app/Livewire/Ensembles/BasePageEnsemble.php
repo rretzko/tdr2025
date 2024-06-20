@@ -17,6 +17,7 @@ class BasePageEnsemble extends BasePage
     public Ensemble $ensemble;
     public EnsembleForm $form;
 
+
     public function mount(): void
     {
         parent::mount();

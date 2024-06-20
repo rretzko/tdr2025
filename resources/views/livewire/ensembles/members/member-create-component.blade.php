@@ -52,10 +52,19 @@
                         :results="$resultsName"
                     />
 
+                    {{-- PRONOUNS --}}
+                    <x-forms.elements.livewire.selectWide
+                        label="preferred pronoun"
+                        name="form.pronounId"
+                        :options="$pronouns"
+                        required="required"
+                    />
+
                     {{-- MEMBER GRADE/CLASSOF --}}
                     <x-forms.elements.livewire.inputTextNarrow
                         label="Member Grade/Class Of"
                         name="form.classOfGrade"
+                        blur=""
                         placeholder="2025 or 9"
                         required
                         hint="Enter 'class of' or grade for current students."

@@ -3,10 +3,14 @@
 namespace App\Models\Schools;
 
 use App\Models\County;
+use App\Models\Ensembles\Ensemble;
 use App\Models\Geostate;
+use App\Models\Students\Student;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 
 class School extends Model
@@ -31,6 +35,11 @@ class School extends Model
         return $this->belongsTo(County::class);
     }
 
+    public function ensembles(): HasMany
+    {
+        return $this->hasMany(Ensemble::class);
+    }
+
     public function getCountyNameAttribute(): string
     {
         return County::find($this->county_id)->name;
@@ -48,6 +57,11 @@ class School extends Model
             ->orderBy('grade')
             ->pluck('grade')
             ->toArray();
+    }
+
+    public function students(): BelongsToMany
+    {
+        return $this->belongsToMany(Student::class);
     }
 
     public function updateGrades(array $grades): void

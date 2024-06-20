@@ -31,7 +31,7 @@ class VoicePartSeeder extends Seeder
             ['Baritone', 'Bar', 11],
             ['High Baritone', 'HB', 12],
             ['Low Baritone', 'LB', 13],
-            ['BassBaritone', 'BB', 14],
+            ['Bass Baritone', 'BB', 14],
             ['Bass', 'Bass', 15],
             ['Bass I', 'BI', 16],
             ['Bass II', 'BII', 17],

@@ -47,7 +47,7 @@
             </thead>
             <tbody>
             @forelse($rows AS $row)
-                <tr class=" odd:bg-green-100 ">
+                <tr class=" odd:bg-green-50 ">
                     <td class="border border-gray-200 px-1">
                         {{ $row->schoolName }} {{-- name --}}
                     </td>

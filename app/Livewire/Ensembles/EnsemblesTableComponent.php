@@ -34,8 +34,8 @@ class EnsemblesTableComponent extends BasePageEnsemble
     }
 
     public function updatedSelectedTab()
-    {
-        $uri = ($this->selectedTab === 'ensemble')
+    {//dd($this->selectedTab);
+        $uri = ($this->selectedTab === 'ensembles')
             ? '/ensembles'
             : '/ensembles/'.$this->selectedTab;
 
