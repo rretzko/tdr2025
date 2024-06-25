@@ -87,7 +87,7 @@ class SchoolForm extends Form
 
             $this->school->update(
                 [
-                    'abbr' => $this->abbr,
+                    'abbr' => Str::upper($this->abbr),
                     'name' => $this->name,
                     'city' => $this->city,
                     'county_id' => $this->countyId,
@@ -237,7 +237,7 @@ class SchoolForm extends Form
                 'postal_code' => $this->postalCode,
             ],
             [
-                'abbr' => $this->abbr,
+                'abbr' => Str::upper($this->abbr),
                 'city' => $this->city,
                 'county_id' => $this->countyId,
             ]

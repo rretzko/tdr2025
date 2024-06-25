@@ -35,13 +35,13 @@
             {{-- FILTERS --}}
             @if($hasFilters)
                 <div class="flex justify-center">
-                    <x-sidebars.filters :filters="$filters" :methods="['schools']"/>
+                    <x-sidebars.filters :filters="$filters" :methods="['schools', 'classOfs', 'voicePartIds']"/>
                 </div>
             @endif
 
             {{-- TABLE WITH LINKS --}}
             <div class="flex flex-col space-y-2 mb-2">
-
+                <div>Count: {{ count($rows) }}</div>
                 {{-- LINKS:TOP --}}
                 <div class="shadow-lg">
                     {{ $rows->links() }}
@@ -129,7 +129,8 @@
                     </div>
 
                     <div wire:loading.flex class="flex justify-center items-center absolute inset-0">
-                        <x-heroicons.spinner size="10" class="text-gray-500"/>
+                        <x-heroicons.spinner size="6" class="text-gray-500"/>
+
                     </div>
                 </div>
 
