@@ -174,6 +174,7 @@ class StudentsTableComponent extends BasePage
             [
                 'column' => $this->sortCol,
                 'asc' => $this->sortAsc,
+                'label' => $this->sortColLabel,
             ]
         );
     }
