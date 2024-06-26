@@ -12,7 +12,7 @@ return new class extends Migration {
             $table->foreignIdFor(\App\Models\User::class)->constrained();
             $table->string('header');
             $table->string('filter');
-            $table->json('values');
+            $table->string('values');
             $table->timestamps();
         });
     }

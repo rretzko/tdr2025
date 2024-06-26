@@ -78,11 +78,33 @@ Commercial emails (gmail, hotmail, etc.) are automatically <strong>unverified</s
             [
                 'header' => 'students',
                 'instructions' => '<p>Students Table Page</p>
-<p>Students are displayed in name-alpha order.</p>
-<p>If you have multiple schools and have previously selected a school, that school\'s students will be displayed by default.  Schools can be changed by clicking on the "Filter" button.</p>
-<p>Sortable columns are displayed with up/down arrows in the column headers</p>
-<p>You can search for name, email, class, and voice part by entering a value in the "Search" box.</p>
-<p>You can filter the results by clicking on the "Filter" button.  Filtering options are school (if you have multiple schools), class-of, and voice part.</p>'
+<p>The Students Table page displays your students with robust display, search, filter, and sort features:
+<ul>
+<li><strong>Records Per Page</strong>: Select from the drop-down box to increase or decrease the number of pages displayed per page.</li>
+<li><strong>Search</strong>: Display records that match the value in the "Search" box for name, class of, or voice part columns. Note: capitalization is disregarded in the search so <strong><i>Soprano I</i></strong> is the same as <strong><i>soprano i</i></strong>.</li>
+<li><strong>Filters</strong>: You will find filtering options on the left-hand side of the table.  Checking and unchecking boxes will automatically trigger an update of the table to reflect the options chosen.
+<ul>
+<li>If you teach in multiple schools, a <strong>Schools</strong> filter will display the abbreviation for those schools.  Clicking/unclicking the appropriate checkbox will include/exclude the display of students from those schools.</li>
+<li>The <strong>Class Of</strong> filter contains all years matching those of your students in the system.</li>
+<li>The <strong>Class Of</strong> filter contains two aggregate settings: <strong>current</strong> and <strong>alum</strong>.
+<ul>
+<li>The <strong>current</strong> option will select the current senior year and all years later than the current senior year.</li>
+<li>The <strong>alum</strong> option will select all years earlier than the current senior year.</li>
+</ul>
+</li>
+<li>The <strong>Voice Parts</strong> filter contains all voice parts matching those of your students in the system.</li>
+</li>
+</ul>
+<li><strong>Sorting</strong>: The table column headers: name, class of, and voice part may be clicked to sort the table in ascending or descending order by those columns.
+<ul>
+<li>Up- and down-arrows will display on the selected column to indicate the current direction of the sort.</li>
+<li>Voice parts are sorted in score-order rather than alpha-order, i.e. soprano-to-bass or bass-to-soprano.
+</ul>
+</li>
+</ul>
+</p>
+<p><u>Please note that the system "remembers" your settings.</u>  If you leave and later return to the Students table, the settings you last used will be used for your return display.</p>'
+
             ],
             [
                 'header' => 'new student',

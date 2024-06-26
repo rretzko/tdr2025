@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UserFilter extends Model
 {
-    public $timestamps = false;
-
     protected $fillable = [
         'user_id',
         'header',

@@ -12,6 +12,7 @@ class UserSort extends Model
         'header',
         'column',
         'asc',
+        'label',
     ];
 
     public function user(): BelongsTo

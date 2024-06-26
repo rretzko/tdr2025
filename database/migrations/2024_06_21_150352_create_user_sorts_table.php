@@ -13,6 +13,7 @@ return new class extends Migration {
             $table->string('header');
             $table->string('column');
             $table->boolean('asc');
+            $table->string('label');
             $table->timestamps();
         });
     }

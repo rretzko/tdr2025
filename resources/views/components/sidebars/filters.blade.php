@@ -1,8 +1,9 @@
 @props(['filters','methods'])
 
 <div id="filters" class="bg-white p-2 mr-0.5 mt-1 rounded-lg space-y-2 h-full shadow-lg">
-    <div class="flex justify-center">
+    <div class="flex items-center justify-center space-x-1 w-full underline">
         <x-heroicons.funnelSolidMicro/>
+        <span>Filters</span>
     </div>
 
     @forelse($methods AS $method)

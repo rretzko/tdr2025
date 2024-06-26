@@ -74,7 +74,7 @@ class BasePage extends Component
         );
     }
 
-    public function updatedSearch()
+    public function updatedSearch(): void
     {
         $this->resetPage();
     }

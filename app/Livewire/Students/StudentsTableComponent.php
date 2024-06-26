@@ -4,7 +4,6 @@ namespace App\Livewire\Students;
 
 use App\Livewire\BasePage;
 use App\Models\Students\Student;
-use App\Models\UserFilter;
 use App\Models\UserSort;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
@@ -12,6 +11,8 @@ use JetBrains\PhpStorm\NoReturn;
 
 class StudentsTableComponent extends BasePage
 {
+    public array $filterMethods = [];
+
     public function mount(): void
     {
         parent::mount();
@@ -25,28 +26,44 @@ class StudentsTableComponent extends BasePage
         $this->hasSearch = true;
 
         //filters
-        $this->filters->schoolsSelectedIds = UserFilter::query()
-            ->where('user_id', auth()->id())
-            ->where('header', $this->dto['header'])
-            ->where('filter', 'schoolsSelectedIds')
-            ->exists()
-            ? UserFilter::query()
-                ->where('user_id', auth()->id())
-                ->where('header', $this->dto['header'])
-                ->where('filter', 'schoolsSelectedIds')
-                ->pluck('values')
-                ->toArray()
+        $this->filters->schoolsSelectedIds = $this->filters->previousFilterExists('schoolsSelectedIds',
+            $this->dto['header'])
+            ? $this->filters->getPreviousFilterArray('schoolsSelectedIds', $this->dto['header'])
             : $this->filters->schoolsSelectedIds;
 
+        $this->filters->classOfsSelectedIds = $this->filters->previousFilterExists('classOfsSelectedIds',
+            $this->dto['header'])
+            ? $this->filters->getPreviousFilterArray('classOfsSelectedIds', $this->dto['header'])
+            : $this->filters->classOfsSelectedIds;
+
+        $this->filters->voicePartIdsSelectedIds = $this->filters->previousFilterExists('voicePartIdsSelectedIds',
+            $this->dto['header'])
+            ? $this->filters->getPreviousFilterArray('voicePartIdsSelectedIds', $this->dto['header'])
+            : $this->filters->voicePartIdsSelectedIds;
+
+        //filterMethods
+        if (count($this->filters->schoolsSelectedIds) > 1) {
+            $this->filterMethods[] = 'schools';
+        }
+        if (count($this->filters->classOfsSelectedIds) > 1) {
+            $this->filterMethods[] = 'classOfs';
+        }
+        if (count($this->filters->voicePartIdsSelectedIds) > 1) {
+            $this->filterMethods[] = 'voicePartIds';
+        }
+
+        //sorts
         $this->sortCol = $userSort ? $userSort->column : 'users.last_name';
         $this->sortAsc = $userSort ? $userSort->asc : $this->sortAsc;
-        $this->sortColLabel = 'name';
+        $this->sortColLabel = $userSort ? $userSort->label : 'name';
     }
 
     public function render()
     {
         $this->saveSortParameters();
-        $this->saveFilterParameters();
+        $this->filters->setFilter('schoolsSelectedIds', $this->dto['header']);
+        $this->filters->setFilter('classOfsSelectedIds', $this->dto['header']);
+        $this->filters->setFilter('voicePartIdsSelectedIds', $this->dto['header']);
 
         $rows = $this->getRows();
 
@@ -81,12 +98,15 @@ class StudentsTableComponent extends BasePage
 
     /** END OF PUBLIC FUNCTIONS **************************************************/
 
-    protected function applySearch($query)
-    {
-        return ($this->search === '')
-            ? $query
-            : $query->where('users.name', 'LIKE', '%'.$this->search.'%');
-    }
+//    protected function applySearch($query)
+//    {
+//        $search = '%' . $this->search . '%';
+//
+//        return ($this->search === '')
+//            ? $query
+//            : $query->where('users.name', 'LIKE', $search)
+//                ->orWhere('classOf', 'LIKE', $search);
+//    }
 
     private function getColumnHeaders(): array
     {
@@ -127,6 +147,8 @@ class StudentsTableComponent extends BasePage
             })
             ->where('student_teacher.teacher_id', auth()->user()->teacher->id)
             ->where('users.name', 'LIKE', '%'.$this->search.'%')
+            ->orWhere('students.class_of', '=', $this->search)
+            ->orWhere('voice_parts.descr', 'LIKE', '%'.$this->search.'%')
             ->tap(function ($query) {
                 $this->filters->filterStudentsBySchools($query);
                 $this->filters->filterStudentsByClassOfs($query);
@@ -140,45 +162,6 @@ class StudentsTableComponent extends BasePage
             )
             ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
             ->paginate($this->recordsPerPage);
-    }
-
-    protected function saveFilterParameters(): void
-    {
-        //schoolsSelectedIds
-        UserFilter::updateOrCreate(
-            [
-                'user_id' => auth()->id(),
-                'header' => $this->dto['header'],
-                'filter' => 'schoolsSelectedIds'
-            ],
-            [
-                'values' => json_encode($this->filters->schoolsSelectedIds),
-            ]
-        );
-
-        //classOfsSelectedIds
-        UserFilter::updateOrCreate(
-            [
-                'user_id' => auth()->id(),
-                'header' => $this->dto['header'],
-                'filter' => 'classOfsSelectedIds'
-            ],
-            [
-                'values' => json_encode($this->filters->classOfsSelectedIds),
-            ]
-        );
-
-        //voicePartsSelectedIds
-        UserFilter::updateOrCreate(
-            [
-                'user_id' => auth()->id(),
-                'header' => $this->dto['header'],
-                'filter' => 'voicePartIdsSelectedIds'
-            ],
-            [
-                'values' => json_encode($this->filters->voicePartIdsSelectedIds),
-            ]
-        );
     }
 
     protected function saveSortParameters(): void

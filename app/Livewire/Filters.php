@@ -3,7 +3,9 @@
 namespace App\Livewire;
 
 use App\Models\Students\VoicePart;
+use App\Models\UserFilter;
 use App\Services\CalcSeniorYearService;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Url;
 use Livewire\Form;
 
@@ -104,6 +106,17 @@ class Filters extends Form
         return $query->whereIn('ensemble_members.ensemble_id', $this->ensemblesSelectedIds);
     }
 
+    public function getPreviousFilterArray(string $filter, string $header): array
+    {
+        $row = UserFilter::query()
+            ->where('user_id', auth()->id())
+            ->where('header', $header)
+            ->where('filter', $filter)
+            ->first();
+
+        return $row && strlen($row->values) ? explode(',', $row->values) : [];
+    }
+
     public function getTeacherClassOfs(): array
     {
         return auth()->user()->teacher->students
@@ -116,6 +129,24 @@ class Filters extends Form
     public function schools(): array
     {
         return auth()->user()->teacher->schools->pluck('abbr', 'id')->toArray();
+    }
+
+    public function setFilter(string $filter, string $header): void
+    {
+        $str = '';
+
+        $str = implode(',', $this->$filter);
+        Log::info('string: '.$str);
+        UserFilter::updateOrCreate(
+            [
+                'user_id' => auth()->id(),
+                'header' => $header,
+                'filter' => $filter,
+            ],
+            [
+                'values' => $str,
+            ]
+        );
     }
 
     /**
@@ -133,6 +164,15 @@ class Filters extends Form
         $voiceParts = VoicePart::find($voicePartIds);
 
         return $voiceParts->sortBy('order_by')->pluck('abbr', 'id')->toArray();
+    }
+
+    public function previousFilterExists(string $filter, string $header): bool
+    {
+        return UserFilter::query()
+            ->where('user_id', auth()->id())
+            ->where('header', $header)
+            ->where('filter', $filter)
+            ->exists();
     }
 
     private function interpretAggregateClassOfValues(): void
