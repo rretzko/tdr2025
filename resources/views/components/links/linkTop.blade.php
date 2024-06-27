@@ -3,7 +3,7 @@
     'rows'
 ])
 <div>
-    @if(count($rows) <= $recordsPerPage)
+    @if($rows->total() < $recordsPerPage)
         <div>Count: {{ count($rows) }}</div>
     @endif
     {{-- LINKS:TOP --}}

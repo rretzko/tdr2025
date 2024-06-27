@@ -111,7 +111,9 @@ class EnsemblesTableComponent extends BasePageEnsemble
             [
                 'user_id' => auth()->id(),
                 'header' => $this->dto['header'],
-                'schools' => json_encode($this->filters->schoolsSelectedIds)
+                'filter' => 'schoolSelectedIds',
+                'values' => implode(',', $this->filters->schoolsSelectedIds)
+
             ]
         );
     }
