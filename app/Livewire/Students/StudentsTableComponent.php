@@ -5,6 +5,7 @@ namespace App\Livewire\Students;
 use App\Livewire\BasePage;
 use App\Models\Students\Student;
 use App\Models\UserSort;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
 use JetBrains\PhpStorm\NoReturn;
@@ -61,16 +62,15 @@ class StudentsTableComponent extends BasePage
     public function render()
     {
         $this->saveSortParameters();
+
         $this->filters->setFilter('schoolsSelectedIds', $this->dto['header']);
         $this->filters->setFilter('classOfsSelectedIds', $this->dto['header']);
         $this->filters->setFilter('voicePartIdsSelectedIds', $this->dto['header']);
 
-        $rows = $this->getRows();
-
         return view('livewire..students.students-table-component',
             [
                 'columnHeaders' => $this->getColumnHeaders(),
-                'rows' => $rows,
+                'rows' => $this->getRows()->paginate($this->recordsPerPage),
             ]);
     }
 
@@ -98,16 +98,6 @@ class StudentsTableComponent extends BasePage
 
     /** END OF PUBLIC FUNCTIONS **************************************************/
 
-//    protected function applySearch($query)
-//    {
-//        $search = '%' . $this->search . '%';
-//
-//        return ($this->search === '')
-//            ? $query
-//            : $query->where('users.name', 'LIKE', $search)
-//                ->orWhere('classOf', 'LIKE', $search);
-//    }
-
     private function getColumnHeaders(): array
     {
         return [
@@ -126,9 +116,8 @@ class StudentsTableComponent extends BasePage
         return $inches.' ('.floor($inches / 12)."' ".($inches % 12).'")';
     }
 
-    private function getRows(): LengthAwarePaginator
+    private function getRows(): Builder
     {
-        $a = [];
         //$this->logSql();
 
         return Student::query()
@@ -147,12 +136,10 @@ class StudentsTableComponent extends BasePage
             })
             ->where('student_teacher.teacher_id', auth()->user()->teacher->id)
             ->where('users.name', 'LIKE', '%'.$this->search.'%')
-            ->orWhere('students.class_of', '=', $this->search)
-            ->orWhere('voice_parts.descr', 'LIKE', '%'.$this->search.'%')
             ->tap(function ($query) {
                 $this->filters->filterStudentsBySchools($query);
-                $this->filters->filterStudentsByClassOfs($query);
-                $this->filters->filterStudentsByVoicePartIds($query);
+                $this->filters->filterStudentsByClassOfs($query, $this->search);
+                $this->filters->filterStudentsByVoicePartIds($query, $this->search);
             })
             ->select('users.name', 'schools.name AS schoolName', 'students.class_of AS classOf',
                 'students.height', 'students.birthday', 'students.shirt_size AS shirtSize', 'students.id AS studentId',
@@ -160,8 +147,8 @@ class StudentsTableComponent extends BasePage
                 'home.phone_number AS phoneHome', 'users.last_name', 'users.first_name', 'users.middle_name',
                 'users.prefix_name', 'users.suffix_name'
             )
-            ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
-            ->paginate($this->recordsPerPage);
+            ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'));
+
     }
 
     protected function saveSortParameters(): void
@@ -199,7 +186,9 @@ class StudentsTableComponent extends BasePage
                     ->where('home.phone_type', '=', 'home');
             })
             ->where('student_teacher.teacher_id', auth()->user()->teacher->id)
-            ->where('users.name', 'LIKE', '%'.$this->search.'%')
+//            ->where('users.name', 'LIKE', '%'.$this->search.'%')
+//            ->orWhere('students.class_of', '=', $this->search)
+//            ->orWhere('voice_parts.descr', 'LIKE', '%'.$this->search.'%')
             ->tap(function ($query) {
                 $this->filters->filterStudentsBySchools($query);
                 $this->filters->filterStudentsByClassOfs($query);

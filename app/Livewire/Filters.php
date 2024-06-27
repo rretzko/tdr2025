@@ -87,6 +87,7 @@ class Filters extends Form
 //$test = in_array('current', $this->classOfsSelectedIds);
         //interpret "current" and "alum" into the current classOf values
         $this->interpretAggregateClassOfValues();
+
 //if($test){ dd($query->whereIn('students.class_of', $this->classOfsSelectedIds)->get());}
         return $query->whereIn('students.class_of', $this->classOfsSelectedIds);
     }
