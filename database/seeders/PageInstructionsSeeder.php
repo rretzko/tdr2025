@@ -82,6 +82,7 @@ Commercial emails (gmail, hotmail, etc.) are automatically <strong>unverified</s
 <ul>
 <li><strong>Records Per Page</strong>: Select from the drop-down box to increase or decrease the number of pages displayed per page.</li>
 <li><strong>Search</strong>: Display records that match the value in the "Search" box for any part of the student\'s name. Note: capitalization is disregarded in the search so <strong><i>DiGreggorio</i></strong> is the same as <strong><i>digreggorio</i></strong>.</li>
+<li><strong>Export</strong>: Click the Export button to export <strong>ALL</strong> of your student records for your analysis and backup. The export contains all student information from the bio, comms, and emergency contact tabs.</li>
 <li><strong>Filters</strong>: You will find filtering options on the left-hand side of the table.  Checking and unchecking boxes will automatically trigger an update of the table to reflect the options chosen.
 <ul>
 <li>If you teach in multiple schools, a <strong>Schools</strong> filter will display the abbreviation for those schools.  Clicking/unclicking the appropriate checkbox will include/exclude the display of students from those schools.</li>

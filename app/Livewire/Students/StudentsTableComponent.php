@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Students;
 
+use App\Exports\StudentsExport;
 use App\Livewire\BasePage;
 use App\Models\Students\Student;
 use App\Models\UserSort;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
 use JetBrains\PhpStorm\NoReturn;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StudentsTableComponent extends BasePage
 {
@@ -72,6 +74,11 @@ class StudentsTableComponent extends BasePage
                 'columnHeaders' => $this->getColumnHeaders(),
                 'rows' => $this->getRows()->paginate($this->recordsPerPage),
             ]);
+    }
+
+    public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    {
+        return Excel::download(new StudentsExport, 'students.csv');
     }
 
     public function sortBy(string $key): void

@@ -7,14 +7,14 @@ use Illuminate\Support\Str;
 class SplitNameIntoNamePartsService
 {
     private const PREFIXES = [
-        'Dr', 'Dr.', 'Esq', 'Esq.', 'Hon', 'Hon.', 'Prof', 'Prof.', 'Professor',
+        'Dr', 'Dr.', 'Md', 'Md.', 'Esq', 'Esq.', 'Hon', 'Hon.', 'Prof', 'Prof.', 'Professor',
         'Miss', 'Mr', 'Mr.', 'Mrs', 'Mrs.', 'Ms', 'Ms.', 'Mx', 'Mx.',
         'Rev', 'Rev.', 'Sr', 'Sr.'
     ];
     private const SUFFIXES = [
         'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VII', 'IX', 'X',
         'Jr', 'Jr.', 'Sr', 'Sr.',
-        'Esq', 'Esq.', 'DDS', 'DVM',
+        'Esq', 'Esq.', 'DDS', 'DVM', 'MD', 'MD.', 'PHD', 'PHD.'
     ];
     private array $nameParts =
         [

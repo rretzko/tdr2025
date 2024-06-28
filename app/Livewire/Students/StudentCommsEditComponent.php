@@ -6,6 +6,7 @@ use App\Livewire\Students\BasePageStudent;
 use App\Models\Address;
 use App\Models\PhoneNumber;
 use App\Models\User;
+use App\Services\FormatPhoneService;
 
 class StudentCommsEditComponent extends BasePageStudent
 {
@@ -143,6 +144,7 @@ class StudentCommsEditComponent extends BasePageStudent
 
     public function updatedFormPhoneHome(): void
     {
+        $service = new FormatPhoneService();
         $this->reset('successMessageAddress', 'successMessageEmail', 'successMessagePhones');
 
         $this->validate([
@@ -155,7 +157,7 @@ class StudentCommsEditComponent extends BasePageStudent
                 'phone_type' => 'home',
             ],
             [
-                'phone_number' => $this->form->phoneHome,
+                'phone_number' => $service->getPhoneNumber($this->form->phoneHome),
             ],
         );
 
@@ -164,6 +166,8 @@ class StudentCommsEditComponent extends BasePageStudent
 
     public function updatedFormPhoneMobile(): void
     {
+        $service = new FormatPhoneService();
+
         $this->reset('successMessageAddress', 'successMessageEmail', 'successMessagePhones');
 
         $this->validate([
@@ -176,7 +180,7 @@ class StudentCommsEditComponent extends BasePageStudent
                 'phone_type' => 'mobile',
             ],
             [
-                'phone_number' => $this->form->phoneMobile,
+                'phone_number' => $service->getPhoneNumber($this->form->phoneMobile),
             ],
         );
 

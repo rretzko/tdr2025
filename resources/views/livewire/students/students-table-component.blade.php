@@ -26,11 +26,19 @@
         {{-- HEADER and ADD-NEW BUTTON --}}
         <div class="flex justify-between mb-1">
             <div>{{ ucwords($dto['header']) }}</div>
-            <x-buttons.addNew route="student.create"/>
+            <div class="flex items-center space-x-2">
+                <x-buttons.addNew route="student.create"/>
+                <div class="flex space-x-1 bg-gray-100 border border-gray-600 rounded-lg px-2 text-xs">
+                    <x-heroicons.arrowDownTray/>
+                    <button wire:click="export" class="cursor-pointer">
+                        Export
+                    </button>
+                </div>
+            </div>
         </div>
 
         {{-- FILTERS and TABLE --}}
-        <div class="flex flex-row">
+        <div class="flex flex-row ">
 
             {{-- FILTERS --}}
             @if($hasFilters)
@@ -40,7 +48,7 @@
             @endif
 
             {{-- TABLE WITH LINKS --}}
-            <div class="flex flex-col space-y-2 mb-2">
+            <div class="flex flex-col space-y-2 mb-2 w-full">
 
                 <x-links.linkTop :recordsPerPage="$recordsPerPage" :rows="$rows"/>
 
