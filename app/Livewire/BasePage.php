@@ -87,6 +87,22 @@ class BasePage extends Component
         $this->resetPage();
     }
 
+    protected function saveSortParameters(): void
+    {
+        UserSort::updateOrCreate(
+            [
+                'user_id' => auth()->id(),
+                'header' => $this->dto['header']
+            ],
+            [
+                'column' => $this->sortCol,
+                'asc' => $this->sortAsc,
+                'label' => $this->sortColLabel,
+            ]
+        );
+    }
+
+
     protected function setFirstTimer($header): void
     {
         $pageView = PageView::firstOrCreate(

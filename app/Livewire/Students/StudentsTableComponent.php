@@ -151,21 +151,6 @@ class StudentsTableComponent extends BasePage
 
     }
 
-    protected function saveSortParameters(): void
-    {
-        UserSort::updateOrCreate(
-            [
-                'user_id' => auth()->id(),
-                'header' => $this->dto['header']
-            ],
-            [
-                'column' => $this->sortCol,
-                'asc' => $this->sortAsc,
-                'label' => $this->sortColLabel,
-            ]
-        );
-    }
-
     /**
      * for troubleshooting
      */

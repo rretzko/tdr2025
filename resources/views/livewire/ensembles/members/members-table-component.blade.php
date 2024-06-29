@@ -13,10 +13,13 @@
     {{-- PAGE CONTENT --}}
     <div class="w-11/12">
 
-        {{-- HEADER and ADD-NEW BUTTON --}}
+        {{-- HEADER and ADD-NEW and EXPORT BUTTONS --}}
         <div class="flex justify-between mb-1">
             <div>{{ ucwords($dto['header']) }}</div>
-            <x-buttons.addNew route="schoolEnsembleMember.create"/>
+            <div class="flex items-center space-x-2">
+                <x-buttons.addNew route="schoolEnsembleMember.create"/>
+                <x-buttons.export/>
+            </div>
         </div>
 
         {{-- FILTERS AND TABLE --}}

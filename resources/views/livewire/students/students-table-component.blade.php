@@ -23,17 +23,12 @@
     {{-- PAGE CONTENT --}}
     <div class="w-11/12">
 
-        {{-- HEADER and ADD-NEW BUTTON --}}
+        {{-- HEADER and ADD-NEW and EXPORT BUTTONS --}}
         <div class="flex justify-between mb-1">
             <div>{{ ucwords($dto['header']) }}</div>
             <div class="flex items-center space-x-2">
                 <x-buttons.addNew route="student.create"/>
-                <div class="flex space-x-1 bg-gray-100 border border-gray-600 rounded-lg px-2 text-xs">
-                    <x-heroicons.arrowDownTray/>
-                    <button wire:click="export" class="cursor-pointer">
-                        Export
-                    </button>
-                </div>
+                <x-buttons.export/>
             </div>
         </div>
 

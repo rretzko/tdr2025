@@ -2,9 +2,12 @@
 
 namespace App\Livewire\Ensembles\Members;
 
+use App\Exports\SchoolEnsembleMembersExport;
+use App\Models\UserSort;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 
 class MembersTableComponent extends BasePageMember
 {
@@ -21,17 +24,27 @@ class MembersTableComponent extends BasePageMember
         $this->sortCol = $this->userSort ? $this->userSort->column : 'users.last_name';
         $this->sortAsc = $this->userSort ? $this->userSort->asc : $this->sortAsc;
         $this->sortColLabel = $this->userSort ? $this->userSort->label : 'name/school';
-
     }
 
     public function render()
     {
+        $this->saveSortParameters();
+
+        $this->filters->setFilter('schoolsSelectedIds', $this->dto['header']);
+        $this->filters->setFilter('ensemblesSelectedIds', $this->dto['header']);
+        $this->filters->setFilter('ensembleYearsSelectedIds', $this->dto['header']);
+
         return view('livewire..ensembles.members.members-table-component',
             [
                 'columnHeaders' => $this->getColumnHeaders(),
                 'rows' => $this->getMembers(),
                 'tabs' => self::ENSEMBLETABS,
             ]);
+    }
+
+    public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    {
+        return Excel::download(new SchoolEnsembleMembersExport, 'members.csv');
     }
 
     public function sortBy(string $key): void
