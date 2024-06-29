@@ -40,6 +40,8 @@
                     :columnHeaders="$columnHeaders"
                     :header="$dto['header']"
                     :rows="$rows"
+                    sortColLabel="{{  $sortColLabel }}"
+                    :sortAsc="$sortAsc"
                 />
 
             </div>

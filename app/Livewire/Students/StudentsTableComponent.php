@@ -18,11 +18,6 @@ class StudentsTableComponent extends BasePage
     {
         parent::mount();
 
-        $userSort = UserSort::query()
-            ->where('user_id', auth()->id())
-            ->where('header', $this->dto['header'])
-            ->first();
-
         $this->hasFilters = true;
         $this->hasSearch = true;
 
@@ -54,9 +49,9 @@ class StudentsTableComponent extends BasePage
         }
 
         //sorts
-        $this->sortCol = $userSort ? $userSort->column : 'users.last_name';
-        $this->sortAsc = $userSort ? $userSort->asc : $this->sortAsc;
-        $this->sortColLabel = $userSort ? $userSort->label : 'name';
+        $this->sortCol = $this->userSort ? $this->userSort->column : 'users.last_name';
+        $this->sortAsc = $this->userSort ? $this->userSort->asc : $this->sortAsc;
+        $this->sortColLabel = $this->userSort ? $this->userSort->label : 'name';
     }
 
     public function render()

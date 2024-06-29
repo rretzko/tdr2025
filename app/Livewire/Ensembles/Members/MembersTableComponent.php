@@ -17,6 +17,11 @@ class MembersTableComponent extends BasePageMember
 
         $this->setFilterMethods();
 
+        //sorts
+        $this->sortCol = $this->userSort ? $this->userSort->column : 'users.last_name';
+        $this->sortAsc = $this->userSort ? $this->userSort->asc : $this->sortAsc;
+        $this->sortColLabel = $this->userSort ? $this->userSort->label : 'name/school';
+
     }
 
     public function render()
@@ -27,6 +32,32 @@ class MembersTableComponent extends BasePageMember
                 'rows' => $this->getMembers(),
                 'tabs' => self::ENSEMBLETABS,
             ]);
+    }
+
+    public function sortBy(string $key): void
+    {
+        $this->sortColLabel = $key;
+
+        $properties = [
+            'name/school' => 'users.last_name',
+            'ensemble' => 'ensembles.id',
+            'voicePart' => 'voice_parts.order_by',
+            'classOf' => 'students.class_of',
+            'schoolYear' => 'ensemble_members.school_year',
+            'status' => 'ensemble_members.status',
+            'office' => 'ensemble_members.office',
+        ];
+
+        $requestedSort = $properties[$key];
+
+        //toggle $this->sortAsc if user clicks on the same column header twice
+        if ($requestedSort === $this->sortCol) {
+
+            $this->sortAsc = (!$this->sortAsc);
+        }
+
+        $this->sortCol = $properties[$key];
+
     }
 
     public function updatedSelectedTab()
@@ -40,7 +71,16 @@ class MembersTableComponent extends BasePageMember
 
     private function getColumnHeaders(): array
     {
-        return ['###', 'name/school', 'ensemble', 'voice part', 'grade', 'year', 'status', 'office'];
+        return [
+            ['label' => '###', 'sortBy' => ''],
+            ['label' => 'name/school', 'sortBy' => 'name/school'],
+            ['label' => 'ensemble', 'sortBy' => 'ensemble'],
+            ['label' => 'voice part', 'sortBy' => 'voicePart'],
+            ['label' => 'grade', 'sortBy' => 'classOf'],
+            ['label' => 'year', 'sortBy' => 'schoolYear'],
+            ['label' => 'status', 'sortBy' => 'status'],
+            ['label' => 'office', 'sortBy' => 'office'],
+        ];
     }
 
     private function getMembers(): array
@@ -66,6 +106,7 @@ class MembersTableComponent extends BasePageMember
                 'voice_parts.descr AS voicePartDescr', 'students.class_of',
                 'ensemble_members.school_year', 'ensemble_members.status', 'ensemble_members.office',
                 'ensemble_members.id')
+            ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
             ->get()
             ->toArray();
     }

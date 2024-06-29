@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\PageView;
 use App\Models\Schools\School;
 use App\Models\UserConfig;
+use App\Models\UserSort;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -30,6 +31,7 @@ class BasePage extends Component
     public string $sortCol = '';
     public string $sortColLabel = '';
     public string $successMessage = '';
+    protected $userSort;
 
     public const ENSEMBLETABS = ['ensembles', 'members', 'assets', 'inventory'];
 
@@ -59,6 +61,11 @@ class BasePage extends Component
             ->where('header', $this->dto['header'])
             ->where('property', 'recordsPerPage')
             ->value('value') ?? 15;
+
+        $this->userSort = UserSort::query()
+            ->where('user_id', auth()->id())
+            ->where('header', $this->dto['header'])
+            ->first();
     }
 
     public function updatedRecordsPerPage(): void
