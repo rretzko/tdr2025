@@ -3,12 +3,16 @@
 
     <x-pageInstructions.instructions instructions="{!! $pageInstructions !!}" firstTimer="{{ $firstTimer }}"/>
 
-    {{-- SEARCH --}}
-    @if($hasSearch)
-        <div class="px-4 w-11/12">
-            <input class="w-3/4" type="text" placeholder="Search"/>
-        </div>
-    @endif
+    {{-- SEARCH AND RECORDS PER PAGE --}}
+    <div class="flex flex-row justify-between px-4 w-full">
+
+        {{-- SEARCH --}}
+        <x-tables.searchComponent/>
+
+        {{-- RECORDS PER PAGE --}}
+        <x-forms.indicators.recordsPerPage/>
+
+    </div>
 
     {{-- PAGE CONTENT --}}
     <div class="w-11/12">

@@ -110,6 +110,7 @@ class MembersTableComponent extends BasePageMember
             ->join('voice_parts', 'ensemble_members.voice_part_id', '=', 'voice_parts.id')
             ->join('schools', 'school_student.school_id', '=', 'schools.id')
             ->whereIn('ensemble_members.school_id', $schoolIds)
+            ->where('users.name', 'LIKE', '%'.$this->search.'%')
             ->tap(function ($query) {
                 $this->filters->filterStudentsBySchools($query);
                 $this->filters->filterMembersByEnsemble($query);
