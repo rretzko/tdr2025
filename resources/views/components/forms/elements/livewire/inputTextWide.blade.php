@@ -1,5 +1,6 @@
 @props([
     'autofocus' => false,
+    'blur' => true,
     'hint' => '',
     'label',
     'name',
@@ -20,7 +21,9 @@
     >
         {{ ucwords($label) }}
     </label>
-    <input wire:model.blur="{{ $name }}"
+    <input @if($blur) wire:model.blur @else
+        wire:model.live.debounce
+    @endif ="{{ $name }}"
            type="{{ $type }}"
            @class([
              'wide',

@@ -25,7 +25,8 @@
                 <span>alum</span>
             </label>
         @endif
-        @foreach($filters->$method() AS $key => $value)
+
+    @foreach($filters->$method() AS $key => $value)
 
             <label class="flex flex-row space-x-3 text-xs" wire:key="{{ $method }}-{{ $key }}">
 

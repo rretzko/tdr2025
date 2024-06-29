@@ -5,6 +5,7 @@ namespace App\Livewire\Ensembles\Members;
 use App\Livewire\BasePage;
 use App\Livewire\Forms\SchoolEnsembleMemberForm;
 use App\Models\Ensembles\Ensemble;
+use App\Models\Ensembles\Members\Member;
 use App\Models\Students\VoicePart;
 use App\Services\CalcGradeFromClassOfService;
 use App\Services\CalcSeniorYearService;
@@ -31,15 +32,6 @@ class BasePageMember extends BasePage
     ];
     public SchoolEnsembleMemberForm $form;
     public string $selectedTab = 'members';
-
-    protected function getEnsembles(): array
-    {
-        return Ensemble::query()
-            ->orderBy('name')
-            ->where('school_id', $this->form->schoolId)
-            ->pluck('name', 'id')
-            ->toArray();
-    }
 
     protected function getVoiceParts(): array
     {

@@ -41,7 +41,7 @@
         <div class="flex flex-row ">
 
             {{-- FILTERS --}}
-            @if($hasFilters)
+            @if($hasFilters && count($filterMethods))
                 <div class="flex justify-center">
                     <x-sidebars.filters :filters="$filters" :methods="$filterMethods"/>
                 </div>

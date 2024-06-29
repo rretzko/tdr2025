@@ -13,6 +13,7 @@ class BasePage extends Component
     use WithPagination;
 
     public array $dto;
+    public array $filterMethods = [];
     public Filters $filters;
     public string $firstTimer = 'false';
     public bool $hasFilters = false;

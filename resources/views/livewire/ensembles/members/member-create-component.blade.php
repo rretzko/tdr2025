@@ -17,23 +17,37 @@
                     <x-forms.elements.livewire.labeledInfoOnly label="Sys.Id" wireModel="form.sysId"/>
 
                     {{-- SCHOOLS --}}
-                    <x-forms.elements.livewire.selectWide
-                        autofocus
-                        label="school"
-                        name="form.schoolId"
-                        option0
-                        :options="$schools"
-                        required="required"
-                    />
+                    @if(count($schools) === 1)
+                        <x-forms.elements.livewire.labeledInfoOnly
+                            label="school"
+                            wireModel="form.schoolName"
+                        />
+                    @else
+                        <x-forms.elements.livewire.selectWide
+                            autofocus
+                            label="school"
+                            name="form.schoolId"
+                            option0
+                            :options="$schools"
+                            required="required"
+                        />
+                    @endif
 
                     {{-- ENSEMBLES --}}
-                    <x-forms.elements.livewire.selectWide
-                        label="ensemble"
-                        name="form.ensembleId"
-                        option0
-                        :options="$ensembles"
-                        required="required"
-                    />
+                    @if(count($ensembles) === 1)
+                        <x-forms.elements.livewire.labeledInfoOnly
+                            label="ensemble"
+                            wireModel="form.ensembleName"
+                        />
+                    @else
+                        <x-forms.elements.livewire.selectWide
+                            label="ensemble"
+                            name="form.ensembleId"
+                            option0
+                            :options="$ensembles"
+                            required="required"
+                        />
+                    @endif
 
                     {{-- SCHOOL YEAR --}}
                     <x-forms.elements.livewire.inputTextNarrow
@@ -45,6 +59,7 @@
 
                     {{-- NAME --}}
                     <x-forms.elements.livewire.inputTextWide
+                        blur=""
                         label="member name"
                         name="form.name"
                         placeholder="Enter first or last and tab out to search"
@@ -53,22 +68,22 @@
                     />
 
                     {{-- PRONOUNS --}}
-                    <x-forms.elements.livewire.selectWide
-                        label="preferred pronoun"
-                        name="form.pronounId"
-                        :options="$pronouns"
-                        required="required"
-                    />
+                    {{--                    <x-forms.elements.livewire.selectWide--}}
+                    {{--                        label="preferred pronoun"--}}
+                    {{--                        name="form.pronounId"--}}
+                    {{--                        :options="$pronouns"--}}
+                    {{--                        required="required"--}}
+                    {{--                    />--}}
 
                     {{-- MEMBER GRADE/CLASSOF --}}
-                    <x-forms.elements.livewire.inputTextNarrow
-                        label="Member Grade/Class Of"
-                        name="form.classOfGrade"
-                        blur=""
-                        placeholder="2025 or 9"
-                        required
-                        hint="Enter 'class of' or grade for current students."
-                    />
+                    {{--                    <x-forms.elements.livewire.inputTextNarrow--}}
+                    {{--                        label="Member Grade/Class Of"--}}
+                    {{--                        name="form.classOfGrade"--}}
+                    {{--                        blur=""--}}
+                    {{--                        placeholder="2025 or 9"--}}
+                    {{--                        required--}}
+                    {{--                        hint="Enter 'class of' or grade for current students."--}}
+                    {{--                    />--}}
 
                     {{-- VOICE PARTS --}}
                     <x-forms.elements.livewire.selectWide

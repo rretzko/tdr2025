@@ -1,10 +1,5 @@
 @props(['filters'])
 
-{{--<div x-data="{ count: 0 }">--}}
-{{--    <button @click="count++">Add</button>--}}
-{{--    <span x-text="count">0</span>--}}
-{{--</div>--}}
-
 <x-popover>
 
     <x-popover.button buttonId="filter-schools"

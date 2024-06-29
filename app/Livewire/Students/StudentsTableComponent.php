@@ -14,8 +14,6 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class StudentsTableComponent extends BasePage
 {
-    public array $filterMethods = [];
-
     public function mount(): void
     {
         parent::mount();

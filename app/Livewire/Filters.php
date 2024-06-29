@@ -2,6 +2,8 @@
 
 namespace App\Livewire;
 
+use App\Models\Ensembles\Ensemble;
+use App\Models\Ensembles\Members\Member;
 use App\Models\Students\VoicePart;
 use App\Models\UserFilter;
 use App\Services\CalcSeniorYearService;
@@ -15,6 +17,7 @@ class Filters extends Form
     public array $classOfsSelectedIds = [];
     #[Url]
     public array $ensemblesSelectedIds = [];
+    public array $ensembleYearsSelectedIds = [];
     public string $header = '';
     #[Url]
     public array $schoolsSelectedIds = [];
@@ -31,6 +34,9 @@ class Filters extends Form
                 $this->ensemblesSelectedIds[] = $ensemble->id;
             }
         }
+
+        //initially set ensembleYears filter to include ALL ensembles' school years
+        $this->ensembleYearsSelectedIds = array_values($this->ensembleYears());
 
         //initially set classOfs filter to include ALL classOfs for auth()->user()->teacher
         $this->classOfsSelectedIds = auth()->user()->teacher->students
@@ -75,20 +81,29 @@ class Filters extends Form
 
             foreach ($school->ensembles as $ensemble) {
 
-                $a[$ensemble->id] = $ensemble->abbr.' ('.$ensemble->school->abbr.')';
+                $a[$ensemble->id] = $ensemble->abbr;
             }
         }
 
         return $a;
     }
 
+    public function ensembleYears(): array
+    {
+        $schoolIds = auth()->user()->teacher->schools->pluck('id')->toArray();
+        $ensembleIds = Ensemble::whereIn('school_id', $schoolIds)->pluck('id')->toArray();
+
+        return Member::query()
+            ->whereIn('ensemble_id', $ensembleIds)
+            ->distinct('school_year')
+            ->pluck('school_year', 'school_year')
+            ->toArray();
+    }
+
     public function filterStudentsByClassOfs($query)
     {
-//$test = in_array('current', $this->classOfsSelectedIds);
-        //interpret "current" and "alum" into the current classOf values
         $this->interpretAggregateClassOfValues();
 
-//if($test){ dd($query->whereIn('students.class_of', $this->classOfsSelectedIds)->get());}
         return $query->whereIn('students.class_of', $this->classOfsSelectedIds);
     }
 
@@ -105,6 +120,11 @@ class Filters extends Form
     public function filterMembersByEnsemble($query)
     {
         return $query->whereIn('ensemble_members.ensemble_id', $this->ensemblesSelectedIds);
+    }
+
+    public function filterMembersBySchoolYear($query)
+    {
+        return $query->whereIn('ensemble_members.school_year', $this->ensembleYearsSelectedIds);
     }
 
     public function getPreviousFilterArray(string $filter, string $header): array

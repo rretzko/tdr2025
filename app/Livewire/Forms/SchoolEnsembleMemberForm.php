@@ -18,11 +18,13 @@ class SchoolEnsembleMemberForm extends Form
     public int $classOfGrade;
     public Ensemble $ensemble;
     public int $ensembleId = 0;
+    public string $ensembleName = '';
     public int $grade;
     public string $name = '';
     public string $office = 'member';
     public int $pronounId = 1;
     public int $schoolId = 0;
+    public string $schoolName = '';
     public int $schoolYear;
     public int $srYear = 1960;
     public string $status = 'active';
