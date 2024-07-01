@@ -5,9 +5,11 @@ namespace App\Livewire\Forms;
 use App\Models\Ensembles\AssetEnsemble;
 use App\Models\Ensembles\Ensemble;
 use App\Models\Schools\School;
+use App\Rules\UniqueSchoolEnsembleName;
 use JetBrains\PhpStorm\NoReturn;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
+use Illuminate\Validation\Rule;
 
 class EnsembleForm extends Form
 {
@@ -18,12 +20,23 @@ class EnsembleForm extends Form
     #[Validate('required', message: 'A description is required.')]
     public string $description = '';
     public array $ensembleAssets = [];
-    #[Validate('required', message: 'The ensemble name is required.')]
+    //#[Validate('required', message: 'The ensemble name is required.')]
     public string $name = '';
     public int $schoolId = 0;
     #[Validate('required', message: 'A short name is required.')]
     public string $shortName = '';
     public string $sysId = 'new';
+
+    public function rules(): array
+    {
+        return [
+            'name' => [
+                'required', 'string', Rule::unique('ensembles')->where(function ($query) {
+                    return $query->where('school_id', $this->schoolId);
+                })
+            ]
+        ];
+    }
 
     public function setEnsemble(Ensemble $ensemble)
     {
@@ -48,13 +61,13 @@ class EnsembleForm extends Form
     public function update()
     {
         $this->validate(
-            [
-                'name' => ['required', 'string'],
-                'shortName' => ['required', 'string'],
-                'abbr' => ['required', 'string'],
-                'description' => ['required', 'string'],
-                'active' => ['nullable', 'boolean'],
-            ]
+//            [
+//                'name' => ['required', 'string'],
+//                'shortName' => ['required', 'string'],
+//                'abbr' => ['required', 'string'],
+//                'description' => ['required', 'string'],
+//                'active' => ['nullable', 'boolean'],
+//            ]
         );
 
         ($this->sysId === 'new')

@@ -17,6 +17,8 @@ class SchoolStudent extends Model
         'active',
     ];
 
+    public $timestamps = false;
+
     public function school(): BelongsTo
     {
         return $this->belongsTo(School::class);

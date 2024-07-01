@@ -67,11 +67,22 @@
                 <td class="border border-gray-200 px-1 text-center">
                     {{ $row['shirtSize'] }}
                 </td>
-                <td class="text-center border border-gray-200">
-                    <x-buttons.edit id="{{ $row['studentId'] }}" route="student.edit"/>
+                <td class="border border-gray-200 px-1  ">
+                    @if($row['active'])
+                        <div class="flex items-center justify-center text-green-600">
+                            <x-heroicons.check/>
+                        </div>
+                    @else
+                        <div class=" flex items-center justify-center text-red-600">
+                            <x-heroicons.xMark/>
+                        </div>
+                    @endif
                 </td>
                 <td class="text-center border border-gray-200">
-                    <x-buttons.remove id="{{ $row['studentId'] }}" livewire="1"/>
+                    <x-buttons.edit id="{{ $row['schoolStudentId'] }}" route="student.edit"/>
+                </td>
+                <td class="text-center border border-gray-200">
+                    <x-buttons.remove id="{{ $row['schoolStudentId'] }}" livewire="1"/>
                 </td>
             </tr>
 

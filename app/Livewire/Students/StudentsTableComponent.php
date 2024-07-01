@@ -38,7 +38,7 @@ class StudentsTableComponent extends BasePage
             : $this->filters->voicePartIdsSelectedIds;
 
         //filterMethods
-        if (count($this->filters->schoolsSelectedIds) > 1) {
+        if ($this->schoolCount > 1) {
             $this->filterMethods[] = 'schools';
         }
         if (count($this->filters->classOfsSelectedIds) > 1) {
@@ -79,8 +79,9 @@ class StudentsTableComponent extends BasePage
         $this->sortColLabel = $key;
 
         $properties = [
-            'name' => 'users.last_name',
+            'active' => 'school_student.active',
             'classOf' => 'students.class_of',
+            'name' => 'users.last_name',
             'voicePart' => 'voice_parts.order_by',
         ];
 
@@ -108,6 +109,7 @@ class StudentsTableComponent extends BasePage
             ['label' => 'height', 'sortBy' => ''],
             ['label' => 'birthday', 'sortBy' => ''],
             ['label' => 'shirt size', 'sortBy' => ''],
+            ['label' => 'active', 'sortBy' => 'active'],
         ];
     }
 
@@ -141,8 +143,11 @@ class StudentsTableComponent extends BasePage
                 $this->filters->filterStudentsByClassOfs($query, $this->search);
                 $this->filters->filterStudentsByVoicePartIds($query, $this->search);
             })
-            ->select('users.name', 'schools.name AS schoolName', 'students.class_of AS classOf',
-                'students.height', 'students.birthday', 'students.shirt_size AS shirtSize', 'students.id AS studentId',
+            ->select('users.name',
+                'schools.name AS schoolName', 'schools.id AS schoolId',
+                'school_student.id AS schoolStudentId', 'school_student.active',
+                'students.class_of AS classOf', 'students.height', 'students.birthday',
+                'students.shirt_size AS shirtSize', 'students.id AS studentId',
                 'voice_parts.descr AS voicePart', 'users.email', 'mobile.phone_number AS phoneMobile',
                 'home.phone_number AS phoneHome', 'users.last_name', 'users.first_name', 'users.middle_name',
                 'users.prefix_name', 'users.suffix_name'

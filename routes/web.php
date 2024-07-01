@@ -64,7 +64,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('students');
     Route::get('student/new', [\App\Http\Controllers\Students\StudentController::class, 'create'])
         ->name('student.create');
-    Route::get('student/edit/{student}', [\App\Http\Controllers\Students\StudentController::class, 'edit'])
+    Route::get('student/edit/{school_student}', [\App\Http\Controllers\Students\StudentController::class, 'edit'])
         ->name('student.edit');
     Route::get('student/comms/edit/{student}',
         [\App\Http\Controllers\Students\StudentCommunicationsController::class, 'edit'])

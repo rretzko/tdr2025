@@ -9,6 +9,7 @@ use App\Models\Geostate;
 use App\Models\Pronoun;
 use App\Models\Schools\GradesITeach;
 use App\Models\Schools\School;
+use App\Models\SchoolStudent;
 use App\Models\Students\Student;
 use App\Models\Students\VoicePart;
 use App\Services\CalcClassOfFromGradeService;
@@ -54,10 +55,11 @@ class BasePageStudent extends BasePage
         if ($this->dto['id']) {
 
             //set selected student
-            $this->student = Student::find($this->dto['id']);
-            $this->form->setStudent($this->getGradesITeach(), $this->student);
+            $this->student = Student::find(SchoolStudent::find($this->dto['id'])->student_id);
+            $this->form->setStudent($this->getGradesITeach(), $this->student, $this->dto['id']);
             $this->fullName = $this->student->user->name;
             $this->sysId = $this->student->id;
+
         } else {
 
             //set default student

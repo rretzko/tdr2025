@@ -1,5 +1,5 @@
 @props([
-    'id' => 0,
+    'id',
     'livewire' => 0,
     'route' => '',
 ])

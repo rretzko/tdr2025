@@ -4,6 +4,8 @@ namespace App\Livewire\Students;
 
 use App\Livewire\BasePage;
 use App\Livewire\Forms\StudentForm;
+use App\Models\Schools\School;
+use App\Models\SchoolStudent;
 use App\Models\Students\Student;
 use Carbon\Carbon;
 use JetBrains\PhpStorm\NoReturn;
@@ -13,8 +15,19 @@ use JetBrains\PhpStorm\NoReturn;
  */
 class StudentEditComponent extends BasePageStudent
 {
-    public string $successMessagePronoun;
-    public string $successMessageSchool;
+    public string $successMessageActive = '';
+    public string $successMessagePronoun = '';
+    public string $successMessageSchool = '';
+    public string $successMessageSchoolId = '';
+
+    public function mount(): void
+    {
+        parent::mount();
+
+        $this->school = School::find(SchoolStudent::find($this->dto['id'])->school_id);
+
+        $this->form->schoolId = $this->school->id;
+    }
 
     public function render()
     {
@@ -31,11 +44,11 @@ class StudentEditComponent extends BasePageStudent
         );
     }
 
-    #[NoReturn] public function updatedFormClassOf(): void
+    #[NoReturn] public function updatedFormActive(): void
     {
-        $this->student->update(['class_of' => $this->form->classOf]);
+        $this->form->updateActive();
 
-        $this->successMessageSchool = 'Grade updated.';
+        $this->successMessageActive = 'Student active status updated.';
     }
 
     #[NoReturn] public function updatedFormBirthday(): void
@@ -43,6 +56,13 @@ class StudentEditComponent extends BasePageStudent
         $this->student->update(['birthday' => Carbon::parse($this->form->birthday)->format('Y-m-d')]);
 
         $this->successMessageSchool = 'Birthday updated.';
+    }
+
+    #[NoReturn] public function updatedFormClassOf(): void
+    {
+        $this->student->update(['class_of' => $this->form->classOf]);
+
+        $this->successMessageSchool = 'Grade updated.';
     }
 
     #[NoReturn] public function updatedFormFirst(): void
@@ -84,6 +104,15 @@ class StudentEditComponent extends BasePageStudent
         $this->student->user->update(['pronoun_id' => $this->form->pronounId]);
 
         $this->successMessagePronoun = 'Preferred pronoun updated.';
+    }
+
+    #[NoReturn] public function updatedFormSchoolId(): void
+    {
+        $this->school = School::find($this->form->schoolId);
+
+        $this->form->updateSchoolStudent();
+
+        $this->successMessageSchoolId = 'School updated.';
     }
 
     #[NoReturn] public function updatedFormShirtSize(): void

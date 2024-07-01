@@ -77,21 +77,35 @@
                 <fieldset id="student-info">
 
                     {{-- SCHOOL --}}
-                    @if($school->id)
-                        <x-forms.elements.livewire.labeledInfoOnly
-                            label="School"
-                            data="{{  $schoolName }}"
-                            wireModel="schoolName"
+                    <x-forms.elements.livewire.selectWide
+                        label="school"
+                        name="form.schoolId"
+                        option0
+                        :options="$schools"
+                        required="required"
+                    />
+
+                    <div class="mb-2 text-green-600 italic text-xs">
+                        @if($successMessageSchoolId)
+                            {{ $successMessageSchoolId }}
+                        @endif
+                    </div>
+
+                    <div class="mb-2">
+                        <x-forms.elements.livewire.inputCheckbox
+                            hint='' {{-- For students, only one school can be active at a time.' --}}
+                        label='active?'
+                            name="form.active"
+                            type='bool'
+                            value='1'
                         />
-                    @else
-                        <x-forms.elements.livewire.selectWide
-                            label="school"
-                            name="schoolId"
-                            option0
-                            :options="$schools"
-                            required="required"
-                        />
-                    @endif
+                    </div>
+
+                    <div class="mb-2 text-green-600 italic text-xs">
+                        @if($successMessageActive)
+                            {{ $successMessageActive }}
+                        @endif
+                    </div>
 
                     <fieldset class="flex flex-col md:flex-row md:space-x-2">
 

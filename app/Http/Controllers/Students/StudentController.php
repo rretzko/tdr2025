@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Students;
 use App\Data\ViewDataFactory;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Students\StudentRequest;
+use App\Models\Schools\School;
+use App\Models\SchoolStudent;
 use App\Models\Students\Student;
 
 class StudentController extends Controller
@@ -28,13 +30,13 @@ class StudentController extends Controller
         return view($dto['pageName'], compact('dto'));
     }
 
-    public function edit(Student $student)
+    public function edit(SchoolStudent $schoolStudent)
     {
-        $data = new ViewDataFactory(__METHOD__, $student->id);
+        $data = new ViewDataFactory(__METHOD__, $schoolStudent->id);
 
         $dto = $data->getDto();
 
-        $id = $student->id;
+        $id = $schoolStudent->id;
 
         return view($dto['pageName'], compact('dto', 'id'));
     }

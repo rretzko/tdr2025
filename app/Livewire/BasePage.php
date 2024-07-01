@@ -23,6 +23,7 @@ class BasePage extends Component
     public string $pageInstructions = "no instructions found...";
     public int $recordsPerPage = 15;
     public School $school;
+    public int $schoolCount = 0;
     public string $schoolName = '';
     public array $schools = [];
     public string $search = '';
@@ -46,7 +47,10 @@ class BasePage extends Component
             ->pluck('name', 'id')
             ->toArray();
 
-        $this->school = (count($this->schools) === 1)
+        //$this->schoolCount is used to determine if the schools filter should be displayed
+        $this->schoolCount = count($this->schools);
+
+        $this->school = ($this->schoolCount === 1)
             ? auth()->user()->teacher->schools->first()
             : new School();
 

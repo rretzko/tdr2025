@@ -5,6 +5,7 @@ namespace App\Livewire\Forms;
 use App\Models\PhoneNumber;
 use App\Models\Schools\School;
 use App\Models\Schools\Teacher;
+use App\Models\SchoolStudent;
 use App\Models\Students\Student;
 use App\Models\User;
 use App\Services\FindMatchingStudentService;
@@ -20,6 +21,7 @@ use Livewire\Form;
 
 class StudentForm extends Form
 {
+    public bool $active = false;
     public string $address1 = '';
     public string $address2 = '';
     #[Validate('nullable', 'date')]
@@ -57,6 +59,8 @@ class StudentForm extends Form
     #[Validate('required', 'exists:voice_parts,id')]
     public int $voicePartId = 1; //default soprano
 
+    public int $studentId = 0;
+
     private array $shirtSizes = [];
 
     public function resetDuplicateStudentAdvisory()
@@ -79,7 +83,7 @@ class StudentForm extends Form
         $this->shirtSizes = $shirtSizes;
     }
 
-    public function setStudent(array $gradesITeach, Student $student = null): void
+    public function setStudent(array $gradesITeach, Student $student = null, int $schoolStudentId = 0): void
     {
         if ($student) {
 
@@ -97,6 +101,14 @@ class StudentForm extends Form
             $this->phoneMobile = $student->phoneMobile ?? '';
             $this->phoneHome = $student->phoneHome ?? '';
 
+            $this->studentId = $student->id;
+
+            //SchoolStudent
+            $schoolStudent = SchoolStudent::find($schoolStudentId);
+
+            $this->active = $schoolStudent->active;
+
+            //Address
             if ($student->address) {
 
                 $address = $student->address;
@@ -162,6 +174,45 @@ class StudentForm extends Form
 
             return $this->properlyUpdated();
         }
+    }
+
+    public function updateActive(): void
+    {
+        if ($this->active) {
+            //change any active statuses to inactive
+            SchoolStudent::where('student_id', $this->studentId)->update(['active' => 0]);
+        }
+
+        //set the current schoolStatus to updated active value or create new.
+        SchoolStudent::updateOrCreate(
+            [
+                'school_id' => $this->schoolId,
+                'student_id' => $this->studentId,
+            ],
+            [
+                'active' => $this->active,
+            ]
+        );
+    }
+
+    public function updateSchoolStudent(): void
+    {
+        if ($this->studentId) {
+
+            //make all other schools inactive
+            SchoolStudent::where('student_id', $this->studentId)->update(['active' => 0]);
+
+            SchoolStudent::updateOrCreate(
+                [
+                    'school_id' => $this->schoolId,
+                    'student_id' => $this->studentId
+                ],
+                [
+                    'active' => 1,
+                ]
+            );
+        }
+
     }
 
     public function updateWithoutDuplicateStudentCheck(): void

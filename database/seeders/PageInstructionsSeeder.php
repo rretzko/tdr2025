@@ -125,7 +125,11 @@ Commercial emails (gmail, hotmail, etc.) are automatically <strong>unverified</s
 <p>
 This page is divided into four tabs and allows you to edit your student information.  The tabs are:
 <ul>
-<li><strong>bio</strong>: containing name, etc.</li>
+<li><strong>bio</strong>: containing name, etc.
+<ul>
+<li>Students may be "active" in only ONE school at a time.</li>
+</ul>
+</li>
 <li><strong>comms</strong>: containing email, phone numbers, and home address,</li>
 <li><strong>emergency contact</strong>: containing the student emergency contact information, and </li>
 <li><strong>password reset</strong>: a single button allowing you to reset the student\'s password to their lower-case email address.</li>
