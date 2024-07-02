@@ -32,7 +32,7 @@
     {{-- HINT --}}
     @if($hint)
         <div class="text-xs ml-1 italic">
-            {{ $hint }}
+            {!! $hint !!}
         </div>
     @endif
 

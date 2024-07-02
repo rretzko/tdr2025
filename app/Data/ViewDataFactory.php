@@ -145,6 +145,10 @@ class ViewDataFactory extends aViewData
             'asset create' => 'ensembles.assets.asset-create-component',
             'asset edit' => 'ensembles.assets.asset-edit-component',
 
+            'inventories' => 'ensembles.inventories.inventories-table-component',
+            'inventory create' => 'ensembles.inventories.inventory-create-component',
+            'inventory edit' => 'ensembles.inventories.inventory-edit-component',
+
             'members' => 'ensembles.members.members-table-component',
             'member create' => 'ensembles.members.member-create-component',
             'member edit' => 'ensembles.members.member-edit-component',

@@ -37,6 +37,18 @@ Breadcrumbs::for('assets', function (BreadcrumbTrail $trail) {
     $trail->push('Assets', route('assets'));
 });
 
+// Ensembles.Inventories
+Breadcrumbs::for('inventories', function (BreadcrumbTrail $trail) {
+    $trail->parent('ensembles');
+    $trail->push('Inventories', route('inventories'));
+});
+
+// Ensembles.Inventory.Create
+Breadcrumbs::for('inventory create', function (BreadcrumbTrail $trail) {
+    $trail->parent('inventories');
+    $trail->push('Add Inventory', route('inventories'));
+});
+
 // Ensembles.Members
 Breadcrumbs::for('members', function (BreadcrumbTrail $trail) {
     $trail->parent('ensembles');

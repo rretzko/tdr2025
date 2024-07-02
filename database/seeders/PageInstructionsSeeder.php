@@ -190,6 +190,47 @@ This page is divided into four tabs and allows you to edit your student informat
                 'instructions' => '<p>School Ensemble Member edit page instructions</p>
 <p>Use this page to edit a school ensemble\'s member information</p>'
             ],
+            [
+                'header' => 'inventories',
+                'instructions' => '<p>Inventory table page instructions</p>
+<p>Inventory table page instructions...</p>'
+            ],
+            [
+                'header' => 'inventory create',
+                'instructions' => '<p>Inventory create page instructions.</p>
+<p>Use this page to record your asset inventory to assist with inventory assignment, collection, and reconciliation.
+<br />
+For example: A package of 25 new cummerbunds has just been received.  You\'ll number these items and then assign the items to your ensemble members.  Use this form to record item-specific information.
+</p>
+<div>
+<ul>
+<li><strong>Asset</strong>: Select the previously created asset category from the drop-down list.
+<ul>
+<li>Note: Clicking the "Submit and Add Another" button when submitting the form will remember this selection so that you can simply tab through it on subsequent entries.</li>
+</ul>
+</li>
+<li><strong>Item Id</strong>: Enter the item number/id that you use for the item.</li>
+<li><strong>Size</strong>: If the item has a size and you want to track it, enter that here.  This field can be left blank if unneeded.
+<ul>
+<li>Note: This will also be remembered by the system.</li>
+</ul>
+</li>
+<li><strong>Color</strong>: If the item has a color or colors and you want to track it, enter that here.  This field can be left blank if unneeded.
+ul>
+<li>Note: This will also be remembered by the system.</li>
+</ul>
+</li>
+<li><strong>Status</strong>: The "available" status is pre-selected, but can be changed to: "assigned", "lost", "removed", or "unreturned" if needed.</li>
+<li><strong>Comments</strong>Use this field to record any additional comments or information that might be helpful in the future.</li>
+</ul>
+</div>
+    '
+            ],
+            [
+                'header' => 'inventory edit',
+                'instructions' => '<p>Inventory edit page instructions</p>
+<p>Inventory edit page instructions...</p>'
+            ],
         ];
     }
 

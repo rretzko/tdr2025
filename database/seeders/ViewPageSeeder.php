@@ -116,6 +116,18 @@ class ViewPageSeeder extends Seeder
                 'livewire',
                 'member create'
             ],
+            [
+                'InventoryController',
+                'create',
+                'livewire',
+                'inventory new'
+            ],
+            [
+                'InventoryController',
+                'edit',
+                'livewire',
+                'inventory edit'
+            ],
         ];
 
         foreach ($seeds as $seed) {

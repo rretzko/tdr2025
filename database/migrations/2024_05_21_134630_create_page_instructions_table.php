@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('page_instructions', function (Blueprint $table) {
             $table->id();
-            $table->string('header');
+            $table->string('header')->unique();
             $table->longText('instructions');
             $table->timestamps();
         });

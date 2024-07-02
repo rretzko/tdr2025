@@ -48,6 +48,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('events', [\App\Http\Controllers\Events\EventController::class, 'index'])
         ->name('events');
 
+    //INVENTORIES
+    Route::get('ensembles/inventory', [\App\Http\Controllers\Ensembles\Inventories\InventoryController::class, 'index'])
+        ->name('inventories');
+    Route::get('ensembles/inventory/new',
+        [\App\Http\Controllers\Ensembles\Inventories\InventoryController::class, 'create'])
+        ->name('inventory.create');
+
+    //LIBRARIES
     Route::get('libraries', [\App\Http\Controllers\Libraries\libraryController::class, 'index'])
         ->name('libraries');
 
