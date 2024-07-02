@@ -67,24 +67,6 @@
                         :results="$resultsName"
                     />
 
-                    {{-- PRONOUNS --}}
-                    {{--                    <x-forms.elements.livewire.selectWide--}}
-                    {{--                        label="preferred pronoun"--}}
-                    {{--                        name="form.pronounId"--}}
-                    {{--                        :options="$pronouns"--}}
-                    {{--                        required="required"--}}
-                    {{--                    />--}}
-
-                    {{-- MEMBER GRADE/CLASSOF --}}
-                    {{--                    <x-forms.elements.livewire.inputTextNarrow--}}
-                    {{--                        label="Member Grade/Class Of"--}}
-                    {{--                        name="form.classOfGrade"--}}
-                    {{--                        blur=""--}}
-                    {{--                        placeholder="2025 or 9"--}}
-                    {{--                        required--}}
-                    {{--                        hint="Enter 'class of' or grade for current students."--}}
-                    {{--                    />--}}
-
                     {{-- VOICE PARTS --}}
                     <x-forms.elements.livewire.selectWide
                         label="voice part"
@@ -113,8 +95,14 @@
 
             </div>
 
-            {{-- SUBMIT --}}
-            <x-buttons.submit/>
+            <div class="flex flex-row space-x-2">
+                {{-- SUBMIT AND RETURN TO TABLE VIEW--}}
+                <x-buttons.submit/>
+
+                {{-- SUBMIT AND STAY --}}
+                <x-buttons.submitAndStay/>
+
+            </div>
 
             {{-- SUCCESS INDICATOR --}}
             <x-forms.indicators.successIndicator :showSuccessIndicator="$showSuccessIndicator"

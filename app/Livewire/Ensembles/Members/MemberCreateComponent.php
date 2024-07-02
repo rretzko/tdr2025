@@ -48,6 +48,17 @@ class MemberCreateComponent extends BasePageMember
         return redirect()->route('members');
     }
 
+    /**
+     * Add the submitted member and then stay on the Create Member form, persisting appropriate values
+     * @return void
+     */
+    public function saveAndStay()
+    {
+        $this->form->updateAndStay();
+
+        return redirect()->back();
+    }
+
     public function setStudent(Student $student): void
     {
         $this->reset('resultsName');

@@ -67,6 +67,13 @@ class SchoolEnsembleMemberForm extends Form
             : $this->updateSchoolEnsembleMember();
     }
 
+    public function updateAndStay()
+    {
+        $this->update();
+
+        $this->reset('name', 'office');
+    }
+
     private function add()
     {
         $user = $this->makeUser();
