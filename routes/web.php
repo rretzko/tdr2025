@@ -54,6 +54,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('ensembles/inventory/new',
         [\App\Http\Controllers\Ensembles\Inventories\InventoryController::class, 'create'])
         ->name('inventory.create');
+    Route::get('ensembles/inventory/{inventory}',
+        [\App\Http\Controllers\Ensembles\Inventories\InventoryController::class, 'edit'])
+        ->name('inventory.edit');
 
     //LIBRARIES
     Route::get('libraries', [\App\Http\Controllers\Libraries\libraryController::class, 'index'])

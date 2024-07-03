@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Ensembles\Inventories;
 
+use Illuminate\Routing\Redirector;
+
 class InventoryCreateComponent extends BasePageInventory
 {
     public function render()
@@ -10,5 +12,14 @@ class InventoryCreateComponent extends BasePageInventory
             [
                 'statuses' => self::INVENTORYSTATUSES,
             ]);
+    }
+
+    public function save()
+    {
+        $this->form->update();
+
+        $this->successMessage = 'Inventory item successfully added.';
+
+        return $this->redirectRoute('inventories');
     }
 }

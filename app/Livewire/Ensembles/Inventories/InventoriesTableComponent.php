@@ -3,6 +3,7 @@
 namespace App\Livewire\Ensembles\Inventories;
 
 use App\Livewire\Ensembles\Inventories\BasePageInventory;
+use Illuminate\Support\Facades\DB;
 
 class InventoriesTableComponent extends BasePageInventory
 {
@@ -31,14 +32,21 @@ class InventoriesTableComponent extends BasePageInventory
             ['label' => '###', 'sortBy' => ''],
             ['label' => 'asset', 'sortBy' => 'asset'],
             ['label' => 'size', 'sortBy' => 'size'],
-            ['label' => 'year', 'sortBy' => 'schoolYear'],
             ['label' => 'color(s)', 'sortBy' => ''],
+            ['label' => 'comments', 'sortBy' => ''],
+            ['label' => 'status', 'sortBy' => 'status'],
         ];
     }
 
     private function getInventories(): array
     {
-        return [];
+        return DB::table('inventories')
+            ->join('assets', 'assets.id', '=', 'inventories.asset_id')
+            ->select('inventories.id', 'inventories.item_id', 'inventories.size', 'inventories.color',
+                'inventories.comments', 'inventories.status',
+                'assets.name')
+            ->get()
+            ->toArray();
     }
 
     public function updatedSelectedTab()

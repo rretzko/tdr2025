@@ -45,36 +45,32 @@
             <tr
                 @class([
                     'odd:bg-green-50',
-                    'text-gray-400, bg-gray-50, odd:bg-gray-50' => (! ($row->status === 'active')),
+//                    'text-gray-400, bg-gray-50, odd:bg-gray-50' => (! ($row->status === 'active')),
                 ])
             >
                 <td class="border border-gray-200 px-1 text-center">
                     {{ $loop->iteration }}
                 </td>
                 <td class="border border-gray-200 px-1">
-                    <div>{{ $row->name }}</div>
-                    <div class="ml-2 text-xs italic">{{ $row->schoolName }}</div>
+                    {{ $row->name }}
                 </td>
                 <td class="border border-gray-200 px-1 text-center">
-                    {{ $row->ensembleName }}
+                    {{ $row->item_id }}
                 </td>
                 <td class="border border-gray-200 px-1 text-center">
-                    {{ $row->voicePartDescr }}
+                    {{ $row->size }}
                 </td>
                 <td class="border border-gray-200 px-1 text-center">
-                    {{ $row->class_of }}
+                    {{ $row->color }}
                 </td>
                 <td class="border border-gray-200 px-1 text-center">
-                    {{ $row->school_year }}
+                    {{ $row->comments }}
                 </td>
                 <td class="border border-gray-200 px-1 text-center">
                     {{ $row->status }}
                 </td>
-                <td class="border border-gray-200 px-1 text-center">
-                    {{ $row->office }}
-                </td>
                 <td class="text-center border border-gray-200">
-                    <x-buttons.edit id="{{ $row->id }}" route="schoolEnsembleMember.edit"/>
+                    <x-buttons.edit id="{{ $row->id }}" route="inventory.edit"/>
                 </td>
                 <td class="text-center border border-gray-200">
                     <x-buttons.remove id="{{ $row->id }}" livewire="1"/>
