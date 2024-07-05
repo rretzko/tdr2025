@@ -38,6 +38,7 @@ class SchoolForm extends Form
     public string $resultsName = '';
     public School $school;
     public SchoolTeacher $schoolTeacher;
+    public array $subjects = [];
     public string $sysId = 'new';
 
     public function rules()

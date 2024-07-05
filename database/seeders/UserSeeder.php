@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Schools\SchoolTeacher;
 use App\Models\Schools\Teacher;
+use App\Models\Schools\Teachers\TeacherSubject;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -54,6 +55,7 @@ class UserSeeder extends Seeder
 
         //set Founder as Teacher for testing
         Teacher::create(['id' => 368, 'user_id' => 368]);
+
         SchoolTeacher::create(
             [
                 'school_id' => 1,
@@ -61,6 +63,14 @@ class UserSeeder extends Seeder
                 'email' => 'rick@mfracademy.edu',
                 'email_verified_at' => Carbon::now(),
                 'active' => 1
+            ]
+        );
+
+        TeacherSubject::create(
+            [
+                'teacher_id' => 368,
+                'school_id' => 1,
+                'subject' => 'chorus',
             ]
         );
     }

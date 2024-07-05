@@ -8,6 +8,7 @@ use App\Models\Schools\School;
 use App\Models\Schools\SchoolGrade;
 use App\Models\Schools\SchoolTeacher;
 use App\Models\Schools\Teacher;
+use App\Models\Schools\Teachers\TeacherSubject;
 use App\Models\Students\Student;
 use App\Models\User;
 use Carbon\Carbon;
@@ -41,6 +42,14 @@ class Teachers100Seeder extends Seeder
                     'email' => $user->email,
                     'email_verified_at' => Carbon::now(),
                     'active' => 1,
+                ]
+            );
+
+            TeacherSubject::create(
+                [
+                    'teacher_id' => $teacher->id,
+                    'school_id' => $school->id,
+                    'subject' => 'chorus',
                 ]
             );
 

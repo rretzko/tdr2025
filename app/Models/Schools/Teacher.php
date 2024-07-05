@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class Teacher extends Model
@@ -37,6 +38,16 @@ class Teacher extends Model
 //            ->where('teacher_id', $this->id)
 //            ->pluck('grade')
 //            ->toArray());
+    }
+
+    public function getSubjects(School $school): array
+    {
+        return DB::table('teacherSubjects')
+            ->where('teacher_id', $this->id)
+            ->where('school_id', $school->id)
+            ->pluck('subject', 'id')
+            ->toArray();
+
     }
 
     public function isVerified(): bool
