@@ -26,10 +26,15 @@ class EnsemblesTableComponent extends BasePageEnsemble
 
     public function render()
     {
+        $rows = $this->getEnsembles();
+
+        $memberCounts = $this->getMemberCounts($rows);
+
         return view('livewire..ensembles.ensembles-table-component',
             [
                 'columnHeaders' => $this->getColumnHeaders(),
-                'rows' => $this->getEnsembles(),
+                'rows' => $rows,
+                'memberCounts' => $memberCounts,
             ]);
     }
 
@@ -62,7 +67,7 @@ class EnsemblesTableComponent extends BasePageEnsemble
     private function getColumnHeaders(): array
     {
         return [
-            'name/school', 'short name', 'abbr', 'description', 'active', 'assets',
+            'name/school', 'short name', 'abbr', 'description', 'members', 'active', 'assets',
         ];
     }
 
@@ -95,7 +100,28 @@ class EnsemblesTableComponent extends BasePageEnsemble
         $this->buildEnsembleAssetsCsvs($a);
 
         return $a;
+    }
 
+    private function getMemberCounts(array $rows): array
+    {
+        $a = [];
+
+        foreach ($rows as $schoolEnsembles) {
+
+            foreach ($schoolEnsembles as $ensemble) {
+
+                $schoolEnsemble = Ensemble::find($ensemble['id']);
+                $activeMemberCount = $schoolEnsemble->countActiveMembers();
+                $nonActiveMemberCount = $schoolEnsemble->countNonActiveMembers();
+
+                $a[$ensemble['id']] = [
+                    'countActive' => $activeMemberCount,
+                    'countNonActive' => $nonActiveMemberCount,
+                ];
+            }
+        }
+
+        return $a;
     }
 
     private function getSchools(): array

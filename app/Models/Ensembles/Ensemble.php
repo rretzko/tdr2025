@@ -2,6 +2,7 @@
 
 namespace App\Models\Ensembles;
 
+use App\Models\Ensembles\Members\Member;
 use App\Models\Schools\School;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -30,5 +31,21 @@ class Ensemble extends Model
     public function school(): BelongsTo
     {
         return $this->belongsTo(School::class);
+    }
+
+    public function countActiveMembers(): int
+    {
+        return Member::query()
+            ->where('ensemble_id', $this->id)
+            ->where('status', 'active')
+            ->count('id');
+    }
+
+    public function countNonActiveMembers(): int
+    {
+        return Member::query()
+            ->where('ensemble_id', $this->id)
+            ->whereNot('status', 'active')
+            ->count('id');
     }
 }
