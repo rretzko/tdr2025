@@ -95,6 +95,17 @@
                     <td class="border border-gray-200 px-1">
                         {{ $row->gradesITeach }} {{-- grades i teach--}}
                     </td>
+                    <td class="border border-gray-200 px-2">
+                        @if($row->subjects)
+                            @forelse($row->subjects AS $subject)
+                                <div>{{ $subject }}</div>
+                            @empty
+                                <div>None</div>
+                            @endforelse
+                        @else
+                            <div>None</div>
+                        @endif
+                    </td>
 
                     <td class="text-center border border-gray-200">
                         <x-buttons.edit id="{{ $row->schoolId }}" livewire="1"/>

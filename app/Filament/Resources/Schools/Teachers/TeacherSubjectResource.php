@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Schools\Teachers;
 use App\Filament\Resources\Schools\Teachers\TeacherSubjectResource\Pages;
 use App\Models\Schools\Teachers\TeacherSubject;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -12,15 +13,10 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ForceDeleteAction;
-use Filament\Tables\Actions\ForceDeleteBulkAction;
-use Filament\Tables\Actions\RestoreAction;
-use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Eloquent\Model;
 
 class TeacherSubjectResource extends Resource
 {
@@ -46,9 +42,10 @@ class TeacherSubjectResource extends Resource
                     ->required()
                     ->integer(),
 
-                TextInput::make('school_id')
-                    ->required()
-                    ->integer(),
+                Select::make('school_id')
+                    ->relationship('school', 'name')
+                    ->searchable()
+                    ->required(),
 
                 TextInput::make('subject')
                     ->required(),
@@ -61,22 +58,22 @@ class TeacherSubjectResource extends Resource
             ->columns([
                 TextColumn::make('teacher_id'),
 
+                TextColumn::make('school.name')
+                    ->searchable()
+                    ->sortable(),
+
                 TextColumn::make('subject'),
             ])
             ->filters([
-                TrashedFilter::make(),
+                //
             ])
             ->actions([
                 EditAction::make(),
                 DeleteAction::make(),
-                RestoreAction::make(),
-                ForceDeleteAction::make(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -90,16 +87,24 @@ class TeacherSubjectResource extends Resource
         ];
     }
 
-    public static function getEloquentQuery(): Builder
+    public static function getGlobalSearchEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
+        return parent::getGlobalSearchEloquentQuery()->with(['school']);
     }
 
     public static function getGloballySearchableAttributes(): array
     {
-        return [];
+        return ['school.name'];
+    }
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        $details = [];
+
+        if ($record->school) {
+            $details['School'] = $record->school->name;
+        }
+
+        return $details;
     }
 }

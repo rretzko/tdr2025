@@ -37,7 +37,8 @@ class SchoolsTableService
                 'school_teacher.email',
                 'school_teacher.email_verified_at',
                 DB::raw('(SELECT GROUP_CONCAT(grade ORDER BY grade ASC SEPARATOR ",") FROM school_grades WHERE school_grades.school_id=schoolId) AS gradesTaught'),
-                DB::raw('(SELECT GROUP_CONCAT(grade ORDER BY grade ASC SEPARATOR ",") FROM grades_i_teaches WHERE grades_i_teaches.school_id=schoolId AND grades_i_teaches.teacher_id=school_teacher.teacher_id) AS gradesITeach')
+                DB::raw('(SELECT GROUP_CONCAT(grade ORDER BY grade ASC SEPARATOR ",") FROM grades_i_teaches WHERE grades_i_teaches.school_id=schoolId AND grades_i_teaches.teacher_id=school_teacher.teacher_id) AS gradesITeach'),
+                DB::raw('(SELECT GROUP_CONCAT(subject ORDER BY subject ASC SEPARATOR ",") FROM teacher_subjects WHERE teacher_subjects.teacher_id=school_teacher.teacher_id ) AS subjects')
             )
             ->get()
             ->toArray();

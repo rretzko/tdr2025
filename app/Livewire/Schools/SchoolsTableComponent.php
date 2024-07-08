@@ -29,7 +29,7 @@ class SchoolsTableComponent extends BasePage
     {
         return view('livewire.schools.schools-table-component',
             [
-                'columnHeaders' => ['name', 'address', 'grades', 'active?', 'email', 'verified', 'i teach',],
+                'columnHeaders' => ['name', 'address', 'grades', 'active?', 'email', 'verified', 'i teach', 'subjects'],
                 'rows' => $this->rows(),
             ]);
     }

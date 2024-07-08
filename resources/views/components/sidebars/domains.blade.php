@@ -1,4 +1,5 @@
-<div id="domains" class="bg-white p-2 mr-0.5 rounded-lg space-y-2 h-full">
+<div id="domains"
+     class="bg-white p-2 mr-0.5 mb-0.5 flex flex-row md:flex-col space-x-8 md:space-x-0 md:space-y-2 rounded-lg h-full ">
     <div class="text-indigo-600">
         <a href="{{ route('schools') }}" title="Schools">
             <x-heroicons.building/>

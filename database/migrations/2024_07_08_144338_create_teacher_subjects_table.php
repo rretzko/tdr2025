@@ -9,12 +9,10 @@ return new class extends Migration {
     {
         Schema::create('teacher_subjects', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(\App\Models\Schools\Teacher::class)->constrained();
-            $table->foreignIdFor(\App\Models\Schools\School::class)->constrained();
+            $table->foreignId('teacher_id');
+            $table->foreignId('school_id');
             $table->string('subject');
-            $table->softDeletes();
             $table->timestamps();
-            $table->unique(['teacher_id', 'school_id', 'subject'], 'uAll');
         });
     }
 

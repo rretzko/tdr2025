@@ -11,7 +11,7 @@
 
     {{-- SIDEBAR --}}
     <div class="py-0.5">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-row">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-col md:flex-row">
 
             {{-- DOMAINS --}}
             <x-sidebars.domains/>

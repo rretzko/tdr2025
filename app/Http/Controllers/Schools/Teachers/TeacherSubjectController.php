@@ -17,6 +17,7 @@ class TeacherSubjectController extends Controller
     {
         $data = $request->validate([
             'teacher_id' => ['required', 'exists:teachers'],
+            'school_id' => ['required', 'exists:schools'],
             'subject' => ['required'],
         ]);
 
@@ -32,6 +33,7 @@ class TeacherSubjectController extends Controller
     {
         $data = $request->validate([
             'teacher_id' => ['required', 'exists:teachers'],
+            'school_id' => ['required', 'exists:schools'],
             'subject' => ['required'],
         ]);
 

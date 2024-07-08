@@ -2,14 +2,15 @@
 
 namespace App\Models\Schools\Teachers;
 
+use App\Models\Schools\School;
 use App\Models\Schools\Teacher;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TeacherSubject extends Model
 {
-    use SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
         'teacher_id',
@@ -20,5 +21,10 @@ class TeacherSubject extends Model
     public function teacher(): BelongsTo
     {
         return $this->belongsTo(Teacher::class);
+    }
+
+    public function school(): BelongsTo
+    {
+        return $this->belongsTo(School::class);
     }
 }
