@@ -69,7 +69,7 @@
                     @for($i=1; $i<13; $i++)
                         <div>
                             <input wire:model.blur="form.gradesTaught"
-                                   wire:key="gradesTaught{{ $i }}"
+                                   wire:key="gradesTaught-{{ $i }}"
                                    type="checkbox"
                                    value="{{ $i }}"
                                    aria-label="grade {{ $i }}"
@@ -101,7 +101,7 @@
                     @for($i=1; $i<13; $i++)
                         <div>
                             <input wire:model.blur="form.gradesITeach"
-                                   wire:key="gradesITeach{{ $i }}"
+                                   wire:key="gradesITeach-{{ $i }}"
                                    type="checkbox"
                                    value="{{ $i }}"
                                    aria-label="grade {{ $i }}"
@@ -111,6 +111,38 @@
                     @endfor
                 </div>
                 @error('form.gradesITeach')
+                <x-input-error messages="{{ $message }}" aria-live="polite"/>
+                @enderror
+
+            </div>
+
+            {{-- SUBJECTS I TEACH IN SCHOOL --}}
+            <div class="flex flex-col">
+                <label for="" class="required">Subjects I Teach in School</label>
+                <div
+                    @class([
+                     'flex flex-row space-x-2',
+                     'border border-red-600 px-2 py-1' => $errors->has('form.subjects'),
+                     ])
+                    aria-label="subjects i teach"
+                    @error('form.subjects')
+                    aria-invalid="true"
+                    aria-description="{{ $message }}"
+                    @enderror
+                >
+                    @foreach($subjects AS $subject)
+                        <div>
+                            <input wire:model="form.subjects"
+                                   wire:key="subjects-{{ $subject }}"
+                                   type="checkbox"
+                                   value="{{ $subject }}"
+                                   aria-label="subject {{ $subject }}"
+                            />
+                            <label>{{ $subject }}</label>
+                        </div>
+                    @endforeach
+                </div>
+                @error('form.subjects')
                 <x-input-error messages="{{ $message }}" aria-live="polite"/>
                 @enderror
 

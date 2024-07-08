@@ -97,7 +97,7 @@
                     </td>
                     <td class="border border-gray-200 px-2">
                         @if($row->subjects)
-                            @forelse($row->subjects AS $subject)
+                            @forelse(explode(',', $row->subjects) AS $subject)
                                 <div>{{ $subject }}</div>
                             @empty
                                 <div>None</div>

@@ -41,6 +41,7 @@ class SchoolEditComponent extends BasePage
         return view('livewire..schools.school-edit-component',
             [
                 'counties' => County::orderBy('name')->pluck('name', 'id')->toArray(),
+                'subjects' => ['chorus', 'band', 'orchestra'],
             ]);
     }
 

@@ -8,6 +8,7 @@ use App\Models\Schools\GradesITeach;
 use App\Models\Schools\School;
 use App\Models\Schools\SchoolTeacher;
 use App\Models\Schools\Teacher;
+use App\Models\Schools\Teachers\TeacherSubject;
 use App\Services\SchoolsTableService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Routing\Redirector;
@@ -39,8 +40,17 @@ class SchoolsTableComponent extends BasePage
         return $this->redirectRoute('school.edit', ['school' => $schoolId]);
     }
 
+    /**
+     * @todo Test to determine impact of leaving student_teacher relationship in-place while removing the school_teacher relationship
+     */
     public function remove(int $schoolId): void
     {
+        //remove teacherSubject
+        TeacherSubject::query()
+            ->where('school_id', $schoolId)
+            ->where('teacher_id', auth()->id())
+            ->delete();
+
         $schoolTeacher = SchoolTeacher::query()
             ->where('school_id', $schoolId)
             ->where('teacher_id', auth()->id())
@@ -48,6 +58,7 @@ class SchoolsTableComponent extends BasePage
 
         $schoolName = $schoolTeacher->schoolName;
 
+        //remove schoolTeacher
         $schoolTeacher->delete();
 
         $this->showSuccessIndicator = true;

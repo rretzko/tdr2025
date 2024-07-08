@@ -8,6 +8,7 @@ use App\Models\Schools\GradesITeach;
 use App\Models\Schools\School;
 use App\Models\Schools\SchoolGrade;
 use App\Models\Schools\SchoolTeacher;
+use App\Models\Schools\Teachers\TeacherSubject;
 use App\ValueObjects\SchoolResultsValueObject;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Validate;
@@ -38,8 +39,10 @@ class SchoolForm extends Form
     public string $resultsName = '';
     public School $school;
     public SchoolTeacher $schoolTeacher;
+    #[Validate('min:1', message: 'At least one subject must be selected.')]
     public array $subjects = [];
     public string $sysId = 'new';
+    public TeacherSubject $teacherSubject;
 
     public function rules()
     {
@@ -102,6 +105,9 @@ class SchoolForm extends Form
 
         //delete old and insert new $this->gradesITeach
         $this->schoolTeacher->updateGradesITeach($this->gradesITeach, $this->school->id);
+
+        //delete old and insert new $this->subjects
+        $this->teacherSubject->updateTeacherSubject($this->subjects);
 
         //check for email change
         $emailChanged = $this->checkForEmailChange($this->school);
@@ -318,6 +324,7 @@ class SchoolForm extends Form
 
         $this->setGradesITeach();
         $this->setGradesTaught();
+        $this->setSubjects();
     }
 
     private function setGradesITeach(): void
@@ -344,7 +351,35 @@ class SchoolForm extends Form
                 'email_verified_at' => null,
             ]
         );
+    }
 
+    private function setSubjects(): void
+    {
+        $this->subjects = TeacherSubject::query()
+            ->where('school_id', $this->school->id)
+            ->where('teacher_id', auth()->id())
+            ->pluck('subject')
+            ->toArray();
+
+        if (!$this->subjects) {
+
+            TeacherSubject::create(
+                [
+                    'school_id' => $this->school->id,
+                    'teacher_id' => auth()->id(),
+                    'subject' => 'chorus', //default
+                ]
+            );
+
+            //recursive call ensures at least on row in $this->subjects array
+            $this->setSubjects();
+        }
+
+        //set $this->teacherSubject to the first row found
+        $this->teacherSubject = TeacherSubject::query()
+            ->where('school_id', $this->school->id)
+            ->where('teacher_id', auth()->id())
+            ->first();
     }
 
 }
