@@ -3,17 +3,21 @@
 namespace App\Livewire\Forms;
 
 use App\Models\Ensembles\Ensemble;
+use App\Models\Ensembles\Inventories\Inventory;
 use App\Models\Ensembles\Members\Member;
 use App\Models\Schools\School;
 use App\Models\Students\Student;
 use App\Models\User;
+use App\Services\CalcSeniorYearService;
 use App\Services\SplitNameIntoNamePartsService;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
 
 class SchoolEnsembleMemberForm extends Form
 {
+    public array $memberAssets = [];
     public int $classOf = 1960;
     public int $classOfGrade;
     public Ensemble $ensemble;
@@ -33,6 +37,7 @@ class SchoolEnsembleMemberForm extends Form
     public string $sysId = 'new';
     public int $voicePartId = 1;
     public array $voiceParts = [];
+    public int $userId = 0;
 
     protected function rules()
     {
@@ -49,6 +54,74 @@ class SchoolEnsembleMemberForm extends Form
         ];
     }
 
+    public function getAssignedAssets(): array
+    {
+        $this->setAssignedAssets();
+
+        return $this->memberAssets;
+    }
+
+    public function setAssignedAssets(): void
+    {
+        //clear artifacts
+        $this->memberAssets = [];
+
+        $inventories = Inventory::query()
+            ->join('assets', 'assets.id', '=', 'inventories.asset_id')
+            ->where('assigned_to', $this->userId)
+            ->where('status', 'assigned')
+            ->select('inventories.*', 'assets.name AS assetName')
+            ->get();
+
+        Log::info(Inventory::query()
+            ->join('assets', 'assets.id', '=', 'inventories.asset_id')
+            ->where('assigned_to', $this->userId)
+            ->where('status', 'assigned')
+            ->select('inventories.*', 'assets.name AS assetName')
+            ->toRawSql());
+
+        foreach ($inventories as $inventory) {
+
+            $this->memberAssets[$inventory->assetName]['id'] = $inventory->id;
+            $this->memberAssets[$inventory->assetName]['label'] = '#'.$inventory->item_id;
+
+            $this->memberAssets[$inventory->assetName]['label'] .= (strlen($inventory->color))
+                ? ', '.$inventory->color
+                : '';
+
+            $this->memberAssets[$inventory->assetName]['label'] .= (strlen($inventory->size))
+                ? ', '.$inventory->size
+                : '';
+        }
+
+    }
+
+    public function setMember(int $id): void
+    {
+        $member = Member::find($id);
+        $service = new CalcSeniorYearService();
+
+        $this->ensembleId = $member->ensemble_id;
+        $this->ensemble = Ensemble::find($member->ensemble_id);
+        $this->ensembleName = $this->ensemble->name;
+        $this->schoolId = $this->ensemble->school_id;
+        $this->status = $member->status;
+        $this->studentId = $member->student_id;
+        $student = Student::find($this->studentId);
+        $this->userId = $student->user->id;
+        $this->name = $student->user->name;
+        $this->sysId = $id;
+        $this->classOf = $student->class_of;
+        $this->classOfGrade = $student->class_of;
+        $this->voicePartId = $member->voice_part_id;
+        $this->pronounId = $student->user->pronoun_id;
+        $this->srYear = $service->getSeniorYear();
+        $this->schoolName = School::find($this->schoolId)->name;
+        $this->schoolYear = $member->school_year;
+
+        $this->setAssignedAssets();
+    }
+
     public function setStudentAsMember(Student $student): void
     {
         $this->name = $student->user->name;
@@ -58,7 +131,7 @@ class SchoolEnsembleMemberForm extends Form
         $this->studentId = $student->id;
     }
 
-    public function update()
+    public function update(): void
     {
         $this->validate();
 
@@ -149,9 +222,21 @@ class SchoolEnsembleMemberForm extends Form
         return new Student();
     }
 
-    private function updateSchoolEnsembleMember()
+    private function updateSchoolEnsembleMember(): void
     {
+        $member = Member::find($this->sysId);
 
+        $member->update(
+            [
+                'school_id' => $this->schoolId,
+                'ensemble_id' => $this->ensembleId,
+                'school_year' => $this->schoolYear,
+                'student_id' => $this->studentId,
+                'voice_part_id' => $this->voicePartId,
+                'office' => $this->office,
+                'status' => $this->status,
+            ]
+        );
     }
 
 }

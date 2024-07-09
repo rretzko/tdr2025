@@ -11,12 +11,13 @@ class Inventory extends Model
 {
     protected $fillable = [
         'asset_id',
+        'assigned_to',
         'color',
         'comments',
         'item_id',
         'size',
         'status',
-        'user_id',
+        'updated_by',
     ];
 
     public function asset(): BelongsTo

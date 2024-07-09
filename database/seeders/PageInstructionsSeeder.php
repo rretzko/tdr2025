@@ -188,7 +188,29 @@ This page is divided into four tabs and allows you to edit your student informat
             [
                 'header' => 'member edit',
                 'instructions' => '<p>School Ensemble Member edit page instructions</p>
-<p>Use this page to edit a school ensemble\'s member information</p>'
+<p>Use this page to edit a school ensemble\'s member information and to assign or remove assets from the ensemble member.</p>
+<p>There are four editable fields regarding the member\'s biographic information:
+<ul>
+<li><strong>School Year</strong>: The school year for which you are entering information.  This will typically be the current school year, but might represent previous years, or even the <i>next</i> school year if you\'re planning ahead!
+<ul>
+<li>The field expects a four-character number representing the end of the school year, for example: the 2024-25 school year is represented by 2025.</li>
+</ul>
+</li>
+<li><strong>Voice Part</strong>: Select the voice part from the drop-down list.</li>
+<li><strong>Office</strong>: This defaults to "member" but you may select any of the values from the drop-down box.
+<ul>
+<li>If you need an office that\'s not listed, drop me an email explaining your needs at <a href="mailto:rick@mfrholdings.com?subject=New office title needed&body=Hi Rick - " class="text-blue-500">rick@mfrholdings.com</a>!</li>
+</ul>
+</li>
+<li><strong>Status</strong>: This defaults to "active" but you may select any of the values from the drop-down box.
+<ul>
+<li>If you need an office that\'s not listed, drop me an email explaining your needs at <a href="mailto:rick@mfrholdings.com?subject=New school ensemble member status needed&body=Hi Rick - "
+ class="text-blue-500">rick@mfrholdings.com</a>!</li>
+</ul>
+</li>
+</ul>
+</p>
+<p>If assets have been assigned to the ensemble (ex. folders, gowns, tuxes, etc.), you may assign these assets from your inventory to the ensemble member.  If an asset is already assigned, that asset information will be displayed with a button to remove the asset from the member\'s record.</p>'
             ],
             [
                 'header' => 'inventories',

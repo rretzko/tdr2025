@@ -4,6 +4,8 @@ namespace App\Livewire\Ensembles\Members;
 
 use App\Livewire\BasePage;
 use App\Livewire\Forms\SchoolEnsembleMemberForm;
+use App\Models\Ensembles\Asset;
+use App\Models\Ensembles\AssetEnsemble;
 use App\Models\Ensembles\Ensemble;
 use App\Models\Ensembles\Members\Member;
 use App\Models\Students\VoicePart;
@@ -32,6 +34,22 @@ class BasePageMember extends BasePage
     ];
     public SchoolEnsembleMemberForm $form;
     public string $selectedTab = 'members';
+
+    protected function getAssets(): array
+    {
+        //early exit
+        if ($this->form->sysId === 'new') {
+            return [];
+        }
+
+        return AssetEnsemble::query()
+            ->join('assets', 'assets.id', '=', 'asset_ensemble.asset_id')
+            ->where('ensemble_id', $this->form->ensembleId)
+            ->select('assets.name', 'assets.id AS assetId')
+            ->orderBy('assets.name')
+            ->get()
+            ->toArray();
+    }
 
     protected function getVoiceParts(): array
     {
