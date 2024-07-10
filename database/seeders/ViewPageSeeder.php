@@ -128,6 +128,30 @@ class ViewPageSeeder extends Seeder
                 'livewire',
                 'inventory edit'
             ],
+            [
+                'EventsDashboardController',
+                '__invoke',
+                'dashboard',
+                'events dashboard',
+            ],
+            [
+                'EventsDashboardController',
+                '__invoke',
+                'dashboard',
+                'events dashboard',
+            ],
+            [
+                'EventsManageController',
+                '__invoke',
+                'table',
+                'my events',
+            ],
+            [
+                'EventManageCreateController',
+                '__invoke',
+                'livewire',
+                'new event',
+            ],
         ];
 
         foreach ($seeds as $seed) {

@@ -11,11 +11,10 @@
 <div class="flex flex-row mt-4 space-x-2">
     <input type="checkbox"
            @class([
-            'mt-0.5',
+            'mt-0.5 rounded',
             'border border-red-600' => $errors->has($name),
             ])
            wire:model.blur="{{ $name }}"
-           value="{{ $value }}"
            aria-label="{{ $label }}"
            @error($name)
            aria-invalid="true"

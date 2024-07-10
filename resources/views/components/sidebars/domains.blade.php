@@ -21,7 +21,7 @@
         </a>
     </div>
     <div class="text-red-600">
-        <a href="{{ route('events') }}" title="Events">
+        <a href="{{ route('events.dashboard') }}" title="Events">
             <x-heroicons.calendar/>
         </a>
     </div>

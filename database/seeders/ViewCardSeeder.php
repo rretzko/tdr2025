@@ -63,6 +63,33 @@ class ViewCardSeeder extends Seeder
                 'label' => 'events',
                 'orderBy' => 5,
             ],
+            [
+                'header' => 'events dashboard',
+                'color' => 'green',
+                'description' => '<p>Add information and registrants to events in which you are participating.</p>',
+                'heroicon' => 'heroicons.calendar',
+                'href' => 'participation/dashboard',
+                'label' => 'event participation',
+                'orderBy' => 1,
+            ],
+            [
+                'header' => 'events dashboard',
+                'color' => 'yellow',
+                'description' => '<p>This card will activate if you are selected to judge an audition.</p>',
+                'heroicon' => 'heroicons.scale',
+                'href' => 'adjudication',
+                'label' => 'adjudication',
+                'orderBy' => 2,
+            ],
+            [
+                'header' => 'events dashboard',
+                'color' => 'red',
+                'description' => '<p>Add new or manage existing events.</p>',
+                'heroicon' => 'heroicons.gear',
+                'href' => 'manage',
+                'label' => 'event participation',
+                'orderBy' => 3,
+            ],
         ];
     }
 

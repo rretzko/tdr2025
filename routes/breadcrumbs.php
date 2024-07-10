@@ -67,6 +67,24 @@ Breadcrumbs::for('member edit', function (BreadcrumbTrail $trail, int $id) {
     $trail->push('Edit Member', route('members', ['member' => $id]));
 });
 
+//Event.Create
+Breadcrumbs::for('new event', function (BreadcrumbTrail $trail) {
+    $trail->parent('my events');
+    $trail->push('New', route('event.create'));
+});
+
+//Events.Dashboard
+Breadcrumbs::for('events dashboard', function (BreadcrumbTrail $trail) {
+    $trail->parent('home');
+    $trail->push('Events Dashboard', route('events.dashboard'));
+});
+
+//Events.Manage.Table
+Breadcrumbs::for('my events', function (BreadcrumbTrail $trail) {
+    $trail->parent('events dashboard');
+    $trail->push('My Events', route('events.manage'));
+});
+
 // Profile
 Breadcrumbs::for('profile', function (BreadcrumbTrail $trail) {
     $trail->parent('home');

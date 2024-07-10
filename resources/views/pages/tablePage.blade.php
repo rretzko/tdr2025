@@ -29,7 +29,7 @@
                     <div class="w-11/12">
                         <div class="flex justify-between mb-1">
                             <div>{{ ucwords($dto['header']) }}</div>
-                            <x-buttons.addNew/>
+                            <x-buttons.addNew route="{{ $dto['addNewButtonRoute'] }}"/>
                         </div>
                         <table class="px-4 shadow-lg w-full">
                             <thead>

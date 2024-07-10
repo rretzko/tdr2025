@@ -44,9 +44,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('ensembles/members/new', [\App\Http\Controllers\Ensembles\Members\MemberController::class, 'create'])
         ->name('schoolEnsembleMember.create');
 
+    //EVENT
+    Route::get('event/new', \App\Http\Controllers\Events\EventManageCreateController::class)
+        ->name('event.create');
+
     //EVENTS
-    Route::get('events', [\App\Http\Controllers\Events\EventController::class, 'index'])
-        ->name('events');
+//    Route::get('events', [\App\Http\Controllers\Events\EventController::class, 'index'])
+//        ->name('events');
+    Route::get('events/dashboard', \App\Http\Controllers\Events\EventsDashboardController::class)
+        ->name('events.dashboard');
+    Route::get('events/participation/dashboard', \App\Http\Controllers\Events\EventsParticipationController::class)
+        ->name('events.participation.dashboard');
+    Route::get('events/adjudication', \App\Http\Controllers\Events\EventsAdjudicationController::class)
+        ->name('events.adjudication');
+    Route::get('events/manage', \App\Http\Controllers\Events\EventsManageController::class)
+        ->name('events.manage');
 
     //INVENTORIES
     Route::get('ensembles/inventory', [\App\Http\Controllers\Ensembles\Inventories\InventoryController::class, 'index'])

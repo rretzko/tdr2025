@@ -245,13 +245,27 @@ ul>
 <li><strong>Status</strong>: The "available" status is pre-selected, but can be changed to: "assigned", "lost", "removed", or "unreturned" if needed.</li>
 <li><strong>Comments</strong>Use this field to record any additional comments or information that might be helpful in the future.</li>
 </ul>
-</div>
-    '
+</div>'
             ],
             [
                 'header' => 'inventory edit',
                 'instructions' => '<p>Inventory edit page instructions</p>
 <p>Inventory edit page instructions...</p>'
+            ],
+            [
+                'header' => 'events dashboard',
+                'instructions' => '<p>Events dashboard page instructions</p>
+<p>Events dashboard page instructions...</p>'
+            ],
+            [
+                'header' => 'my events',
+                'instructions' => '<p>My Events page instructions</p>
+<p>My Events page instructions</p>',
+            ],
+            [
+                'header' => 'new event',
+                'instructions' => '<p>New Event page instructions</p>
+<p>New Event page instructions</p>',
             ],
         ];
     }
