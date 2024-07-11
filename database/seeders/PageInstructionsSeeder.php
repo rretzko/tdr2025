@@ -267,6 +267,11 @@ ul>
                 'instructions' => '<p>New Event page instructions</p>
 <p>New Event page instructions</p>',
             ],
+            [
+                'header' => 'event edit',
+                'instructions' => '<p>Event edit page instructions</p>
+<p>Event edit page instructions</p>',
+            ],
         ];
     }
 

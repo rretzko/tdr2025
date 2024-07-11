@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Events\EventManageEditController;
 use App\Http\Controllers\ProfileController;
 use App\Livewire\Ensembles\Assets\AssetsTableComponent;
 use Illuminate\Support\Facades\Route;
@@ -47,6 +48,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //EVENT
     Route::get('event/new', \App\Http\Controllers\Events\EventManageCreateController::class)
         ->name('event.create');
+    Route::get('event/edit/{event}', EventManageEditController::class)
+        ->name('event.edit');
 
     //EVENTS
 //    Route::get('events', [\App\Http\Controllers\Events\EventController::class, 'index'])
@@ -101,3 +104,4 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 require __DIR__.'/auth.php';
+require __DIR__.'/founder.php';

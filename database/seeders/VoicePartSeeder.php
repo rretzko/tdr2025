@@ -18,23 +18,23 @@ class VoicePartSeeder extends Seeder
     private function buildSeeds(): array
     {
         return [
-            ['Descant', 'Des', 1],
-            ['Soprano', 'Sop', 2],
-            ['Soprano I', 'SI', 3],
-            ['Soprano II', 'SII', 4],
-            ['Alto', 'Alt', 5],
-            ['Alto I', 'AI', 6],
-            ['Alto II', 'AII', 7],
-            ['Tenor', 'Ten', 8],
-            ['Tenor I', 'TI', 9],
-            ['Tenor II', 'TII', 10],
-            ['Baritone', 'Bar', 11],
-            ['High Baritone', 'HB', 12],
-            ['Low Baritone', 'LB', 13],
-            ['Bass Baritone', 'BB', 14],
-            ['Bass', 'Bass', 15],
-            ['Bass I', 'BI', 16],
-            ['Bass II', 'BII', 17],
+            [71, 'Descant', 'Des', 1],
+            [5, 'Soprano', 'Sop', 2],
+            [63, 'Soprano I', 'SI', 3],
+            [64, 'Soprano II', 'SII', 4],
+            [1, 'Alto', 'Alt', 5],
+            [65, 'Alto I', 'AI', 6],
+            [66, 'Alto II', 'AII', 7],
+            [6, 'Tenor', 'Ten', 8],
+            [67, 'Tenor I', 'TI', 9],
+            [68, 'Tenor II', 'TII', 10],
+            [2, 'Baritone', 'Bar', 11],
+            [72, 'High Baritone', 'HB', 12],
+            [73, 'Low Baritone', 'LB', 13],
+            [4, 'Bass Baritone', 'BB', 14],
+            [3, 'Bass', 'Bass', 15],
+            [69, 'Bass I', 'BI', 16],
+            [70, 'Bass II', 'BII', 17],
         ];
     }
 
@@ -47,9 +47,10 @@ class VoicePartSeeder extends Seeder
 
             VoicePart::create(
                 [
-                    'descr' => $seed[0],
-                    'abbr' => $seed[1],
-                    'order_by' => $seed[2],
+                    'id' => $seed[0],
+                    'descr' => $seed[1],
+                    'abbr' => $seed[2],
+                    'order_by' => $seed[3],
                 ]
             );
         }

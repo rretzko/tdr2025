@@ -1,6 +1,7 @@
 @props([
     'error' => '',
     'hint' => '',
+    'key' => false,
     'label',
     'name',
     'placeholder' => '',
@@ -16,6 +17,7 @@
             ])
            wire:model.blur="{{ $name }}"
            aria-label="{{ $label }}"
+           @if($key) wire:key='{{ $key }}' @endif
            @error($name)
            aria-invalid="true"
            aria-description="{{ $message }}"

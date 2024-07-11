@@ -11,9 +11,22 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->string('short_name');
-            $table->string('organization_name');
-            $table->foreignId('user_id')->index();
-            $table->unique(['name', 'user_id']);
+            $table->string('organization');
+            $table->tinyInteger('audition_count')->default(1);
+            $table->tinyInteger('max_registrant_count')->default(0);
+            $table->tinyInteger('max_upper_voice_count')->default(0);
+            $table->tinyInteger('ensemble_count')->default(1);
+            $table->string('frequency')->default('annual');
+            $table->string('grades');
+            $table->enum('status', ['active', 'closed', 'inactive', 'sandbox'])->default('sandbox');
+            $table->string('logo_file')->nullable();
+            $table->string('logo_file_alt')->default('event logo image');
+            $table->boolean('required_height')->default(0);
+            $table->boolean('required_shirt_size')->default(0);
+            $table->unsignedBigInteger('created_by')->comment('user id');
+            $table->timestamps();
+            $table->unique(['name', 'organization']);
+            $table->softDeletes();
         });
     }
 

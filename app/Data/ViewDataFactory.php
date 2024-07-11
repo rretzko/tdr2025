@@ -147,6 +147,7 @@ class ViewDataFactory extends aViewData
             'member create' => 'ensembles.members.member-create-component',
             'member edit' => 'ensembles.members.member-edit-component',
 
+            'event edit' => 'events.event-edit-component',
             'new event' => 'events.event-create-component',
         ];
 

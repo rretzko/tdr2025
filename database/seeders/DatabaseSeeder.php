@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
         $this->call(SchoolSeeder::class);
         $this->call(VoicePartSeeder::class);
         $this->call(UserSeeder::class);
+        $this->call(EventSeeder::class);
 
         $this->call(Teachers100Seeder::class);
 

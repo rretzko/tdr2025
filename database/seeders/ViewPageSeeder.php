@@ -135,12 +135,6 @@ class ViewPageSeeder extends Seeder
                 'events dashboard',
             ],
             [
-                'EventsDashboardController',
-                '__invoke',
-                'dashboard',
-                'events dashboard',
-            ],
-            [
                 'EventsManageController',
                 '__invoke',
                 'table',
@@ -151,6 +145,12 @@ class ViewPageSeeder extends Seeder
                 '__invoke',
                 'livewire',
                 'new event',
+            ],
+            [
+                'EventManageEditController',
+                '__invoke',
+                'livewire',
+                'event edit',
             ],
         ];
 

@@ -73,6 +73,12 @@ Breadcrumbs::for('new event', function (BreadcrumbTrail $trail) {
     $trail->push('New', route('event.create'));
 });
 
+//Event.Edit
+Breadcrumbs::for('event edit', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('my events');
+    $trail->push('Edit', route('event.edit', [$id]));
+});
+
 //Events.Dashboard
 Breadcrumbs::for('events dashboard', function (BreadcrumbTrail $trail) {
     $trail->parent('home');
@@ -89,6 +95,12 @@ Breadcrumbs::for('my events', function (BreadcrumbTrail $trail) {
 Breadcrumbs::for('profile', function (BreadcrumbTrail $trail) {
     $trail->parent('home');
     $trail->push('Profile', route('profile.edit'));
+});
+
+// Founder
+Breadcrumbs::for('founder page', function (BreadcrumbTrail $trail) {
+    $trail->parent('home');
+    $trail->push('Founder Page', route('founder'));
 });
 
 // Schools
