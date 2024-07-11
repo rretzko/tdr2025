@@ -29,7 +29,7 @@ class EventCreateComponent extends BasePage
     {
         $event = $this->form->add();
 
-        return $this->redirect('/event/edit/'.$event->id);
+        return $this->redirectRoute('event.edit', [$event]);
     }
 
 }

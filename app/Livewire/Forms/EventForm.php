@@ -48,6 +48,24 @@ class EventForm extends Form
         );
     }
 
+    public function setEvent(int $id, array $statuses): void
+    {
+        $event = Event::find($id);
+
+        $this->sysId = $id;
+        $this->ensembleCountId = $event->ensemble_count;
+        $this->grades = $event->grades;
+        $this->logo = $event->logo_file;
+        $this->maxRegistrants = $event->max_registrant_count;
+        $this->maxUpperVoices = $event->max_upper_voice_count;
+        $this->name = $event->name;
+        $this->orgName = $event->organization;
+        $this->requiredHeight = $event->required_height;
+        $this->requiredShirtSize = $event->required_shirt_size;
+        $this->shortName = $event->short_name;
+        $this->statusId = array_flip($statuses)[$event->status];
+    }
+
     /**
      * Ensure comma-separated string without white-space padding
      * @return string

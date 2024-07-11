@@ -15,7 +15,7 @@ class EventEditComponent extends BasePage
     {
         parent::mount();
 
-        $this->form->setEvent($this->dto);
+        $this->form->setEvent($this->dto['id'], self::STATUSES);
     }
 
     public function render()
