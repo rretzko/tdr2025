@@ -7,6 +7,7 @@ use App\Models\Schools\SchoolTeacher;
 use App\Models\Schools\Teacher;
 use App\Services\HomeDashboardTestForSchoolsService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -17,6 +18,8 @@ class HomeController extends Controller
     {
         //early exit
         if (!auth()->user()->isTeacher()) {
+
+            Auth::logout();
 
             abort(403, 'You must be a teacher to use TheDirectorsRoom.com');
         }

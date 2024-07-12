@@ -59,7 +59,7 @@ class ViewCardSeeder extends Seeder
                 'color' => 'red',
                 'description' => '<p>Update your student registration information for an upcoming auditioned event (ex. Region, All-State, etc.).</p><p>Open adjudication pages (when available).</p><p>Even create and manage an event of your own!</p>',
                 'heroicon' => 'heroicons.calendar',
-                'href' => 'events',
+                'href' => 'events/dashboard',
                 'label' => 'events',
                 'orderBy' => 5,
             ],

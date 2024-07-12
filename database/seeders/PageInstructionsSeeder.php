@@ -269,8 +269,45 @@ ul>
             ],
             [
                 'header' => 'event edit',
-                'instructions' => '<p>Event edit page instructions</p>
-<p>Event edit page instructions</p>',
+                'instructions' => '<p>Event Edit page</p>
+<p>The Event Edit page contains the information about the event which is unlikely to change between event occurrences. It also includes a subordinate form(s) to add information about the event ensembles.</p>
+<p><strong>Please do not include variable information (ex: years or dates) in any of the fields below.</strong>
+<p>
+<p>The Event Edit page consists of two sections: General event information and event ensemble information</p>
+<p><strong><u>General Event Information</u></strong></p>
+<ul class="mb-4">
+<li><strong>Name</strong>: The formal name of the event.</li>
+<li><strong>Short Name</strong>: A shorter, informal name of the event to be used when brevity is required.</li>
+<li><strong>Organization Name</strong>: The name of the sponsoring organization.</li>
+<li><strong>Logo File</strong>: If you want to use your event or organization logo, upload that image file here.  The system expects a jpg, jpeg, or png file extension.</li>
+<li><strong>Eligibile Grades</strong>: The student grades eligible to participate in the event.  Please separate each grade with a comma (ex: 9,10,11,12).</li>
+<li><strong>Status</strong>: The current status of the event.
+<ul>
+<li><strong>Active</strong>: The event has or will have active versions for member participation.</li>
+<li><strong>Closed</strong>: The event has been canceled and no longer expects to have active versions for member participation.  A "closed" status will preclude the creation of a new version and will reclassify any currently active versions as "closed".
+<br />This status should be used when the event is truly canceled or where significant changes are required (ex. different grade eligibility, different number of ensembles) that support the creation of a new event. </li>
+<li><strong>Inactive</strong>: The event has been paused (ex: Covid outbreak) but is expected to resume at some time in the future when the current emergency passes.  An "inactive" status will preclude the creation of a new version and will reclassify any currently active versions as "inactive".</li>
+<li><strong>Sandbox</strong>: Use this setting when you start to create a new event.  The "sandbox" setting will allow you to do everything <u>except</u> invite members to participate.</li>
+</ul>
+</li>
+<li><strong>Maximum Number Of Registrants</strong>: If your event limits the maximum number of registrants per school, select that number here.  Use zero if you have no limit on the number of registrants per school.</li>
+<li><strong>Maxiumum Number of Upper Voice Registrants</strong>: If your event limits the maximum number of soprano and alto combined registrants per school, select that number here.  Use zero if you have no limit on the number of upper voice registrants per school.</li>
+<li><strong>Ensemble count</strong>: Following auditions, successful registrants are assigned to ensembles.  Select the number of ensembles to which your registrants will be assigned. Changing this number will change the number of subordinate ensemble forms displayed to the right of the event form.
+<ul>
+<li>Note: Once the first version is closed, <strong>reducing</strong> this number should be considered a significant change as it will impact any historical data and it is recommended that you <u>create a new event</u>. Increasing the number of ensembles has no impact on the historical data and is NOT considered a significant change.</li>
+</ul>
+</li>
+<li><strong>Height</strong>: Click this checkbox if you need to know your registrant\'s height.</li>
+<li><strong>Shirt Size</strong>: Click this checkbox if you need to know your registrant\'s shirt size.</li>
+</ul>
+<p><strong><u>Event Ensemble Information</u></strong></p>
+<p>This subordinate form links ensemble information to the event. </p>
+<ul>
+<li><strong>Name</strong>: The formal name of the ensemble.</li>
+<li><strong>Short Name</strong>: A shorter, informal name of the ensemble to be used when brevity is required.</li>
+<li><strong>Eligible Grades</strong>: If there is only one ensemble, this is likely to mirror the grades of the event.  If there are multiple ensembles, this will be used to further define which successfully auditioned registrants are eligible to be assigned to this ensemble.</li>
+<li><strong>Voice Parts</strong>: Click the checkboxes that identify the voice parts to be used in this ensemble. this will be used to further define which successfully auditioned registrants are eligible to be assigned to this ensemble.</li>
+</ul>',
             ],
         ];
     }

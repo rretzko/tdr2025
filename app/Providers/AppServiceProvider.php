@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Listeners\SendWorkEmailVerificationListener;
+use App\Models\User;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -25,5 +27,12 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(
             SendWorkEmailVerificationListener::class,
         );
+
+        //authorize the founder for all gates
+        Gate::before(function (User $user, string $ability) {
+            if ($user->isFounder()) {
+                return true;
+            }
+        });
     }
 }

@@ -137,7 +137,7 @@ class ViewPageSeeder extends Seeder
             [
                 'EventsManageController',
                 '__invoke',
-                'table',
+                'livewire',
                 'my events',
             ],
             [

@@ -9,10 +9,12 @@ export default {
         './resources/views/**/*.blade.php',
     ],
     safelist: [
-        'text-yellow-600',
+        'bg-yellow-600',
+        'bg-yellow-700',
         'bg-green-400',
         'bg-green-600',
         'border-indigo-500',
+        'text-yellow-600',
     ],
     theme: {
         extend: {
