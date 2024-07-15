@@ -6,7 +6,9 @@
 
         <div class="flex flex-col md:flex-row">
 
-            <form wire:submit="save" class="my-4 p-4 border border-gray-200 rounded-lg shadow-lg space-y-4">
+            <form wire:submit="save" class="my-4 p-4 border border-gray-200 rounded-lg shadow-lg space-y-4"
+                  enctype="multipart/form-data"
+            >
 
                 <x-forms.styles.genericStyle/>
 
@@ -15,6 +17,7 @@
 
                 {{-- NAME --}}
                 <x-forms.elements.livewire.inputTextWide
+                    autofocus="true"
                     blur=""
                     label="name"
                     name="form.name"
@@ -41,17 +44,21 @@
                 />
 
                 {{-- EVENT LOGO UPLOAD --}}
-                <x-forms.elements.livewire.inputTextNarrow
+                <x-forms.elements.livewire.imageFileUpload
                     blur=""
                     label="logo file"
-                    name="form.logo"
+                    name="logo"
                     placeholder=""
-                    required
                 />
+
+                {{-- SHOW LOGO --}}
+                @if($form->logoFile)
+                    <img src="{{ $awsBucket . $form->logoFile }}" width="50">
+                @endif
 
                 {{-- GRADES --}}
                 <x-forms.elements.livewire.inputTextNarrow
-                    blur=""
+                    blur="false"
                     label="eligible grades"
                     name="form.grades"
                     hint="Enter comma-separated values (ex. 9,10,11)"
@@ -107,43 +114,49 @@
                     livewire="true"
                 />
 
+                {{-- SUCCESS INDICATOR --}}
+                <x-forms.indicators.successIndicator :showSuccessIndicator="$showSuccessIndicator"
+                                                     message="{{  $successMessage }}"/>
+
                 <div class="flex flex-row space-x-2">
                     {{-- SUBMIT AND RETURN TO TABLE VIEW--}}
                     <x-buttons.submit/>
                 </div>
 
-                {{-- SUCCESS INDICATOR --}}
-                <x-forms.indicators.successIndicator :showSuccessIndicator="$showSuccessIndicator"
-                                                     message="{{  $successMessage }}"/>
             </form>
 
             {{-- ENSEMBLE INFORMATION --}}
             <div class="flex-flex-row ml-0 md:ml-2 space-y-1"
-            @for($i=1; $i<=$form->ensembleCountId; $i++)
+            @for($i=0; $i<$form->ensembleCountId; $i++)
 
                 <form class="my-4 p-4 border border-gray-200 rounded-lg shadow-lg space-y-4"
                       wire:key="ensembleForm-{{$i}}">
 
                     <h3 class="font-semibold">
-                        Ensemble #{{ $i }} Information
+                        Ensemble #{{ ($i + 1) }} Information
                     </h3>
+
+                    <x-forms.elements.livewire.labeledInfoOnly
+                        label="Sys Id"
+                        wireModel="form.ensembles.{{ $i }}.id"
+                    />
 
                     {{-- NAME --}}
                     <x-forms.elements.livewire.inputTextWide
-                        blur="true"
+                        blur="false"
                         label="name"
                         name="form.ensembles.{{$i}}.name"
                         placeholder=""
-                        required
+                        required="true"
                     />
 
                     {{-- SHORT NAME --}}
                     <x-forms.elements.livewire.inputTextNarrow
-                        blur="true"
+                        blur="false"
                         label="short name"
                         name="form.ensembles.{{$i}}.shortName"
                         placeholder=""
-                        required
+                        required="true"
                     />
 
                     {{-- GRADES --}}
@@ -153,11 +166,12 @@
                         <div class="flex flex-row space-x-2">
                             @for($j=1; $j<13; $j++)
                                 <x-forms.elements.livewire.inputCheckbox
+                                    blur="false"
                                     error='grades'
                                     key="grade-{{ $j }}"
                                     label="{{ $j }}"
-                                    name="form.ensembles.{{$i}}.grades.{{$j}}"
-                                    value='{{$j}}'
+                                    name="form.ensembles.{{ $i }}.grades"
+                                    value="{{ $j }}"
                                 />
                             @endfor
                         </div>
@@ -173,10 +187,11 @@
                         <div class="flex flex-col space-y-1">
                             @foreach($voiceParts AS $id => $descr)
                                 <x-forms.elements.livewire.inputCheckbox
+                                    blur="false"
                                     error='grades'
                                     key="voicePart-{{ $id }}"
                                     label="{{ $descr }}"
-                                    name="form.ensembles.{{$i}}.voiceParts.{{$id}}"
+                                    name="form.ensembles.{{$i}}.voiceParts"
                                     value='{{$id}}'
                                 />
                             @endforeach
@@ -187,8 +202,17 @@
                         @enderror
                     </div>
 
+                    {{-- SUCCESS INDICATOR --}}
+                    <x-forms.indicators.successIndicator
+                        :showSuccessIndicator="$form->ensembles[$i]['showSuccessIndicator']"
+                        message="{{  $form->ensembles[$i]['successMessage'] }}"/>
+
+                    {{-- ERROR INDICATOR --}}
+                    <x-forms.indicators.errorIndicator :showErrorIndicator="$showErrorIndicator"
+                                                       message="{!! $form->errors !!}"/>
+
                     <x-buttons.fauxSubmit
-                        value='save ensemble #{{ $i }}'
+                        value='save ensemble #{{ ($i + 1) }}'
                         wireClick='saveEnsemble({{ $i }})'
                     />
 

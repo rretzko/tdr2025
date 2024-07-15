@@ -1,35 +1,28 @@
 @props([
     'autofocus' => false,
     'blur' => true,
+    'error' => '',
     'hint' => '',
     'label',
     'name',
     'placeholder' => '',
     'required' => false,
     'results' => '',
-    'suppressLabel' => false,
     'type' => 'text',
 ])
 <div class="flex flex-col">
-
-    <label for="{{ $name }}"
-        @class([
-            'required' => $required,
-            'hidden' => $suppressLabel,
-            'mt-1' => $suppressLabel
-        ])
-    >
-        {{ ucwords($label) }}
-    </label>
-    <input @if($blur) wire:model.blur @else
-        wire:model.live.debounce
-    @endif ="{{ $name }}"
-           type="{{ $type }}"
+    <label for="{{ $name }}" class="@if($required) required @endif">{{ ucwords($label) }}</label>
+    <input type="file"
+           id="{{ $name }}"
+           name="{{ $name }}"
+           accept="image/png, image/jpeg, image/gif"
            @class([
-             'wide',
-             'border border-red-600' => $errors->has($name),
-             'mt-1' => $suppressLabel,
-             ])
+            'wide',
+            'border border-red-600' => $errors->has($name),
+            ])
+           @if($blur)wire:model.blur @else
+               wire:model
+           @endif ="{{ $name }}"
            placeholder="{{ $placeholder }}"
            @required($required)
            @if($autofocus) autofocus @endif
@@ -43,14 +36,18 @@
     {{-- HINT --}}
     @if($hint)
         <div class="text-xs ml-1 italic">
-            {{ $hint }}
+            {!! $hint !!}
         </div>
     @endif
 
     {{-- RESULTS --}}
-    <div>{!! $results !!}</div>
+    <div class="flex flex-col"> {{--  bg-gray-100 w-1/3 mt-2 --}}
+        {!! $results !!}
+    </div>
 
     {{-- ERROR --}}
     @error($name)
-    <x-input-error messages="{{ $message }}" aria-live="polite"/> @enderror
+    <x-input-error messages="{{ $message }}" aria-live="polite"/>
+    @enderror
+
 </div>

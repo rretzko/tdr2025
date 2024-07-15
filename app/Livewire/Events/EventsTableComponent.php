@@ -2,9 +2,12 @@
 
 namespace App\Livewire\Events;
 
+use App\Exports\EventsExport;
 use App\Livewire\BasePage;
 use App\Models\Events\Event;
+use App\Models\Events\EventManagement;
 use Illuminate\Database\Eloquent\Builder;
+use Maatwebsite\Excel\Facades\Excel;
 
 class EventsTableComponent extends BasePage
 {
@@ -26,6 +29,28 @@ class EventsTableComponent extends BasePage
             ]);
     }
 
+    public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    {
+        return Excel::download(new EventsExport, 'events.csv');
+    }
+
+    public function remove(int $eventId): void
+    {
+        $event = Event::find($eventId);
+        $eventName = $event->name;
+
+        $eventManagement = EventManagement::query()
+            ->where('event_id', $eventId)
+            ->where('user_id', auth()->id())
+            ->where('role', 'manager')
+            ->first();
+
+        $eventManagement->delete();
+
+        $this->successMessage = $eventName.' has been removed from your roster.';
+        $this->showSuccessIndicator = true;
+    }
+
     /** END OF PUBLIC FUNCtiONS **************************************************/
 
     private function getColumnHeaders(): array
@@ -43,39 +68,11 @@ class EventsTableComponent extends BasePage
     private function getRows(): Builder
     {
         return Event::query()
+            ->join('event_management', 'event_management.event_id', '=', 'events.id')
+            ->where('event_management.user_id', auth()->id())
+            ->whereNull('event_management.deleted_at')
+            ->select('events.*')
             ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'));
-
-//        return Student::query()
-//            ->join('school_student', 'students.id', '=', 'school_student.student_id')
-//            ->join('student_teacher', 'students.id', '=', 'student_teacher.student_id')
-//            ->join('schools', 'school_student.school_id', '=', 'schools.id')
-//            ->join('users', 'students.user_id', '=', 'users.id')
-//            ->join('voice_parts', 'students.voice_part_id', '=', 'voice_parts.id')
-//            ->leftJoin('phone_numbers AS mobile', function ($join) {
-//                $join->on('users.id', '=', 'mobile.user_id')
-//                    ->where('mobile.phone_type', '=', 'mobile');
-//            })
-//            ->leftJoin('phone_numbers AS home', function ($join) {
-//                $join->on('users.id', '=', 'home.user_id')
-//                    ->where('home.phone_type', '=', 'home');
-//            })
-//            ->where('student_teacher.teacher_id', auth()->user()->teacher->id)
-//            ->where('users.name', 'LIKE', '%'.$this->search.'%')
-//            ->tap(function ($query) {
-//                $this->filters->filterStudentsBySchools($query);
-//                $this->filters->filterStudentsByClassOfs($query, $this->search);
-//                $this->filters->filterStudentsByVoicePartIds($query, $this->search);
-//            })
-//            ->select('users.name',
-//                'schools.name AS schoolName', 'schools.id AS schoolId',
-//                'school_student.id AS schoolStudentId', 'school_student.active',
-//                'students.class_of AS classOf', 'students.height', 'students.birthday',
-//                'students.shirt_size AS shirtSize', 'students.id AS studentId',
-//                'voice_parts.descr AS voicePart', 'users.email', 'mobile.phone_number AS phoneMobile',
-//                'home.phone_number AS phoneHome', 'users.last_name', 'users.first_name', 'users.middle_name',
-//                'users.prefix_name', 'users.suffix_name'
-//            )
-//            ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'));
 
     }
 

@@ -33,6 +33,7 @@ class BasePage extends Component
     public string $sortColLabel = '';
     public string $successMessage = '';
     protected $userSort;
+    public const AWSBUCKET = 'https://auditionsuite-production.s3.amazonaws.com/';
 
     public const ENSEMBLETABS = ['ensembles', 'members', 'assets', 'inventory'];
 

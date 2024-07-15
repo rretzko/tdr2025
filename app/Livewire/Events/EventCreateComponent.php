@@ -2,18 +2,11 @@
 
 namespace App\Livewire\Events;
 
-use App\Livewire\BasePage;
 use App\Livewire\Forms\EventForm;
 use App\Models\Students\VoicePart;
-use Illuminate\Support\Facades\Log;
-use Livewire\Features\SupportRedirects\Redirector;
 
-
-class EventCreateComponent extends BasePage
+class EventCreateComponent extends EventBasePage
 {
-    const STATUSES = ['active', 'inactive', 'closed', 'sandbox'];
-    public EventForm $form;
-
     public function render()
     {
         return view('livewire..events.event-create-component',
@@ -27,7 +20,7 @@ class EventCreateComponent extends BasePage
 
     public function save()
     {
-        $event = $this->form->add();
+        $event = $this->form->add(self::STATUSES);
 
         return $this->redirectRoute('event.edit', [$event]);
     }

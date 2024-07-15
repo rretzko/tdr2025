@@ -21,6 +21,7 @@
                wire:model
            @endif ="{{ $name }}"
            placeholder="{{ $placeholder }}"
+           @required($required)
            @if($autofocus) autofocus @endif
            aria-label="{{ $label }}"
            @error($name)

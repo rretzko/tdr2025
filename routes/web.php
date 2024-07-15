@@ -49,6 +49,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('event/new', \App\Http\Controllers\Events\EventManageCreateController::class)
         ->name('event.create');
     Route::get('event/edit/{event}', EventManageEditController::class)
+        ->middleware('can:update,event') //check EventPolicy
         ->name('event.edit');
 
     //EVENTS

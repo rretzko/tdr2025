@@ -2,6 +2,8 @@
 
 namespace App\Policies;
 
+use App\Models\Events\Event;
+use App\Models\Events\EventManagement;
 use App\Models\Events\Versions\Version;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
@@ -25,11 +27,16 @@ class VersionPolicy
     }
 
     /**
-     * Determine whether the user can create models.
+     * Users who are founders or managers of the referenced $eventId can create new versions
      */
-    public function create(User $user): bool
+    public function create(User $user, Version $version, int $eventId): bool
     {
-        return $user->isFounder();
+        return $user->isFounder() ||
+            (EventManagement::query()
+                ->where('event_id', $eventId)
+                ->where('user_id', $user->id)
+                ->where('role', 'manager')
+                ->exists());
     }
 
     /**

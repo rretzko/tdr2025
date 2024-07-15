@@ -6,7 +6,9 @@
 
         <div class="flex flex-col md:flex-row">
 
-            <form wire:submit="save" class="my-4 p-4 border border-gray-200 rounded-lg shadow-lg space-y-4">
+            <form wire:submit="save" class="my-4 p-4 border border-gray-200 rounded-lg shadow-lg space-y-4"
+                  enctype="multipart/form-data"
+            >
 
                 <x-forms.styles.genericStyle/>
 
@@ -41,13 +43,17 @@
                 />
 
                 {{-- EVENT LOGO UPLOAD --}}
-                <x-forms.elements.livewire.inputTextNarrow
+                <x-forms.elements.livewire.imageFileUpload
                     blur=""
                     label="logo file"
-                    name="form.logo"
+                    name="logo"
                     placeholder=""
-                    required
                 />
+
+                {{-- SHOW LOGO --}}
+                @if($form->logoFile)
+                    <img src="{{ $logo->temporaryUrl() }}" width="50">
+                @endif
 
                 {{-- GRADES --}}
                 <x-forms.elements.livewire.inputTextNarrow
@@ -95,6 +101,7 @@
 
                 {{-- HEIGHT REQUIREMENT --}}
                 <x-forms.elements.livewire.inputCheckbox
+                    blur="false"
                     label="height is required"
                     name="form.requiredHeight"
                     livewire="true"
@@ -102,6 +109,7 @@
 
                 {{-- SHIRT SIZE REQUIREMENT --}}
                 <x-forms.elements.livewire.inputCheckbox
+                    blur="false"
                     label="shirt size is required"
                     name="form.requiredShirtSize"
                     livewire="true"

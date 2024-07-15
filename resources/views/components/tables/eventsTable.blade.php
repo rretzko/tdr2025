@@ -59,23 +59,27 @@
                 <td class="border border-gray-200 px-1 text-center">
                     {{ $row['status'] }} {{-- ex. 64 (5' 4") --}}
                 </td>
-                <td class="flex justify-center items-center border border-gray-200 border-b-transparent ">
-                    <div class="flex flex-col space-y-1 md:w-5/6 lg:w-3/4 mx-0.5">
+                <td class="mx-auto text-center border border-gray-200 border-b-transparent">
+                    <div class="flex flex-col space-y-1 md:w-5/6 lg:w-3/4 mx-2 lg:mx-4">
+                        {{--                        @can('edit', )--}}
                         <button
                             type="button"
                             class="bg-yellow-600 text-white text-xs px-2 rounded-full hover:bg-yellow-700 "
                         >
                             Current
                         </button>
+                        {{--                        @endcan--}}
 
+                        {{--                        @can('edit', )--}}
                         <button
                             type="button"
                             class="bg-yellow-600 text-white text-xs px-2 rounded-full hover:bg-yellow-700"
                         >
                             All
                         </button>
+                        {{--                        @endcan--}}
 
-                        @can('create', \App\Models\Events\Versions\Version::class)
+                        @can('create', [new \App\Models\Events\Versions\Version(), $row['id']])
                             <button
                                 type="button"
                                 class="bg-yellow-600 text-white text-xs px-2 rounded-full hover:bg-yellow-700"
@@ -88,10 +92,14 @@
 
                 </td>
                 <td class="text-center border border-gray-200">
-                    <x-buttons.edit id="{{ $row['id'] }}" route="event.edit"/>
+                    @can('update', \App\Models\Events\Event::find($row['id']))
+                        <x-buttons.edit id="{{ $row['id'] }}" route="event.edit"/>
+                    @endcan
                 </td>
                 <td class="text-center border border-gray-200">
-                    <x-buttons.remove id="{{ $row['id'] }}" livewire="1"/>
+                    @can('delete', \App\Models\Events\Event::find($row['id']))
+                        <x-buttons.remove id="{{ $row['id'] }}" livewire="1"/>
+                    @endcan
                 </td>
             </tr>
 
@@ -104,13 +112,7 @@
     </table>
 
     <ul>
-        <li>Edit Page Instructions</li>
-        <li>Remove</li>
-        <li>Export</li>
         <li>Event selection by roles</li>
-        <li>New Event Page Instructions</li>
-        <li>Link Ensembles to events</li>
-        <li>Logo upload workflow and link</li>
     </ul>
 
     {{-- LOADING COMPONENT AND SPINNER --}}
