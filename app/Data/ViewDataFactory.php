@@ -150,6 +150,10 @@ class ViewDataFactory extends aViewData
             'event edit' => 'events.event-edit-component',
             'my events' => 'events.events-table-component',
             'new event' => 'events.event-create-component',
+
+            'version edit' => 'events.versions.version-edit-component',
+            'versions' => 'events.versions.versions-table-component',
+            'new version' => 'events.versions.version-create-component',
         ];
 
         return $components[$this->viewPage->header];

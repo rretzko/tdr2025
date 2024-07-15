@@ -157,6 +157,18 @@ Breadcrumbs::for('student reset password', function (BreadcrumbTrail $trail, int
     $trail->push('Reset Password', route('student.reset', ['student' => $id]));
 });
 
+//Versions.Dashboard
+Breadcrumbs::for('versions dashboard', function (BreadcrumbTrail $trail) {
+    $trail->parent('my events');
+    $trail->push('Versions Dashboard', route('versions.dashboard'));
+});
+
+//Version.Create
+Breadcrumbs::for('new version', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('my events');
+    $trail->push('New Version', route('version.create', ['event' => $id]));
+});
+
 // Unknown = ViewData not found for the calling controller::method
 Breadcrumbs::for('unknown', function (BreadcrumbTrail $trail) {
     $trail->parent('home');

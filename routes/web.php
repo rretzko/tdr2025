@@ -53,8 +53,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('event.edit');
 
     //EVENTS
-//    Route::get('events', [\App\Http\Controllers\Events\EventController::class, 'index'])
-//        ->name('events');
     Route::get('events/dashboard', \App\Http\Controllers\Events\EventsDashboardController::class)
         ->name('events.dashboard');
     Route::get('events/participation/dashboard', \App\Http\Controllers\Events\EventsParticipationController::class)
@@ -102,6 +100,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('student/reset/{student}',
         \App\Http\Controllers\Students\StudentResetPasswordController::class) //invokable
     ->name('student.reset');
+
+    //VERSIONS
+    Route::get('version/new/{event}', \App\Http\Controllers\Events\Versions\VersionCreateController::class)
+        ->name('version.create');
+//    Route::get('event/edit/{event}', EventManageEditController::class)
+//        ->middleware('can:update,event') //check EventPolicy
+//        ->name('event.edit');
 });
 
 require __DIR__.'/auth.php';

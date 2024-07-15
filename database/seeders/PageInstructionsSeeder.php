@@ -350,6 +350,29 @@ ul>
 <li><strong>Voice Parts</strong>: Click the checkboxes that identify the voice parts to be used in this ensemble. this will be used to further define which successfully auditioned registrants are eligible to be assigned to this ensemble.</li>
 </ul>',
             ],
+            [
+                'header' => 'new version',
+                'instructions' => '<p>New Version page</p>
+<p>The new-version page collects basic information about the current event\'s new version.  Information from previous versions will be used whenever possible to reduce your workload.</p>
+<p>When submitted, the system will display the version dashboard for your use in creating the full version profile.</p>
+<p>This form will collect information about the following:
+<ul>
+                    <li><strong>Name</strong>: The formal name of the event version.  This will likely include information that will vary between event versions, like date or year.</li>
+                    <li><strong>Short Name</strong>: The information name of the event version for use whenever space is at a premium.</li>
+                    <li><strong>Senior Class</strong>: The graduating senior class at the time of the event.</li>
+                    <li><strong>Status</strong>:  Select from the drop-down menu and used to determine if/when the system should be open to your members.</li>
+                    <li><strong>Upload files</strong>: This is used to determine if system space will be required for uploading files.</li>
+                    <li><strong>Fees:</strong>: This is used to determine which fees must be accounted for within the system.
+                    <ul>
+<li><strong>Registration</strong>: The fee charged at the beginning of the process for students to register for the event.</li>
+                    <li><strong>On-Site Registration</strong>: The fee charged to students registering on the day of the event.  Leave this as zero if students are not permitted to register on-site.</li>
+                    <li><strong>Participation</strong>: The fee charged to successfully auditioned students who are assigned to an ensemble and will be participating in the event\'s concert.</li>
+                    </ul></li>
+                    <li><strong>PayPal</strong>: Click these boxes if you wish to have your teachers or students submit fees via PayPal.  Where students are permitted to pay via PayPal, the teacher will always have the individual discretion to allow/deny their students this option.<ul><li><strong>Teachers</strong>: As above.</li><li><strong>Students</strong>: As above.</li></ul></li>
+                    <li><strong>Pitch Files</strong>: Use the checkbox to indicate if you will be storing your pitch files in the system to be made available to your teachers and their students.</li>
+                </ul>
+</p>'
+            ],
         ];
     }
 

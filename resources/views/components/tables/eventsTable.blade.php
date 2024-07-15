@@ -80,12 +80,14 @@
                         {{--                        @endcan--}}
 
                         @can('create', [new \App\Models\Events\Versions\Version(), $row['id']])
-                            <button
-                                type="button"
-                                class="bg-yellow-600 text-white text-xs px-2 rounded-full hover:bg-yellow-700"
-                            >
-                                New
-                            </button>
+                            <a href="{{ route('version.create', [$row['id']]) }}">
+                                <button
+                                    type="button"
+                                    class="bg-yellow-600 text-white text-xs px-2 rounded-full hover:bg-yellow-700"
+                                >
+                                    New
+                                </button>
+                            </a>
                         @endcan
 
                     </div>
@@ -111,9 +113,13 @@
         </tbody>
     </table>
 
-    <ul>
-        <li>Event selection by roles</li>
-    </ul>
+
+    <div>
+        <h2 class="font-semibold underline mt-4">To-Dos</h2>
+        <ul>
+            <li>Event selection by roles</li>
+        </ul>
+    </div>
 
     {{-- LOADING COMPONENT AND SPINNER --}}
     <x-tables.loadingComponentAndSpinner/>

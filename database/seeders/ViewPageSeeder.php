@@ -152,6 +152,12 @@ class ViewPageSeeder extends Seeder
                 'livewire',
                 'event edit',
             ],
+            [
+                'VersionCreateController',
+                '__invoke',
+                'livewire',
+                'new version',
+            ],
         ];
 
         foreach ($seeds as $seed) {
