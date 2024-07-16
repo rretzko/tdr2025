@@ -262,6 +262,7 @@ ul>
                 'instructions' => '<p>Events Table page</p>
 <p>This page displays all the events for which you are the event manager or in which you have been assigned a management role by the event manager.</p>
 <p>An event contains information that does not change (for example: name, sponsoring organization, grade eligibility, etc.) and information that may vary each time the event happens.</p>
+<p>Click the green button with the white plus sign to add your first event!</p>
 <p>The variable information is contained in the event <b>versions</b>.  You can access that information by clicking one of the three buttons under the "Version" column:
 <ul>
 <li><strong>Current</strong>: This is the most recent version of the event.</li>
@@ -373,6 +374,11 @@ ul>
                 </ul>
 </p>'
             ],
+            [
+                'header' => 'version dashboard',
+                'instructions' => '<p>Version dashboard page</p>
+<p>Version dashboard page instructions</p>'
+            ]
         ];
     }
 

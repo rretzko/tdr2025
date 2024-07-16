@@ -13,4 +13,20 @@ class CalcSeniorYearService
             ? $yr
             : ($yr + 1);
     }
+
+    public function getSeniorYearsArray(): array
+    {
+        $seniorYear = $this->getSeniorYear();
+        $firstGrade = ($seniorYear + 12);
+        $yearOne = 1960;
+
+        $a = [];
+
+        for ($i = $firstGrade; $i > $yearOne; $i--) {
+
+            $a[$i] = $i;
+        }
+
+        return $a;
+    }
 }

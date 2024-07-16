@@ -14,8 +14,17 @@ return new class extends Migration {
             $table->string('short_name');
             $table->smallInteger('senior_class_of');
             $table->string('status');
+            $table->enum('upload_type', ['audio', 'none', 'video'])->default('none');
+            $table->boolean('epayment_student')->default(0);
+            $table->boolean('epayment_teacher')->default(0);
+            $table->integer('fee_registration')->default(0);
+            $table->integer('fee_on_site_registration')->default(0);
+            $table->integer('fee_participation')->default(0);
+            $table->boolean('pitch_files_student')->default(1);
+            $table->boolean('pitch_files_teacher')->default(1);
             $table->softDeletes();
             $table->timestamps();
+            $table->unique(['event_id', 'name']);
         });
     }
 

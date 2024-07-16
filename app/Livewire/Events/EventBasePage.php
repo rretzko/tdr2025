@@ -43,7 +43,7 @@ class EventBasePage extends BasePage
         $fileName = Str::camel($this->form->name);
         $extension = pathInfo($this->logo->getClientOriginalName(), PATHINFO_EXTENSION);
         $fullFileName = $fileName.'.'.$extension;
-//        $path = self::AWSBUCKET . $fullFileName;
+
         $this->logo->storePubliclyAs('logos', $fullFileName, 's3');
 
         //save new logo if $this->form->sysId

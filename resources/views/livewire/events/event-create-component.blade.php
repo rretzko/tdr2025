@@ -115,14 +115,17 @@
                     livewire="true"
                 />
 
+                {{-- SUCCESS INDICATOR --}}
+                <x-forms.indicators.successIndicator
+                    :showSuccessIndicator="$showSuccessIndicator"
+                    message="{{  $successMessage }}"
+                />
+
                 <div class="flex flex-row space-x-2">
                     {{-- SUBMIT AND RETURN TO TABLE VIEW--}}
                     <x-buttons.submit/>
                 </div>
 
-                {{-- SUCCESS INDICATOR --}}
-                <x-forms.indicators.successIndicator :showSuccessIndicator="$showSuccessIndicator"
-                                                     message="{{  $successMessage }}"/>
             </form>
         </div>
     </div>

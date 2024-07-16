@@ -102,8 +102,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     ->name('student.reset');
 
     //VERSIONS
+    Route::get('versions/all/{event}', [\App\Http\Controllers\Events\Versions\VersionsController::class, 'index'])
+        ->name('versions.index');
     Route::get('version/new/{event}', \App\Http\Controllers\Events\Versions\VersionCreateController::class)
         ->name('version.create');
+    Route::get('version/dashboard/{version}', [\App\Http\Controllers\Events\Versions\VersionController::class, 'show'])
+        ->name('version.show');
 //    Route::get('event/edit/{event}', EventManageEditController::class)
 //        ->middleware('can:update,event') //check EventPolicy
 //        ->name('event.edit');
