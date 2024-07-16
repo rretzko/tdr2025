@@ -153,10 +153,16 @@ class ViewPageSeeder extends Seeder
                 'event edit',
             ],
             [
-                'VersionCreateController',
-                '__invoke',
+                'VersionProfileController',
+                'create',
                 'livewire',
-                'new version',
+                'version profile',
+            ],
+            [
+                'VersionProfileController',
+                'edit',
+                'livewire',
+                'version edit profile',
             ],
             [
                 'VersionController',

@@ -2,6 +2,7 @@
 
 namespace App\Data;
 
+use App\Models\Events\Versions\Version;
 use App\Models\PageInstruction;
 use App\Models\ViewCard;
 
@@ -50,6 +51,9 @@ class ViewDataFactory extends aViewData
             //route for the AddNew button
             $this->dto['addNewButtonRoute'] = 'event.create';
 
+            //header for select dashboards
+            $this->dto['dashboardHeader'] = $this->getDashboardHeader();
+
         } else { //user default values
 
             $this->dto['pageInstructions'] = '';
@@ -86,6 +90,17 @@ class ViewDataFactory extends aViewData
         ];
 
         return $components[$this->viewPage->page_name];
+    }
+
+    private function getDashboardHeader(): string
+    {
+        $dashboardHeaders = [
+            'version dashboard' => $this->dto['id'] ? Version::find($this->dto['id'])->name.' Dashboard' : '',
+        ];
+
+        return array_key_exists($this->dto['header'], $dashboardHeaders)
+            ? $dashboardHeaders[$this->dto['header']]
+            : '';
     }
 
     public function getDto(): array
@@ -152,8 +167,10 @@ class ViewDataFactory extends aViewData
             'new event' => 'events.event-create-component',
 
             'version edit' => 'events.versions.version-edit-component',
+            'version profile' => 'events.versions.version-profile-component',
+            'version edit profile' => 'events.versions.version-profile-component',
             'versions' => 'events.versions.versions-table-component',
-            'new version' => 'events.versions.version-create-component',
+
         ];
 
         return $components[$this->viewPage->header];

@@ -18,4 +18,27 @@ class UserConfig extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public static function getValue(string $property): string
+    {
+        return UserConfig::query()
+            ->where('user_id', auth()->id())
+            ->where('property', $property)
+            ->value('value') ?? '';
+    }
+
+    public static function setProperty(string $property, string $value, string $header = 'all'): void
+    {
+        UserConfig::updateOrCreate(
+            [
+                'user_id' => auth()->id(),
+                'property' => $property,
+                'header' => $header,
+            ],
+            [
+                'value' => $value,
+            ]
+        );
+
+    }
 }

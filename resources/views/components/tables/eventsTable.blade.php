@@ -62,12 +62,14 @@
                 <td class="mx-auto text-center border border-gray-200 border-b-transparent">
                     <div class="flex flex-col space-y-1 md:w-5/6 lg:w-3/4 mx-2 lg:mx-4">
                         {{--                        @can('edit', )--}}
-                        <button
-                            type="button"
-                            class="bg-yellow-600 text-white text-xs px-2 rounded-full hover:bg-yellow-700 "
-                        >
-                            Current
-                        </button>
+                        <a href="{{ route('version.current', ['event' => $row['id']]) }}">
+                            <button
+                                type="button"
+                                class="bg-yellow-600 text-white text-xs px-2 rounded-full hover:bg-yellow-700 "
+                            >
+                                Current
+                            </button>
+                        </a>
                         {{--                        @endcan--}}
 
                         {{--                        @can('edit', )--}}
@@ -80,7 +82,7 @@
                         {{--                        @endcan--}}
 
                         @can('create', [new \App\Models\Events\Versions\Version(), $row['id']])
-                            <a href="{{ route('version.create', [$row['id']]) }}">
+                            <a href="{{ route('version.profile', ['event' => $row['id']]) }}">
                                 <button
                                     type="button"
                                     class="bg-yellow-600 text-white text-xs px-2 rounded-full hover:bg-yellow-700"

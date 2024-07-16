@@ -262,7 +262,7 @@ ul>
                 'instructions' => '<p>Events Table page</p>
 <p>This page displays all the events for which you are the event manager or in which you have been assigned a management role by the event manager.</p>
 <p>An event contains information that does not change (for example: name, sponsoring organization, grade eligibility, etc.) and information that may vary each time the event happens.</p>
-<p>Click the green button with the white plus sign to add your first event!</p>
+<p><strong>Click the green button with the white plus sign to add your first event!</strong></p>
 <p>The variable information is contained in the event <b>versions</b>.  You can access that information by clicking one of the three buttons under the "Version" column:
 <ul>
 <li><strong>Current</strong>: This is the most recent version of the event.</li>
@@ -352,9 +352,32 @@ ul>
 </ul>',
             ],
             [
-                'header' => 'new version',
-                'instructions' => '<p>New Version page</p>
-<p>The new-version page collects basic information about the current event\'s new version.  Information from previous versions will be used whenever possible to reduce your workload.</p>
+                'header' => 'version profile',
+                'instructions' => '<p>Version Profile page</p>
+<p>The Version Profile page collects basic information about the current event\'s new version.  Information from previous versions will be used whenever possible to reduce your workload.</p>
+<p>When submitted, the system will display the version dashboard for your use in creating the full version profile.</p>
+<p>This form will collect information about the following:
+<ul>
+                    <li><strong>Name</strong>: The formal name of the event version.  This will likely include information that will vary between event versions, like date or year.</li>
+                    <li><strong>Short Name</strong>: The information name of the event version for use whenever space is at a premium.</li>
+                    <li><strong>Senior Class</strong>: The graduating senior class at the time of the event.</li>
+                    <li><strong>Status</strong>:  Select from the drop-down menu and used to determine if/when the system should be open to your members.</li>
+                    <li><strong>Upload files</strong>: This is used to determine if system space will be required for uploading files.</li>
+                    <li><strong>Fees:</strong>: This is used to determine which fees must be accounted for within the system.
+                    <ul>
+<li><strong>Registration</strong>: The fee charged at the beginning of the process for students to register for the event.</li>
+                    <li><strong>On-Site Registration</strong>: The fee charged to students registering on the day of the event.  Leave this as zero if students are not permitted to register on-site.</li>
+                    <li><strong>Participation</strong>: The fee charged to successfully auditioned students who are assigned to an ensemble and will be participating in the event\'s concert.</li>
+                    </ul></li>
+                    <li><strong>PayPal</strong>: Click these boxes if you wish to have your teachers or students submit fees via PayPal.  Where students are permitted to pay via PayPal, the teacher will always have the individual discretion to allow/deny their students this option.<ul><li><strong>Teachers</strong>: As above.</li><li><strong>Students</strong>: As above.</li></ul></li>
+                    <li><strong>Pitch Files</strong>: Use the checkbox to indicate if you will be storing your pitch files in the system to be made available to your teachers and their students.</li>
+                </ul>
+</p>'
+            ],
+            [
+                'header' => 'version edit profile',
+                'instructions' => '<p>Version Edit Profile page</p>
+<p>The Version Edit Profile page collects basic information about the current event\'s new version.  Information from previous versions will be used whenever possible to reduce your workload.</p>
 <p>When submitted, the system will display the version dashboard for your use in creating the full version profile.</p>
 <p>This form will collect information about the following:
 <ul>

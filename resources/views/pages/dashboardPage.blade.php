@@ -11,6 +11,12 @@
 
             <div class="bg-white dark:bg-gray-800 py-2 mb-4 overflow-hidden shadow-sm sm:rounded-lg">
 
+                @if($dto['dashboardHeader'])
+                    <div class="font-semibold ml-20 my-2">
+                        {{ $dto['dashboardHeader'] }}
+                    </div>
+                @endif
+
                 {{-- DASHBOARD CARDS --}}
                 <div class="flex flex-col justify-center sm:flex-row sm:space-x-2 sm:flex-wrap items-center space-y-2">
 

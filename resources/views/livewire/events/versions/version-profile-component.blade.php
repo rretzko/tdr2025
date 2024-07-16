@@ -12,13 +12,14 @@
             <fieldset id="bio" class=" pb-4 border border-white border-b-gray-300">
 
                 {{-- SYS ID --}}
-                <x-forms.elements.livewire.labeledInfoOnly label="Sys.Id" wireModel="createForm.sysId"/>
+                <x-forms.elements.livewire.labeledInfoOnly label="Sys.Id" wireModel="form.sysId"/>
 
                 {{-- NAME --}}
                 <x-forms.elements.livewire.inputTextWide
+                    autofocus="true"
                     blur=""
                     label="name"
-                    name="createForm.name"
+                    name="form.name"
                     placeholder=""
                     required
                 />
@@ -27,7 +28,7 @@
                 <x-forms.elements.livewire.inputTextNarrow
                     blur=""
                     label="short name"
-                    name="createForm.shortName"
+                    name="form.shortName"
                     placeholder=""
                     required
                 />
@@ -35,7 +36,7 @@
                 {{-- SENIOR CLASS --}}
                 <x-forms.elements.livewire.selectNarrow
                     label="Senior Class"
-                    name="createForm.seniorClassId"
+                    name="form.seniorClassId"
                     :options="$seniorClasses"
                     required="required"
                 />
@@ -43,7 +44,7 @@
                 {{-- STATUS --}}
                 <x-forms.elements.livewire.selectNarrow
                     label="status"
-                    name="createForm.statusId"
+                    name="form.statusId"
                     :options="$statuses"
                     required="required"
                 />
@@ -54,15 +55,15 @@
                 <label>The following file type will be uploaded:</label>
                 <div class="ml-4 space-y-0">
                     <div>
-                        <input type="radio" wire:model="createForm.uploadType" value="audio"/>
+                        <input type="radio" wire:model="form.uploadType" value="audio"/>
                         <label>Audio (mp3, m4a, wav) </label>
                     </div>
                     <div>
-                        <input type="radio" wire:model="createForm.uploadType" value="video"/>
+                        <input type="radio" wire:model="form.uploadType" value="video"/>
                         <label>Video (mp4, mov)</label>
                     </div>
                     <div>
-                        <input type="radio" wire:model="createForm.uploadType" value="none"/>
+                        <input type="radio" wire:model="form.uploadType" value="none"/>
                         <label>None</label>
                     </div>
                 </div>
@@ -75,17 +76,17 @@
                     <x-forms.elements.livewire.inputTextNarrow
                         blur=""
                         label="Registration Fee"
-                        name="createForm.feeRegistration"
+                        name="form.feeRegistration"
                     />
                     <x-forms.elements.livewire.inputTextNarrow
                         blur=""
                         label="On-Site Registration Fee"
-                        name="createForm.feeOnSiteRegistration"
+                        name="form.feeOnSiteRegistration"
                     />
                     <x-forms.elements.livewire.inputTextNarrow
                         blur=""
                         label="Participation Fee"
-                        name="createForm.feeParticipation"
+                        name="form.feeParticipation"
                         placeholder=""
                     />
                 </div>
@@ -98,13 +99,13 @@
                     <x-forms.elements.livewire.inputCheckbox
                         blur="false"
                         label="Teacher"
-                        name="createForm.teacher"
+                        name="form.teacher"
                         livewire="true"
                     />
                     <x-forms.elements.livewire.inputCheckbox
                         blur="false"
                         label="Student"
-                        name="createForm.student"
+                        name="form.student"
                         livewire="true"
                     />
                 </div>
@@ -117,13 +118,13 @@
                     <x-forms.elements.livewire.inputCheckbox
                         blur="false"
                         label="Pitch files on TheDirectorsRoom.com"
-                        name="createForm.pitchFilesteacher"
+                        name="form.pitchFilesTeacher"
                         livewire="true"
                     />
                     <x-forms.elements.livewire.inputCheckbox
                         blur="false"
                         label="Pitch files on StudentFolder.info"
-                        name="createForm.pitchFilesStudent"
+                        name="form.pitchFilesStudent"
                         livewire="true"
                     />
                 </div>

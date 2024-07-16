@@ -15,6 +15,9 @@ export default {
         'bg-green-600',
         'border-indigo-500',
         'text-yellow-600',
+        'text-orange-600',
+        'text-pink-600',
+        'text-lime-600',
     ],
     theme: {
         extend: {

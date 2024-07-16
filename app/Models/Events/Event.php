@@ -2,6 +2,7 @@
 
 namespace App\Models\Events;
 
+use App\Models\Events\Versions\Version;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,5 +34,18 @@ class Event extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Return the event version with the most recent senior_class_of value
+     * or a new Version object if none found
+     * @return Version
+     */
+    public function getCurrentVersion(): Version
+    {
+        return Version::query()
+            ->where('event_id', $this->id)
+            ->orderByDesc('senior_class_of')
+            ->first() ?? new Version();
     }
 }

@@ -4,11 +4,12 @@ namespace App\Livewire\Events\Versions;
 
 use App\Livewire\BasePage;
 use App\Livewire\Forms\VersionForm;
+use App\Models\Events\Versions\Version;
+use App\Models\UserConfig;
 use App\Services\CalcSeniorYearService;
 
 class BasePageVersion extends BasePage
 {
-    public VersionForm $form;
     const STATUSES = ['active' => 'active', 'inactive' => 'inactive', 'closed' => 'closed', 'sandbox' => 'sandbox'];
 
     public function mount(): void
@@ -18,7 +19,7 @@ class BasePageVersion extends BasePage
 
     public function render()
     {
-        return view('livewire..events.versions.version-create-component');
+        return view('livewire..events.versions.version-profile-component');
     }
 
     protected function getSeniorClasses(): array
@@ -26,5 +27,10 @@ class BasePageVersion extends BasePage
         $service = new CalcSeniorYearService();
 
         return $service->getSeniorYearsArray();
+    }
+
+    protected function storeVersionId(Version $version): void
+    {
+        UserConfig::setProperty('versionId', $version->id);
     }
 }

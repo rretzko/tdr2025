@@ -163,10 +163,16 @@ Breadcrumbs::for('versions dashboard', function (BreadcrumbTrail $trail, int $id
     $trail->push('Versions Dashboard', route('versions.index', ['event' => $id]));
 });
 
-//Version.Create
-Breadcrumbs::for('new version', function (BreadcrumbTrail $trail, int $id) {
+//Version.Profile
+Breadcrumbs::for('version profile', function (BreadcrumbTrail $trail, int $id) {
     $trail->parent('my events');
-    $trail->push('New Version', route('version.create', ['event' => $id]));
+    $trail->push('Version Profile', route('version.create', ['event' => $id]));
+});
+
+//Version.Edit Profile
+Breadcrumbs::for('version edit profile', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('my events');
+    $trail->push('Version Edit Profile', route('version.create', ['event' => $id]));
 });
 
 //Version.Dashboard (note: SINGLE version)

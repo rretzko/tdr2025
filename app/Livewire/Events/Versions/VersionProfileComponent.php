@@ -2,23 +2,27 @@
 
 namespace App\Livewire\Events\Versions;
 
-use App\Livewire\Forms\VersionCreateForm;
-use Livewire\Component;
+use App\Livewire\Forms\VersionProfileForm;
 
-class VersionCreateComponent extends BasePageVersion
+class VersionProfileComponent extends BasePageVersion
 {
-    public VersionCreateForm $createForm;
+    public VersionProfileForm $form;
 
     public function mount(): void
     {
         parent::mount();
 
-        $this->createForm->setSeniorClassId();
+        if ($this->dto['id']) {
+
+            $this->form->setProfile($this->dto['id']);
+        }
+
+        $this->form->setSeniorClassId();
     }
 
     public function render()
     {
-        return view('livewire..events.versions.version-create-component',
+        return view('livewire..events.versions.version-profile-component',
             [
                 'seniorClasses' => $this->getSeniorClasses(),
                 'statuses' => self::STATUSES,
@@ -27,11 +31,13 @@ class VersionCreateComponent extends BasePageVersion
 
     public function save()
     {
-        $version = $this->createForm->add($this->dto['id']);
+        $version = $this->form->update($this->dto['id']);
 
         $this->showSuccessIndicator = true;
 
         $this->successMessage = 'The version has been added.';
+
+        $this->storeVersionId($version);
 
         return redirect()->route('version.show', ['version' => $version]);
     }
