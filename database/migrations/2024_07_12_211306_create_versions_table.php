@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->integer('fee_registration')->default(0);
             $table->integer('fee_on_site_registration')->default(0);
             $table->integer('fee_participation')->default(0);
+            $table->integer('fee_epayment_surcharge')->default(0);
             $table->boolean('pitch_files_student')->default(1);
             $table->boolean('pitch_files_teacher')->default(1);
             $table->softDeletes();

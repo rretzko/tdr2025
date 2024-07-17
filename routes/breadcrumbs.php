@@ -163,21 +163,33 @@ Breadcrumbs::for('versions dashboard', function (BreadcrumbTrail $trail, int $id
     $trail->push('Versions Dashboard', route('versions.index', ['event' => $id]));
 });
 
+//Versions.Table (note: MULTIPLE versions)
+Breadcrumbs::for('versions', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('my events');
+    $trail->push('Versions Table', route('versions.index', ['event' => $id]));
+});
+
+//Version.Configs
+Breadcrumbs::for('version configs edit', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('version dashboard', $id);
+    $trail->push('Version Configs Edit', route('version.configs'));
+});
+
 //Version.Profile
 Breadcrumbs::for('version profile', function (BreadcrumbTrail $trail, int $id) {
-    $trail->parent('my events');
+    $trail->parent('versions');
     $trail->push('Version Profile', route('version.create', ['event' => $id]));
 });
 
 //Version.Edit Profile
 Breadcrumbs::for('version edit profile', function (BreadcrumbTrail $trail, int $id) {
     $trail->parent('my events');
-    $trail->push('Version Edit Profile', route('version.create', ['event' => $id]));
+    $trail->push('Version Edit Profile', route('version.edit', ['event' => $id]));
 });
 
 //Version.Dashboard (note: SINGLE version)
 Breadcrumbs::for('version dashboard', function (BreadcrumbTrail $trail, int $id) {
-    $trail->parent('events dashboard'); //s/b versions dashboard
+    $trail->parent('my events'); //s/b versions dashboard
     $trail->push('Version Dashboard', route('version.show', ['version' => $id]));
 });
 

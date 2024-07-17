@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Forms;
 
+use App\Models\Events\Event;
 use App\Models\Events\Versions\Version;
 use App\Models\UserConfig;
 use App\Services\CalcSeniorYearService;
@@ -12,6 +13,8 @@ use Livewire\Form;
 
 class VersionProfileForm extends Form
 {
+    public bool $cloneAdvisory = false;
+    public float $feeEpaymentSurcharge = 0;
     public float $feeParticipation = 0;
     public float $feeOnSiteRegistration = 0;
     public float $feeRegistration = 0;
@@ -41,21 +44,23 @@ class VersionProfileForm extends Form
                 'fee_registration' => ConvertToPenniesService::usdToPennies($this->feeRegistration),
                 'fee_on_site_registration' => ConvertToPenniesService::usdToPennies($this->feeOnSiteRegistration),
                 'fee_participation' => ConvertToPenniesService::usdToPennies($this->feeParticipation),
+                'fee_epayment_surcharge' => ConvertToPenniesService::usdToPennies($this->feeEpaymentSurcharge),
                 'pitch_files_student' => $this->pitchFilesStudent,
                 'pitch_files_teacher' => $this->pitchFilesTeacher,
             ]
         );
     }
 
-    public function setProfile(int $versionId): void
+    public function setProfile(int $versionId, bool $clone = false): bool
     {
         $version = Version::find($versionId);
-        $this->sysId = $versionId;
+        $this->sysId = ($clone ? 'new' : $versionId);
         $this->name = $version->name;
         $this->shortName = $version->short_name;
         $this->seniorClassId = $version->senior_class_of;
         $this->statusId = $version->status;
         $this->uploadType = $version->upload_type;
+        $this->feeEpaymentSurcharge = ConvertToUsdService::penniesToUsd($version->fee_epayment_surcharge);
         $this->feeParticipation = ConvertToUsdService::penniesToUsd($version->fee_participation);
         $this->feeOnSiteRegistration = ConvertToUsdService::penniesToUsd($version->fee_on_site_registration);
         $this->feeRegistration = ConvertToUsdService::penniesToUsd($version->fee_registration);
@@ -64,6 +69,23 @@ class VersionProfileForm extends Form
         $this->pitchFilesStudent = $version->pitch_files_student;
         $this->pitchFilesTeacher = $version->pitch_files_teacher;
 
+        return true;
+    }
+
+    /**
+     * If other versions exist for the current event,
+     * use the most recent senior_class_of to clone profile values
+     * @return void
+     */
+    public function setProfileClone(): bool
+    {
+        $event = Event::find(UserConfig::getValue('eventId'));
+        $versionId = $event->getCurrentVersion()->id ?: 0;
+
+        if ($versionId) {
+
+            return $this->setProfile($versionId, true);
+        }
 
     }
 
@@ -87,6 +109,7 @@ class VersionProfileForm extends Form
                     'senior_class_of' => $this->seniorClassId,
                     'status' => $this->statusId,
                     'upload_type' => $this->uploadType,
+                    'fee_epayment_surcharge' => ConvertToPenniesService::usdToPennies($this->feeEpaymentSurcharge),
                     'fee_registration' => ConvertToPenniesService::usdToPennies($this->feeRegistration),
                     'fee_on_site_registration' => ConvertToPenniesService::usdToPennies($this->feeOnSiteRegistration),
                     'fee_participation' => ConvertToPenniesService::usdToPennies($this->feeParticipation),

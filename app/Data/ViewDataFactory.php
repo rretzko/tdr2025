@@ -94,13 +94,13 @@ class ViewDataFactory extends aViewData
 
     private function getDashboardHeader(): string
     {
+        $versionName = Version::find($this->dto['id'])->name ?? '';
+
         $dashboardHeaders = [
-            'version dashboard' => $this->dto['id'] ? Version::find($this->dto['id'])->name.' Dashboard' : '',
+            'version dashboard' => $versionName,
         ];
 
-        return array_key_exists($this->dto['header'], $dashboardHeaders)
-            ? $dashboardHeaders[$this->dto['header']]
-            : '';
+        return $dashboardHeaders[$this->dto['header']] ?? '';
     }
 
     public function getDto(): array
@@ -166,6 +166,7 @@ class ViewDataFactory extends aViewData
             'my events' => 'events.events-table-component',
             'new event' => 'events.event-create-component',
 
+            'version configs edit' => 'events.versions.version-configs-edit-component',
             'version edit' => 'events.versions.version-edit-component',
             'version profile' => 'events.versions.version-profile-component',
             'version edit profile' => 'events.versions.version-profile-component',

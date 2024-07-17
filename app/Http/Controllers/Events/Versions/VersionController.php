@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Events\Versions;
 use App\Data\ViewDataFactory;
 use App\Http\Controllers\Controller;
 use App\Models\Events\Versions\Version;
+use App\Models\UserConfig;
 use Illuminate\Http\Request;
 
 class VersionController extends Controller
@@ -29,6 +30,8 @@ class VersionController extends Controller
 
     public function show(Version $version)
     {
+        UserConfig::setProperty('versionId', $version->id);
+
         $data = new ViewDataFactory(__METHOD__, $version->id);
 
         $dto = $data->getDto();

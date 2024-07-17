@@ -48,72 +48,72 @@
                 <td class="border border-gray-200 px-1">
                     <div>{{ $row['name'] }}</div>
                     <div class="ml-2 text-xs italic">{{ $row['short_name'] }}</div>
-                    <div class="ml-2 text-xs italic">{{ $row['organization'] }}</div>
                 </td>
                 <td class="border border-gray-200 px-1 text-center">
-                    {{ $row['grades'] }} {{-- ex. 2026 (11th grade) --}}
+                    {{ $row['senior_class_of'] }} {{-- ex. 2026 (11th grade) --}}
                 </td>
                 <td class="border border-gray-200 px-1 text-center">
-                    {{ $row['ensemble_count'] }} {{-- ex. baritone --}}
+                    {{ $row['status'] }} {{-- ex. inactive --}}
                 </td>
                 <td class="border border-gray-200 px-1 text-center">
-                    {{ $row['status'] }} {{-- ex. 64 (5' 4") --}}
+                    @if($row['epayment_student'])
+                        student
+                    @endif
+                    @if($row['epayment_teacher'])
+                        <br/>teacher
+                    @endif
                 </td>
                 <td class="mx-auto text-center border border-gray-200 border-b-transparent">
                     <div class="flex flex-col space-y-1 md:w-5/6 lg:w-3/4 mx-2 lg:mx-4">
 
-                        {{-- DISPLAY "CURRENT" BUTTON IF AT LEAST ONE VERSION EXISTS --}}
-                        @if($row['versionsCount'])
-                            {{--                        @can('edit', )--}}
-                            <a href="{{ route('version.current', ['event' => $row['id']]) }}">
-                                <button
-                                    type="button"
-                                    class="bg-yellow-600 text-white text-xs px-2 rounded-full hover:bg-yellow-700 "
-                                >
-                                    Current
-                                </button>
-                            </a>
-                            {{--                        @endcan--}}
-                        @endif
+                        <div>
+                            @if($row['fee_registration'])
+                                {{ '$' . number_format(($row['fee_registration'] / 100), 2) . ' (reg)' }}
+                            @endif
+                        </div>
 
+                        <div>
+                            @if($row['fee_on_site_registration'])
+                                {{ '$' . number_format(($row['fee_on_site_registration'] / 100), 2) . ' (on-site)' }}
+                            @endif
+                        </div>
 
-                        {{-- DISPLAY "ALL" BUTTON IF MORE THAN ONE VERSION EXISTS --}}
-                        @if($row['versionsCount'] > 1)
-                            {{--                        @can('edit', )--}}
-                            <a href="{{ route('versions.index', ['event' => $row['id']]) }}">
-                                <button
-                                    type="button"
-                                    class="bg-yellow-600 text-white text-xs px-2 rounded-full hover:bg-yellow-700"
-                                >
-                                    All
-                                </button>
-                            </a>
-                            {{--                        @endcan--}}
-                        @endif
+                        <div>
+                            @if($row['fee_participation'])
+                                {{ '$' . number_format(($row['fee_participation'] / 100), 2) . ' (part)' }}
+                            @endif
+                        </div>
 
-                        @can('create', [new \App\Models\Events\Versions\Version(), $row['id']])
-                            <a href="{{ route('version.create', ['event' => $row['id']]) }}">
-                                <button
-                                    type="button"
-                                    class="bg-yellow-600 text-white text-xs px-2 rounded-full hover:bg-yellow-700"
-                                >
-                                    New
-                                </button>
-                            </a>
-                        @endcan
+                    </div>
+
+                </td>
+                <td class="mx-auto text-center border border-gray-200 border-b-transparent">
+                    <div class="flex flex-col space-y-1 md:w-5/6 lg:w-3/4 mx-2 lg:mx-4">
+
+                        <div>
+                            @if($row['pitch_files_student'])
+                                student
+                            @endif
+                        </div>
+
+                        <div>
+                            @if($row['pitch_files_teacher'])
+                                teacher
+                            @endif
+                        </div>
 
                     </div>
 
                 </td>
                 <td class="text-center border border-gray-200">
-                    @can('update', \App\Models\Events\Event::find($row['id']))
-                        <x-buttons.edit id="{{ $row['id'] }}" route="event.edit"/>
-                    @endcan
+                    {{--                    @can('update', \App\Models\Events\Versions\Version::find($row['id']))--}}
+                    <x-buttons.edit id="{{ $row['id'] }}" route="version.show"/>
+                    {{--                    @endcan--}}
                 </td>
                 <td class="text-center border border-gray-200">
-                    @can('delete', \App\Models\Events\Event::find($row['id']))
-                        <x-buttons.remove id="{{ $row['id'] }}" livewire="1"/>
-                    @endcan
+                    {{--                    @can('delete', \App\Models\Events\Versions\Version::find($row['id']))--}}
+                    <x-buttons.remove id="{{ $row['id'] }}" livewire="1"/>
+                    {{--                    @endcan--}}
                 </td>
             </tr>
 

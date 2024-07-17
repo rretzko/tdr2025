@@ -265,8 +265,8 @@ ul>
 <p><strong>Click the green button with the white plus sign to add your first event!</strong></p>
 <p>The variable information is contained in the event <b>versions</b>.  You can access that information by clicking one of the three buttons under the "Version" column:
 <ul>
-<li><strong>Current</strong>: This is the most recent version of the event.</li>
-<li><strong>All</strong>: This will display a table containing all versions for which you have a management role.</li>
+<li><strong>Current</strong>: This button will display if at least one version has been created.  This is the most recent version of the event.</li>
+<li><strong>All</strong>: This button will display if more than one version has been created. This will display a table containing all versions for which you have a management role.</li>
 <li><strong>New</strong>: This will open a page to create a new version.
 <ul>
 <li>Note: This button only displays for the current event manager(s).</li>
@@ -401,7 +401,17 @@ ul>
                 'header' => 'version dashboard',
                 'instructions' => '<p>Version dashboard page</p>
 <p>Version dashboard page instructions</p>'
-            ]
+            ],
+            [
+                'header' => 'versions',
+                'instructions' => '<p>Versions table page</p>
+<p>Versions table page instructions</p>'
+            ],
+            [
+                'header' => 'version configs edit',
+                'instructions' => '<p>Version Configurations edit page</p>
+<p>Version Configurations edit page instructions</p>'
+            ],
         ];
     }
 

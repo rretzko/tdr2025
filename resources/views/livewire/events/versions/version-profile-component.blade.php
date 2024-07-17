@@ -9,6 +9,14 @@
 
             <x-forms.styles.genericStyle/>
 
+            <div>
+                {{-- SUCCESS INDICATOR --}}
+                <x-forms.indicators.successIndicator
+                    :showSuccessIndicator="$showSuccessIndicator"
+                    message="Please Note: The most recent version's information has been copied to populate the fields below!"
+                />
+            </div>
+
             <fieldset id="bio" class=" pb-4 border border-white border-b-gray-300">
 
                 {{-- SYS ID --}}
@@ -107,6 +115,11 @@
                         label="Student"
                         name="form.student"
                         livewire="true"
+                    />
+
+                    <x-forms.elements.livewire.inputTextNarrow
+                        label="add surcharge for payPal payments"
+                        name="form.feeEpaymentSurcharge"
                     />
                 </div>
             </fieldset>

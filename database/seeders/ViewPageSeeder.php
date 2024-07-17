@@ -170,6 +170,18 @@ class ViewPageSeeder extends Seeder
                 'dashboard',
                 'version dashboard',
             ],
+            [
+                'VersionsController',
+                'index',
+                'table',
+                'versions table',
+            ],
+            [
+                'VersionConfigController',
+                'edit',
+                'livewire',
+                'version configs edit',
+            ],
         ];
 
         foreach ($seeds as $seed) {

@@ -15,6 +15,12 @@ class VersionProfileComponent extends BasePageVersion
         if ($this->dto['id']) {
 
             $this->form->setProfile($this->dto['id']);
+        } else {
+
+            if ($this->form->setProfileClone()) {
+
+                $this->showSuccessIndicator = true;
+            }
         }
 
         $this->form->setSeniorClassId();

@@ -12,6 +12,8 @@ class BasePageVersion extends BasePage
 {
     const STATUSES = ['active' => 'active', 'inactive' => 'inactive', 'closed' => 'closed', 'sandbox' => 'sandbox'];
 
+    protected const TABS = ['adjudication', 'registrants', 'registrants 2', 'ensembles', 'membership'];
+
     public function mount(): void
     {
         parent::mount();
