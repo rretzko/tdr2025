@@ -11,7 +11,7 @@ use App\Models\UserConfig;
 class VersionConfigsEditComponent extends BasePageVersion
 {
     public VersionConfigsForm $form;
-    public string $selectedTab = 'adjudication';
+    public string $selectedTab = 'advisory'; //'adjudication';
     public Event $event;
     public Version $version;
 
@@ -20,6 +20,8 @@ class VersionConfigsEditComponent extends BasePageVersion
         parent::mount();
         $this->event = Event::find(UserConfig::getValue('eventId'));
         $this->version = Version::find(UserConfig::getValue('versionId'));
+        //assign form based on $selectedTab value
+        $this->updatedSelectedTab();
     }
 
     public function render()
@@ -33,7 +35,12 @@ class VersionConfigsEditComponent extends BasePageVersion
 
     public function process(): void
     {
-        $this->form->update();
+        $this->reset('showSuccessIndicator', 'successMessage');
+
+        //updateAdjudication, updateRegistrants
+        $updateMethod = 'update'.ucfirst($this->selectedTab);
+
+        $this->form->$updateMethod($this->version->id);
 
         $this->showSuccessIndicator = true;
 
@@ -43,5 +50,13 @@ class VersionConfigsEditComponent extends BasePageVersion
     public function remove()
     {
 
+    }
+
+    public function updatedSelectedTab(): void
+    {
+        //setRowAdjudication, setRowRegistrants, etc.
+        $method = 'setRow'.ucfirst($this->selectedTab);
+
+        $this->form->$method($this->version->id);
     }
 }

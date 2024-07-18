@@ -27,7 +27,7 @@
                                 autofocus='true'
                                 label="How many {{ $version->upload_type }} files will be uploaded by each student?"
                                 name="form.fileUploadCount"
-                                :options="$count1thru5Options" {{-- 1-thru-5 --}}
+                                :options="$count1thru5Options" 1-thru-5
                                 required="true"
                             />
 
@@ -38,6 +38,7 @@
                                 required="true"
                                 placeholder="Scales,Amazing Grade,The Silver Swan"
                             />
+
                         @endif {{-- @if($selectedTab = 'adjudication') --}}
 
                         {{-- JUDGE COUNT --}}
@@ -45,7 +46,7 @@
                             <x-forms.elements.livewire.selectNarrow
                                 label="How many judges per room?"
                                 name="form.judgeCount"
-                                :options="$count1thru5Options" {{-- 1-thru-5 --}}
+                                :options="$count1thru5Options" 1-thru-5
                                 required="true"
                             />
                         </div>
@@ -70,7 +71,7 @@
                             <div class="flex flex-col">
                                 <div class="flex flex-row space-x-2 items-center">
                                     <input type="radio"
-                                           wire:model="form.scoreAscending"
+                                           wire:model="form.scoresAscending"
                                            value="1"
                                            aria-label="ascending scores checkbox"
                                     />
@@ -78,7 +79,7 @@
                                 </div>
                                 <div class="flex flex-row space-x-2 items-center">
                                     <input type="radio"
-                                           wire:model="form.scoreAscending"
+                                           wire:model="form.scoresAscending"
                                            value="0"
                                            aria-label="descending scores checkbox"
                                     />
@@ -86,7 +87,7 @@
                                 </div>
                             </div>
 
-                        </div> {{-- END OF SCORING ORDER --}}
+                        </div>  {{-- END OF SCORING ORDER --}}
 
                         {{-- ALTERNATING SCORES --}}
                         @if($event->ensemble_count > 1)
@@ -94,6 +95,75 @@
                                 label="Score assignment should alternate between event ensembles."
                                 name="form.alternatingScores"
                                 value="1"
+                            />
+                        @endif
+
+                        {{-- SUCCESS INDICATOR --}}
+                        @if($showSuccessIndicator)
+                            <div class="text-green-600 italic text-xs">
+                                {{ $successMessage }}
+                            </div>
+                        @endif
+
+                        {{-- SUBMIT BUTTON --}}
+                        <x-buttons.fauxSubmit/>
+
+                    @endif  {{-- END OF IF $SELECTEDTAB===adjudication --}}
+
+                </fieldset> {{-- END OF ADJUDICATION FIELDSET --}}
+
+                {{-- REGISTRANTS --}}
+                <fieldset id="registrants" class="space-y-2">
+
+                    @if($selectedTab === 'registrants')
+
+                        {{-- EAPPLICATION --}}
+                        <x-forms.elements.livewire.inputCheckbox
+                            label="This event version will use an eApplication."
+                            name="form.eapplication"
+                            value="1"
+                        />
+
+                        {{-- AUDITION COUNT --}}
+                        <x-forms.elements.livewire.selectNarrow
+                            autofocus='true'
+                            label="How many voice parts is each registrant allowed to audition?"
+                            name="form.auditionCount"
+                            :options="$count1thru5Options" 1-thru-5
+                            required="true"
+                        />
+
+                        @if($showSuccessIndicator)
+                            <div class="text-green-600 italic text-xs">
+                                {{ $successMessage }}
+                            </div>
+                        @endif
+
+                        <x-buttons.fauxSubmit/>
+
+                    @endif   {{-- END OF @if($selectedTab = 'adjudication') --}}
+
+                </fieldset> {{-- END OF REGISTRANTS FIELDSET --}}
+
+                {{-- MEMBERSHIP --}}
+                <fieldset id="membership" class="space-y-2">
+
+                    @if($selectedTab === 'membership')
+
+                        {{-- MEMBERSHIP CARD --}}
+                        <x-forms.elements.livewire.inputCheckbox
+                            label="This event version requires a copy of a membership card."
+                            name="form.membershipCard"
+                            value="1"
+                            live="true"
+                        />
+
+                        {{-- VALID THRU --}}
+                        @if($form->membershipCard)
+                            <x-forms.elements.livewire.inputDate
+                                label="Membership must be valid through:"
+                                name="form.validThru"
+                                type="date"
                             />
                         @endif
 
@@ -105,25 +175,27 @@
 
                         <x-buttons.fauxSubmit/>
 
-                    @endif {{-- IF $SELECTEDTAB===adjudication --}}
+                    @endif   {{-- END OF @if($selectedTab = 'adjudication') --}}
 
-                </fieldset>{{-- ADJUDICATION FIELDSET --}}
+                </fieldset> {{-- END OF MEMBERSHIP FIELDSET --}}
 
-                <fieldset id="fees">
+                {{-- ADVISORY --}}
+                <fieldset id="advisory" class="space-y-2">
 
-                    @if($selectedTab === 'fees')
+                    @if($selectedTab === 'advisory')
 
-                        @if($showSuccessIndicator)
-                            <div class="text-green-600 italic text-xs">
-                                {{ $successMessage }}
+                        @forelse($form->advisories AS $advisory)
+                            <div class="border border-white border-b-gray-200">
+                                {!! $advisory !!}
                             </div>
-                        @endif
+                        @empty
+                            <div>No advisories found.</div>
+                        @endforelse
 
-                        <x-buttons.fauxSubmit/>
+                    @endif
 
-                    @endif {{-- END OF @if($selectedTab = 'adjudication') --}}
+                </fieldset> {{-- END OF ADVISORY --}}
 
-                </fieldset> {{-- END OF FEES FIELDSET --}}
 
             </div>
         </form>
@@ -131,5 +203,3 @@
     </div>{{-- END OF ID=CONTAINER --}}
 
 </div>
-
-

@@ -4,6 +4,7 @@
     'hint' => '',
     'key' => false,
     'label',
+    'live' => false,
     'name',
     'placeholder' => '',
     'required' => false,
@@ -19,7 +20,9 @@
             'border border-red-600' => $errors->has($name),
             ])
 
-           @if($blur === 'true')
+           @if($live === 'true')
+               wire:model.live="{{ $name }}"
+           @elseif($blur === 'true')
                wire:model.blur="{{ $name }}"
            @else
                wire:model="{{ $name }}"
