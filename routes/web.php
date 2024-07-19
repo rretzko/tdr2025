@@ -101,10 +101,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         \App\Http\Controllers\Students\StudentResetPasswordController::class) //invokable
     ->name('student.reset');
 
-
     //VERSIONS
     Route::get('version/configs', [\App\Http\Controllers\Events\Versions\VersionConfigController::class, 'edit'])
         ->name('version.configs');
+
+    Route::get('version/dates', [\App\Http\Controllers\Events\Versions\VersionDateController::class, 'edit'])
+        ->name('version.dates');
 
     Route::get('version/profile', [\App\Http\Controllers\Events\Versions\VersionProfileController::class, 'edit'])
         ->name('version.edit');

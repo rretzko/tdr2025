@@ -412,6 +412,11 @@ ul>
                 'instructions' => '<p>Version Configurations edit page</p>
 <p>Version Configurations edit page instructions</p>'
             ],
+            [
+                'header' => 'version dates edit',
+                'instructions' => '<p>Version Dates edit page</p>
+<p>Version Dated edit page instructions</p>'
+            ],
         ];
     }
 

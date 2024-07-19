@@ -10,7 +10,9 @@
     'type' => 'text',
 ])
 <div class="flex flex-col">
-    <label for="{{ $name }}" class="@if($required) required @endif">{{ ucwords($label) }}</label>
+    <label for="{{ $name }}" class="@if($required) required @endif">
+        {!! ucwords($label) !!}
+    </label>
     <input type="{{ $type }}"
            @class([
             'narrow',
