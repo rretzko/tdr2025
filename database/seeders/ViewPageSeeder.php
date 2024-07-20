@@ -188,6 +188,12 @@ class ViewPageSeeder extends Seeder
                 'livewire',
                 'version dates edit',
             ],
+            [
+                'VersionParticipantController',
+                'index',
+                'livewire',
+                'version participants',
+            ],
         ];
 
         foreach ($seeds as $seed) {

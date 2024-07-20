@@ -417,6 +417,25 @@ ul>
                 'instructions' => '<p>Version Dates edit page</p>
 <p>Version Dated edit page instructions</p>'
             ],
+            [
+                'header' => 'version participants',
+                'instructions' => '<p>Version Participation page</p>
+<p>Version participation page displays all participants to the selected version.</p>
+<p>Using the "Search" box, you may search by the participant or school\'s  name.</p>
+<p>The table may be sorted by name, school or status by clicking the
+appropriate column header.</p>
+<p>There are two short forms embedded in the table:
+<ul>
+<li><strong>Add Participant</strong> form: Accessed by clicking the green button with the plus sign.
+<ul>
+<li>You can find a participate by entering their <strong>email address</strong>,or</li>
+<li>Selecting the <strong>participants name</strong> from the drop-down box.</li>
+<li>Once found, an "Invite This Teacher?" button will display to add that teacher to your participants roster.</li>
+<li>Participant status will automatically change from "invited" when the participant hits certain milestones (ex. clicking through the "Obligations" page or when students become candidates for auditions).</li>
+</ul></li>
+<li><strong>Edit Participant</strong> form: Accessed by clicking the indigo "Edit" button. Note that the only data you may edit on a participant is their status.</li>
+</ul></p>'
+            ],
         ];
     }
 

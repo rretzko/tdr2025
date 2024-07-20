@@ -105,8 +105,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('version/configs', [\App\Http\Controllers\Events\Versions\VersionConfigController::class, 'edit'])
         ->name('version.configs');
 
+    //VERSIONS.DATES
     Route::get('version/dates', [\App\Http\Controllers\Events\Versions\VersionDateController::class, 'edit'])
         ->name('version.dates');
+
+    //VERSIONS.PARTICIPANTS
+    Route::get('version/participants',
+        [\App\Http\Controllers\Events\Versions\VersionParticipantController::class, 'index'])
+        ->name('version.participants');
+    Route::get('version/participant/edit/{participant}',
+        [\App\Http\Controllers\Events\Versions\VersionParticipantController::class, 'index'])
+        ->name('version.participant.edit');
+
 
     Route::get('version/profile', [\App\Http\Controllers\Events\Versions\VersionProfileController::class, 'edit'])
         ->name('version.edit');
