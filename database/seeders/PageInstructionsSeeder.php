@@ -436,6 +436,12 @@ appropriate column header.</p>
 <li><strong>Edit Participant</strong> form: Accessed by clicking the indigo "Edit" button. Note that the only data you may edit on a participant is their status.</li>
 </ul></p>'
             ],
+            [
+                'header' => 'version roles',
+                'instructions' => '<p>Version Roles page instructions</p>o a
+<p>Use this page to assign event version management roles to version participants.</p>
+<p>Note: A teacher <strong>must be a participant</strong> of the version prior to being assigned a role!</p>'
+            ]
         ];
     }
 

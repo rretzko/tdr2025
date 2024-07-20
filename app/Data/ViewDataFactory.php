@@ -171,6 +171,7 @@ class ViewDataFactory extends aViewData
             'version edit' => 'events.versions.version-edit-component',
             'version participants' => 'events.versions.version-participants-table-component',
             'version profile' => 'events.versions.version-profile-component',
+            'version roles' => 'events.versions.version-role-component',
             'version edit profile' => 'events.versions.version-profile-component',
             'versions' => 'events.versions.versions-table-component',
 

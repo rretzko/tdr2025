@@ -4,11 +4,9 @@ namespace App\Livewire\Events\Versions;
 
 use App\Exports\VersionParticipantsExport;
 use App\Livewire\BasePage;
-use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionParticipant;
 use App\Models\Schools\Teacher;
 use App\Models\User;
-use App\Services\UserNameService;
 use App\ValueObjects\TeacherNameAndSchoolValueObject;
 use Illuminate\Database\Eloquent\Builder;
 use Maatwebsite\Excel\Facades\Excel;

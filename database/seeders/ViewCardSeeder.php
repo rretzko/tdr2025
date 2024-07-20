@@ -132,7 +132,7 @@ class ViewCardSeeder extends Seeder
                 'description' => '<p>Assign version management roles to your previously selected participants, including event owner(s), registration manager(s), tab room participants, etc.</p>',
                 'heroicon' => 'heroicons.briefcase',
                 'href' => '/version/roles',
-                'label' => 'manage events',
+                'label' => 'event version roles',
                 'orderBy' => 5,
             ],
             [
@@ -149,8 +149,8 @@ class ViewCardSeeder extends Seeder
                 'color' => 'red',
                 'description' => '<p>Scoring.</p>',
                 'heroicon' => 'heroicons.star',
-                'href' => 'manage',
-                'label' => 'manage events',
+                'href' => '/version/scoring',
+                'label' => 'scoring',
                 'orderBy' => 7,
             ],
             [

@@ -194,6 +194,12 @@ class ViewPageSeeder extends Seeder
                 'livewire',
                 'version participants',
             ],
+            [
+                'VersionRoleController',
+                '__invoke',
+                'livewire',
+                'version roles',
+            ],
         ];
 
         foreach ($seeds as $seed) {

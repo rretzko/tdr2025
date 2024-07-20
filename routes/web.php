@@ -117,6 +117,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         [\App\Http\Controllers\Events\Versions\VersionParticipantController::class, 'index'])
         ->name('version.participant.edit');
 
+    //VERSIONS.ROLES
+    Route::get('version/roles', \App\Http\Controllers\Events\Versions\VersionRoleController::class)
+        ->name('version.roles');
 
     Route::get('version/profile', [\App\Http\Controllers\Events\Versions\VersionProfileController::class, 'edit'])
         ->name('version.edit');

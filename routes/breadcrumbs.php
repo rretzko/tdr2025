@@ -187,6 +187,12 @@ Breadcrumbs::for('version participants', function (BreadcrumbTrail $trail, int $
     $trail->push('Version Participants', route('version.participants'));
 });
 
+//Version.Roles
+Breadcrumbs::for('version roles', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('version dashboard', $id);
+    $trail->push('Version Roles', route('version.roles'));
+});
+
 //Version.Profile
 Breadcrumbs::for('version profile', function (BreadcrumbTrail $trail, int $id) {
     $trail->parent('versions');
