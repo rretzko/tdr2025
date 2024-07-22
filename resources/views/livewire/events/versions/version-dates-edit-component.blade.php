@@ -95,7 +95,7 @@
                                 <x-forms.elements.livewire.inputDate
                                     label=""
                                     name="form.finalTeacherChanges"
-                                    type="date"
+                                    type="datetime-local"
                                 />
                                 {{-- SUCCESS INDICATOR --}}
                                 @if($successIndicators['finalTeacherChanges'])
@@ -116,7 +116,7 @@
                                 <x-forms.elements.livewire.inputDate
                                     label=""
                                     name="form.studentOpen"
-                                    type="date"
+                                    type="datetime-local"
                                 />
                                 {{-- SUCCESS INDICATOR --}}
                                 @if($successIndicators['studentOpen'])
@@ -130,7 +130,7 @@
                                 <x-forms.elements.livewire.inputDate
                                     label=""
                                     name="form.studentClose"
-                                    type="date"
+                                    type="datetime-local"
                                 />
                                 {{-- SUCCESS INDICATOR --}}
                                 @if($successIndicators['studentClose'])
@@ -151,7 +151,7 @@
                                 <x-forms.elements.livewire.inputDate
                                     label=""
                                     name="form.adjudicationOpen"
-                                    type="date"
+                                    type="datetime-local"
                                 />
                                 {{-- SUCCESS INDICATOR --}}
                                 @if($successIndicators['adjudicationOpen'])
@@ -165,7 +165,7 @@
                                 <x-forms.elements.livewire.inputDate
                                     label=""
                                     name="form.adjudicationClose"
-                                    type="date"
+                                    type="datetime-local"
                                 />
                                 {{-- SUCCESS INDICATOR --}}
                                 @if($successIndicators['adjudicationClose'])
@@ -186,7 +186,7 @@
                                 <x-forms.elements.livewire.inputDate
                                     label=""
                                     name="form.tabRoomOpen"
-                                    type="date"
+                                    type="datetime-local"
                                 />
                                 {{-- SUCCESS INDICATOR --}}
                                 @if($successIndicators['tabRoomOpen'])
@@ -200,7 +200,7 @@
                                 <x-forms.elements.livewire.inputDate
                                     label=""
                                     name="form.tabRoomClose"
-                                    type="date"
+                                    type="datetime-local"
                                 />
                                 {{-- SUCCESS INDICATOR --}}
                                 @if($successIndicators['tabRoomClose'])
@@ -211,16 +211,6 @@
                             </div>
                         </div>
                     </div> {{-- END OF TAB ROOM DATES --}}
-
-                    {{-- SUCCESS INDICATOR --}}
-                    {{--                    @if($showSuccessIndicator)--}}
-                    {{--                        <div class="text-green-600 italic text-xs">--}}
-                    {{--                            {{ $successMessage }}--}}
-                    {{--                        </div>--}}
-                    {{--                    @endif--}}
-
-                    {{-- SUBMIT BUTTON --}}
-                    {{--                    <x-buttons.fauxSubmit/>--}}
 
                 </fieldset> {{-- END OF ADJUDICATION FIELDSET --}}
 

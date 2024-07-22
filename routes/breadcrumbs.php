@@ -165,7 +165,7 @@ Breadcrumbs::for('versions dashboard', function (BreadcrumbTrail $trail, int $id
 
 //Versions.Table (note: MULTIPLE versions)
 Breadcrumbs::for('versions', function (BreadcrumbTrail $trail, int $id) {
-    $trail->parent('my events');
+    $trail->parent('my events', $id);
     $trail->push('Versions Table', route('versions.index', ['event' => $id]));
 });
 
@@ -187,6 +187,12 @@ Breadcrumbs::for('version participants', function (BreadcrumbTrail $trail, int $
     $trail->push('Version Participants', route('version.participants'));
 });
 
+//Version.PitchFiles
+Breadcrumbs::for('version pitch files', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('version dashboard', $id);
+    $trail->push('Version Pitch Files', route('version.pitchFiles'));
+});
+
 //Version.Roles
 Breadcrumbs::for('version roles', function (BreadcrumbTrail $trail, int $id) {
     $trail->parent('version dashboard', $id);
@@ -195,7 +201,7 @@ Breadcrumbs::for('version roles', function (BreadcrumbTrail $trail, int $id) {
 
 //Version.Profile
 Breadcrumbs::for('version profile', function (BreadcrumbTrail $trail, int $id) {
-    $trail->parent('versions');
+    $trail->parent('versions', $id);
     $trail->push('Version Profile', route('version.create', ['event' => $id]));
 });
 

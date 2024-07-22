@@ -11,7 +11,7 @@ use App\Models\UserConfig;
 class VersionConfigsEditComponent extends BasePageVersion
 {
     public VersionConfigsForm $form;
-    public string $selectedTab = 'advisory'; //'adjudication';
+    public string $selectedTab = 'adjudication';
     public Event $event;
     public Version $version;
 

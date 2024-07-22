@@ -9,6 +9,7 @@ use App\Models\Schools\Teacher;
 use App\Models\User;
 use App\ValueObjects\TeacherNameAndSchoolValueObject;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 
 class VersionParticipantsTableComponent extends BasePage

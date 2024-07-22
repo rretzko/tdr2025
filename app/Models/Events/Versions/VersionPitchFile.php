@@ -2,37 +2,32 @@
 
 namespace App\Models\Events\Versions;
 
+use App\Models\Students\VoicePart;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class VersionConfigDate extends Model
+class VersionPitchFile extends Model
 {
-    use HasFactory;
+    use SoftDeletes, HasFactory;
 
     protected $fillable = [
         'version_id',
-        'date_type',
-        'version_date',
+        'file_type',
+        'voice_part_id',
+        'url',
+        'description',
+        'order_by',
     ];
-
-    protected array $dates = [
-        'version_date',
-        'created_at',
-        'updated_at',
-    ];
-
-//    protected $casts = ['version_date' => 'datetime'];
 
     public function version(): BelongsTo
     {
         return $this->belongsTo(Version::class);
     }
 
-    protected function casts()
+    public function voicePart(): BelongsTo
     {
-        return [
-            'version_date' => 'datetime',
-        ];
+        return $this->belongsTo(VoicePart::class);
     }
 }

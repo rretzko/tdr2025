@@ -87,6 +87,7 @@ class VersionProfileForm extends Form
             return $this->setProfile($versionId, true);
         }
 
+        return false;
     }
 
     public function update(int $versionId): Version

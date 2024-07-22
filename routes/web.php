@@ -117,6 +117,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         [\App\Http\Controllers\Events\Versions\VersionParticipantController::class, 'index'])
         ->name('version.participant.edit');
 
+    //VERSIONS.PITCHFILES
+    Route::get('version/pitchFiles', \App\Http\Controllers\Events\Versions\VersionPitchFileController::class)
+        ->name('version.pitchFiles');
+
     //VERSIONS.ROLES
     Route::get('version/roles', \App\Http\Controllers\Events\Versions\VersionRoleController::class)
         ->name('version.roles');

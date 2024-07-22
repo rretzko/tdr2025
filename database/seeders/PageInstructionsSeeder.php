@@ -438,10 +438,15 @@ appropriate column header.</p>
             ],
             [
                 'header' => 'version roles',
-                'instructions' => '<p>Version Roles page instructions</p>o a
+                'instructions' => '<p>Version Roles page instructions</p>
 <p>Use this page to assign event version management roles to version participants.</p>
 <p>Note: A teacher <strong>must be a participant</strong> of the version prior to being assigned a role!</p>'
-            ]
+            ],
+            [
+                'header' => 'version pitch files',
+                'instructions' => '<p>Version Pitch Files page instructions</p>
+<p>Use this page to add/edit/remove pitch files to be used by your member teachers and their students.</p>'
+            ],
         ];
     }
 

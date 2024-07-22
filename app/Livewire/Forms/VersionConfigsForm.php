@@ -45,12 +45,12 @@ class VersionConfigsForm extends Form
             $vca = VersionConfigAdjudication::create(['version_id' => $versionId]);
         }
 
-        $this->alternatingScores = $vca->alternating_scores;
-        $this->averagedScores = $vca->averaged_scores;
+        $this->alternatingScores = $vca->alternating_scores ?? false;
+        $this->averagedScores = $vca->averaged_scores ?? false;
         $this->fileTypes = $vca->upload_types ?? '';
-        $this->fileUploadCount = $vca->upload_count;
-        $this->judgeCount = $vca->judge_per_room_count;
-        $this->roomMonitor = $vca->room_monitor;
+        $this->fileUploadCount = $vca->upload_count ?? 1;
+        $this->judgeCount = $vca->judge_per_room_count ?? 1;
+        $this->roomMonitor = $vca->room_monitor ?? 0;
         $this->scoresAscending = $vca->scores_ascending;
         $this->sysId = $vca->id;
     }
@@ -66,7 +66,7 @@ class VersionConfigsForm extends Form
 <b>eligibility</b> in this event\'s ensemble(s)
 <ul><li>Voice Part</li><li>Grade</li></ul></p>';
 
-        $this->advisories[] = ($version->alternating_scores)
+        $this->advisories[] = ($version && $version->alternating_scores)
             ? '<p>In addition to scoring, the following will be used to
 determine <b>participation</b> in the event\'s ensemble(s):
 <ul>
@@ -91,7 +91,7 @@ scores may contain multiple individuals.';
             $mbr = VersionConfigMembership::create(['version_id' => $versionId]);
         }
 
-        $this->membershipCard = $mbr->membership_card;
+        $this->membershipCard = $mbr->membership_card ?? false;
         $this->validThru = Carbon::parse($mbr->valid_thru)->format('Y-m-d');
     }
 
@@ -106,8 +106,8 @@ scores may contain multiple individuals.';
             $vcr = VersionConfigRegistrant::create(['version_id' => $versionId]);
         }
 
-        $this->eapplication = $vcr->eapplication;
-        $this->auditionCount = $vcr->audition_count;
+        $this->eapplication = $vcr->eapplication ?? false;
+        $this->auditionCount = $vcr->audition_count ?? 1;
     }
 
     public function updateAdjudication(int $versionId)

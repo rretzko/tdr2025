@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('version_id')->index();
             $table->string('date_type');
-            $table->date('version_date');
+            $table->dateTime('version_date');
             $table->timestamps();
         });
     }

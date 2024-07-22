@@ -36,7 +36,7 @@ class VersionProfileController extends Controller
         $dto = $data->getDto();
 
         $id = $versionId;
-
+        dd(__LINE__.': '.$id);
         return view($dto['pageName'], compact('dto', 'id'));
     }
 }

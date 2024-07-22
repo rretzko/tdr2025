@@ -15,7 +15,8 @@
     </label>
     <input type="{{ $type }}"
            @class([
-            'narrow',
+            'narrow' => ($type === 'date'),
+            'wide' => ($type === 'datetime-local'),
             'border border-red-600' => $errors->has($name),
             ])
            wire:model.blur="{{ $name }}"

@@ -4,9 +4,7 @@ namespace App\Livewire\Forms;
 
 use App\Models\Events\Versions\VersionConfigDate;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Livewire\Attributes\Validate;
 use Livewire\Form;
 
 class VersionDatesForm extends Form
@@ -24,6 +22,22 @@ class VersionDatesForm extends Form
     public string $tabRoomClose = '';
     public string $tabRoomOpen = '';
 
+    public function rules(): array
+    {
+        return [
+            'adjudicationOpen' => 'required|date',//|before:adjudicationClose',
+            'adjudicationClose' => 'required|date|after:adjudicationOpen',
+            'adminOpen' => 'required|date',//|before:adminClose',
+            'adminClose' => 'required|date|after:adminOpen',
+            'finalTeacherChanges' => 'required' | 'date',
+            'membershipOpen' => 'required|date',//|before:membershipClose',
+            'membershipClose' => 'required|date|after:membershipOpen',
+            'studentOpen' => 'required|date',//|before:studentClose',
+            'studentClose' => 'required|date|after:studentOpen',
+            'tabRoomOpen' => 'required|date',//|before:tabRoomClose',
+            'tabRoomClose' => 'required|date|after:tabRoomOpen',
+        ];
+    }
 
     public function setDates(int $versionId): void
     {
@@ -46,15 +60,15 @@ class VersionDatesForm extends Form
             $vcds = VersionConfigDate::where('version_id', $versionId)->get();
         }
 
-        foreach ($dateTypes as $dateType) {
+        foreach ($dateTypes as $dateType) { //ex. adjudication_close
 
-            $var = Str::camel($dateType); //ex admin_close === adminClose
+            $var = Str::camel($dateType); //ex adjudication_close === adjudicationClose
 
             $versionDate = $vcds->where('date_type', $dateType)->first();
 
             if ($versionDate) {
 
-                $this->$var = Carbon::parse($versionDate->version_date)->format('Y-m-d');
+                $this->$var = $versionDate->version_date;//->format('Y-m-d h:i a');
 
             } else {
 
@@ -74,10 +88,24 @@ class VersionDatesForm extends Form
 
     public function updateDate(string $date_type, string $value): int
     {
+        $this->validateOnly(Str::camel($date_type));
+
+        if (Str::contains($value, 'T')) {//has time element
+
+            $versionDate = Carbon::parse($value)->format('Y-m-d H:i:s');
+
+        } else { //add a time element defaulting to 11:59:59 pm of $value
+
+            $versionDate = Carbon::createFromFormat('Y-m-d', $value);
+            (Str::contains($date_type, 'open'))
+                ? $versionDate->setTime(0, 0, 1)
+                : $versionDate->setTime(23, 59, 59);
+        }
+
         return VersionConfigDate::query()
             ->where('version_id', $this->sysId)
             ->where('date_type', $date_type)
-            ->update(['version_date' => Carbon::parse($value)->format('Y-m-d')]);
+            ->update(['version_date' => $versionDate]);
 
     }
 
