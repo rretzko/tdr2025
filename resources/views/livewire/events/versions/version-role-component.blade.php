@@ -85,6 +85,15 @@
                             <x-buttons.fauxSubmit value="Add" wireClick="updateRole"/>
                         </div>
 
+                        {{-- CANCEL --}}
+                        <div class="flex flex-col mt-2 max-w-xs">
+                            <button wire:click="$set('showAddRoleForm', 0)"
+                                    class="bg-gray-800 text-white rounded-full px-2"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+
                     </div>
 
                 </div>
@@ -117,7 +126,7 @@
                                 </button>
                             </td>
                             <td class="border border-white px-2">
-                                <button wire:click="$set('showEditParticipantForm', 0)"
+                                <button wire:click="$set('showEditRoleForm', 0)"
                                         class="bg-gray-800 text-white rounded-full px-2"
                                 >
                                     Cancel

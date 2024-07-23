@@ -97,8 +97,10 @@ class VersionRoleComponent extends BasePage
             ->join('school_teacher', 'school_teacher.teacher_id', '=', 'teachers.id')
             ->join('schools', 'schools.id', '=', 'school_teacher.school_id')
             ->where('version_roles.version_id', $this->versionId)
-            ->where('users.name', 'LIKE', '%'.$this->search.'%')
-            ->orWhere('schools.name', 'LIKE', '%'.$this->search.'%')
+            ->where(function ($query) {
+                $query->where('users.name', 'LIKE', '%'.$this->search.'%')
+                    ->orWhere('schools.name', 'LIKE', '%'.$this->search.'%');
+            })
             ->select('version_roles.id', 'version_roles.role',
                 'version_participants.id as versionParticipantsId', 'version_participants.status',
                 'users.id as userId', 'users.last_name', 'users.first_name', 'users.middle_name',
@@ -154,61 +156,79 @@ class VersionRoleComponent extends BasePage
 
     public function updateRole(): void
     {
-        if ($this->showAddRoleForm) {
+        //ensure no zero values are persisted in the database
+        if ($this->versionId && $this->searchParticipantId && $this->searchRole) {
 
-            VersionRole::create(
-                [
-                    'version_id' => $this->versionId,
-                    'version_participant_id' => $this->searchParticipantId,
-                    'role' => $this->searchRole,
-                ]
-            );
-        } else {
+            $this->restoreTrashedRole();
 
-            VersionRole::updateOrCreate(
-                [
-                    'version_id' => $this->versionId,
-                    'version_participant_id' => $this->searchParticipantId,
-                ],
-                [
-                    'role' => $this->searchRole,
-                ]
-            );
+            if ($this->showAddRoleForm) {
+
+                //early exit if duplicate value exists
+                if (!VersionRole::where('version_id', $this->versionId)
+                    ->where('version_participant_id', $this->searchParticipantId)
+                    ->where('role', $this->searchRole)
+                    ->exists()) {
+
+                    VersionRole::create(
+                        [
+                            'version_id' => $this->versionId,
+                            'version_participant_id' => $this->searchParticipantId,
+                            'role' => $this->searchRole,
+                        ]
+                    );
+                }
+            } else {
+
+                VersionRole::update(
+                    [
+                        'version_id' => $this->versionId,
+                        'version_participant_id' => $this->searchParticipantId,
+                    ],
+                    [
+                        'role' => $this->searchRole,
+                    ]
+                );
+            }
         }
 
         $this->showSuccessIndicator = true;
         $this->successMessage = 'Roles updated.';
     }
 
-    public function updatedShowEditRoleForm(): void
+    public function updatedShowAddRoleForm(): void
     {
-        $vr = VersionRole::find($this->showEditRoleForm);
-        $vp = VersionParticipant::find($vr->version_participant_id);
-        $user = User::find($vp->user_id);
-        $teacher = Teacher::where('user_id', $user->id)->first();
-        $this->showEditRoleFormName = TeacherNameAndSchoolValueObject::getVo($teacher);
-        $this->showEditRoleFormRole = $vr->role;
+        //ensure that the edit form has been closed
+        $this->reset('showEditRoleForm');
     }
 
-    private function test(): void
+    public function updatedShowEditRoleForm(): void
     {
-        dd(VersionRole::query()
-            ->join('version_participants', 'version_participants.id', '=', 'version_roles.version_participant_id')
-//        ->join('users', 'users.id', '=', 'version_participants.user_id')
-//        ->join('teachers', 'teachers.user_id', '=', 'users.id')
-//        ->join('school_teacher', 'school_teacher.teacher_id', '=', 'teachers.id')
-//        ->join('schools', 'schools.id', '=', 'school_teacher.school_id')
-//        ->where('version_roles.version_id', $this->versionId)
-//        ->where('users.name', 'LIKE', '%'.$this->search.'%')
-//        ->orWhere('schools.name', 'LIKE', '%'.$this->search.'%')
-//        ->select('version_roles.role',
-//            'version_participants.id', 'version_participants.status',
-//            'users.id as userId', 'users.last_name', 'users.first_name', 'users.middle_name',
-//            'schools.name as schoolName')
-//        ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
-//        ->orderBy('users.last_name')
-//        ->orderBy('users.first_name')
-            ->get());
+        if ($this->showEditRoleForm) {
+
+            //ensure that the add form has been closed
+            $this->reset('showAddRoleForm');
+
+            $vr = VersionRole::find($this->showEditRoleForm);
+            $vp = VersionParticipant::find($vr->version_participant_id);
+            $user = User::find($vp->user_id);
+            $teacher = Teacher::where('user_id', $user->id)->first();
+            $this->showEditRoleFormName = TeacherNameAndSchoolValueObject::getVo($teacher);
+            $this->showEditRoleFormRole = $vr->role;
+        }
+    }
+
+    private function restoreTrashedRole(): void
+    {
+        $trashedRole = VersionRole::query()
+            ->where('version_id', $this->versionId)
+            ->where('version_participant_id', $this->searchParticipantId)
+            ->where('role', $this->searchRole)
+            ->onlyTrashed()
+            ->first();
+
+        if ($trashedRole) {
+            $trashedRole->restore();
+        }
     }
 
 }
