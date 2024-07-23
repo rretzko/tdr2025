@@ -2,10 +2,12 @@
 
 namespace App\Models\Events;
 
+use App\Models\Ensembles\Ensemble;
 use App\Models\Events\Versions\Version;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Event extends Model
@@ -31,9 +33,9 @@ class Event extends Model
         'user_id',
     ];
 
-    public function user(): BelongsTo
+    public function eventEnsembles(): HasMany
     {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(EventEnsemble::class);
     }
 
     /**
@@ -48,4 +50,10 @@ class Event extends Model
             ->orderByDesc('senior_class_of')
             ->first() ?? new Version();
     }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
 }

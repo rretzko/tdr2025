@@ -11,10 +11,13 @@
     'type' => 'text',
 ])
 <div class="flex flex-col">
-    <label for="{{ $name }}" class="@if($required) required @endif">{{ ucwords($label)  }}</label>
-    <input type="{{ $type }}"
+    <label for="{{ $name }}" class="@if($required) required @endif">{{ ucwords($label) }}</label>
+    <input type="file"
+           id="{{ $name }}"
+           name="{{ $name }}"
+           accept="audio/mpeg, audio/ogg, audio/wav"
            @class([
-            'narrow',
+            'wide',
             'border border-red-600' => $errors->has($name),
             ])
            @if($blur)wire:model.blur @else

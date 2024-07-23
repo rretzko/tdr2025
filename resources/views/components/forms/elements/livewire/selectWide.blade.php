@@ -10,7 +10,9 @@
     'required',
 ])
 <div class="flex flex-col">
-    <label for="{{ $name }}" class="{{ $required }}">{{ ucwords($label) }}</label>
+    <label for="{{ $name }}" class="{{ $required }}">
+        {{ ucwords($label) . ($required ? '<span class="text-sm text-red-600">*</span>' : '') }}
+    </label>
     <select wire:model.live="{{ $name }}"
             @class([
                 'wide',

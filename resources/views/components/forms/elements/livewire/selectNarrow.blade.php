@@ -6,12 +6,15 @@
     'label',
     'name',
     'option0' => false,
+    'option0Label' => '- select -',
     'options',
     'placeholder' => '',
     'required' => false,
 ])
 <div class="flex flex-col">
-    <label for="{{ $name }}" class="{{ $required }}">{{ ucwords($label) }}</label>
+    <label for="{{ $name }}" class="{{ $required }}">
+        {!! ucwords($label)  . ($required ? '<span class="text-sm text-red-600">*</span>' : '') !!}
+    </label>
     <select wire:model.live="{{ $name }}"
             @class([
                 'narrow',
@@ -25,7 +28,7 @@
         @enderror
     >
         @if($option0)
-            <option value="0">- select -</option>
+            <option value="0">{{ $option0Label }}</option>
         @endif
         @foreach($options AS $key => $value)
             <option value="{{ $key }}">{{ $value }}</option>
@@ -45,4 +48,5 @@
 
     {{-- ADVISORY --}}
     <div class="mt-2 text-sm text-blue-600">{!! $advisory !!}</div>
+
 </div>

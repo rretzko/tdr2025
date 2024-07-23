@@ -41,49 +41,61 @@
             </div>
         </div>
 
-        {{-- ADD ROLE FORM --}
+        {{-- ADD ROLE FORM --}}
         <div>
-            @if($showAddRoleForm)
+            @if($showAddForm)
 
                 <div class="bg-gray-100 p-2 mb-4">
-                    <h3 class="font-semibold">Add A New Role</h3>
+                    <h3 class="font-semibold">Add A New Pitch File</h3>
                     <div
-                        class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 items-start md:items-center">
+                        class="flex flex-col lg:flex-row space-y-2 lg:space-y-0 lg:space-x-2 items-start"
+                    >
+                        {{-- SELECT VOICE PART --}}
+                        <x-forms.elements.livewire.selectNarrow
+                            autofocus='true'
+                            hint='ALL = Will be included in ALL voice parts.'
+                            label="voice part"
+                            name="form.voicePartId"
+                            option0='true'
+                            option0Label="All"
+                            :options="$voiceParts"
+                            required='true'
+                        />
 
-                        {{-- SELECT PARTICIPANT --}
-                        <div class="flex flex-col">
-                            <label>Select Participant</label>
-                            <select wire:model="searchParticipantId">
-                                <option value="0">Select</option>
-                                @forelse($participants AS $id => $label)
-                                    <option value="{{  $id }}">
-                                        {{ $label }}
-                                    </option>
-                                @empty
-                                    <option value="0">No participants found</option>
-                                @endforelse
-                            </select>
-                        </div>
+                        {{-- SELECT FILE TYPE --}}
+                        <x-forms.elements.livewire.selectNarrow
+                            label="file type"
+                            name="form.fileType"
+                            :options="$fileTypes"
+                            :required='true'
+                        />
 
-                        {{-- SELECT ROLE --}
-                        <div class="flex flex-col">
-                            <label>Select Role</label>
-                            <select wire:model="searchRole">
-                                <option value="0">Select</option>
-                                @forelse($roles AS $role)
-                                    <option value="{{  $role }}">
-                                        {{ $role }}
-                                    </option>
-                                @empty
-                                    <option value="0">No participants found</option>
-                                @endforelse
-                            </select>
-                        </div>
+                        {{-- ORDER BY --}}
+                        <x-forms.elements.livewire.selectNarrow
+                            label="order"
+                            name="form.orderBy"
+                            :options="$options1Thru50"
+                            :required="true"
+                        />
 
-                        {{-- SUBMIT --}
-                        <div class="">
-                            <x-buttons.fauxSubmit value="Add" wireClick="updateRole"/>
-                        </div>
+                        {{-- DESCRIPTION --}}
+                        <x-forms.elements.livewire.inputTextWide
+                            label="description"
+                            name="form.description"
+                            required="true"
+                        />
+
+                        <x-forms.elements.livewire.audioFileUpload
+                            label="pitch file"
+                            name="pitchFile"
+                            hint=".mp3, .ogg and .wav ONLY"
+                            required="true"
+                        />
+                    </div>
+
+                    {{-- SUBMIT --}}
+                    <div class="flex -mt-8 ">{{-- offset for fauxSubmit label --}}
+                        <x-buttons.fauxSubmit value="Add" wireClick="updateRole"/>
 
                     </div>
 
