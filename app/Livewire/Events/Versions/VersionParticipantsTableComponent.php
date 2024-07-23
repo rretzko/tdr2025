@@ -63,8 +63,10 @@ class VersionParticipantsTableComponent extends BasePage
             ->join('school_teacher', 'school_teacher.teacher_id', '=', 'teachers.id')
             ->join('schools', 'schools.id', '=', 'school_teacher.school_id')
             ->where('version_id', $this->dto['id'])
-            ->where('users.name', 'LIKE', '%'.$this->search.'%')
-            ->orWhere('schools.name', 'LIKE', '%'.$this->search.'%')
+            ->where(function ($query) {
+                $query->where('users.name', 'LIKE', '%'.$this->search.'%')
+                    ->orWhere('schools.name', 'LIKE', '%'.$this->search.'%');
+            })
             ->select('version_participants.id', 'version_participants.status',
                 'users.id as userId', 'users.last_name', 'users.first_name', 'users.middle_name',
                 'schools.name as schoolName')

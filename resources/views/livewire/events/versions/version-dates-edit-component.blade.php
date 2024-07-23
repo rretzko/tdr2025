@@ -25,7 +25,7 @@
                                 <x-forms.elements.livewire.inputDate
                                     label=""
                                     name="form.adminOpen"
-                                    type="date"
+                                    type="datetime-local"
                                 />
                                 {{-- SUCCESS INDICATOR --}}
                                 @if($successIndicators['adminOpen'])
@@ -39,7 +39,7 @@
                                 <x-forms.elements.livewire.inputDate
                                     label=""
                                     name="form.adminClose"
-                                    type="date"
+                                    type="datetime-local"
                                 />
                                 {{-- SUCCESS INDICATOR --}}
                                 @if($successIndicators['adminClose'])
@@ -60,7 +60,7 @@
                                 <x-forms.elements.livewire.inputDate
                                     label=""
                                     name="form.membershipOpen"
-                                    type="date"
+                                    type="datetime-local"
                                 />
                                 {{-- SUCCESS INDICATOR --}}
                                 @if($successIndicators['membershipOpen'])
@@ -74,7 +74,7 @@
                                 <x-forms.elements.livewire.inputDate
                                     label=""
                                     name="form.membershipClose"
-                                    type="date"
+                                    type="datetime-local"
                                 />
                                 {{-- SUCCESS INDICATOR --}}
                                 @if($successIndicators['membershipClose'])

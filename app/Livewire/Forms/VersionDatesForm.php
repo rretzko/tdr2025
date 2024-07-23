@@ -72,11 +72,26 @@ class VersionDatesForm extends Form
 
             } else {
 
+                //defaults
+                $defaults = [
+                    'adjudicationOpen' => Carbon::now()->setTime(7, 0, 0),
+                    'adjudicationClose' => Carbon::now()->setTime(15, 30, 0),
+                    'adminOpen' => Carbon::now()->setTime(0, 0, 1),
+                    'adminClose' => Carbon::now()->setTime(23, 59, 59),
+                    'finalTeacherChanges' => Carbon::now()->setTime(0, 30, 0),
+                    'membershipOpen' => Carbon::now()->setTime(0, 0, 1),
+                    'membershipClose' => Carbon::now()->setTime(15, 30, 0),
+                    'studentOpen' => Carbon::now()->setTime(0, 0, 1),
+                    'studentClose' => Carbon::now()->setTime(15, 30, 0),
+                    'tabRoomOpen' => Carbon::now()->setTime(0, 0, 1),
+                    'tabRoomClose' => Carbon::now()->setTime(23, 59, 59),
+                ];
+
                 //create row
                 VersionConfigDate::create([
                     'version_id' => $versionId,
                     'date_type' => $dateType,
-                    'version_date' => Carbon::now()->format('Y-m-d')
+                    'version_date' => $defaults[Str::camel($dateType)],
                 ]);
 
                 $this->$var = VersionConfigDate::where('version_id', $versionId)
@@ -84,6 +99,7 @@ class VersionDatesForm extends Form
                     ->first()->version_date;
             }
         }
+
     }
 
     public function updateDate(string $date_type, string $value): int
