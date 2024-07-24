@@ -38,4 +38,5 @@
     @empty
         <h3>No filters</h3>
     @endforelse
+
 </div>

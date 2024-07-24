@@ -49,7 +49,9 @@ class UserFilterResource extends Resource
 
                 TextColumn::make('header'),
 
-                TextColumn::make('schools'),
+                TextColumn::make('filter'),
+
+                TextColumn::make('values'),
             ])
             ->filters([
                 //

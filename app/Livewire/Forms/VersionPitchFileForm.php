@@ -2,23 +2,87 @@
 
 namespace App\Livewire\Forms;
 
+use App\Models\Events\Versions\VersionPitchFile;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
 
 class VersionPitchFileForm extends Form
 {
+    #[Validate('required|string|min:3')]
     public string $description = '';
+    #[Validate('required|string|min:3')]
     public string $fileType = '';
+    #[Validate('required|int|min:1')]
     public int $orderBy = 1;
+    public string $sysId = 'new';
     public int $versionId = 0;
+    #[Validate('required', message: 'A file must be selected.')]
     public string $url = '';
+    #[Validate('required|int|min:0')]
     public int $voicePartId = 0;
 
-    public function setNewPitchFile(int $versionId): void
+    public function add(): void
     {
+        $this->validate();
+
+        VersionPitchFile::create(
+            [
+                'description' => $this->description,
+                'file_type' => $this->fileType,
+                'order_by' => $this->orderBy,
+                'version_id' => $this->versionId,
+                'voice_part_id' => $this->voicePartId,
+                'url' => $this->url,
+            ]
+        );
+    }
+
+    public function pitchFileUpdate(): void
+    {
+        $this->validate();
+
+        VersionPitchFile::find($this->sysId)
+            ->update(
+                [
+                    'description' => $this->description,
+                    'file_type' => $this->fileType,
+                    'order_by' => $this->orderBy,
+                    'version_id' => $this->versionId,
+                    'voice_part_id' => $this->voicePartId,
+                    'url' => $this->url,
+                ]
+            );
+    }
+
+    public function resetAll(): void
+    {
+        $this->reset('description', 'fileType', 'orderBy',
+            'ulr', 'versionId', 'voicePartId');
+    }
+
+    public function setNewPitchFile(int $versionId, array $fileTypes): void
+    {
+        $this->resetAll();
+
         $this->versionId = $versionId;
 
-        $this->reset('description', 'fileType', 'orderBy',
-            'ulr', 'voicePartId');
+        $this->fileType = array_key_first($fileTypes);
+    }
+
+    public function setPitchFile(int $versionId, int $versionPitchFileId): void
+    {
+        $this->resetAll();
+
+        $this->versionId = $versionId;
+
+        $vpf = VersionPitchFile::find($versionPitchFileId);
+
+        $this->sysId = $vpf->id;
+        $this->description = $vpf->description;
+        $this->fileType = $vpf->file_type;
+        $this->orderBy = $vpf->order_by;
+        $this->versionId = $vpf->version_id;
+        $this->voicePartId = $vpf->voice_part_id;
+        $this->url = $vpf->url;
     }
 }

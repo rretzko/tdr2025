@@ -4,7 +4,11 @@ namespace App\Livewire;
 
 use App\Models\Ensembles\Ensemble;
 use App\Models\Ensembles\Members\Member;
+use App\Models\Events\Event;
+use App\Models\Events\Versions\Version;
+use App\Models\Events\Versions\VersionPitchFile;
 use App\Models\Students\VoicePart;
+use App\Models\UserConfig;
 use App\Models\UserFilter;
 use App\Services\CalcSeniorYearService;
 use Illuminate\Support\Facades\Log;
@@ -19,6 +23,10 @@ class Filters extends Form
     public array $ensemblesSelectedIds = [];
     public array $ensembleYearsSelectedIds = [];
     public string $header = '';
+    #[Url]
+    public array $pitchFileFileTypesSelectedIds = [];
+    #[Url]
+    public array $pitchFileVoicePartsSelectedIds = [];
     #[Url]
     public array $schoolsSelectedIds = [];
     #[Url]
@@ -37,6 +45,24 @@ class Filters extends Form
 
         //initially set ensembleYears filter to include ALL ensembles' school years
         $this->ensembleYearsSelectedIds = array_values($this->ensembleYears());
+
+        //initially set pitchFileVoiceParts filter to include ALL voicePartIds for pitch files
+        $this->pitchFileVoicePartsSelectedIds = VersionPitchFile::query()
+            ->join('voice_parts', 'voice_parts.id', '=', 'version_pitch_files.voice_part_id')
+            ->where('version_pitch_files.version_id', UserConfig::getValue('versionId'))
+            ->distinct('version_pitch_files.voice_part_id')
+            ->orderBy('voice_parts.order_by')
+            ->pluck('voice_parts.id')
+            ->toArray();
+
+        //initially set pitchFileFileTypes filter to include all file types for pitch files
+        $this->pitchFileFileTypesSelectedIds = VersionPitchFile::query()
+            ->where('version_pitch_files.version_id', UserConfig::getValue('versionId'))
+            ->distinct('version_pitch_files.file_type')
+            ->orderBy('version_pitch_files.file_type')
+            ->pluck('version_pitch_files.file_type', 'version_pitch_files.file_type')
+            ->toArray();
+
 
         //initially set classOfs filter to include ALL classOfs for auth()->user()->teacher
         $this->classOfsSelectedIds = auth()->user()->teacher->students
@@ -100,6 +126,35 @@ class Filters extends Form
             ->toArray();
     }
 
+    public function pitchFileVoiceParts(): array
+    {
+        return VersionPitchFile::find(UserConfig::getValue('versionId'))
+            ->join('voice_parts', 'voice_parts.id', '=', 'version_pitch_files.voice_part_id')
+            ->distinct('voice_parts.id')
+            ->orderBy('voice_parts.order_by')
+            ->pluck('voice_parts.descr', 'voice_parts.id')
+            ->toArray();
+    }
+
+    public function pitchFileFileTypes(): array
+    {
+        return VersionPitchFile::find(UserConfig::getValue('versionId'))
+            ->distinct('version_pitch_files.file_type')
+            ->orderBy('version_pitch_files.file_type')
+            ->pluck('version_pitch_files.file_type', 'version_pitch_files.file_type')
+            ->toArray();
+    }
+
+    public function filterPitchFileFileTypes($query)
+    {
+        return $query->whereIn('version_pitch_files.file_type', $this->pitchFileFileTypesSelectedIds);
+    }
+
+    public function filterPitchFileVoiceParts($query)
+    {
+        return $query->whereIn('voice_part_id', $this->pitchFileVoicePartsSelectedIds);
+    }
+
     public function filterStudentsByClassOfs($query)
     {
         $this->interpretAggregateClassOfValues();
@@ -136,6 +191,23 @@ class Filters extends Form
             ->first();
 
         return $row && strlen($row->values) ? explode(',', $row->values) : [];
+    }
+
+    public function getPitchFileVoicePartIds(): array
+    {
+        $a = [];
+        $ensembles = Event::find(UserConfig::getValue('eventId'))->eventEnsembles;
+
+        foreach ($ensembles as $ensemble) {
+
+            $a = array_merge($a, explode(',', $ensemble->voice_part_ids));
+        }
+
+        return VoicePart::whereIn('id', $a)
+            ->distinct('id')
+            ->orderBy('order_by')
+            ->pluck('descr', 'id')
+            ->toArray();
     }
 
     public function getTeacherClassOfs(): array

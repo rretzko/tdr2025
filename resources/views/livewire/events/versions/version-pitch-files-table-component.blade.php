@@ -33,7 +33,7 @@
             <div class="flex items-center space-x-2">
 
                 {{-- ADD-NEW BUTTON OPENS ADD-PARTICIPANT-FORM --}}
-                <button type="button" wire:click="$set('showAddRoleForm', true)"
+                <button type="button" wire:click="$set('showAddForm', true)"
                         class="bg-green-500 text-white text-3xl px-2 rounded-lg" title="Add New" tabindex="-1">
                     +
                 </button>
@@ -56,8 +56,6 @@
                             hint='ALL = Will be included in ALL voice parts.'
                             label="voice part"
                             name="form.voicePartId"
-                            option0='true'
-                            option0Label="All"
                             :options="$voiceParts"
                             required='true'
                         />
@@ -70,6 +68,13 @@
                             :required='true'
                         />
 
+                        {{-- DESCRIPTION --}}
+                        <x-forms.elements.livewire.inputTextWide
+                            label="description"
+                            name="form.description"
+                            required="true"
+                        />
+
                         {{-- ORDER BY --}}
                         <x-forms.elements.livewire.selectNarrow
                             label="order"
@@ -78,24 +83,22 @@
                             :required="true"
                         />
 
-                        {{-- DESCRIPTION --}}
-                        <x-forms.elements.livewire.inputTextWide
-                            label="description"
-                            name="form.description"
-                            required="true"
-                        />
+                        <div class="flex flex-col">
+                            <x-forms.elements.livewire.audioFileUpload
+                                label="pitch file"
+                                name="pitchFile"
+                                hint=".mp3, .ogg, and .wav ONLY"
+                                required="true"
+                            />
+                            @error('form.url')
+                            <x-input-error messages="{{ $message }}" aria-live="polite"/>
+                            @enderror</div>
 
-                        <x-forms.elements.livewire.audioFileUpload
-                            label="pitch file"
-                            name="pitchFile"
-                            hint=".mp3, .ogg and .wav ONLY"
-                            required="true"
-                        />
                     </div>
 
                     {{-- SUBMIT --}}
                     <div class="flex -mt-8 ">{{-- offset for fauxSubmit label --}}
-                        <x-buttons.fauxSubmit value="Add" wireClick="updateRole"/>
+                        <x-buttons.fauxSubmit value="Add" wireClick="addPitchFile"/>
 
                     </div>
 
@@ -103,52 +106,69 @@
             @endif
         </div>
 
-        {{-- EDIT ROLE FORM --}
+        {{-- EDIT ROLE FORM --}}
         <div>
-            @if($showEditRoleForm)
+            @if($showEditForm)
                 <div class="bg-gray-100 p-2">
-                    <table class="w-11/12 mx-auto bg-white">
-                        <tr>
-                            <td class="border border-white px-2">
-                                {{ $showEditRoleFormName }}
-                            </td>
-                            <td class="border border-white px-2">
-                                <select wire:model="showEditRoleFormRole">
-                                    @foreach($roles AS $role)
-                                        <option value="{{ $role }}">
-                                            {{ $role }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </td>
-                            <td class="border border-white px-2">
-                                <button wire:click="participantRoleUpdate"
-                                        class="bg-indigo-500 text-white rounded-full px-2"
-                                >
-                                    Update
-                                </button>
-                            </td>
-                            <td class="border border-white px-2">
-                                <button wire:click="$set('showEditParticipantForm', 0)"
-                                        class="bg-gray-800 text-white rounded-full px-2"
-                                >
-                                    Cancel
-                                </button>
-                            </td>
-                        </tr>
-                    </table>
+                    <div class="bg-gray-100 p-2 mb-4">
+                        <h3 class="font-semibold">Edit A Pitch File</h3>
+                        <div
+                            class="flex flex-col lg:flex-row space-y-2 lg:space-y-0 lg:space-x-2 items-start"
+                        >
+                            {{-- SELECT VOICE PART --}}
+                            <x-forms.elements.livewire.selectNarrow
+                                autofocus='true'
+                                hint='ALL = Will be included in ALL voice parts.'
+                                label="voice part"
+                                name="form.voicePartId"
+                                :options="$voiceParts"
+                                required='true'
+                            />
+
+                            {{-- SELECT FILE TYPE --}}
+                            <x-forms.elements.livewire.selectNarrow
+                                label="file type"
+                                name="form.fileType"
+                                :options="$fileTypes"
+                                :required='true'
+                            />
+
+                            {{-- DESCRIPTION --}}
+                            <x-forms.elements.livewire.inputTextWide
+                                label="description"
+                                name="form.description"
+                                required="true"
+                            />
+
+                            {{-- ORDER BY --}}
+                            <x-forms.elements.livewire.selectNarrow
+                                label="order"
+                                name="form.orderBy"
+                                :options="$options1Thru50"
+                                :required="true"
+                            />
+
+                        </div>
+
+                        {{-- SUBMIT --}}
+                        <div class="flex -mt-8 ">{{-- offset for fauxSubmit label --}}
+                            <x-buttons.fauxSubmit value="Update" wireClick="pitchFileUpdate"/>
+                        </div>
+
+                    </div>
                 </div>
             @endif
         </div>
 
-        {{-- FILTERS and TABLE --}
+        {{-- FILTERS and TABLE --}}
         <div class="flex flex-row ">
 
             {{-- FILTERS --}}
-        @if($hasFilters && count($filterMethods))
-            <div class="flex justify-center">
+            @if($hasFilters && count($filterMethods))
+                <div class="flex justify-center">
                 <x-sidebars.filters :filters="$filters" :methods="$filterMethods"/>
             </div>
+
         @endif
 
         {{-- TABLE WITH LINKS --}}
@@ -157,7 +177,7 @@
             <x-links.linkTop :recordsPerPage="$recordsPerPage" :rows="$rows"/>
 
             {{-- TABLE --}}
-            <x-tables.versionRolesTable
+            <x-tables.pitchFilesTable
                 :columnHeaders="$columnHeaders"
                 :header="$dto['header']"
                 :recordsPerPage="$recordsPerPage"

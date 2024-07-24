@@ -2,11 +2,8 @@
 
 namespace App\Exports;
 
-use App\Models\Schools\Teacher;
-use App\Models\Students\Student;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
