@@ -9,8 +9,8 @@ use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionConfigAdjudication;
 use App\Models\Events\Versions\VersionPitchFile;
 use App\Models\Students\VoicePart;
+use App\Services\FileTypesArrayService;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Validate;
 use Livewire\WithFileUploads;
@@ -37,7 +37,7 @@ class VersionPitchFilesTableComponent extends BasePage
         $version = Version::find($this->dto['id']);
         $this->versionId = $version->id;
         $this->eventId = $version->event_id;
-        $this->fileTypes = $this->getFileTypes();
+        $this->fileTypes = FileTypesArrayService::getArray($this->versionId);
 
         //default values
         $this->hasFilters = true;
@@ -183,22 +183,6 @@ class VersionPitchFilesTableComponent extends BasePage
             ['label' => 'pitch file', 'sortBy' => null],
             ['label' => 'order', 'sortBy' => 'orderBy'],
         ];
-    }
-
-    private function getFileTypes(): array
-    {
-        $types = explode(',', VersionConfigAdjudication::query()
-            ->where('version_id', $this->versionId)
-            ->value('upload_types'));
-
-        $a = [];
-
-        foreach ($types as $type) {
-
-            $a[strtolower($type)] = ucwords($type);
-        }
-
-        return $a;
     }
 
     private function getRows(): Builder

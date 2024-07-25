@@ -444,8 +444,38 @@ appropriate column header.</p>
             ],
             [
                 'header' => 'version pitch files',
-                'instructions' => '<p>Version Pitch Files page instructions</p>
-<p>Use this page to add/edit/remove pitch files to be used by your member teachers and their students.</p>'
+                'instructions' => '<p>Pitch Files page instructions</p>
+<p>Use this page to add/edit/remove pitch files to be used by your member teachers and their students.</p>
+<p>Click the green button with the plus sign to add a new pitch file.</p>
+<p>As new pitch files are added, the filters on the left-hand side of the table will expand to display additional voice parts and file types as these are added.  Use the checkboxes to restrict the display of pitch files.</p>
+<p>There are three sortable columns on the table; voice part, file type, and order.  Click the column header to sort the table by these columns.</p>
+<p>Clicking the indigo "Edit" button will allow changes to voice part, file type, description, and order.  If you need to change the file, please use the red "Remove" button to remove the row and then the green plus sign button to add a new row with the correct pitch file.</p>
+<p>Please note that the "order" column will determine the order in which the pitch files are displayed to your members and their students. <strong>It is recommended</strong> that you
+<ul>
+<li>carefully think the through file order before you start adding new files, and </li>
+<li>visually check the order in the table below as you add new files </li>
+</ul>
+as changing the order will have a cascading effect on the subsequent files requiring a change to each file that comes after the one changed.</p>
+<p>You can use the "Export" button to export your work to a .csv file.</p>
+'
+            ],
+            [
+                'header' => 'version scoring',
+                'instructions' => '<p>Scoring page instructions</p>
+<p>User this page to add/edit/remove the specific scoring segments upon which your judges score.</p>
+The fields available are:
+<ul class="mb-4">
+<li><strong>File Type</strong>: is established on the Version Dashboard->Configuration:Adjudication page under the heading "What File Types Will Be Uploaded?". If you are doing an on-site audition, this could be referred to as scoring categories.  Typically these are high-level groupings that are further defined by specific scoring segments.</li>
+<li><strong>Segment</strong>: This identifies a specific quality upon which the judges score.</li>
+<li><strong>Abbr</strong>: A <u>very</u> short (1-3 character) abbreviation for the segment.  This is used on the score sheets, so brevity is critical!</li>
+<li><strong>Order</strong>: The system uses this number to determine how scores should be presented to the user either on individual pages or on full-detail pdf forms.  The order represents the entire scoring pattern of <u>ALL</u> segments.  For example: if you have ten total scoring segments, then the order should be one through 10.</li>
+<li><strong>Best</strong>: The best score that the auditioner can be given for the specific segment.</li>
+<li><strong>Worst</strong>: The worst score that the auditioner can be given for the specific segment.</li>
+<li><strong>Multiplier</strong>: If your scoring calculation includes a multiplier factor, that should be indicated here.  The system will default to "1" (i.e. no multiplier).</li>
+<li><strong>Tolerance</strong>: Tolerance is the allowable difference in scores between the judges. If you have a tolerance specific to the segment, choose that here.  The system will default to "0" (i.e. no tolerance is applied to the specific segment.)</li>
+</ul>
+<p>Click the indigo "Edit" button to edit any of your previous entries.</p>
+<p>Click the red "Remove" button to remove the segment.</p>'
             ],
         ];
     }

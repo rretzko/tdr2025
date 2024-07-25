@@ -173,6 +173,7 @@ class ViewDataFactory extends aViewData
             'version pitch files' => 'events.versions.version-pitch-files-table-component',
             'version profile' => 'events.versions.version-profile-component',
             'version roles' => 'events.versions.version-role-component',
+            'version scoring' => 'events.versions.version-scoring-table-component',
             'version edit profile' => 'events.versions.version-profile-component',
             'versions' => 'events.versions.versions-table-component',
 

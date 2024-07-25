@@ -206,6 +206,12 @@ class ViewPageSeeder extends Seeder
                 'livewire',
                 'version pitch files',
             ],
+            [
+                'VersionScoringController',
+                '__invoke',
+                'livewire',
+                'version scoring',
+            ],
         ];
 
         foreach ($seeds as $seed) {

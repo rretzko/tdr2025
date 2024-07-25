@@ -137,6 +137,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('version/dashboard/{version}', [\App\Http\Controllers\Events\Versions\VersionController::class, 'show'])
         ->name('version.show');
 
+    //VERSIONS.SCORING
+    Route::get('version/scoring', \App\Http\Controllers\Events\Versions\VersionScoringController::class)
+        ->name('version.scoring');
+    //for filament
+    Route::resource('events.versions.version-scorings', VersionScoringController::class);
+
 
 //    Route::get('event/edit/{event}', EventManageEditController::class)
 //        ->middleware('can:update,event') //check EventPolicy
