@@ -162,6 +162,45 @@ class ViewCardSeeder extends Seeder
                 'label' => 'attachments',
                 'orderBy' => 8,
             ],
+            [
+                'header' => 'participation active',
+                'color' => 'green',
+                'description' => '<p>Manage your student\'s registration for the event.</p>
+<p>Only students matching the event\'s grade requirements will be included in this roster.</p>',
+                'heroicon' => 'heroicons.mortarBoard',
+                'href' => '/candidates',
+                'label' => 'eligible student roster',
+                'orderBy' => 1,
+            ],
+            [
+                'header' => 'participation active',
+                'color' => 'indigo',
+                'description' => '<p>Click to review the obligations you accepted
+for participation in this event.</p>',
+                'heroicon' => 'heroicons.documentCheck',
+                'href' => '/obligations',
+                'label' => 'teacher obligation',
+                'orderBy' => 2,
+            ],
+            [
+                'header' => 'participation active',
+                'color' => 'yellow',
+                'description' => '<p>View the pitch files for this event</p>',
+                'heroicon' => 'heroicons.sixteenthNotes',
+                'href' => '/pitchFiles',
+                'label' => 'pitch files',
+                'orderBy' => 3,
+            ],
+            [
+                'header' => 'participation active',
+                'color' => 'red',
+                'description' => '<p>View the estimate/invoice form and PayPal
+payment option (if available) for this event.</p>',
+                'heroicon' => 'heroicons.tableCells',
+                'href' => '/estimate',
+                'label' => 'estimate/Invoice form',
+                'orderBy' => 4,
+            ],
         ];
     }
 

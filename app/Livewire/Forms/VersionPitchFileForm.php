@@ -18,7 +18,7 @@ class VersionPitchFileForm extends Form
     public int $versionId = 0;
     #[Validate('required', message: 'A file must be selected.')]
     public string $url = '';
-    #[Validate('required|int|min:0')]
+    #[Validate('required|int|min:0|exists:voice_parts,id')]
     public int $voicePartId = 0;
 
     public function add(): void
@@ -60,13 +60,22 @@ class VersionPitchFileForm extends Form
             'ulr', 'versionId', 'voicePartId');
     }
 
-    public function setNewPitchFile(int $versionId, array $fileTypes): void
+    public function setDefaults(int $versionId, array $voiceParts): void
+    {
+        $this->versionId = $versionId;
+//dd(array_key_first($voiceParts));
+        $this->voicePartId = array_key_first($voiceParts);
+    }
+
+    public function setNewPitchFile(int $versionId, array $fileTypes, array $voiceParts): void
     {
         $this->resetAll();
 
         $this->versionId = $versionId;
 
         $this->fileType = array_key_first($fileTypes);
+
+        $this->voicePartId = array_key_first($voiceParts);
     }
 
     public function setPitchFile(int $versionId, int $versionPitchFileId): void

@@ -477,6 +477,33 @@ The fields available are:
 <p>Click the indigo "Edit" button to edit any of your previous entries.</p>
 <p>Click the red "Remove" button to remove the segment.</p>'
             ],
+            [
+                'header' => 'events participations',
+                'instructions' => '<p>Events Participation instructions page</p>
+<p>Use this page to navigate between current and past events, and to request an
+invitation to new events.</p>'
+            ],
+            [
+                'header' => 'versions table',
+                'instructions' => '<p>Versions table instructions page</p>
+<p>Use this page to navigate between the event\'s versions.</p>'
+            ],
+            [
+                'header' => 'participation active',
+                'instructions' => '<p>Active Participation instructions page</p>
+<p>Use this page to complete the work necessary to have your students participate
+in the current version.</p>'
+            ],
+            [
+                'header' => 'participation results',
+                'instructions' => '<p>Use this page to review the results of your
+student\'s participation in a past event.</p>'
+            ],
+            [
+                'header' => 'candidates',
+                'instructions' => '<p>Use this page to edit your students\'
+information for this event.</p>'
+            ],
         ];
     }
 

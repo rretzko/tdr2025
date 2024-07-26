@@ -5,6 +5,7 @@ namespace App\Data;
 use App\Models\Events\Versions\Version;
 use App\Models\PageInstruction;
 use App\Models\ViewCard;
+use App\Services\VersionsTableService;
 
 class ViewDataFactory extends aViewData
 {
@@ -27,15 +28,12 @@ class ViewDataFactory extends aViewData
         //anything else until a school is added
         $this->dto['schoolCount'] = auth()->user()->teacher->schools->count();
 
+        //register pageName, header, and page instructions in $dto
         if ($this->viewPage->id) {
+
             $this->dto['pageName'] = 'pages.'.$this->viewPage->page_name.'Page';
+
             $this->dto['header'] = $this->viewPage->header;
-//            Log::info('info header: '.$this->dto['header']);
-//            Log::error('error header: '.$this->dto['header']);
-//            if (is_null($this->dto['header'])) {
-//                Log::info('info: is_null('.$this->dto['header'].')');
-//                Log::error('error: is_null('.$this->dto['header'].')');
-//            }
 
             $this->dto['pageInstructions'] = $this->decodeInstructions(PageInstruction::where('header',
                 $this->dto['header'])->first()->instructions);
@@ -135,6 +133,8 @@ class ViewDataFactory extends aViewData
     private function getLivewireComponent(): string
     {
         $components = [
+            'candidates' => 'events.versions.participations.candidates-table-component',
+
             'new school' => 'schools.school-create-component',
             'schools' => 'schools.schools-table-component',
             'school edit' => 'schools.school-edit-component',
@@ -149,6 +149,8 @@ class ViewDataFactory extends aViewData
             'ensembles' => 'ensembles.ensembles-table-component',
             'ensemble create' => 'ensembles.ensemble-create-component',
             'ensemble edit' => 'ensembles.ensemble-edit-component',
+
+            'events participation' => 'events.event-participation-table-component',
 
             'assets' => 'ensembles.assets.assets-table-component',
             'asset create' => 'ensembles.assets.asset-create-component',
@@ -175,7 +177,9 @@ class ViewDataFactory extends aViewData
             'version roles' => 'events.versions.version-role-component',
             'version scoring' => 'events.versions.version-scoring-table-component',
             'version edit profile' => 'events.versions.version-profile-component',
+
             'versions' => 'events.versions.versions-table-component',
+            'versions table' => 'events.versions.versions-table-component',
 
         ];
 

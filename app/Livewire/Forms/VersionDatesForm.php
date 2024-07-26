@@ -29,7 +29,7 @@ class VersionDatesForm extends Form
             'adjudicationClose' => 'required|date|after:adjudicationOpen',
             'adminOpen' => 'required|date',//|before:adminClose',
             'adminClose' => 'required|date|after:adminOpen',
-            'finalTeacherChanges' => 'required' | 'date',
+            'finalTeacherChanges' => 'required|date',
             'membershipOpen' => 'required|date',//|before:membershipClose',
             'membershipClose' => 'required|date|after:membershipOpen',
             'studentOpen' => 'required|date',//|before:studentClose',

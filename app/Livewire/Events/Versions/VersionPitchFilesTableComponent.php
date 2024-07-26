@@ -26,7 +26,9 @@ class VersionPitchFilesTableComponent extends BasePage
     public bool $showEditForm = false;
     public int $versionId = 0;
     public int $eventId = 0;
-    #[Validate('mimes:mp3,mpeg,ogg,wav|max:6000')]
+    public array $voiceParts = [];
+
+    #[Validate('mimes:mp3,mpeg,ogg,wav,pdf|max:6000')]
     public $pitchFile;
 
 
@@ -38,6 +40,7 @@ class VersionPitchFilesTableComponent extends BasePage
         $this->versionId = $version->id;
         $this->eventId = $version->event_id;
         $this->fileTypes = FileTypesArrayService::getArray($this->versionId);
+        $this->voiceParts = $this->getVoiceParts();
 
         //default values
         $this->hasFilters = true;
@@ -53,20 +56,16 @@ class VersionPitchFilesTableComponent extends BasePage
             ? $this->filters->getPreviousFilterArray('pitchFileFileTypesSelectedIds', $this->dto['header'])
             : $this->filters->pitchFileFileTypesSelectedIds;
 
-//        //filterMethods
+        //filterMethods
         $this->filterMethods[] = 'pitchFileVoiceParts';
         $this->filterMethods[] = 'pitchFileFileTypes';
-
-//        if (count($this->filters->classOfsSelectedIds) > 1) {
-//            $this->filterMethods[] = 'classOfs';
-//        }
-//        if (count($this->filters->voicePartIdsSelectedIds) > 1) {
-//            $this->filterMethods[] = 'voicePartIds';
 
         $this->sortCol = $this->userSort ? $this->userSort->column : 'version_pitch_files.order_by';
         $this->sortAsc = $this->userSort ? $this->userSort->asc : $this->sortAsc;
         $this->sortColLabel = $this->userSort ? $this->userSort->label : 'orderBy';
-//        }
+
+        //form
+        $this->form->setDefaults($this->versionId, $this->voiceParts);
     }
 
     public function render()
@@ -82,7 +81,7 @@ class VersionPitchFilesTableComponent extends BasePage
                 'fileTypes' => $this->fileTypes,
                 'options1Thru50' => range(0, 50),
                 'rows' => $this->getRows()->paginate($this->recordsPerPage),
-                'voiceParts' => $this->getVoiceParts(),
+                'voiceParts' => $this->voiceParts,
             ]);
     }
 
@@ -152,7 +151,7 @@ class VersionPitchFilesTableComponent extends BasePage
         //close edit-form if opened
         $this->reset('showEditForm');
 
-        $this->form->setNewPitchFile($this->versionId, $this->fileTypes);
+        $this->form->setNewPitchFile($this->versionId, $this->fileTypes, $this->voiceParts);
     }
 
     public function updatedShowEditForm(int $versionPitchFileId): void

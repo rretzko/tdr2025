@@ -87,7 +87,7 @@
                             <x-forms.elements.livewire.audioFileUpload
                                 label="pitch file"
                                 name="pitchFile"
-                                hint=".mp3, .ogg, and .wav ONLY"
+                                hint="mp3, ogg, wav, or pdf ONLY"
                                 required="true"
                             />
                             @error('form.url')

@@ -56,4 +56,9 @@ class Event extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function versions(): HasMany
+    {
+        return $this->hasMany(Version::class)->orderByDesc('senior_class_of');
+    }
+
 }

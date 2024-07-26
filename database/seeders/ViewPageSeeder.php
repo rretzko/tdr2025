@@ -173,7 +173,7 @@ class ViewPageSeeder extends Seeder
             [
                 'VersionsController',
                 'index',
-                'table',
+                'livewire',
                 'versions table',
             ],
             [
@@ -212,6 +212,31 @@ class ViewPageSeeder extends Seeder
                 'livewire',
                 'version scoring',
             ],
+            [
+                'EventsParticipationController',
+                '__invoke',
+                'dashboard',
+                'events participation',
+            ],
+            [
+                'ParticipationActiveController',
+                '__invoke',
+                'dashboard',
+                'participation dashboard',
+            ],
+            [
+                'ParticipationResultsController',
+                '__invoke',
+                'livewire',
+                'participation results',
+            ],
+            [
+                'CandidateController',
+                '__invoke',
+                'livewire',
+                'candidates',
+            ],
+
         ];
 
         foreach ($seeds as $seed) {

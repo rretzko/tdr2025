@@ -13,6 +13,12 @@ Breadcrumbs::for('home', function (BreadcrumbTrail $trail) {
     $trail->push('Home', route('home'));
 });
 
+//Candidates
+Breadcrumbs::for('candidates', function (BreadcrumbTrail $trail, $id) {
+    $trail->parent('participation active', $id);
+    $trail->push('Candidates', route('candidates', $id));
+});
+
 // Ensembles
 Breadcrumbs::for('ensembles', function (BreadcrumbTrail $trail) {
     $trail->parent('home');
@@ -91,6 +97,18 @@ Breadcrumbs::for('my events', function (BreadcrumbTrail $trail) {
     $trail->push('My Events', route('events.manage'));
 });
 
+//Events.Participation.Dashboard
+Breadcrumbs::for('events participation', function (BreadcrumbTrail $trail) {
+    $trail->parent('events dashboard');
+    $trail->push('Event Participation', route('events.participation.table'));
+});
+
+//Participation.Dashboard
+Breadcrumbs::for('participation active', function (BreadcrumbTrail $trail, $id) {
+    $trail->parent('versions table', $id);
+    $trail->push('Participation Dashboard', route('participation.dashboard', $id));
+});
+
 // Profile
 Breadcrumbs::for('profile', function (BreadcrumbTrail $trail) {
     $trail->parent('home');
@@ -164,7 +182,7 @@ Breadcrumbs::for('versions dashboard', function (BreadcrumbTrail $trail, int $id
 });
 
 //Versions.Table (note: MULTIPLE versions)
-Breadcrumbs::for('versions', function (BreadcrumbTrail $trail, int $id) {
+Breadcrumbs::for('versions table', function (BreadcrumbTrail $trail, int $id) {
     $trail->parent('my events', $id);
     $trail->push('Versions Table', route('versions.index', ['event' => $id]));
 });
@@ -201,7 +219,7 @@ Breadcrumbs::for('version roles', function (BreadcrumbTrail $trail, int $id) {
 
 //Version.Profile
 Breadcrumbs::for('version profile', function (BreadcrumbTrail $trail, int $id) {
-    $trail->parent('versions', $id);
+    $trail->parent('versions table', $id);
     $trail->push('Version Profile', route('version.create', ['event' => $id]));
 });
 

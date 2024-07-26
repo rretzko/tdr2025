@@ -20,6 +20,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    //Candidates
+    Route::get('candidates', \App\Http\Controllers\Events\Versions\Participations\CandidateController::class)
+        ->name('candidates');
+
     //ENSEMBLES
     Route::get('ensembles', [\App\Http\Controllers\Ensembles\EnsembleController::class, 'index'])
         ->name('ensembles');
@@ -55,8 +59,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //EVENTS
     Route::get('events/dashboard', \App\Http\Controllers\Events\EventsDashboardController::class)
         ->name('events.dashboard');
-    Route::get('events/participation/dashboard', \App\Http\Controllers\Events\EventsParticipationController::class)
-        ->name('events.participation.dashboard');
+    Route::get('events/participation/table', \App\Http\Controllers\Events\EventsParticipationController::class)
+        ->name('events.participation.table');
     Route::get('events/adjudication', \App\Http\Controllers\Events\EventsAdjudicationController::class)
         ->name('events.adjudication');
     Route::get('events/manage', \App\Http\Controllers\Events\EventsManageController::class)
@@ -75,6 +79,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //LIBRARIES
     Route::get('libraries', [\App\Http\Controllers\Libraries\libraryController::class, 'index'])
         ->name('libraries');
+
+    Route::get('participation/dashboard/{version}',
+        \App\Http\Controllers\Events\Versions\Participations\ParticipationActiveController::class)
+        ->name('participation.dashboard');
+    Route::get('participation/results/{version}',
+        \App\Http\Controllers\Events\Versions\Participations\ParticipationResultsController::class)
+        ->name('participation.results');
 
     //SCHOOLS
     Route::get('schools', \App\Http\Controllers\Schools\SchoolsController::class)
@@ -141,7 +152,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('version/scoring', \App\Http\Controllers\Events\Versions\VersionScoringController::class)
         ->name('version.scoring');
     //for filament
-    Route::resource('events.versions.version-scorings', VersionScoringController::class);
+    Route::resource('events.versions.version-scorings',
+        \App\Http\Controllers\Events\Versions\VersionScoringController::class);
 
 
 //    Route::get('event/edit/{event}', EventManageEditController::class)

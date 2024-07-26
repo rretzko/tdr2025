@@ -5,6 +5,7 @@ namespace App\Livewire\Events\Versions;
 use App\Exports\VersionScoringExport;
 use App\Livewire\BasePage;
 use App\Livewire\Forms\VersionScoringForm;
+use App\Models\Events\Event;
 use App\Models\Events\Versions\VersionConfigAdjudication;
 use App\Models\Events\Versions\VersionScoring;
 use App\Models\UserConfig;
@@ -45,6 +46,45 @@ class VersionScoringTableComponent extends BasePage
             ]);
     }
 
+    private function clonePreviousVersionScorings(): Builder
+    {
+        $event = Event::find(UserConfig::getValue('eventId'));
+        $versions = $event->versions;
+
+        if ($versions->count() > 1) { //create db rows for $this->versionId using the previous scoring
+
+            $version = $versions[1];
+
+            $previousScorings = VersionScoring::query()
+                ->where('version_id', 2) //$version->id));
+                ->get();
+
+            //use the previous scorings to create current models
+            foreach ($previousScorings as $scoring) {
+
+                VersionScoring::create(
+                    [
+                        'version_id' => $this->versionId,
+                        'file_type' => $scoring->file_type,
+                        'segment' => $scoring->segment,
+                        'abbr' => $scoring->abbr,
+                        'best' => $scoring->best,
+                        'worst' => $scoring->worst,
+                        'multiplier' => $scoring->multiplier,
+                        'tolerance' => $scoring->tolerance,
+                        'order_by' => $scoring->order_by,
+                    ]
+                );
+            }
+
+            //return a Builder object using the newly created rows
+            return VersionScoring::query()
+                ->where('version_id', $this->versionId)
+                ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'));
+
+        }
+    }
+
     private function getColumnHeaders(): array
     {
         return [
@@ -62,9 +102,13 @@ class VersionScoringTableComponent extends BasePage
 
     private function getRows(): Builder
     {
-        return VersionScoring::query()
+        return (VersionScoring::query()
             ->where('version_id', $this->versionId)
-            ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'));
+            ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))->exists())
+            ? VersionScoring::query()
+                ->where('version_id', $this->versionId)
+                ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
+            : $this->clonePreviousVersionScorings();
     }
 
     public function addSegment(): void
@@ -101,22 +145,6 @@ class VersionScoringTableComponent extends BasePage
 
         $this->form->setEditValues($this->showEditForm);
     }
-
-//    private function getFileTypes(): array
-//    {
-//        $types = explode(',', VersionConfigAdjudication::query()
-//            ->where('version_id', $this->versionId)
-//            ->value('upload_types'));
-//
-//        $a = [];
-//
-//        foreach ($types as $type) {
-//
-//            $a[strtolower($type)] = ucwords($type);
-//        }
-//
-//        return $a;
-//    }
 
     public function updatedShowAddForm(): void
     {
