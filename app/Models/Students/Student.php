@@ -7,6 +7,8 @@ use App\Models\PhoneNumber;
 use App\Models\Schools\School;
 use App\Models\Schools\Teacher;
 use App\Models\User;
+use App\Services\CalcClassOfFromGradeService;
+use App\Services\CalcGradeFromClassOfService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -30,6 +32,13 @@ class Student extends Model
     public function address(): HasOne
     {
         return $this->hasOne(Address::class, 'user_id', 'user_id');
+    }
+
+    public function getGradeAttribute(): int
+    {
+        $service = new CalcGradeFromClassOfService();
+
+        return $service->getGrade($this->class_of);
     }
 
     public function getPhoneHomeAttribute(): string

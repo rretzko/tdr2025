@@ -37,6 +37,18 @@ class BasePage extends Component
 
     public const ENSEMBLETABS = ['ensembles', 'members', 'assets', 'inventory'];
 
+    protected const SHIRTSIZES = [
+        '2xs' => '2xs',
+        'xs' => 'xs',
+        'sm' => 'sm',
+        'med' => 'med',
+        'lg' => 'lg',
+        'xl' => 'xl',
+        '2xl' => '2xl',
+        '3xl' => '3xl',
+        '4xl' => '4xl',
+    ];
+
     public function mount(): void
     {
         $this->header = $this->dto['header'];

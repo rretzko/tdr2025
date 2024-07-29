@@ -25,4 +25,5 @@ class Address extends Model
     {
         return $this->belongsTo(Geostate::class);
     }
+
 }

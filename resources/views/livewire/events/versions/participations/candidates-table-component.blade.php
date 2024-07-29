@@ -15,11 +15,11 @@
             @endif
 
             {{-- RECORDS PER PAGE --}}
-            {{--            @if(count($rows) > 15)--}}
-            {{--                <x-forms.indicators.recordsPerPage/>--}}
-            {{--            @else--}}
-            {{--                <div></div>--}}
-            {{--            @endif--}}
+            @if(count($rows) > 15)
+                <x-forms.indicators.recordsPerPage/>
+            @else
+                <div></div>
+            @endif
         @endif
 
     </div>
@@ -30,211 +30,72 @@
         {{-- HEADER and ADD-NEW and EXPORT BUTTONS --}}
         <div class="flex justify-between mb-1">
             <div>{{ ucwords($dto['header']) }}</div>
-            {{--            <div class="flex items-center space-x-2">--}}
-
-            {{--                --}}{{-- ADD-NEW BUTTON OPENS ADD-PARTICIPANT-FORM --}}
-            {{--                <button type="button" wire:click="$set('showAddForm', true)"--}}
-            {{--                        class="bg-green-500 text-white text-3xl px-2 rounded-lg" title="Add New" tabindex="-1">--}}
-            {{--                    +--}}
-            {{--                </button>--}}
-            {{--                <x-buttons.export/>--}}
-            {{--            </div>--}}
         </div>
 
-        {{-- ADD ROLE FORM --}}
-        {{--        <div>--}}
-        {{--            @if($showAddForm)--}}
-
-        {{--                <div class="bg-gray-100 p-2 mb-4">--}}
-        {{--                    <h3 class="font-semibold">Add A New Scoring Segment</h3>--}}
-        {{--                    <div--}}
-        {{--                        class="flex flex-col lg:flex-row lg:flex-wrap space-y-2 lg:space-y-0 lg:space-x-2 items-start"--}}
-        {{--                    >--}}
-        {{--                        --}}{{-- SELECT FILE TYPE/CATEGORY --}}
-        {{--                        <x-forms.elements.livewire.selectNarrow--}}
-        {{--                            autofocus='true'--}}
-        {{--                            label="file type"--}}
-        {{--                            name="form.fileType"--}}
-        {{--                            :options="$fileTypes"--}}
-        {{--                            required='true'--}}
-        {{--                        />--}}
-
-        {{--                        --}}{{-- SEGMENT --}}
-        {{--                        <x-forms.elements.livewire.inputTextNarrow--}}
-        {{--                            label="segment"--}}
-        {{--                            name="form.segment"--}}
-        {{--                            hint="ex: quality, intonation, etc."--}}
-        {{--                            required="true"--}}
-        {{--                        />--}}
-
-        {{--                        --}}{{-- ABBR --}}
-        {{--                        <x-forms.elements.livewire.inputTextNarrow--}}
-        {{--                            label="abbreviation"--}}
-        {{--                            name="form.abbr"--}}
-        {{--                            required="true"--}}
-        {{--                        />--}}
-
-        {{--                        --}}{{-- ORDER BY --}}
-        {{--                        <x-forms.elements.livewire.selectNarrow--}}
-        {{--                            label="order"--}}
-        {{--                            name="form.orderBy"--}}
-        {{--                            :options="$options1Thru50"--}}
-        {{--                            :required="true"--}}
-        {{--                        />--}}
-
-        {{--                        --}}{{-- BEST --}}
-        {{--                        <x-forms.elements.livewire.selectNarrow--}}
-        {{--                            label="best"--}}
-        {{--                            name="form.best"--}}
-        {{--                            :options="$options1Thru50"--}}
-        {{--                            :required="true"--}}
-        {{--                        />--}}
-
-        {{--                        --}}{{-- WORST --}}
-        {{--                        <x-forms.elements.livewire.selectNarrow--}}
-        {{--                            label="worst"--}}
-        {{--                            name="form.worst"--}}
-        {{--                            :options="$options1Thru50"--}}
-        {{--                            :required="true"--}}
-        {{--                        />--}}
-
-        {{--                        --}}{{-- MULTIPLIER --}}
-        {{--                        <x-forms.elements.livewire.selectNarrow--}}
-        {{--                            label="multiplier"--}}
-        {{--                            name="form.multiplier"--}}
-        {{--                            :options="$options1Thru50"--}}
-        {{--                            :required="true"--}}
-        {{--                        />--}}
-
-        {{--                        --}}{{-- TOLERANCE --}}
-        {{--                        <x-forms.elements.livewire.selectNarrow--}}
-        {{--                            label="tolerance"--}}
-        {{--                            name="form.tolerance"--}}
-        {{--                            :options="$options0Thru50"--}}
-        {{--                            :required="true"--}}
-        {{--                        />--}}
-
-        {{--                        --}}{{-- SUBMIT --}}
-        {{--                        <div class="flex -mt-8 ">--}}{{-- offset for fauxSubmit label --}}
-        {{--                            <x-buttons.fauxSubmit value="Add" wireClick="addSegment"/>--}}
-        {{--                        </div>--}}
-        {{--                    </div>--}}
-        {{--                </div>--}}
-        {{--            @endif--}}
-        {{--        </div>--}}
-
-        {{-- EDIT ROLE FORM --}}
-        {{--        <div>--}}
-        {{--            @if($showEditForm)--}}
-        {{--                <div class="bg-gray-100 p-2">--}}
-        {{--                    <div class="bg-gray-100 p-2 mb-4">--}}
-        {{--                        <h3 class="font-semibold">Edit A Scoring Segment</h3>--}}
-        {{--                        <div--}}
-        {{--                            class="flex flex-col lg:flex-row lg:flex-wrap space-y-2 lg:space-y-0 lg:space-x-2 items-start"--}}
-        {{--                        >--}}
-        {{--                            --}}{{-- SELECT FILE TYPE/CATEGORY --}}
-        {{--                            <x-forms.elements.livewire.selectNarrow--}}
-        {{--                                autofocus='true'--}}
-        {{--                                label="file type"--}}
-        {{--                                name="form.fileType"--}}
-        {{--                                :options="$fileTypes"--}}
-        {{--                                required='true'--}}
-        {{--                            />--}}
-
-        {{--                            --}}{{-- SEGMENT --}}
-        {{--                            <x-forms.elements.livewire.inputTextNarrow--}}
-        {{--                                label="segment"--}}
-        {{--                                name="form.segment"--}}
-        {{--                                hint="ex: quality, intonation, etc."--}}
-        {{--                                required="true"--}}
-        {{--                            />--}}
-
-        {{--                            --}}{{-- ABBR --}}
-        {{--                            <x-forms.elements.livewire.inputTextNarrow--}}
-        {{--                                label="abbreviation"--}}
-        {{--                                name="form.abbr"--}}
-        {{--                                required="true"--}}
-        {{--                            />--}}
-
-        {{--                            --}}{{-- ORDER BY --}}
-        {{--                            <x-forms.elements.livewire.selectNarrow--}}
-        {{--                                label="order"--}}
-        {{--                                name="form.orderBy"--}}
-        {{--                                :options="$options1Thru50"--}}
-        {{--                                :required="true"--}}
-        {{--                            />--}}
-
-        {{--                            --}}{{-- BEST --}}
-        {{--                            <x-forms.elements.livewire.selectNarrow--}}
-        {{--                                label="best"--}}
-        {{--                                name="form.best"--}}
-        {{--                                :options="$options1Thru50"--}}
-        {{--                                :required="true"--}}
-        {{--                            />--}}
-
-        {{--                            --}}{{-- WORST --}}
-        {{--                            <x-forms.elements.livewire.selectNarrow--}}
-        {{--                                label="worst"--}}
-        {{--                                name="form.worst"--}}
-        {{--                                :options="$options1Thru50"--}}
-        {{--                                :required="true"--}}
-        {{--                            />--}}
-
-        {{--                            --}}{{-- MULTIPLIER --}}
-        {{--                            <x-forms.elements.livewire.selectNarrow--}}
-        {{--                                label="multiplier"--}}
-        {{--                                name="form.multiplier"--}}
-        {{--                                :options="$options1Thru50"--}}
-        {{--                                :required="true"--}}
-        {{--                            />--}}
-
-        {{--                            --}}{{-- TOLERANCE --}}
-        {{--                            <x-forms.elements.livewire.selectNarrow--}}
-        {{--                                label="tolerance"--}}
-        {{--                                name="form.tolerance"--}}
-        {{--                                :options="$options0Thru50"--}}
-        {{--                                :required="true"--}}
-        {{--                            />--}}
-
-        {{--                        </div>--}}
-
-        {{--                        --}}{{-- SUBMIT --}}
-        {{--                        <div class="flex -mt-8 ">--}}{{-- offset for fauxSubmit label --}}
-        {{--                            <x-buttons.fauxSubmit value="Update" wireClick="segmentUpdate"/>--}}
-        {{--                        </div>--}}
-
-        {{--                    </div>--}}
-        {{--                </div>--}}
-        {{--            @endif--}}
-        {{--        </div>--}}
-
         {{-- FILTERS and TABLE --}}
-        <div class="flex flex-row ">
+        <div class="flex flex-row">
 
             {{-- FILTERS --}}
             @if($hasFilters && count($filterMethods))
                 <div class="flex justify-center">
                     <x-sidebars.filters :filters="$filters" :methods="$filterMethods"/>
                 </div>
-
             @endif
 
-            {{-- TABLE WITH LINKS --}}
-            <div class="flex flex-col space-y-2 mb-2 w-full">
+            {{-- SCROLLABLE LIST OF LINKS --}}
+            <div class="flex w-full">
+                <!-- Left side: Scrollable list of links -->
+                <div class="w-1/2 sm:w-1/4 overflow-y-auto h-screen">
+                    <ul class="list-none ml-1">
+                        @for($i=0; $i<4; $i++)
+                            @foreach($rows as $row)
+                                <li>
+                                    <button wire:click="selectCandidate({{ $row->candidateId }})"
+                                            class="text-xs text-left block py-1 border-b hover:text-blue-500">
+                                        {{ $row->last_name . ($row->suffix_name ? ' ' . $row->suffix_name : '') . ', ' . $row->first_name . $row->middle_name }}
+                                    </button>
+                                </li>
+                            @endforeach
+                        @endfor
+                    </ul>
+                </div>
+
+                <!-- Right side: form -->
+                <div class="w-full ml-2 overflow-y-auto h-screen">
+                    <div class="advisory text-center text-gray-500">
+                        @if($form->firstName)
+                            <x-forms.partials.candidateForm
+                                :auditionFiles="$auditionFiles"
+                                :ensembleVoiceParts="$ensembleVoiceParts"
+                                :eventGrades="$eventGrades"
+                                :heights="$heights"
+                                :form="$form"
+                                :shirtSizes="$shirtSizes"
+                                :statuses="$statuses"
+                            />
+                        @else
+                            Click name to complete form...
+                        @endif
+                    </div>
+                </div>
+
+                {{-- TABLE WITH LINKS --}}
+                {{--            <div class="flex flex-col space-y-2 mb-2 w-full">--}}
 
                 {{--                <x-links.linkTop :recordsPerPage="$recordsPerPage" :rows="$rows"/>--}}
 
-                {{-- TABLE --}}
-                <x-tables.eventsParticipationTable
-                    :columnHeaders="$columnHeaders"
-                    :header="$dto['header']"
-                    :recordsPerPage="$recordsPerPage"
-                    :rows="$rows"
-                    :sortAsc="$sortAsc"
-                    :sortColLabel="$sortColLabel"
-                />
+                {{--                --}}{{-- TABLE --}}
+                {{--                <x-tables.candidatesTable--}}
+                {{--                    :columnHeaders="$columnHeaders"--}}
+                {{--                    :header="$dto['header']"--}}
+                {{--                    :recordsPerPage="$recordsPerPage"--}}
+                {{--                    :rows="$rows"--}}
+                {{--                    seniorYear="{{  $seniorYear }}"--}}
+                {{--                    :sortAsc="$sortAsc"--}}
+                {{--                    :sortColLabel="$sortColLabel"--}}
+                {{--                />--}}
 
-                {{-- LINKS:BOTTOM --}}
+                {{--                --}}{{-- LINKS:BOTTOM --}}
                 {{--                <x-links.linkBottom :rows="$rows"/>--}}
 
             </div>

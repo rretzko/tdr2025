@@ -15,12 +15,15 @@ class Candidate extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'version_id',
-        'student_id',
-        'teacher_id',
+        'id',
         'program_name',
-        'candidate_type',
+        'ref',
+        'school_id',
+        'student_id',
+        'status',
+        'teacher_id',
+        'version_id',
+        'voice_part_id',
     ];
 
     public function user(): BelongsTo

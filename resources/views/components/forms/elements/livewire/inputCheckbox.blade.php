@@ -5,13 +5,14 @@
     'key' => false,
     'label',
     'live' => false,
+    'marginTop' => 4,
     'name',
     'placeholder' => '',
     'required' => false,
     'type' => 'text',
     'value' => '1',
 ])
-<div class="flex flex-row mt-4 space-x-2">
+<div class="flex flex-row mt-{{ $marginTop }} space-x-2">
     <input type="checkbox"
            value="{{ $value }}"
 

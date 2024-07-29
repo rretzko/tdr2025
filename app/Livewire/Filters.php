@@ -5,11 +5,14 @@ namespace App\Livewire;
 use App\Models\Ensembles\Ensemble;
 use App\Models\Ensembles\Members\Member;
 use App\Models\Events\Event;
+use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionPitchFile;
 use App\Models\Students\VoicePart;
+use App\Models\User;
 use App\Models\UserConfig;
 use App\Models\UserFilter;
+use App\Services\CalcGradeFromClassOfService;
 use App\Services\CalcSeniorYearService;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Url;
@@ -17,6 +20,8 @@ use Livewire\Form;
 
 class Filters extends Form
 {
+    #[Url]
+    public array $candidateGradesSelectedIds = [];
     #[Url]
     public array $classOfsSelectedIds = [];
     #[Url]
@@ -29,12 +34,15 @@ class Filters extends Form
     public array $pitchFileVoicePartsSelectedIds = [];
     #[Url]
     public array $schoolsSelectedIds = [];
+    public int $versionId = 0;
     #[Url]
     public array $voicePartIdsSelectedIds = [];
+
 
     public function init(string $header)
     {
         $this->header = $header;
+        $this->versionId = (int) UserConfig::getValue('versionId');
 
         //initially set ensembles filter to include ALL schools' ensembles
         foreach (auth()->user()->teacher->schools as $school) {
@@ -42,6 +50,15 @@ class Filters extends Form
                 $this->ensemblesSelectedIds[] = $ensemble->id;
             }
         }
+
+        //initially set candidateGrades filter to include ALL candidate grades
+        $this->candidateGradesSelectedIds = Candidate::query()
+            ->join('students', 'students.id', '=', 'candidates.student_id')
+            ->where('version_id', $this->versionId)
+            ->orderBy('students.class_of')
+            ->pluck('students.class_of', 'students.class_of')
+            ->unique()
+            ->toArray();
 
         //initially set ensembleYears filter to include ALL ensembles' school years
         $this->ensembleYearsSelectedIds = array_values($this->ensembleYears());
@@ -88,6 +105,28 @@ class Filters extends Form
     public function apply($query)
     {
         return $query->whereIn('ensembles.school_id', $this->schoolsSelectedIds);
+    }
+
+    public function candidateGrades(): array
+    {
+        $serviceSeniorYear = new CalcSeniorYearService;
+        $seniorYear = $serviceSeniorYear->getSeniorYear();
+
+        $serviceGrade = new CalcGradeFromClassOfService;
+
+        $classOfs = Candidate::query()
+            ->join('students', 'students.id', '=', 'candidates.student_id')
+            ->where('teacher_id', auth()->id())
+            ->orderBy('students.class_of')
+            ->pluck('students.class_of', 'students.class_of')
+            ->unique()
+            ->values();
+
+        $grades = $classOfs->mapWithKeys(function ($classOf) use ($serviceGrade) {
+            return [$classOf => $serviceGrade->getGrade($classOf)];
+        });
+
+        return $grades->sort()->toArray();
     }
 
     public function classOfs(): array

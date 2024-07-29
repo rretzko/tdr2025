@@ -20,17 +20,6 @@ use Carbon\Carbon;
  */
 class BasePageStudent extends BasePage
 {
-    protected const SHIRTSIZES = [
-        '2xs' => '2xs',
-        'xs' => 'xs',
-        'sm' => 'sm',
-        'med' => 'med',
-        'lg' => 'lg',
-        'xl' => 'xl',
-        '2xl' => '2xl',
-        '3xl' => '3xl',
-        '4xl' => '4xl',
-    ];
     protected const TABS = ['bio', 'comms', 'emergency contact', 'reset password'];
 
     public Filters $filters;
