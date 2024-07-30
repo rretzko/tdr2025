@@ -18,13 +18,16 @@ class VersionProfileForm extends Form
     public float $feeParticipation = 0;
     public float $feeOnSiteRegistration = 0;
     public float $feeRegistration = 0;
+    public bool $height = false;
     public string $name = '';
     public bool $pitchFilesStudent = false;
     public bool $pitchFilesTeacher = false;
     public string $shortName = '';
+    public bool $shirtSize = false;
     public int $seniorClassId = 2025;
     public string $statusId = 'sandbox';
     public bool $student = false;
+    public bool $studentHomeAddress = false;
     public string $sysId = 'new';
     public bool $teacher = false;
     public string $uploadType = 'none';
@@ -47,6 +50,9 @@ class VersionProfileForm extends Form
                 'fee_epayment_surcharge' => ConvertToPenniesService::usdToPennies($this->feeEpaymentSurcharge),
                 'pitch_files_student' => $this->pitchFilesStudent,
                 'pitch_files_teacher' => $this->pitchFilesTeacher,
+                'student_home_address' => $this->studentHomeAddress,
+                'height' => $this->height,
+                'shirt_size' => $this->shirtSize,
             ]
         );
     }
@@ -68,6 +74,9 @@ class VersionProfileForm extends Form
         $this->student = $version->epayment_student;
         $this->pitchFilesStudent = $version->pitch_files_student;
         $this->pitchFilesTeacher = $version->pitch_files_teacher;
+        $this->studentHomeAddress = $version->student_home_address;
+        $this->height = $version->height;
+        $this->shirtSize = $version->shirt_size;
 
         return true;
     }
@@ -116,6 +125,9 @@ class VersionProfileForm extends Form
                     'fee_participation' => ConvertToPenniesService::usdToPennies($this->feeParticipation),
                     'pitch_files_student' => $this->pitchFilesStudent,
                     'pitch_files_teacher' => $this->pitchFilesTeacher,
+                    'student_home_address' => $this->studentHomeAddress,
+                    'height' => $this->height,
+                    'shirt_size' => $this->shirtSize,
                 ]
             );
         }

@@ -165,11 +165,11 @@ class ViewCardSeeder extends Seeder
             [
                 'header' => 'participation active',
                 'color' => 'green',
-                'description' => '<p>Manage your student\'s registration for the event.</p>
+                'description' => '<p>Manage your eligible student\'s registration for the event.</p>
 <p>Only students matching the event\'s grade requirements will be included in this roster.</p>',
                 'heroicon' => 'heroicons.mortarBoard',
                 'href' => '/candidates',
-                'label' => 'eligible student roster',
+                'label' => 'candidate roster',
                 'orderBy' => 1,
             ],
             [

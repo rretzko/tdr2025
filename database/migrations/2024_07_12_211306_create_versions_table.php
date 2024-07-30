@@ -23,6 +23,9 @@ return new class extends Migration {
             $table->integer('fee_epayment_surcharge')->default(0);
             $table->boolean('pitch_files_student')->default(1);
             $table->boolean('pitch_files_teacher')->default(1);
+            $table->boolean('student_home_address')->default(0);
+            $table->boolean('height')->default(0);
+            $table->boolean('shirt_size')->default(0);
             $table->softDeletes();
             $table->timestamps();
             $table->unique(['event_id', 'name']);

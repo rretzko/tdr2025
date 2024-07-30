@@ -22,7 +22,7 @@ class ParticipationActiveController extends Controller
 
         $dto = $data->getDto();
 
-        $id = $version->id;
+        $id = $version->event->id;
 
         return view($dto['pageName'], compact('dto', 'id'));
     }

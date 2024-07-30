@@ -52,7 +52,7 @@
                                 <li>
                                     <button wire:click="selectCandidate({{ $row->candidateId }})"
                                             class="text-xs text-left block py-1 border-b hover:text-blue-500">
-                                        {{ $row->last_name . ($row->suffix_name ? ' ' . $row->suffix_name : '') . ', ' . $row->first_name . $row->middle_name }}
+                                        {{ $row->last_name . ($row->suffix_name ? ' ' . $row->suffix_name : '') . ', ' . trim($row->first_name . ' ' . $row->middle_name) }}
                                     </button>
                                 </li>
                             @endforeach
@@ -68,35 +68,20 @@
                                 :auditionFiles="$auditionFiles"
                                 :ensembleVoiceParts="$ensembleVoiceParts"
                                 :eventGrades="$eventGrades"
+                                :height="$height"
                                 :heights="$heights"
                                 :form="$form"
+                                :shirtSize="$shirtSize"
                                 :shirtSizes="$shirtSizes"
-                                :statuses="$statuses"
+                                :showSuccessIndicator="$showSuccessIndicator"
+                                :studentHomeAddress="$studentHomeAddress"
+                                successMessage="{{  $successMessage }}"
                             />
                         @else
                             Click name to complete form...
                         @endif
                     </div>
                 </div>
-
-                {{-- TABLE WITH LINKS --}}
-                {{--            <div class="flex flex-col space-y-2 mb-2 w-full">--}}
-
-                {{--                <x-links.linkTop :recordsPerPage="$recordsPerPage" :rows="$rows"/>--}}
-
-                {{--                --}}{{-- TABLE --}}
-                {{--                <x-tables.candidatesTable--}}
-                {{--                    :columnHeaders="$columnHeaders"--}}
-                {{--                    :header="$dto['header']"--}}
-                {{--                    :recordsPerPage="$recordsPerPage"--}}
-                {{--                    :rows="$rows"--}}
-                {{--                    seniorYear="{{  $seniorYear }}"--}}
-                {{--                    :sortAsc="$sortAsc"--}}
-                {{--                    :sortColLabel="$sortColLabel"--}}
-                {{--                />--}}
-
-                {{--                --}}{{-- LINKS:BOTTOM --}}
-                {{--                <x-links.linkBottom :rows="$rows"/>--}}
 
             </div>
 

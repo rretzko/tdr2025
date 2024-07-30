@@ -105,7 +105,7 @@ Breadcrumbs::for('events participation', function (BreadcrumbTrail $trail) {
 
 //Participation.Dashboard
 Breadcrumbs::for('participation active', function (BreadcrumbTrail $trail, $id) {
-    $trail->parent('versions table', $id);
+    $trail->parent('events participation', $id);
     $trail->push('Participation Dashboard', route('participation.dashboard', $id));
 });
 

@@ -2,12 +2,28 @@
     'auditionFiles' => [],
     'ensembleVoiceParts',
     'eventGrades',
+    'height',
     'heights',
     'form',
+    'shirtSize',
     'shirtSizes',
-    'statuses',
+    'showSuccessIndicator',
+    'studentHomeAddress',
+    'successMessage',
 ])
 <form wire:submit="save" class="space-y-2">
+
+    {{-- STATUS BAR --}}
+    <div class="w-full text-center border border-gray-600 {{ $form->statusBg }} {{ $form->statusTextColor }}">
+        {{ strtoupper($form->status) }}
+        {{-- SUCCESS INDICATOR --}}
+        @if($showSuccessIndicator)
+            <div class="text-green-600 italic text-xs">
+                {{ $successMessage }}
+            </div>
+        @endif
+    </div>
+
     {{-- NAME --}}
     <fieldset class="flex flex-row space-x-1">
         <x-forms.elements.livewire.inputTextCompressed
@@ -30,14 +46,9 @@
         />
     </fieldset>
 
-    {{-- STATUS, GRADE, VOICEPART --}}
+    {{-- GRADE, VOICEPART --}}
     <fieldset class="flex flex-row space-x-1">
-        <x-forms.elements.livewire.selectCompressed
-            label="status"
-            name="form.status"
-            :options="$statuses"
-            required="true"
-        />
+
         <x-forms.elements.livewire.selectCompressed
             label="grades"
             name="form.grade"
@@ -64,23 +75,29 @@
             name="form.phoneMobile"
         />
         <x-forms.elements.livewire.inputTextCompressed
-            label="homePhone"
+            label="home phone"
             name="form.phoneHome"
         />
     </fieldset>
 
     {{-- HEIGHT, SHIRT SIZE, PROGRAM NAME --}}
     <fieldset class="flex flex-row space-x-1 pb-2 border border-transparent border-b-gray-200">
-        <x-forms.elements.livewire.selectCompressed
-            label="height"
-            name="form.height"
-            :options="$heights"
-        />
-        <x-forms.elements.livewire.selectCompressed
-            label="shirt size"
-            name="form.shirtSize"
-            :options="$shirtSizes"
-        />
+        @if($height)
+            <x-forms.elements.livewire.selectCompressed
+                label="height"
+                name="form.height"
+                :options="$heights"
+            />
+        @endif
+
+        @if($shirtSize)
+            <x-forms.elements.livewire.selectCompressed
+                label="shirt size"
+                name="form.shirtSize"
+                :options="$shirtSizes"
+            />
+        @endif
+
         <x-forms.elements.livewire.inputTextCompressed
             label="program name"
             name="form.programName"
@@ -119,35 +136,44 @@
     </fieldset>
 
     {{-- HOME ADDRESS --}}
-    <fieldset class="flex flex-col space-y-1 text-sm pb-2 border border-transparent border-b-gray-200">
-        <h3 class="text-left font-semibold">Home Address</h3>
-        <hint class="text-xs text-left italic">
-            Home Address information can be added/edited from the Students->edit->comms page.
-        </hint>
-        @if($form->homeAddress)
-            <div class="text-left">
-                {{ $form->homeAddress }}
-            </div>
-        @else
-            <div class="text-left text-red-600">
-                No or partial home address found.
-            </div>
+    <fieldset
+        class="flex flex-col space-y-1 text-sm pb-2 @if($studentHomeAddress) border border-transparent border-b-gray-200 @endif ">
+        @if($studentHomeAddress)
+            <h3 class="text-left font-semibold">Home Address</h3>
+            <hint class="text-xs text-left italic">
+                Home Address information can be added/edited from the Students->edit->comms page.
+            </hint>
+            @if($form->homeAddress)
+                <div class="text-left">
+                    {{ $form->homeAddress }}
+                </div>
+            @else
+                <div class="text-left text-red-600">
+                    No or partial home address found.
+                </div>
+            @endif
         @endif
     </fieldset>
 
     {{-- APPLICATION --}}
     <fieldset class="flex flex-col space-y-1 text-sm pb-2 border border-transparent border-b-gray-200">
-        <h3 class="text-left font-semibold">Application</h3>
+        <h3 class="text-left font-semibold">
+            {{ $form->eApplication ? 'eApplication' : 'Application' }}
+        </h3>
 
         <div class="flex flex-row w-full">
 
-            <div class="w-1/2 ">
-                <x-forms.elements.livewire.inputCheckbox
-                    label="Click checkbox to approve signatures"
-                    name="form.signatures"
-                    marginTop="0"
-                />
-            </div>
+            @if($form->eApplication)
+                eApplication
+            @else
+                <div class="w-1/2 ">
+                    <x-forms.elements.livewire.inputCheckbox
+                        label="Click checkbox to approve signatures"
+                        name="form.signatureTeacher"
+                        marginTop="0"
+                    />
+                </div>
+            @endif
 
             <a href="" class="text-left pl-2 w-1/2 border border-transparent border-l-gray-400">
                 Click to display application pdf
@@ -165,17 +191,37 @@
             @foreach($form->fileUploads AS $uploadType)
                 <div class=" shadow-lg p-2" wire:key="auditionFile-{{ $uploadType }}">
                     <h4 class="font-semibold">{{ ucwords($uploadType) }} Recording</h4>
-                    @if(array_key_exists($uploadType, $form->auditionFiles) && strlen($form->auditionFiles[$uploadType]))
+                    @if(array_key_exists($uploadType, $form->recordings) && count($form->recordings[$uploadType]))
                         <div>
                             <audio id="audioPlayer-{{ $uploadType }}" class="mx-auto" controls style="display: block">
                                 <source id="audioSource-{{ $uploadType }}"
-                                        src="https://auditionsuite-production.s3.amazonaws.com/{{ $form->auditionFiles[$uploadType] }}"
+                                        src="https://auditionsuite-production.s3.amazonaws.com/{{ $form->recordings[$uploadType]['url'] }}"
                                         type="audio/mpeg"
                                 >
                                 " Your browser does not support the audio element. "
                             </audio>
-                            Play {{ $uploadType }} recording
-                            {{--                            {{ $form->$auditionFiles[$uploadType] }}--}}
+                            <div class="flex flex-row w-full mt-2 space-x-4 justify-center">
+                                @if(array_key_exists('approved', $form->recordings[$uploadType]) &&
+                                    strlen($form->recordings[$uploadType]['approved']))
+                                    <div class="text-xs text-green-600">
+                                        Approved: {{ $form->recordings[$uploadType]['approved'] }}
+                                    </div>
+                                @else
+                                    <button class="px-2 rounded-full text-sm bg-green-600 text-green-100"
+                                            wire:click="recordingApprove('{{  $uploadType }}')"
+                                            type="button"
+                                    >
+                                        Approve
+                                    </button>
+                                @endif
+                                <button class="px-2 rounded-full text-sm bg-red-600 text-red-100"
+                                        wire:click="recordingReject('{{  $uploadType }}')"
+                                        wire:confirm="This will PERMANENTLY delete the uploaded {{ $uploadType }} file.\nPlease notify your student of their need to re-record this file.\nClick OK to proceed or Cancel to stop this action."
+                                        type="button"
+                                >
+                                    Reject
+                                </button>
+                            </div>
                         </div>
                     @else
                         <x-forms.elements.livewire.audioFileUpload

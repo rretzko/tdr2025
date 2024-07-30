@@ -14,6 +14,8 @@ use App\Services\CoTeachersService;
 use App\Services\MakeCandidateRecordsService;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\WithFileUploads;
 
@@ -28,26 +30,18 @@ class CandidatesTableComponent extends BasePage
     public array $auditionFiles = [];
     public array $ensembleVoiceParts = [];
     public array $eventGrades = [];
+    public bool $height = false;
     public array $heights = [];
     public int $schoolId = 0;
     public int $seniorYear = 0;
+    public bool $shirtSize = false;
     public array $shirtSizes = [];
     public bool $showFormAdd = false;
     public int $showFormEdit = 0;
+    public bool $studentHomeAddress = false;
     public int $versionId = 0;
 
     public Filters $filters;
-
-    const  STATUSES = [
-        'active' => 'active',
-        'eligible' => 'eligible',
-        'no-app' => 'no-app',
-        'pre-registered' => 'pre-registered',
-        'prohibited' => 'prohibited',
-        'registered' => 'registered',
-        'removed' => 'removed',
-        'withdrew' => 'withdrew'
-    ];
 
     public function mount(): void
     {
@@ -57,6 +51,9 @@ class CandidatesTableComponent extends BasePage
         $this->versionId = $this->dto['id'];
         $this->version = Version::find($this->versionId);
         $this->event = $this->version->event;
+        $this->height = $this->version->height;
+        $this->shirtSize = $this->version->shirt_size;
+        $this->studentHomeAddress = $this->version->student_home_address;
 
         $this->ensembleVoiceParts = $this->getEnsembleVoiceParts();
         $this->eventGrades = $this->getEventGrades();
@@ -85,13 +82,35 @@ class CandidatesTableComponent extends BasePage
             [
                 'columnHeaders' => $this->getColumnHeaders(),
                 'rows' => $this->getRows()->paginate($this->recordsPerPage),
-                'statuses' => self::STATUSES,
             ]);
     }
 
-    public function process(): void
+    public function recordingApprove(string $fileType): void
     {
-        dd($this->auditionFiles);
+        $this->reset('showSuccessIndicator', 'successMessage');
+
+        if ($this->form->recordingApprove($fileType)) {
+
+            $this->showSuccessIndicator = true;
+            $this->successMessage = 'Recording accepted';
+        }
+    }
+
+    public function recordingReject(string $fileType): void
+    {
+        $this->reset('showSuccessIndicator', 'successMessage');
+
+        $url = $this->form->recordings[$fileType]['url'];
+
+        //if the db record has been deleted, delete the s3 storage file
+        if ($this->form->recordingReject($fileType)) {
+
+            //delete the file from s3 storage
+            Storage::disk('s3')->delete($url);
+
+            $this->showSuccessIndicator = true;
+            $this->successMessage = 'Recording rejected';
+        }
     }
 
     public function selectCandidate(int $candidateId): void
@@ -101,12 +120,30 @@ class CandidatesTableComponent extends BasePage
 
     public function updatedAuditionFiles($value, $key): void
     {
+        $this->reset('showSuccessIndicator', 'successMessage');
+
         $fileName = $this->makeFileName($key);
 
         $this->auditionFiles[$key]->storePubliclyAs('recordings', $fileName, 's3');
 
-        //save new logo if $this->form->sysId
-        $this->form->auditionFiles[$key] = 'recordings/'.$fileName;
+        //store the url reference for saving
+        $this->form->recordings[$key]['url'] = 'recordings/'.$fileName;
+
+        if ($this->form->recordingSave($key)) {
+
+            $this->showSuccessIndicator = true;
+            $this->successMessage = ucwords($key).' recording saved.';
+        }
+    }
+
+    public function updatedForm($value, $key)
+    {
+        $this->reset('showSuccessIndicator', 'successMessage');
+
+        if ($this->form->updatedProperty($value, $key)) {
+            $this->showSuccessIndicator = true;
+            $this->successMessage = Str::remove('Id', Str::headline($key)).' updated.';
+        }
     }
 
 

@@ -143,6 +143,32 @@
                 </div>
             </fieldset>
 
+            {{-- Audition Requirements --}}
+            <fieldset id="pitchFiles" class="space-y-0 pb-4 border border-white border-b-gray-300">
+                <label>The following are required to register for audition:</label>
+                <div class="ml-4 space-y-0">
+                    <x-forms.elements.livewire.inputCheckbox
+                        blur="false"
+                        label="Student must have a complete home address."
+                        name="form.studentHomeAddress"
+                        livewire="true"
+                    />
+                    <x-forms.elements.livewire.inputCheckbox
+                        blur="false"
+                        label="Student must have a height measurement."
+                        name="form.height"
+                        livewire="true"
+                    />
+                    <x-forms.elements.livewire.inputCheckbox
+                        blur="false"
+                        label="Student must have a shirt size."
+                        name="form.shirtSize"
+                        livewire="true"
+                    />
+
+                </div>
+            </fieldset>
+
             {{-- SUCCESS INDICATOR --}}
             <x-forms.indicators.successIndicator
                 :showSuccessIndicator="$showSuccessIndicator"

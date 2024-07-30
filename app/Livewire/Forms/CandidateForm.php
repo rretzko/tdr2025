@@ -5,21 +5,36 @@ namespace App\Livewire\Forms;
 use App\Models\Address;
 use App\Models\EmergencyContact;
 use App\Models\Events\Versions\Participations\Candidate;
+use App\Models\Events\Versions\Participations\Recording;
+use App\Models\Events\Versions\Participations\Signature;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionConfigAdjudication;
+use App\Models\Events\Versions\VersionConfigRegistrant;
 use App\Models\Geostate;
+use App\Models\PhoneNumber;
+use App\Models\Students\Student;
+use App\Models\User;
+use App\Services\CalcClassOfFromGradeService;
+use App\Services\FormatPhoneService;
 use App\ValueObjects\AddressValueObject;
+use http\Exception\InvalidArgumentException;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
 
 class CandidateForm extends Form
 {
     public Candidate $candidate;
+    public Student $student;
+    public User $user;
 
-    public array $auditionFiles = [];
+    public array $auditionFiles = []; //store uploaded __FILE__
     public int $classOf = 0;
     #[Validate('nullable|email')]
     public string $email = '';
+    public bool $eApplication = false;
     public array $emergencyContacts = [];
     public array $fileUploads = [];
     #[Validate('required|string')]
@@ -40,43 +55,127 @@ class CandidateForm extends Form
     #[Validate('nullable|string')]
     public string $phoneMobile = '';
     public int $recordingCount = 0;
+    public array $recordings = []; //store Recording object details [fileType][url/approved datetime] = value
     #[Validate('nullable|string')]
     public string $shirtSize = '';
     #[Validate('bool')]
-    public bool $signatures = false;
-    #[Validate('required|string')]
+    public bool $signatureGuardian = false;
+    public bool $signatureStudent = false;
+    public bool $signatureTeacher = false;
     public string $status = '';
+    public string $statusBg = 'bg-gray-200';
+    public string $statusTextColor = 'text-black';
     #[Validate('nullable|string')]
     public string $suffixName = '';
     #[Validate('required|int')]
     public int $voicePartId = 0;
 
+    protected array $propertyMap = [
+        'classOf' => 'student',
+        'grade' => 'student',
+        'height' => 'student',
+        'firstName' => 'user',
+        'lastName' => 'user',
+        'middleName' => 'user',
+        'phoneHome' => 'phoneNumber',
+        'phoneMobile' => 'phoneNumber',
+        'programName' => 'candidate',
+        'shirtSize' => 'student',
+        'signatureGuardian' => 'signature',
+        'signatureStudent' => 'signature',
+        'signatureTeacher' => 'signature',
+        'suffixName' => 'user',
+        'email' => 'user',
+        'voicePartId' => 'candidate',
+    ];
+
+    public function recordingApprove(string $fileType): bool
+    {
+        if (array_key_exists($fileType, $this->recordings) &&
+            strlen($this->recordings[$fileType]['url'])) {
+            $recording = Recording::query()
+                ->where('candidate_id', $this->candidate->id)
+                ->where('version_id', $this->candidate->version_id)
+                ->where('file_type', $fileType)
+                ->first();
+
+            $updated = $recording->update([
+                'approved' => Carbon::now()->format('Y-m-d H:i:s'),
+                'approved_by' => auth()->id(),
+                'url' => $this->recordings[$fileType]['url']
+            ]);
+
+            if ($updated) {
+                $this->recordings[$fileType]['approved'] = Carbon::parse($recording->approved)->format('D, M, y g:i a');
+            }
+
+            return $updated;
+        }
+    }
+
+    public function recordingReject(string $fileType): bool
+    {
+        if (array_key_exists($fileType, $this->recordings) &&
+            strlen($this->recordings[$fileType]['url'])) {
+            $recording = Recording::query()
+                ->where('candidate_id', $this->candidate->id)
+                ->where('version_id', $this->candidate->version_id)
+                ->where('file_type', $fileType)
+                ->first();
+
+            $url = $recording->url;
+
+            $deleted = $recording->delete();
+
+            if ($deleted) {
+
+                //update the recording array
+                $this->setRecordingsArray();
+            }
+
+            return $deleted;
+        }
+    }
+
+    public function recordingSave(string $fileType): bool
+    {
+        return (bool) Recording::create(
+            [
+                'version_id' => $this->candidate->version_id,
+                'candidate_id' => $this->candidate->id,
+                'file_type' => $fileType,
+                'uploaded_by' => auth()->id(),
+                'url' => $this->recordings[$fileType]['url'],
+            ]
+        );
+    }
+
     public function setCandidate(int $candidateId): void
     {
         $this->candidate = Candidate::find($candidateId);
-        $student = $this->candidate->student;
-        $user = $student->user;
+        $this->student = $this->candidate->student;
+        $this->user = $this->student->user;
 
         $this->programName = $this->candidate->program_name;
         $this->status = $this->candidate->status;
         $this->voicePartId = $this->candidate->voice_part_id;
 
-        $this->classOf = $student->class_of;
-        $this->grade = $student->grade;
-        $this->height = $student->height;
-        $this->homeAddress = $this->calcHomeAddress($student->address);
-        $this->phoneHome = $student->phoneHome;
-        $this->phoneMobile = $student->phoneMobile;
-        $this->shirtSize = $student->shirt_size;
+        $this->classOf = $this->student->class_of;
+        $this->grade = $this->student->grade;
+        $this->height = $this->student->height;
+        $this->homeAddress = $this->calcHomeAddress($this->student->address);
+        $this->phoneHome = $this->student->phoneHome;
+        $this->phoneMobile = $this->student->phoneMobile;
+        $this->shirtSize = $this->student->shirt_size;
 
-        $this->email = $user->email;
-        $this->firstName = $user->first_name;
-        $this->lastName = $user->last_name;
-        $this->middleName = $user->middle_name;
-        $this->suffixName = $user->suffix_name;
+        $this->email = $this->user->email;
+        $this->firstName = $this->user->first_name;
+        $this->lastName = $this->user->last_name;
+        $this->middleName = $this->user->middle_name;
+        $this->suffixName = $this->user->suffix_name;
 
         $this->emergencyContacts = EmergencyContact::query()
-            ->where('student_id', $student->id)
+            ->where('student_id', $this->student->id)
             ->select('id AS emergencyContactId',
                 'name AS emergencyContactName', 'email AS emergencyContactEmail',
                 'phone_home AS emergencyContactPhoneHome', 'phone_mobile AS emergencyContactPhoneMobile',
@@ -94,7 +193,42 @@ class CandidateForm extends Form
             ->first()
             ->upload_types);
 
-        $this->auditionFiles['scales'] = 'recordings/42160_scales.mp3';
+        //recordings array
+        $this->setRecordingsArray();
+
+        //dApplications
+        $this->eApplication = VersionConfigRegistrant::query()
+            ->where('version_id', $this->candidate->version_id)
+            ->first()
+            ->eapplication;
+
+        //signatures
+        $this->setSignatures();
+    }
+
+    public function updatedProperty($value, $key): bool
+    {
+        $this->validateOnly($key);
+
+        if ($key === 'grade') {
+            $key = 'classOf';
+            $service = new CalcClassOfFromGradeService;
+            $value = $service->getClassOf($value);
+        }
+
+        $property = $this->propertyMap[$key] ?? null;
+
+        if (!$property) {
+            throw new InvalidArgumentException("Invalid property key: $key");
+        }
+
+        if (str_starts_with($property, 'phone')) {
+            return $this->updatedPhoneNumber($value, $key);
+        } elseif (str_starts_with($property, 'signature')) {
+            return $this->updatedSignature($value, $key);
+        } else {
+            return $this->$property->update([Str::snake($key) => $value]);
+        }
     }
 
     private function calcHomeAddress(Address|null $address): string
@@ -111,6 +245,84 @@ class CandidateForm extends Form
         }
 
         return '';
+    }
+
+    private function setSignatures(): void
+    {
+        $this->signatureGuardian = (bool) Signature::query()
+            ->where('candidate_id', $this->candidate->id)
+            ->where('version_id', $this->candidate->version_id)
+            ->where('role', 'guardian')
+            ->where('signed', 1)
+            ->first();
+
+        $this->signatureStudent = (bool) Signature::query()
+            ->where('candidate_id', $this->candidate->id)
+            ->where('version_id', $this->candidate->version_id)
+            ->where('role', 'student')
+            ->where('signed', 1)
+            ->first();
+
+        $this->signatureTeacher = (bool) Signature::query()
+            ->where('candidate_id', $this->candidate->id)
+            ->where('version_id', $this->candidate->version_id)
+            ->where('role', 'teacher')
+            ->where('signed', 1)
+            ->first();
+    }
+
+    private function setRecordingsArray(): void
+    {
+        //clear artifacts
+        $this->recordings = [];
+
+        $recordings = Recording::query()
+            ->where('candidate_id', $this->candidate->id)
+            ->where('version_id', $this->candidate->version_id)
+            ->get();
+
+        foreach ($recordings as $recording) {
+
+            $this->recordings[$recording->file_type]['url'] = $recording->url;
+            $this->recordings[$recording->file_type]['approved'] =
+                Carbon::parse($recording->approved)->format('D, M j, y g:i a');
+        }
+    }
+
+    private function updatedPhoneNumber($value, $key): bool
+    {
+        //ensure proper formatting of $value if not blank
+        $service = new FormatPhoneService;
+        $fValue = $service->getPhoneNumber($value);
+
+        $this->$key = $fValue;
+
+        return (bool) PhoneNumber::updateOrCreate(
+            [
+                'user_id' => $this->user->id,
+                'phone_number' => $fValue,
+            ],
+            [
+                'phone_type' => Str::lower(substr($key, 5)),
+            ]
+        );
+    }
+
+    private function updatedSignature($value, $key): bool
+    {
+        $role = Str::lower(Str::remove('signature', $key)); //i.e. guardian, student, or teacher
+
+        return (bool) Signature::updateOrCreate(
+            [
+                'version_id' => $this->candidate->version_id,
+                'candidate_id' => $this->candidate->id,
+                'user_id' => auth()->id(),
+                'role' => $role,
+            ],
+            [
+                'signed' => $value,
+            ]
+        );
     }
 
 }
