@@ -80,12 +80,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('libraries', [\App\Http\Controllers\Libraries\libraryController::class, 'index'])
         ->name('libraries');
 
+    //PARTICIPATIONS (Event)
     Route::get('participation/dashboard/{version}',
         \App\Http\Controllers\Events\Versions\Participations\ParticipationActiveController::class)
         ->name('participation.dashboard');
     Route::get('participation/results/{version}',
         \App\Http\Controllers\Events\Versions\Participations\ParticipationResultsController::class)
         ->name('participation.results');
+
+    //PDFs
+    Route::get('pdf/application/{candidate}', \App\Http\Controllers\Pdfs\ApplicationPdfController::class)
+        ->name('pdf.application');
 
     //SCHOOLS
     Route::get('schools', \App\Http\Controllers\Schools\SchoolsController::class)

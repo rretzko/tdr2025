@@ -175,8 +175,9 @@
                 </div>
             @endif
 
-            <a href="" class="text-left pl-2 w-1/2 border border-transparent border-l-gray-400">
-                Click to display application pdf
+            <a href="{{ route('pdf.application',['candidate' => $form->candidate]) }}"
+               class="text-left text-blue-500 pl-2 w-1/2 border border-transparent border-l-gray-400">
+                Click to download application pdf
             </a>
 
         </div>
@@ -235,17 +236,5 @@
         </div>
 
     </fieldset>
-    {{--        <x-forms.elements.livewire.inputTextCompressed--}}
-    {{--            label="middle"--}}
-    {{--            name="form.middleName"--}}
-    {{--        />--}}
-    {{--        <x-forms.elements.livewire.inputTextCompressed--}}
-    {{--            label="last"--}}
-    {{--            name="form.lastName"--}}
-    {{--        />--}}
-    {{--        <x-forms.elements.livewire.inputTextCompressed--}}
-    {{--            label="suffix"--}}
-    {{--            name="form.suffixName"--}}
-    {{--        />--}}
-    {{--    </div>--}}
+
 </form>

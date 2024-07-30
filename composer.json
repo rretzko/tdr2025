@@ -10,6 +10,7 @@
     "require": {
         "php": "^8.2",
         "aws/aws-sdk-php": "^3.308",
+        "barryvdh/laravel-dompdf": "^2.2",
         "diglactic/laravel-breadcrumbs": "^9.0",
         "filament/filament": "3.2.57",
         "laravel/framework": "^11.0",
