@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Pdfs;
 
+use App\Data\PdfApplicationDataFactory;
 use App\Http\Controllers\Controller;
 use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Version;
@@ -23,7 +24,8 @@ class ApplicationPdfController extends Controller
         $service = new FindPdfPathService;
         $path = $service->findApplicationPath($candidate);
 
-        $dto = [];
+        $data = new PdfApplicationDataFactory($candidate);
+        $dto = $data->getDto();
 
         $pdf = PDF::loadView($path, compact('dto'));
 

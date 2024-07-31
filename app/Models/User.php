@@ -6,6 +6,7 @@ namespace App\Models;
 use App\Models\Schools\SchoolTeacher;
 use App\Models\Schools\Teacher;
 use App\Models\Students\Student;
+use App\Services\FullNameAlphaService;
 use App\Services\JoinNamePartsIntoNameService;
 use App\Services\UserNameService;
 use Filament\Panel;
@@ -76,6 +77,11 @@ class User extends Authenticatable
     public function canAccessPanel(Panel $panel): bool
     {
         return str_ends_with($this->email, '@mfrholdings.com') && $this->hasVerifiedEmail();
+    }
+
+    public function getFullNameAlphaAttribute(): string
+    {
+        return FullNameAlphaService::getName($this);
     }
 
     public function isFounder(): bool

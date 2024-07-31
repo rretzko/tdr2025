@@ -6,11 +6,14 @@ use App\Livewire\BasePage;
 use App\Livewire\Filters;
 use App\Livewire\Forms\CandidateForm;
 use App\Models\Events\Event;
+use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Version;
 use App\Models\Students\VoicePart;
 use App\Models\UserConfig;
+use App\Services\CalcApplicationRequirements;
 use App\Services\CalcSeniorYearService;
 use App\Services\CoTeachersService;
+use App\Services\EventEnsemblesVoicePartsArrayService;
 use App\Services\MakeCandidateRecordsService;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
@@ -71,12 +74,18 @@ class CandidatesTableComponent extends BasePage
 
         //filterMethods
         $this->filterMethods[] = 'candidateGrades';
+
+        //pre-load empty model
+        $this->form->candidate = new Candidate();
     }
 
     public function render()
     {
         //ensure that all eligible students have a record
         $this->makeCandidateRecords();
+
+        //ensure that missing application requirements are logged
+        $this->form->missingApplicationRequirements();
 
         return view('livewire..events.versions.participations.candidates-table-component',
             [
@@ -160,25 +169,9 @@ class CandidatesTableComponent extends BasePage
 
     private function getEnsembleVoiceParts(): array
     {
-        $ensembles = $this->event->eventEnsembles;
+        $service = new EventEnsemblesVoicePartsArrayService($this->event->eventEnsembles);
 
-        $voiceParts = $ensembles->flatMap(function ($ensemble) {
-            return explode(',', $ensemble->voice_part_ids);
-        })->unique();
-
-//        foreach($ensembles AS $ensemble){
-//
-//            $voiceParts = array_merge($voiceParts, explode(',', $ensemble->voice_part_ids));
-//        }
-//
-//        $unique = array_unique($voiceParts);
-
-        return VoicePart::query()
-            ->whereIn('id', $voiceParts)
-            ->whereNot('descr', 'ALL')
-            ->orderBy('order_by')
-            ->pluck('descr', 'id')
-            ->toArray();
+        return $service->getArray();
     }
 
     private function getEventGrades(): array

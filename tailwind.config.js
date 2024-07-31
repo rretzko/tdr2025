@@ -11,13 +11,20 @@ export default {
     safelist: [
         'bg-yellow-600',
         'bg-yellow-700',
+        'bg-gray-200',
+        'bg-green-200',
         'bg-green-400',
         'bg-green-600',
+        'bg-red-200',
+        'bg-yellow-200',
         'border-indigo-500',
-        'text-yellow-600',
+        'text-green-800',
+        'text-lime-600',
         'text-orange-600',
         'text-pink-600',
-        'text-lime-600',
+        'text-red-800',
+        'text-yellow-600',
+        'text-yellow-800',
     ],
     theme: {
         extend: {

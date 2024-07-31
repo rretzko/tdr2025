@@ -25,11 +25,6 @@ class School extends Model
         'county_id',
     ];
 
-    public function getAddressAttribute(): string
-    {
-        return $this->city.' in '.$this->getCountyNameAttribute().', '.$this->postal_code;
-    }
-
     public function county(): BelongsTo
     {
         return $this->belongsTo(County::class);
@@ -38,6 +33,11 @@ class School extends Model
     public function ensembles(): HasMany
     {
         return $this->hasMany(Ensemble::class);
+    }
+
+    public function getAddressAttribute(): string
+    {
+        return $this->city.' in '.$this->getCountyNameAttribute().', '.$this->postal_code;
     }
 
     public function getCountyNameAttribute(): string
@@ -57,6 +57,20 @@ class School extends Model
             ->orderBy('grade')
             ->pluck('grade')
             ->toArray();
+    }
+
+    public function getShortNameAttribute(): string
+    {
+        $rhs = str_replace('Regional High School', 'RHS', $this->name);
+        $rms = str_replace('Regional Middle School', 'RMS', $rhs);
+        $shs = str_replace('Senior High School', 'Sr HS', $rms);
+        $hs = str_replace('High School', 'HS', $shs);
+        $ms = str_replace('Middle School', 'MS', $hs);
+        $js1 = str_replace('Junior/Senior', 'J/S', $ms);
+        $js2 = str_replace('Junior/senior', 'J/S', $js1);
+        $es = str_replace('Elementary School', 'ES', $js2);
+
+        return $es;
     }
 
     public function students(): BelongsToMany

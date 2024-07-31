@@ -2,6 +2,7 @@
     'auditionFiles' => [],
     'ensembleVoiceParts',
     'eventGrades',
+    'missingApplicationRequirements',
     'height',
     'heights',
     'form',
@@ -118,14 +119,15 @@
                 <div class="w-1/6">
                     {{ $emergencyContact['emergencyContactEmail'] }}
                 </div>
-                <div class="w-1/6 @if($emergencyContactBestPhone === 'mobile') font-semibold @endif">
+                <div
+                    class="w-1/6 @if($emergencyContact['emergencyContactBestPhone'] === 'mobile') font-semibold @endif">
                     {{ $emergencyContact['emergencyContactPhoneMobile'] }} (c)
                 </div>
-                <div class="w-1/6 @if($emergencyContactBestPhone === 'home') font-semibold @endif">
-                    {{ $emergencyContact['emergencyContactPhoneMobile'] }} (h)
+                <div class="w-1/6 @if($emergencyContact['emergencyContactBestPhone'] === 'home') font-semibold @endif">
+                    {{ $emergencyContact['emergencyContactPhoneHome'] }} (h)
                 </div>
-                <div class="w-1/6 @if($emergencyContactBestPhone === 'work') font-semibold @endif">
-                    {{ $emergencyContact['emergencyContactPhoneMobile'] }} (w)
+                <div class="w-1/6 @if($emergencyContact['emergencyContactBestPhone'] === 'work') font-semibold @endif">
+                    {{ $emergencyContact['emergencyContactPhoneWork'] }} (w)
                 </div>
             </div>
         @empty
@@ -165,6 +167,15 @@
 
             @if($form->eApplication)
                 eApplication
+            @elseif(count($missingApplicationRequirements))
+                <div>
+                    <h3>An application cannot be created because the following requirements are missing:</h3>
+                    <ul class="text-left">
+                        @foreach($missingApplicationRequirements AS $missing)
+                            <li>{!! $missing !!}</li>
+                        @endforeach
+                    </ul>
+                </div>
             @else
                 <div class="w-1/2 ">
                     <x-forms.elements.livewire.inputCheckbox
@@ -175,10 +186,12 @@
                 </div>
             @endif
 
-            <a href="{{ route('pdf.application',['candidate' => $form->candidate]) }}"
-               class="text-left text-blue-500 pl-2 w-1/2 border border-transparent border-l-gray-400">
-                Click to download application pdf
-            </a>
+            @if(! count($missingApplicationRequirements))
+                <a href="{{ route('pdf.application',['candidate' => $form->candidate]) }}"
+                   class="text-left text-blue-500 pl-2 w-1/2 border border-transparent border-l-gray-400">
+                    Click to download application pdf
+                </a>
+            @endif
 
         </div>
 

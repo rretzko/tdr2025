@@ -20,6 +20,7 @@ class VersionDatesEditComponent extends BasePage
         'finalTeacherChanges' => false,
         'membershipOpen' => false,
         'membershipClose' => false,
+        'postmarkDeadline' => false,
         'studentOpen' => false,
         'studentClose' => false,
         'tabRoomOpen' => false,

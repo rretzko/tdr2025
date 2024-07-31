@@ -3,6 +3,7 @@
 namespace App\Models\Students;
 
 use App\Models\Address;
+use App\Models\EmergencyContact;
 use App\Models\PhoneNumber;
 use App\Models\Schools\School;
 use App\Models\Schools\Teacher;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Student extends Model
@@ -32,6 +34,11 @@ class Student extends Model
     public function address(): HasOne
     {
         return $this->hasOne(Address::class, 'user_id', 'user_id');
+    }
+
+    public function emergencyContacts(): HasMany
+    {
+        return $this->hasMany(EmergencyContact::class);
     }
 
     public function getGradeAttribute(): int

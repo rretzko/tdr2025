@@ -14,7 +14,10 @@ use App\Models\Geostate;
 use App\Models\PhoneNumber;
 use App\Models\Students\Student;
 use App\Models\User;
+use App\Services\CalcApplicationRequirements;
 use App\Services\CalcClassOfFromGradeService;
+use App\Services\CandidateStatusService;
+use App\Services\EventEnsemblesVoicePartsArrayService;
 use App\Services\FormatPhoneService;
 use App\ValueObjects\AddressValueObject;
 use http\Exception\InvalidArgumentException;
@@ -48,6 +51,7 @@ class CandidateForm extends Form
     public string $lastName = '';
     #[Validate('nullable|string')]
     public string $middleName = '';
+    public array $missingApplicationRequirements = [];
     #[Validate('nullable|string')]
     public string $phoneHome = '';
     #[Validate('required|string')]
@@ -88,6 +92,20 @@ class CandidateForm extends Form
         'email' => 'user',
         'voicePartId' => 'candidate',
     ];
+
+    public function missingApplicationRequirements(): void
+    {
+        //clear any artifacts
+        $this->missingApplicationRequirements = [];
+
+        //early exit
+        if ($this->candidate->id) {
+
+            $service = new CalcApplicationRequirements($this->candidate);
+
+            $this->missingApplicationRequirements = $service->getMissingRequirements();
+        }
+    }
 
     public function recordingApprove(string $fileType): bool
     {
@@ -157,8 +175,8 @@ class CandidateForm extends Form
         $this->user = $this->student->user;
 
         $this->programName = $this->candidate->program_name;
-        $this->status = $this->candidate->status;
-        $this->voicePartId = $this->candidate->voice_part_id;
+        $this->status = $this->getStatus();
+        $this->voicePartId = $this->testVoicePartId($this->candidate->voice_part_id);
 
         $this->classOf = $this->student->class_of;
         $this->grade = $this->student->grade;
@@ -196,7 +214,7 @@ class CandidateForm extends Form
         //recordings array
         $this->setRecordingsArray();
 
-        //dApplications
+        //eApplications
         $this->eApplication = VersionConfigRegistrant::query()
             ->where('version_id', $this->candidate->version_id)
             ->first()
@@ -204,6 +222,12 @@ class CandidateForm extends Form
 
         //signatures
         $this->setSignatures();
+
+        //check for missing application requirements
+        $this->missingApplicationRequirements();
+
+        //set status background and text colors
+        $this->formatStatus();
     }
 
     public function updatedProperty($value, $key): bool
@@ -247,6 +271,29 @@ class CandidateForm extends Form
         return '';
     }
 
+    private function formatStatus(): void
+    {
+        $statusStyles = [
+            'prohibited' => ['bg-red-200', 'text-red-800'],
+            'removed' => ['bg-red-200', 'text-red-800'],
+            'withdrew' => ['bg-red-200', 'text-red-800'],
+            'applied' => ['bg-yellow-200', 'text-yellow-800'],
+            'registered' => ['bg-green-200', 'text-green-800'],
+        ];
+
+        if (isset($statusStyles[$this->status])) {
+            [$this->statusBg, $this->statusTextColor] = $statusStyles[$this->status];
+        } else {
+            $this->statusBg = 'bg-gray-200';
+            $this->statusTextColor = 'text-black';
+        }
+    }
+
+    private function getStatus(): string
+    {
+        return CandidateStatusService::getStatus($this->candidate);
+    }
+
     private function setSignatures(): void
     {
         $this->signatureGuardian = (bool) Signature::query()
@@ -286,6 +333,28 @@ class CandidateForm extends Form
             $this->recordings[$recording->file_type]['url'] = $recording->url;
             $this->recordings[$recording->file_type]['approved'] =
                 Carbon::parse($recording->approved)->format('D, M j, y g:i a');
+        }
+    }
+
+    /**
+     * Ensure that $voicePartId is a legitimate choice for the event ensembles
+     * @param  int  $voicePartId
+     * @return int
+     */
+    private function testVoicePartId(int $voicePartId): int
+    {
+        $ensembles = Version::find($this->candidate->version_id)->event->eventEnsembles;
+
+        $service = new EventEnsemblesVoicePartsArrayService($ensembles);
+
+        $voiceParts = $service->getArray();
+
+        if (array_key_exists($voicePartId, $voiceParts)) { //all good
+            return $voicePartId;
+        } else { //set $this->candidate->voice_part_id to a default value
+            $default = array_key_first($voiceParts);
+            $this->candidate->update(['voice_part_id' => $default]);
+            return $default;
         }
     }
 

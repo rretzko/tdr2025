@@ -4,25 +4,25 @@
     <x-pageInstructions.instructions instructions="{!! $pageInstructions !!}" firstTimer="{{ $firstTimer }}"/>
 
     {{-- SEARCH and RECORDS PER PAGE --}}
-    <div class="flex flex-row justify-between px-4 w-full">
+    {{--    <div class="flex flex-row justify-between px-4 w-full">--}}
 
-        {{--  SEARCH AND RECORDS PER ROW--}}
-        @if($hasSearch || (count($rows) > 15))
-            @if($hasSearch)
-                <x-tables.searchComponent placeholder="Search name & school"/>
-            @else
-                <div></div>
-            @endif
+    {{--        --}}{{--  SEARCH AND RECORDS PER ROW--}}
+    {{--        @if($hasSearch || (count($rows) > 15))--}}
+    {{--            @if($hasSearch)--}}
+    {{--                <x-tables.searchComponent placeholder="Search name & school"/>--}}
+    {{--            @else--}}
+    {{--                <div></div>--}}
+    {{--            @endif--}}
 
-            {{-- RECORDS PER PAGE --}}
-            @if(count($rows) > 15)
-                <x-forms.indicators.recordsPerPage/>
-            @else
-                <div></div>
-            @endif
-        @endif
+    {{--            --}}{{-- RECORDS PER PAGE --}}
+    {{--            @if(count($rows) > 15)--}}
+    {{--                <x-forms.indicators.recordsPerPage/>--}}
+    {{--            @else--}}
+    {{--                <div></div>--}}
+    {{--            @endif--}}
+    {{--        @endif--}}
 
-    </div>
+    {{--    </div>--}}
 
     {{-- PAGE CONTENT --}}
     <div class="w-11/12">
@@ -43,6 +43,28 @@
             @endif
 
             {{-- SCROLLABLE LIST OF LINKS --}}
+            <style>
+                .applied {
+                    background-color: yellow;
+                    border-color: blanchedalmond;
+                }
+
+                .eligible {
+                    background-color: gray;
+                    border-color: gray;
+                }
+
+                .registered {
+                    background-color: mediumseagreen;
+                    border-color: mediumseagreen;
+                }
+
+                .prohibited, .removed, .withdrew {
+                    background-color: indianred;
+                    border-color: indianred;
+                }
+
+            </style>
             <div class="flex w-full">
                 <!-- Left side: Scrollable list of links -->
                 <div class="w-1/2 sm:w-1/4 overflow-y-auto h-screen">
@@ -52,6 +74,7 @@
                                 <li>
                                     <button wire:click="selectCandidate({{ $row->candidateId }})"
                                             class="text-xs text-left block py-1 border-b hover:text-blue-500">
+                                        <input type="checkbox" class="w-2 h-2 mb-0.5 {{ $row->status }}"/>
                                         {{ $row->last_name . ($row->suffix_name ? ' ' . $row->suffix_name : '') . ', ' . trim($row->first_name . ' ' . $row->middle_name) }}
                                     </button>
                                 </li>
@@ -68,6 +91,7 @@
                                 :auditionFiles="$auditionFiles"
                                 :ensembleVoiceParts="$ensembleVoiceParts"
                                 :eventGrades="$eventGrades"
+                                :missingApplicationRequirements="$form->missingApplicationRequirements"
                                 :height="$height"
                                 :heights="$heights"
                                 :form="$form"

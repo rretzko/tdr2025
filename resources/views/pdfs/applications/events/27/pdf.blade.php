@@ -1,5 +1,5 @@
 <div class="mt-4">
-    @dd($dto)
+
     <style>
         .sectionHeader {
             background-color: lightblue;
@@ -24,8 +24,13 @@
         <tbody>
         <tr>
             <td>
-                <img src="{{ Storage::disk('s3')->url($dto['logoPdf']) }}"
-                     alt="{{ $dto['organizationName'] }} logo {{ $dto['logo'] }}" height="60" width="60"/>
+                {{-- <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/logo.png'))) }}" alt="Logo"> --}}
+                {{--                <img src="{{ Storage::disk('s3')->url($dto['logoPdf']) }}"--}}
+                {{--                     alt="{{ $dto['organizationName'] }} logo {{ $dto['logo'] }}" height="60" width="60"/>--}}
+                {{--                <img src="https://auditionsuite-production.s3.amazonaws.com/logos/nj-mea-logo.jpg"--}}
+                {{--                     alt="{{ $dto['organizationName'] }} logo" height="60" width="60" />--}}
+                <img src="{{ \Illuminate\Support\Facades\Storage::disk('s3')->url($dto['logoPdf']) }}"
+                     alt="{{ $dto['organizationName'] }} logo" height="60" width="60"/>
             </td>
             <td style="">
                 <div style="text-align: center;">
@@ -68,7 +73,7 @@
         <tbody>
         <tr>
             <td>{{ $dto['fullNameAlpha'] }}</td>
-            <td style="color: red;">{{ $dto['candidateVoicepartDescr'] }}</td>
+            <td style="color: red;">{{ $dto['candidateVoicePartDescr'] }}</td>
             <td>Grade: {{ $dto['grade'] }}</td>
             <td>{{ $dto['schoolShortName'] }}</td>
         </tr>
@@ -226,7 +231,7 @@
         <tr>
             <td>
                 <img src="{{ Storage::disk('s3')->url($dto['logoPdf']) }}"
-                     alt="{{ $dto['organizationName'] }} logo {{ $dto['logo'] }}" height="60" width="60"/>
+                     alt="{{ $dto['organizationName'] }} logo " height="60" width="60"/>
             </td>
             <td style="">
                 <div style="text-align: center;">
@@ -269,7 +274,7 @@
         <tbody>
         <tr>
             <td>{{ $dto['fullNameAlpha'] }}</td>
-            <td style="color: red;">{{ $dto['candidateVoicepartDescr'] }}</td>
+            <td style="color: red;">{{ $dto['candidateVoicePartDescr'] }}</td>
             <td>Grade: {{ $dto['grade'] }}</td>
             <td>{{ $dto['schoolShortName'] }}</td>
         </tr>
@@ -349,7 +354,7 @@
 
                 We will review this application to ensure that all parts are complete and accurate. This application
                 will be mailed to the Registration Manager postmarked by the application deadline of
-                <b>{{ $dto['applicationDeadline'] }}</b>.
+                <b>{{ $dto['postmarkDeadline'] }}</b>.
                 LATE APPLICATIONS WILL NOT BE ACCEPTED. If <b>{{ $dto['fullName'] }}</b> is accepted,
                 we will ensure that <b>{{ $dto['first'] }}</b> is prepared and adheres to
                 the rules and regulations set forth by the {{ $dto['organizationName'] }}.

@@ -16,6 +16,7 @@ class VersionDatesForm extends Form
     public string $finalTeacherChanges = '';
     public string $membershipClose = '';
     public string $membershipOpen = '';
+    public string $postmarkDeadline = '';
     public string $studentClose = '';
     public string $studentOpen = '';
     public string $sysId = 'new';
@@ -32,6 +33,7 @@ class VersionDatesForm extends Form
             'finalTeacherChanges' => 'required|date',
             'membershipOpen' => 'required|date',//|before:membershipClose',
             'membershipClose' => 'required|date|after:membershipOpen',
+            'postmarkDeadline' => 'required|date',
             'studentOpen' => 'required|date',//|before:studentClose',
             'studentClose' => 'required|date|after:studentOpen',
             'tabRoomOpen' => 'required|date',//|before:tabRoomClose',
@@ -49,6 +51,7 @@ class VersionDatesForm extends Form
             'admin_close', 'admin_open',
             'final_teacher_changes',
             'membership_close', 'membership_open',
+            'postmark_deadline',
             'student_close', 'student_open',
             'tab_room_close', 'tab_room_open',
         ];
@@ -81,6 +84,7 @@ class VersionDatesForm extends Form
                     'finalTeacherChanges' => Carbon::now()->setTime(0, 30, 0),
                     'membershipOpen' => Carbon::now()->setTime(0, 0, 1),
                     'membershipClose' => Carbon::now()->setTime(15, 30, 0),
+                    'postmarkDeadline' => Carbon::now()->setTime(17, 0, 0),
                     'studentOpen' => Carbon::now()->setTime(0, 0, 1),
                     'studentClose' => Carbon::now()->setTime(15, 30, 0),
                     'tabRoomOpen' => Carbon::now()->setTime(0, 0, 1),

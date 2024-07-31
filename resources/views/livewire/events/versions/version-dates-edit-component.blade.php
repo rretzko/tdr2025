@@ -107,6 +107,27 @@
                         </div>
                     </div> {{-- END OF FINAL TEACHER CHANGES --}}
 
+                    {{-- POSTMARK DEADLINE --}}
+                    <div class="border border-white border-b-gray-200 py-2">
+                        <h3>Date for <b>postmark deadline</b>:</h3>
+                        <div class="flex flex-col space-y-2">
+                            <div class="flex flex-row items-center space-x-2">
+                                <label>Date</label>
+                                <x-forms.elements.livewire.inputDate
+                                    label=""
+                                    name="form.postmarkDeadline"
+                                    type="datetime-local"
+                                />
+                                {{-- SUCCESS INDICATOR --}}
+                                @if($successIndicators['postmarkDeadline'])
+                                    <div class="text-green-600 italic text-xs">
+                                        {{ $successMessage }}
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div> {{-- END OF POSTMARK DEADLINE --}}
+
                     {{-- STUDENT --}}
                     <div class="border border-white border-b-gray-200 py-2">
                         <h3>Dates for <b>student</b> access:</h3>
