@@ -2,12 +2,14 @@
     'auditionFiles' => [],
     'ensembleVoiceParts',
     'eventGrades',
-    'missingApplicationRequirements',
+    'form',
     'height',
     'heights',
-    'form',
+    'missingApplicationRequirements',
+    'pathToRegistration',
     'shirtSize',
     'shirtSizes',
+    'showRegistrationPath',
     'showSuccessIndicator',
     'studentHomeAddress',
     'successMessage',
@@ -23,6 +25,26 @@
                 {{ $successMessage }}
             </div>
         @endif
+    </div>
+
+    {{-- PATH TO REGISTRATION --}}
+    <div class="flex flex-col justify-start text-xs">
+        <button type="button"
+                class="block text-left border border-gray-600 rounded-full px-2 shadow-lg bg-indigo-50"
+                wire:click="$toggle('showRegistrationPath')"
+        >
+            @if($showRegistrationPath)
+                Click to Close
+            @else
+                Click for Path to Registration
+            @endif
+        </button>
+        <div id="path" class="block text-left">
+            @if($showRegistrationPath)
+                <h3 class="underline">Path to registration</h3>
+                {!! $pathToRegistration !!}
+            @endif
+        </div>
     </div>
 
     {{-- NAME --}}
@@ -179,7 +201,9 @@
             @else
                 <div class="w-1/2 ">
                     <x-forms.elements.livewire.inputCheckbox
+                        blur="false"
                         label="Click checkbox to approve signatures"
+                        live="true"
                         name="form.signatureTeacher"
                         marginTop="0"
                     />

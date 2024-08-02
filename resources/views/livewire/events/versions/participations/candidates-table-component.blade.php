@@ -29,7 +29,7 @@
 
         {{-- HEADER and ADD-NEW and EXPORT BUTTONS --}}
         <div class="flex justify-between mb-1">
-            <div>{{ ucwords($dto['header']) }}</div>
+            <div>{{ ucwords($dto['header']) }} ({{ $rows->total() }})</div>
         </div>
 
         {{-- FILTERS and TABLE --}}
@@ -69,7 +69,7 @@
                 <!-- Left side: Scrollable list of links -->
                 <div class="w-1/2 sm:w-1/4 overflow-y-auto h-screen">
                     <ul class="list-none ml-1">
-                        @for($i=0; $i<4; $i++)
+                        {{--                        @for($i=0; $i<4; $i++)--}}{{-- for testing --}}
                             @foreach($rows as $row)
                                 <li>
                                     <button wire:click="selectCandidate({{ $row->candidateId }})"
@@ -79,7 +79,7 @@
                                     </button>
                                 </li>
                             @endforeach
-                        @endfor
+                        {{--                        @endfor--}}
                     </ul>
                 </div>
 
@@ -95,8 +95,10 @@
                                 :height="$height"
                                 :heights="$heights"
                                 :form="$form"
+                                :pathToRegistration="$pathToRegistration"
                                 :shirtSize="$shirtSize"
                                 :shirtSizes="$shirtSizes"
+                                :showRegistrationPath="$showRegistrationPath"
                                 :showSuccessIndicator="$showSuccessIndicator"
                                 :studentHomeAddress="$studentHomeAddress"
                                 successMessage="{{  $successMessage }}"

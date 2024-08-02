@@ -40,7 +40,8 @@
         @enderror
     />
     <label for="{{ $name }}" class="@if($required) required @endif">{{ ucwords($label) }}</label>
-
+    <div>live: {{ $live }}</div>
+    <div>blur: {{ $blur }}</div>
     {{-- HINT --}}
     @if($hint)
         <div class="text-xs ml-1 italic">

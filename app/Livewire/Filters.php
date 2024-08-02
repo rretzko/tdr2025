@@ -14,6 +14,7 @@ use App\Models\UserConfig;
 use App\Models\UserFilter;
 use App\Services\CalcGradeFromClassOfService;
 use App\Services\CalcSeniorYearService;
+use App\Services\CoTeachersService;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Url;
 use Livewire\Form;
@@ -22,6 +23,8 @@ class Filters extends Form
 {
     #[Url]
     public array $candidateGradesSelectedIds = [];
+    #[Url]
+    public array $candidateStatusesSelectedIds = [];
     #[Url]
     public array $classOfsSelectedIds = [];
     #[Url]
@@ -55,9 +58,17 @@ class Filters extends Form
         $this->candidateGradesSelectedIds = Candidate::query()
             ->join('students', 'students.id', '=', 'candidates.student_id')
             ->where('version_id', $this->versionId)
+            ->distinct('students.class_of')
             ->orderBy('students.class_of')
-            ->pluck('students.class_of', 'students.class_of')
-            ->unique()
+            ->pluck('students.class_of')
+            ->toArray();
+
+        //initially set candidateStatuses filter to include ALL candidate statuses
+        $this->candidateStatusesSelectedIds = Candidate::query()
+            ->where('version_id', $this->versionId)
+            ->distinct('status')
+            ->orderBy('status')
+            ->pluck('status')
             ->toArray();
 
         //initially set ensembleYears filter to include ALL ensembles' school years
@@ -109,24 +120,38 @@ class Filters extends Form
 
     public function candidateGrades(): array
     {
+        $teacherIds = CoTeachersService::getCoTeachersIds();
+
+        $classOfs = Candidate::query()
+            ->join('students', 'students.id', '=', 'candidates.student_id')
+            ->whereIn('candidates.teacher_id', $teacherIds)
+            ->where('version_id', $this->versionId)
+            ->distinct('students.class_of')
+            ->orderByDesc('students.class_of')
+            ->pluck('students.class_of')
+            ->toArray();
+
         $serviceSeniorYear = new CalcSeniorYearService;
         $seniorYear = $serviceSeniorYear->getSeniorYear();
 
         $serviceGrade = new CalcGradeFromClassOfService;
 
-        $classOfs = Candidate::query()
-            ->join('students', 'students.id', '=', 'candidates.student_id')
-            ->where('teacher_id', auth()->id())
-            ->orderBy('students.class_of')
-            ->pluck('students.class_of', 'students.class_of')
-            ->unique()
-            ->values();
+        return array_combine(
+            $classOfs,
+            array_map(function ($classOf) use ($serviceGrade) {
+                return $serviceGrade->getGrade($classOf);
+            }, $classOfs)
+        );
+    }
 
-        $grades = $classOfs->mapWithKeys(function ($classOf) use ($serviceGrade) {
-            return [$classOf => $serviceGrade->getGrade($classOf)];
-        });
-
-        return $grades->sort()->toArray();
+    public function candidateStatuses()
+    {
+        return Candidate::query()
+            ->where('version_id', $this->versionId)
+            ->distinct('status')
+            ->orderBy('status')
+            ->pluck('status', 'status')
+            ->toArray();
     }
 
     public function classOfs(): array
@@ -190,6 +215,16 @@ class Filters extends Form
                 ->pluck('version_pitch_files.file_type', 'version_pitch_files.file_type')
                 ->toArray()
             : [];
+    }
+
+    public function filterCandidatesByClassOfs($query)
+    {
+        return $query->whereIn('students.class_of', $this->candidateGradesSelectedIds);
+    }
+
+    public function filterCandidatesByStatuses($query)
+    {
+        return $query->whereIn('candidates.status', $this->candidateStatusesSelectedIds);
     }
 
     public function filterPitchFileFileTypes($query)

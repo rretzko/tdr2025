@@ -127,6 +127,8 @@ class CandidateForm extends Form
                 $this->recordings[$fileType]['approved'] = Carbon::parse($recording->approved)->format('D, M, y g:i a');
             }
 
+            $this->resetStatus();
+
             return $updated;
         }
     }
@@ -166,6 +168,13 @@ class CandidateForm extends Form
                 'url' => $this->recordings[$fileType]['url'],
             ]
         );
+    }
+
+    public function resetStatus(): void
+    {
+        $this->status = CandidateStatusService::getStatus($this->candidate);
+
+        $this->formatStatus();
     }
 
     public function setCandidate(int $candidateId): void
@@ -332,7 +341,9 @@ class CandidateForm extends Form
 
             $this->recordings[$recording->file_type]['url'] = $recording->url;
             $this->recordings[$recording->file_type]['approved'] =
-                Carbon::parse($recording->approved)->format('D, M j, y g:i a');
+                ($recording->approved)
+                    ? Carbon::parse($recording->approved)->format('D, M j, y g:i a')
+                    : '';
         }
     }
 

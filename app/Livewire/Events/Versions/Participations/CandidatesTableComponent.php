@@ -12,9 +12,11 @@ use App\Models\Students\VoicePart;
 use App\Models\UserConfig;
 use App\Services\CalcApplicationRequirements;
 use App\Services\CalcSeniorYearService;
+use App\Services\CandidateStatusService;
 use App\Services\CoTeachersService;
 use App\Services\EventEnsemblesVoicePartsArrayService;
 use App\Services\MakeCandidateRecordsService;
+use App\Services\PathToRegistrationService;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -35,12 +37,14 @@ class CandidatesTableComponent extends BasePage
     public array $eventGrades = [];
     public bool $height = false;
     public array $heights = [];
+    public string $pathToRegistration = '';
     public int $schoolId = 0;
     public int $seniorYear = 0;
     public bool $shirtSize = false;
     public array $shirtSizes = [];
     public bool $showFormAdd = false;
     public int $showFormEdit = 0;
+    public bool $showRegistrationPath = false;
     public bool $studentHomeAddress = false;
     public int $versionId = 0;
 
@@ -73,7 +77,7 @@ class CandidatesTableComponent extends BasePage
             : $this->filters->candidateGradesSelectedIds;
 
         //filterMethods
-        $this->filterMethods[] = 'candidateGrades';
+        $this->filterMethods = ['candidateGrades', 'candidateStatuses'];
 
         //pre-load empty model
         $this->form->candidate = new Candidate();
@@ -102,6 +106,8 @@ class CandidatesTableComponent extends BasePage
 
             $this->showSuccessIndicator = true;
             $this->successMessage = 'Recording accepted';
+
+            $this->pathToRegistration = PathToRegistrationService::getPath($this->form->candidate->id);
         }
     }
 
@@ -119,12 +125,16 @@ class CandidatesTableComponent extends BasePage
 
             $this->showSuccessIndicator = true;
             $this->successMessage = 'Recording rejected';
+
+            $this->pathToRegistration = PathToRegistrationService::getPath($this->form->candidate->id);
         }
     }
 
     public function selectCandidate(int $candidateId): void
     {
         $this->form->setCandidate($candidateId);
+
+        $this->pathToRegistration = PathToRegistrationService::getPath($candidateId);
     }
 
     public function updatedAuditionFiles($value, $key): void
@@ -140,8 +150,12 @@ class CandidatesTableComponent extends BasePage
 
         if ($this->form->recordingSave($key)) {
 
+            $this->form->resetStatus();
+
             $this->showSuccessIndicator = true;
             $this->successMessage = ucwords($key).' recording saved.';
+
+            $this->pathToRegistration = PathToRegistrationService::getPath($this->form->candidate->id);
         }
     }
 
@@ -150,9 +164,16 @@ class CandidatesTableComponent extends BasePage
         $this->reset('showSuccessIndicator', 'successMessage');
 
         if ($this->form->updatedProperty($value, $key)) {
+
+            //check status with every property update
+            $this->form->resetStatus();
+
+            $this->pathToRegistration = PathToRegistrationService::getPath($this->form->candidate->id);
             $this->showSuccessIndicator = true;
             $this->successMessage = Str::remove('Id', Str::headline($key)).' updated.';
         }
+
+
     }
 
 
@@ -209,6 +230,10 @@ class CandidatesTableComponent extends BasePage
             ->where('candidates.version_id', $this->versionId)
             ->whereIn('candidates.teacher_id', $coTeacherIds)
             ->where('candidates.school_id', $this->schoolId)
+            ->tap(function ($query) {
+                $this->filters->filterCandidatesByClassOfs($query);
+                $this->filters->filterCandidatesByStatuses($query, $this->search);
+            })
             ->select('candidates.id AS candidateId', 'candidates.ref', 'candidates.status',
                 'candidates.program_name',
                 'users.last_name', 'users.first_name', 'users.middle_name', 'users.suffix_name',
