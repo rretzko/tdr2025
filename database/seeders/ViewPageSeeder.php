@@ -236,6 +236,12 @@ class ViewPageSeeder extends Seeder
                 'livewire',
                 'candidates',
             ],
+            [
+                'ObligationController',
+                '__invoke',
+                'livewire',
+                'obligations',
+            ],
 
         ];
 

@@ -504,6 +504,12 @@ student\'s participation in a past event.</p>'
                 'instructions' => '<p>Use this page to edit your students\'
 information for this event.</p>'
             ],
+            [
+                'header' => 'obligations',
+                'instructions' => '<p>Use this page to acknowledge your
+obligations to this event.</p>'
+            ],
+
         ];
     }
 

@@ -80,6 +80,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('libraries', [\App\Http\Controllers\Libraries\libraryController::class, 'index'])
         ->name('libraries');
 
+    //OBLIGATIONS
+    Route::get('obligations', \App\Http\Controllers\Events\Versions\Participations\ObligationController::class)
+        ->name('obligations');
+
     //PARTICIPATIONS (Event)
     Route::get('participation/dashboard/{version}',
         \App\Http\Controllers\Events\Versions\Participations\ParticipationActiveController::class)
