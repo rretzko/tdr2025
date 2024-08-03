@@ -47,69 +47,77 @@ class Filters extends Form
         $this->header = $header;
         $this->versionId = (int) UserConfig::getValue('versionId');
 
-        //initially set ensembles filter to include ALL schools' ensembles
-        foreach (auth()->user()->teacher->schools as $school) {
-            foreach ($school->ensembles as $ensemble) {
-                $this->ensemblesSelectedIds[] = $ensemble->id;
+        if ($this->header === 'schools') {
+
+        } elseif ($this->header === 'students') {
+
+            //initially set schools filter to include ALL schools
+            $this->schoolsSelectedIds = auth()->user()->teacher->schools
+                ->pluck('id')
+                ->toArray();
+
+            //initially set classOfs filter to include ALL classOfs for auth()->user()->teacher
+            $this->classOfsSelectedIds = auth()->user()->teacher->students
+                ->unique('class_of')
+                ->sortByDesc('class_of')
+                ->pluck('class_of')
+                ->toArray();
+
+            //initially set voicePartIds filter to include ALL voicePartIds for auth()->user()->teacher
+            $this->voicePartIdsSelectedIds = auth()->user()->teacher->students
+                ->unique('voice_part_id')
+                ->sortByDesc('voice_part_id')
+                ->pluck('voice_part_id')
+                ->toArray();
+        } elseif ($this->header === 'candidates') {
+
+            //initially set candidateGrades filter to include ALL candidate grades
+            $this->candidateGradesSelectedIds = Candidate::query()
+                ->join('students', 'students.id', '=', 'candidates.student_id')
+                ->where('version_id', $this->versionId)
+                ->distinct('students.class_of')
+                ->orderBy('students.class_of')
+                ->pluck('students.class_of')
+                ->toArray();
+
+            //initially set candidateStatuses filter to include ALL candidate statuses
+            $this->candidateStatusesSelectedIds = Candidate::query()
+                ->where('version_id', $this->versionId)
+                ->distinct('status')
+                ->orderBy('status')
+                ->pluck('status')
+                ->toArray();
+
+        } else {
+
+            //initially set ensembles filter to include ALL schools' ensembles
+            foreach (auth()->user()->teacher->schools as $school) {
+                foreach ($school->ensembles as $ensemble) {
+                    $this->ensemblesSelectedIds[] = $ensemble->id;
+                }
             }
+
+            //initially set ensembleYears filter to include ALL ensembles' school years
+            $this->ensembleYearsSelectedIds = array_values($this->ensembleYears());
+
+            //initially set pitchFileVoiceParts filter to include ALL voicePartIds for pitch files
+            $this->pitchFileVoicePartsSelectedIds = VersionPitchFile::query()
+                ->join('voice_parts', 'voice_parts.id', '=', 'version_pitch_files.voice_part_id')
+                ->where('version_pitch_files.version_id', UserConfig::getValue('versionId'))
+                ->distinct('version_pitch_files.voice_part_id')
+                ->orderBy('voice_parts.order_by')
+                ->pluck('voice_parts.id')
+                ->toArray();
+
+            //initially set pitchFileFileTypes filter to include all file types for pitch files
+            $this->pitchFileFileTypesSelectedIds = VersionPitchFile::query()
+                ->where('version_pitch_files.version_id', UserConfig::getValue('versionId'))
+                ->distinct('version_pitch_files.file_type')
+                ->orderBy('version_pitch_files.file_type')
+                ->pluck('version_pitch_files.file_type', 'version_pitch_files.file_type')
+                ->toArray();
+
         }
-
-        //initially set candidateGrades filter to include ALL candidate grades
-        $this->candidateGradesSelectedIds = Candidate::query()
-            ->join('students', 'students.id', '=', 'candidates.student_id')
-            ->where('version_id', $this->versionId)
-            ->distinct('students.class_of')
-            ->orderBy('students.class_of')
-            ->pluck('students.class_of')
-            ->toArray();
-
-        //initially set candidateStatuses filter to include ALL candidate statuses
-        $this->candidateStatusesSelectedIds = Candidate::query()
-            ->where('version_id', $this->versionId)
-            ->distinct('status')
-            ->orderBy('status')
-            ->pluck('status')
-            ->toArray();
-
-        //initially set ensembleYears filter to include ALL ensembles' school years
-        $this->ensembleYearsSelectedIds = array_values($this->ensembleYears());
-
-        //initially set pitchFileVoiceParts filter to include ALL voicePartIds for pitch files
-        $this->pitchFileVoicePartsSelectedIds = VersionPitchFile::query()
-            ->join('voice_parts', 'voice_parts.id', '=', 'version_pitch_files.voice_part_id')
-            ->where('version_pitch_files.version_id', UserConfig::getValue('versionId'))
-            ->distinct('version_pitch_files.voice_part_id')
-            ->orderBy('voice_parts.order_by')
-            ->pluck('voice_parts.id')
-            ->toArray();
-
-        //initially set pitchFileFileTypes filter to include all file types for pitch files
-        $this->pitchFileFileTypesSelectedIds = VersionPitchFile::query()
-            ->where('version_pitch_files.version_id', UserConfig::getValue('versionId'))
-            ->distinct('version_pitch_files.file_type')
-            ->orderBy('version_pitch_files.file_type')
-            ->pluck('version_pitch_files.file_type', 'version_pitch_files.file_type')
-            ->toArray();
-
-
-        //initially set classOfs filter to include ALL classOfs for auth()->user()->teacher
-        $this->classOfsSelectedIds = auth()->user()->teacher->students
-            ->unique('class_of')
-            ->sortByDesc('class_of')
-            ->pluck('class_of')
-            ->toArray();
-
-        //initially set schools filter to include ALL schools
-        $this->schoolsSelectedIds = auth()->user()->teacher->schools
-            ->pluck('id')
-            ->toArray();
-
-        //initially set voicePartIds filter to include ALL voicePartIds for auth()->user()->teacher
-        $this->voicePartIdsSelectedIds = auth()->user()->teacher->students
-            ->unique('voice_part_id')
-            ->sortByDesc('voice_part_id')
-            ->pluck('voice_part_id')
-            ->toArray();
 
     }
 
@@ -347,6 +355,7 @@ class Filters extends Form
             ->where('user_id', auth()->id())
             ->where('header', $header)
             ->where('filter', $filter)
+            ->whereNot('values', '')
             ->exists();
     }
 

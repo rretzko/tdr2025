@@ -172,10 +172,7 @@ class CandidatesTableComponent extends BasePage
             $this->showSuccessIndicator = true;
             $this->successMessage = Str::remove('Id', Str::headline($key)).' updated.';
         }
-
-
     }
-
 
     private function getColumnHeaders(): array
     {

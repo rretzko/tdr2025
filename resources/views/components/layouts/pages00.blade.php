@@ -14,7 +14,7 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    {{--    <script src="https://unpkg.com/@alpinejs/ui@latest/dist/cdn.min.js" defer></script>--}}
+{{--        <script src="https://unpkg.com/@alpinejs/ui@latest/dist/cdn.min.js" defer></script>--}}
 
 </head>
 <body class="font-sans antialiased">

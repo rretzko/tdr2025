@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->string('name');
             $table->string('postal_code');
             $table->string('city');
-            $table->string('abbr')->default('ABBR');
+            $table->foreignIdFor(\App\Models\Geostate::class)->default(37)->constrained();
             $table->foreignIdFor(County::class)->constrained('counties');
             $table->timestamps();
         });
