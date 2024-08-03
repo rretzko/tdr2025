@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('version_id');
             $table->foreignId('teacher_id');
-            $table->boolean('accepted')->default(0);
+            $table->dateTime('accepted')->nullable();
             $table->timestamps();
         });
     }
