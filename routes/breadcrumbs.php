@@ -115,6 +115,12 @@ Breadcrumbs::for('participation active', function (BreadcrumbTrail $trail, $id) 
     $trail->push('Participation Dashboard', route('participation.dashboard', $id));
 });
 
+//Pitchfiles
+Breadcrumbs::for('pitchfiles', function (BreadcrumbTrail $trail, $id) {
+    $trail->parent('participation active', $id);
+    $trail->push('Pitch Files', route('pitchFiles', $id));
+});
+
 // Profile
 Breadcrumbs::for('profile', function (BreadcrumbTrail $trail) {
     $trail->parent('home');

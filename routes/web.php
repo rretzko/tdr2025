@@ -96,6 +96,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('pdf/application/{candidate}', \App\Http\Controllers\Pdfs\ApplicationPdfController::class)
         ->name('pdf.application');
 
+    //PARTICIPATION.PITCHFILES
+    Route::get('pitchFiles', \App\Http\Controllers\Events\Versions\Participations\PitchFileController::class)
+        ->name('pitchFiles');
+
     //SCHOOLS
     Route::get('schools', \App\Http\Controllers\Schools\SchoolsController::class)
         ->name('schools');

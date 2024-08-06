@@ -509,6 +509,13 @@ information for this event.</p>'
                 'instructions' => '<p>Use this page to acknowledge your
 obligations to this event.</p>'
             ],
+            [
+                'header' => 'pitchfiles',
+                'instructions' => '<p>Use this page to play pitch files and display related pdfs.</p>
+<p>Click on either the "voice part" or "type" column headers to sort on that column.
+<p>Use the filters on the left-hand side of the table to restrict the display of pitch files and pdfs.</p>
+<p>Filter and sorting selections are saved and will be re-used when you next open the page.</p>'
+            ],
 
         ];
     }

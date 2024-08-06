@@ -8,18 +8,14 @@ use App\Livewire\Forms\CandidateForm;
 use App\Models\Events\Event;
 use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Version;
-use App\Models\Students\VoicePart;
 use App\Models\UserConfig;
-use App\Services\CalcApplicationRequirements;
 use App\Services\CalcSeniorYearService;
-use App\Services\CandidateStatusService;
 use App\Services\CoTeachersService;
 use App\Services\EventEnsemblesVoicePartsArrayService;
 use App\Services\MakeCandidateRecordsService;
 use App\Services\PathToRegistrationService;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\WithFileUploads;
@@ -85,6 +81,11 @@ class CandidatesTableComponent extends BasePage
 
     public function render()
     {
+        $this->saveSortParameters();
+
+        $this->filters->setFilter('candidateGradesSelectedIds', $this->dto['header']);
+        $this->filters->setFilter('candidateStatusesSelectedIds', $this->dto['header']);
+
         //ensure that all eligible students have a record
         $this->makeCandidateRecords();
 

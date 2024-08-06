@@ -242,6 +242,12 @@ class ViewPageSeeder extends Seeder
                 'livewire',
                 'obligations',
             ],
+            [
+                'PitchFileController',
+                '__invoke',
+                'livewire',
+                'pitchfiles',
+            ],
 
         ];
 
