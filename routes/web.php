@@ -92,6 +92,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         \App\Http\Controllers\Events\Versions\Participations\ParticipationResultsController::class)
         ->name('participation.results');
 
+    //PARTICIPATION.ESTIMATE
+    Route::get('estimate', \App\Http\Controllers\Events\Versions\Participations\EstimateController::class)
+        ->name('estimate');
+
     //PDFs
     Route::get('pdf/application/{candidate}', \App\Http\Controllers\Pdfs\ApplicationPdfController::class)
         ->name('pdf.application');

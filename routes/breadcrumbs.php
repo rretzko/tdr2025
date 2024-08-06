@@ -73,6 +73,12 @@ Breadcrumbs::for('member edit', function (BreadcrumbTrail $trail, int $id) {
     $trail->push('Edit Member', route('members', ['member' => $id]));
 });
 
+//Estimate
+Breadcrumbs::for('estimate', function (BreadcrumbTrail $trail, $id) {
+    $trail->parent('participation active', $id);
+    $trail->push('Estimate', route('estimate', $id));
+});
+
 //Event.Create
 Breadcrumbs::for('new event', function (BreadcrumbTrail $trail) {
     $trail->parent('my events');

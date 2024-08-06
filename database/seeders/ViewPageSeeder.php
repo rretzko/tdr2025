@@ -248,6 +248,12 @@ class ViewPageSeeder extends Seeder
                 'livewire',
                 'pitchfiles',
             ],
+            [
+                'EstimateController',
+                '__invoke',
+                'livewire',
+                'estimate',
+            ],
 
         ];
 

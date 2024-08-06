@@ -516,6 +516,15 @@ obligations to this event.</p>'
 <p>Use the filters on the left-hand side of the table to restrict the display of pitch files and pdfs.</p>
 <p>Filter and sorting selections are saved and will be re-used when you next open the page.</p>'
             ],
+            [
+                'header' => 'estimate',
+                'instructions' => '<p>Use this page to play review the data for your estimate
+form or invoice, pay via PayPal (if allowed by the event), and update the records for
+your student payments.<br />
+Note that these student payment records are intended only for your internal use and
+are not used by the event management.
+</p>'
+            ],
 
         ];
     }

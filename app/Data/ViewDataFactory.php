@@ -164,6 +164,7 @@ class ViewDataFactory extends aViewData
             'member create' => 'ensembles.members.member-create-component',
             'member edit' => 'ensembles.members.member-edit-component',
 
+            'estimate' => 'events.versions.participations.estimate-component',
             'obligations' => 'events.versions.participations.obligations-component',
             'pitchfiles' => 'events.versions.participations.pitch-files-component',
             'event edit' => 'events.event-edit-component',
