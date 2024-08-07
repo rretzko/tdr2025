@@ -143,7 +143,7 @@ class StudentsTableComponent extends BasePage
                 $this->filters->filterStudentsByClassOfs($query, $this->search);
                 $this->filters->filterStudentsByVoicePartIds($query, $this->search);
             })
-            ->select('users.name',
+            ->select('users.name', 'users.id AS userId',
                 'schools.name AS schoolName', 'schools.id AS schoolId',
                 'school_student.id AS schoolStudentId', 'school_student.active',
                 'students.class_of AS classOf', 'students.height', 'students.birthday',

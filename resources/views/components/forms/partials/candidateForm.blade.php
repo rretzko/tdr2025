@@ -135,21 +135,27 @@
         </hint>
         @forelse($form->emergencyContacts AS $emergencyContact)
             <div class="flex flex-row space-x-1">
-                <div class="w-1/6">
-                    {{ $emergencyContact['emergencyContactName'] }}
+                <div class="flex flex-col space-y-2 w-1/2 text-left">
+                    <div class="">
+                        {{ $emergencyContact['emergencyContactName'] }}
+                    </div>
+                    <div class="w-1/6">
+                        {{ $emergencyContact['emergencyContactEmail'] }}
+                    </div>
                 </div>
-                <div class="w-1/6">
-                    {{ $emergencyContact['emergencyContactEmail'] }}
-                </div>
-                <div
-                    class="w-1/6 @if($emergencyContact['emergencyContactBestPhone'] === 'mobile') font-semibold @endif">
-                    {{ $emergencyContact['emergencyContactPhoneMobile'] }} (c)
-                </div>
-                <div class="w-1/6 @if($emergencyContact['emergencyContactBestPhone'] === 'home') font-semibold @endif">
-                    {{ $emergencyContact['emergencyContactPhoneHome'] }} (h)
-                </div>
-                <div class="w-1/6 @if($emergencyContact['emergencyContactBestPhone'] === 'work') font-semibold @endif">
-                    {{ $emergencyContact['emergencyContactPhoneWork'] }} (w)
+                <div class="flex flex-col w-1/2 text-left">
+                    <div
+                        class=" @if($emergencyContact['emergencyContactBestPhone'] === 'mobile') font-semibold @endif">
+                        {{ $emergencyContact['emergencyContactPhoneMobile'] }} (c)
+                    </div>
+                    <div
+                        class=" @if($emergencyContact['emergencyContactBestPhone'] === 'home') font-semibold @endif">
+                        {{ $emergencyContact['emergencyContactPhoneHome'] }} (h)
+                    </div>
+                    <div
+                        class=" @if($emergencyContact['emergencyContactBestPhone'] === 'work') font-semibold @endif">
+                        {{ $emergencyContact['emergencyContactPhoneWork'] }} (w)
+                    </div>
                 </div>
             </div>
         @empty
@@ -187,9 +193,7 @@
 
         <div class="flex flex-row w-full">
 
-            @if($form->eApplication)
-                eApplication
-            @elseif(count($missingApplicationRequirements))
+            @if(count($missingApplicationRequirements))
                 <div>
                     <h3>An application cannot be created because the following requirements are missing:</h3>
                     <ul class="text-left">
@@ -197,6 +201,27 @@
                             <li>{!! $missing !!}</li>
                         @endforeach
                     </ul>
+                </div>
+            @elseif(
+            $form->eApplication)
+                <div class="w-1/2 flex flex-col">
+                    {{-- STUDENT SIGNATURE --}}
+                    <x-forms.elements.livewire.inputCheckbox
+                        blur="false"
+                        label="student signature"
+                        live="true"
+                        name="form.signatureStudent"
+                        marginTop="0"
+                    />
+
+                    {{-- GUARDIAN SIGNATURE --}}
+                    <x-forms.elements.livewire.inputCheckbox
+                        blur="false"
+                        label="parent/Guardian signature"
+                        live="true"
+                        name="form.signatureGuardian"
+                        marginTop="0"
+                    />
                 </div>
             @else
                 <div class="w-1/2 ">

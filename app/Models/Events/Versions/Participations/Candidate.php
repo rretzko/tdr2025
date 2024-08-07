@@ -6,6 +6,7 @@ use App\Models\Events\Versions\Version;
 use App\Models\Schools\Teacher;
 use App\Models\Students\Student;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -26,14 +27,29 @@ class Candidate extends Model
         'voice_part_id',
     ];
 
-    public function user(): BelongsTo
+    public function addApplicationDownloadCount(): void
     {
-        return $this->belongsTo(User::class);
+        $application = Application::firstOrNew(
+            [
+                'candidate_id' => $this->id,
+                'version_id' => $this->version_id,
+            ]
+        );
+
+        if ($application->exists) {
+            $application->increment('downloads');
+        } else {
+            $application->downloads = 1;
+            $application->last_downloaded_at = Carbon::now();
+            $application->save();
+        }
     }
 
-    public function version(): BelongsTo
+    public function hasDownloadedApplication(): bool
     {
-        return $this->belongsTo(Version::class);
+        return (bool) Application::query()
+            ->where('candidate_id', $this->id)
+            ->exists();
     }
 
     public function student(): BelongsTo
@@ -45,4 +61,16 @@ class Candidate extends Model
     {
         return $this->belongsTo(Teacher::class);
     }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function version(): BelongsTo
+    {
+        return $this->belongsTo(Version::class);
+    }
+
+
 }

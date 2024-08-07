@@ -12,7 +12,7 @@
 ])
 <div class="flex flex-col">
     <label for="{{ $name }}" class="@if($required) required @endif">
-        {!! ucwords($label)  . ($required ? '<span class="text-sm text-red-600">*</span>' : '') !!}
+        {!! ucwords($label) !!}
     </label>
     <input type="{{ $type }}"
            @class([

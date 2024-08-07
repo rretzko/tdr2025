@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Events\Versions\Participations\Application;
 use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Participations\Recording;
 use App\Models\Events\Versions\Participations\Signature;
@@ -18,7 +19,7 @@ class CandidateStatusService
      * Status definitions:
      * - eligible: Candidate is in the right grade level.
      *      - Candidate eligibility is determined at the point of creation
-     * - applied: Signatures have been verified
+     * - engaged: Application downloaded, recording uploaded, signatures have been verified
      * - pre-registered: TBD
      * - prohibited: Candidate has been designated as prohibited from the current version by the version management
      * - registered: Candidate has the following:
@@ -38,7 +39,12 @@ class CandidateStatusService
             return self::$status;
         }
 
-        self::isApp($candidate);
+        //is engaged
+        self::hasDownloadedApplication($candidate);
+        self::hasSignatures($candidate);
+        self::hasRecording($candidate);
+
+        //is registered
         self::isRegistered($candidate);
 
         //update $candidate if status is changed
@@ -49,20 +55,43 @@ class CandidateStatusService
         return self::$status;
     }
 
-    private static function isApp(Candidate $candidate): void
+    private static function hasDownloadedApplication(Candidate $candidate): void
+    {
+        $downloaded = Application::query()
+            ->where('candidate_id', $candidate->id)
+            ->exists();
+
+        self::$status = ($downloaded)
+            ? 'engaged'
+            : self::$status;
+    }
+
+    private static function hasRecording(Candidate $candidate): void
+    {
+        $recordingCount = Recording::query()
+            ->where('candidate_id', $candidate->id)
+            ->where('version_id', $candidate->version_id)
+            ->count();
+
+        self::$status = ($recordingCount)
+            ? 'engaged'
+            : self::$status;
+    }
+
+    private static function hasSignatures(Candidate $candidate): void
     {
         $eApplication = VersionConfigRegistrant::find($candidate->version_id)->eapplication;
 
         if ($eApplication) {
 
             self::$status = self::$status = self::checkSignatures($candidate, ['student', 'guardian'])
-                ? 'applied'
+                ? 'engaged'
                 : self::$status;
 
         } else { //paper app
 
             self::$status = self::checkSignatures($candidate, ['teacher'])
-                ? 'applied'
+                ? 'engaged'
                 : self::$status;
         }
     }
@@ -93,7 +122,7 @@ class CandidateStatusService
     private static function isRegistered(Candidate $candidate): void
     {
         //early exit
-        if (self::$status !== 'applied') { //confirm that appropriate signatures have been verified
+        if (self::$status !== 'engaged') { //confirm that appropriate signatures have been verified
             return;
         }
 

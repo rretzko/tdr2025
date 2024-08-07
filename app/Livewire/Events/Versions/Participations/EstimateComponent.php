@@ -5,7 +5,6 @@ namespace App\Livewire\Events\Versions\Participations;
 use App\Livewire\BasePage;
 use App\Models\Events\Versions\Participations\Registrant;
 use App\Models\Events\Versions\Version;
-use App\Models\Schools\Teacher;
 use App\Models\UserConfig;
 use App\Services\ConvertToUsdService;
 
@@ -15,6 +14,7 @@ class EstimateComponent extends BasePage
     public float $registrationFee = 0.00;
     public string $selectedTab = 'estimate';
     public array $tabs = [];
+    public int $versionId = 0;
 
     public function mount(): void
     {
@@ -24,6 +24,7 @@ class EstimateComponent extends BasePage
         $this->registrationFee = $this->getRegistrationFee();
         $this->sortColLabel = 'users.name';
         $this->tabs = ['estimate', 'payments', 'payPal'];
+        $this->versionId = $this->dto['id'];
     }
 
     private function getColumnHeaders(): array

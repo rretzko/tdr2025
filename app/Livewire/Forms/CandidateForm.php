@@ -286,7 +286,7 @@ class CandidateForm extends Form
             'prohibited' => ['bg-red-200', 'text-red-800'],
             'removed' => ['bg-red-200', 'text-red-800'],
             'withdrew' => ['bg-red-200', 'text-red-800'],
-            'applied' => ['bg-yellow-200', 'text-yellow-800'],
+            'engaged' => ['bg-yellow-200', 'text-yellow-800'],
             'registered' => ['bg-green-200', 'text-green-800'],
         ];
 

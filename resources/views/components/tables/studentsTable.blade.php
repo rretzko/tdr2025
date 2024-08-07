@@ -79,10 +79,10 @@
                     @endif
                 </td>
                 <td class="text-center border border-gray-200">
-                    <x-buttons.edit id="{{ $row['schoolStudentId'] }}" route="student.edit"/>
+                    <x-buttons.edit id="{{ $row['studentId'] }}" route="student.edit"/>
                 </td>
                 <td class="text-center border border-gray-200">
-                    <x-buttons.remove id="{{ $row['schoolStudentId'] }}" livewire="1"/>
+                    <x-buttons.remove id="{{ $row['studentId'] }}" livewire="1"/>
                 </td>
             </tr>
 

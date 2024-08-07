@@ -44,14 +44,14 @@
 
             {{-- SCROLLABLE LIST OF LINKS --}}
             <style>
-                .applied {
-                    background-color: yellow;
-                    border-color: blanchedalmond;
-                }
-
                 .eligible {
                     background-color: gray;
                     border-color: gray;
+                }
+
+                .engaged {
+                    background-color: yellow;
+                    border-color: blanchedalmond;
                 }
 
                 .registered {

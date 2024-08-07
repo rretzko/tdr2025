@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->foreignId('teacher_id');
             $table->foreignId('voice_part_id');
             $table->enum('status', [
-                'applied', 'eligible', 'no-app', 'preregistered',
+                'eligible', 'engaged', 'no-app', 'preregistered',
                 'prohibited', 'registered', 'removed', 'withdrew'
             ]);
             $table->string('program_name');

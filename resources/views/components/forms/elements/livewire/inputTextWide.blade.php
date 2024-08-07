@@ -19,7 +19,7 @@
             'mt-1' => $suppressLabel
         ])
     >
-        {!! ucwords($label) . ($required ? '<span class="text-sm text-red-600">*</span>' : '') !!}
+        {!! ucwords($label) !!}
 
     </label>
     <input @if($blur) wire:model.blur @else

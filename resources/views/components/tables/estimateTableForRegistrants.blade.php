@@ -7,8 +7,15 @@
     'seniorYear',
     'sortAsc',
     'sortColLabel',
+    'versionId',
 ])
 <div class="relative w-11/12">
+
+    <div class="py-2 w-full flex justify-end">
+        <a href="{{ route('pdf.estimate', $versionId) }}" class="text-blue-500" title="Download estimate form">
+            <x-heroicons.document/>
+        </a>
+    </div>
 
     <table class="px-4 shadow-lg w-full">
         <thead>

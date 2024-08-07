@@ -28,4 +28,26 @@ class FindPdfPathService
         // Optionally handle the case where the version is not found
         throw new \Exception("Version with ID {$versionId} not found.");
     }
+
+    public function findEstimatePath(Version $version): string
+    {
+        $versionId = $version->id;
+        $header = "../resources/views/";
+        $path = "pdfs/estimates/versions/{$versionId}/pdf.blade.php";
+        $file = $header.$path;
+        $view = "pdfs.estimates.versions.{$versionId}.pdf";
+
+        if (file_exists($file)) {
+            return $view;
+        }
+
+        $version = Version::find($versionId);
+        if ($version) {
+            $eventId = $version->event_id;
+            return "pdfs.estimates.events.{$eventId}.pdf";
+        }
+
+        // Optionally handle the case where the version is not found
+        throw new \Exception("Version with ID {$versionId} not found.");
+    }
 }

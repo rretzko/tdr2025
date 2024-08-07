@@ -9,6 +9,7 @@ export default {
         './resources/views/**/*.blade.php',
     ],
     safelist: [
+        'accent-red-500',
         'bg-yellow-600',
         'bg-yellow-700',
         'bg-gray-200',
@@ -31,6 +32,8 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            backgroundColor: ['checked'],
+            borderColor: ['checked'],
         },
     },
 

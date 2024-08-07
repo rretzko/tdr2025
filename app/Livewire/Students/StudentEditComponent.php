@@ -24,7 +24,12 @@ class StudentEditComponent extends BasePageStudent
     {
         parent::mount();
 
-        $this->school = School::find(SchoolStudent::find($this->dto['id'])->school_id);
+        $schoolStudent = SchoolStudent::query()
+            ->where('student_id', $this->dto['id'])
+            ->where('active', 1)
+            ->first();
+
+        $this->school = School::find($schoolStudent->school_id);
 
         $this->form->schoolId = $this->school->id;
     }

@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Pdfs;
 
-use App\Data\Pdfs\PdfApplicationDataFactory;
+use App\Data\Pdfs\PdfEstimateDataFactory;
 use App\Http\Controllers\Controller;
 use App\Models\Events\Versions\Participations\Candidate;
+use App\Models\Events\Versions\Version;
 use App\Services\FindPdfPathService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class ApplicationPdfController extends Controller
+class EstimatePdfController extends Controller
 {
     /**
      * Handle the incoming request.
@@ -18,21 +19,17 @@ class ApplicationPdfController extends Controller
      * @param  Candidate  $candidate
      * @return Response
      */
-    public function __invoke(Request $request, Candidate $candidate)
+    public function __invoke(Request $request, Version $version)
     {
         $service = new FindPdfPathService;
-        $path = $service->findApplicationPath($candidate);
+        $path = $service->findEstimatePath($version);
 
-        $data = new PdfApplicationDataFactory($candidate);
+        $data = new PdfEstimateDataFactory($version);
         $dto = $data->getDto();
 
         $pdf = PDF::loadView($path, compact('dto'));
 
-        if ($pdf) {
-            $candidate->addApplicationDownloadCount();
-        }
-
-        return $pdf->download('application.pdf');
+        return $pdf->download('estimate.pdf');
     }
 
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Data;
+namespace App\Data\Pdfs;
 
 use App\Models\Events\Event;
 use App\Models\Events\Versions\Participations\Candidate;

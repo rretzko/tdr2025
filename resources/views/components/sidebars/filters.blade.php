@@ -26,11 +26,29 @@
             </label>
         @endif
 
-    @foreach($filters->$method() AS $key => $value)
+        @foreach($filters->$method() AS $key => $value)
 
             <label class="flex flex-row space-x-3 text-xs" wire:key="{{ $method }}-{{ $key }}">
 
-                <input type="checkbox" wire:model.live="filters.{{ $method }}SelectedIds" value="{{ $key }}">
+                <input type="checkbox"
+                       @class([
+                            '',
+                            'bg-red-500' => in_array($value, ['prohibited','removed','withdrew']),
+                            'checked:bg-red-500' => in_array($value, ['prohibited','removed','withdrew']),
+                            'checked:border-red-500' => in_array($value, ['prohibited','removed','withdrew']),
+                            'bg-gray-500' => ($value === 'eligible'),
+                            'checked:bg-gray-500' => ($value === 'eligible'),
+                            'checked:border-gray-500' => ($value === 'eligible'),
+                            'bg-green-500' => ($value === 'registered'),
+                            'checked:bg-green-500' => ($value === 'registered'),
+                            'checked:border-green-500' => ($value === 'registered'),
+                            'bg-yellow-300' => ($value === 'engaged'),
+                            'checked:bg-yellow-300' => ($value === 'engaged'),
+                            'checked:border-yellow-300' => ($value === 'engaged'),
+                        ])
+                       wire:model.live="filters.{{ $method }}SelectedIds"
+                       value="{{ $key }}"
+                >
                 <span>{{ $value }}</span>
             </label>
 

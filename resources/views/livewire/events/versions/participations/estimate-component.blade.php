@@ -25,8 +25,9 @@
                         :header="$dto['header']"
                         registrationFee="{{  $registrationFee }}"
                         :rows="$registrants"
-                        sortAsc="$sortAsc"
-                        sortColLabel="$sortColLabel"
+                        sortAsc="{{  $sortAsc }}"
+                        sortColLabel="{{  $sortColLabel }}"
+                        versionId="{{  $versionId }}"
                     />
                 </div>
             @endif
