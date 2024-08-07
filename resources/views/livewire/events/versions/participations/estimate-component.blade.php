@@ -34,7 +34,40 @@
 
             @if($selectedTab === 'payments')
                 <div>
-                    Payments Table
+                    @if($showEditForm)
+                        <x-forms.partials.studentPaymentForm
+                            :paymentTypes="$paymentTypes"
+                            showSuccessIndicator="{{ $showSuccessIndicator }}"
+                            studentFullName="{{ $form->studentFullName }}"
+                            successMessage="{{ $successMessage }}"
+                            sysId="{{ $form->sysId }}"
+
+                        />
+                    @endif
+
+                    @if($addNewPayment)
+                        <x-forms.partials.addStudentPaymentForm
+                            :candidates="$candidates"
+                            :form="$form"
+                            :paymentTypes="$paymentTypes"
+                            showSuccessIndicator="{{ $showSuccessIndicator }}"
+                            studentFullName="{{ $form->studentFullName }}"
+                            successMessage="{{ $successMessage }}"
+                            sysId="{{ $form->sysId }}"
+
+                        />
+                    @endif
+                </div>
+
+                {{-- STUDENT PAYMENTS TABLE --}}
+                <div>
+                    <x-tables.studentPaymentsTable
+                        :columnHeaders="$studentPaymentColumnHeaders"
+                        header="Student Payments"
+                        :rows="$studentPayments"
+                        sortAsc="{{ $sortAsc }}"
+                        sortColLabel="{{ $sortColLabel }}"
+                    />
                 </div>
             @endif
 
@@ -44,24 +77,7 @@
                 </div>
             @endif
 
-            {{-- FILTERS --}}
-            {{--            @if($hasFilters && count($filterMethods))--}}
-            {{--                <div class="flex justify-center">--}}
-            {{--                    <x-sidebars.filters :filters="$filters" :methods="$filterMethods"/>--}}
-            {{--                </div>--}}
-            {{--            @endif--}}
-
-            {{--            <div class="flex flex-col w-full">--}}
-            {{--                <x-tables.participationPitchFilesTable--}}
-            {{--                    :rows="$rows"--}}
-            {{--                    :columnHeaders="$columnHeaders"--}}
-            {{--                    header="$header"--}}
-            {{--                    sortAsc="$sortAsc"--}}
-            {{--                    sortColLabel="$sortColLabel"--}}
-            {{--                />--}}
-
         </div>
     </div>
-</div>
 
 </div>
