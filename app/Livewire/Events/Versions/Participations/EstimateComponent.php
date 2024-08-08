@@ -5,9 +5,12 @@ namespace App\Livewire\Events\Versions\Participations;
 use App\Exports\StudentPaymentsExport;
 use App\Livewire\BasePage;
 use App\Livewire\Forms\StudentPaymentForm;
+use App\Models\Epayment;
+use App\Models\EpaymentCredentials;
 use App\Models\Events\Versions\Participations\Registrant;
 use App\Models\Events\Versions\Participations\StudentPayment;
 use App\Models\Events\Versions\Version;
+use App\Models\Schools\Teacher;
 use App\Models\UserConfig;
 use App\Services\ConvertToUsdService;
 use Illuminate\Support\Facades\DB;
@@ -18,14 +21,24 @@ class EstimateComponent extends BasePage
 {
     public StudentPaymentForm $form;
     public bool $addNewPayment = false;
+    public float $amountDue = 0;
     public array $columnHeaders = [];
+    public string $customProperties = '';
+    public string $email = 'realEpayment@email.com';
+    public string $ePaymentId = 'ePaymentId';
     public array $paymentTypes = ['cash' => 'cash', 'check' => 'check'];
     public float $registrationFee = 0.00;
-    public string $selectedTab = 'payments';//estimate
+    public bool $sandbox = true;
+    public string $sandboxId = 'sandboxId';
+    public string $sandboxPersonalEmail = '';
+    public string $selectedTab = 'estimate';
     public int $showEditForm = 0;
     public array $studentPaymentColumnHeaders = [];
     public array $tabs = [];
+    public string $teacherName = '';
+    public int $userId = 0;
     public int $versionId = 0;
+    public string $versionShortName = '';
 
     public bool $showSuccessIndicatorPaymentTypeAmount = false;
     public string $successMessagePaymentTypeAmount = '';
@@ -34,12 +47,27 @@ class EstimateComponent extends BasePage
     {
         parent::mount();
 
+        $this->versionId = UserConfig::getValue('versionId');
         $this->columnHeaders = $this->getColumnHeaders();
         $this->registrationFee = $this->getRegistrationFee();
         $this->sortColLabel = 'users.name';
         $this->studentPaymentColumnHeaders = $this->getStudentPaymentColumnHeaders();
-        $this->tabs = ['estimate', 'payments', 'payPal'];
-        $this->versionId = $this->dto['id'];
+        $this->tabs = $this->getTabs();
+
+        //ePayments
+        $teacher = Teacher::where('user_id', auth()->id())->first();
+        $version = Version::find($this->versionId);
+
+        $this->amountDue = $this->getAmountDue();
+        $this->customProperties = $this->getCustomProperties();
+        $this->email = auth()->user()->email;
+        $this->ePaymentId = $this->getEpaymentId();
+        $this->sandbox = true;
+        $this->sandboxId = 'sb-qw0iu20847075@business.example.com';
+        $this->sandboxPersonalEmail = 'sb-ndsz820837854@personal.example.com'; //dRkJ4(f)
+        $this->teacherName = $teacher->user->name;
+        $this->userId = auth()->id();
+        $this->versionShortName = $version->short_name;
     }
 
     public function render()
@@ -76,6 +104,27 @@ class EstimateComponent extends BasePage
         $this->form->setStudentPaymentProperties($this->showEditForm);
     }
 
+    private function getAmountDue(): float
+    {
+        //how many registrants are there
+        $registrant = new Registrant($this->school->id, $this->versionId);
+        $registrantCount = $registrant->getRegistrantCount();
+
+        //what is the registration fee
+        $version = Version::find($this->versionId);
+        $registrationFee = $version->fee_registration; //in pennies
+
+        //what is the total expected payment
+        $totalExpected = ($registrantCount * $registrationFee); //in pennies
+
+        //how much has already been collected through ePayments
+        $ePayment = new Epayment();
+        $totalCollected = $ePayment->getTotalCollected($version, $this->school->id); //in pennies
+
+        //return how much remains to be collected
+        return ConvertToUsdService::penniesToUsd($totalExpected - $totalCollected);
+    }
+
     private function getCandidates(): array
     {
         $statuses = ['eligible', 'engaged', 'no-app', 'pre-registered', 'registered'];
@@ -101,6 +150,47 @@ class EstimateComponent extends BasePage
             ['label' => 'grade', 'sortBy' => 'grade'],
             ['label' => 'fee', 'sortBy' => null],
         ];
+    }
+
+    /**
+     * Provide PayPal form with custom properties for tracking payments from
+     * the PayPal website
+     * @return string
+     */
+    private function getCustomProperties(): string
+    {
+        $separator = ' | ';
+
+        $properties = [
+            (string) $this->userId,
+            (string) $this->versionId,
+            (string) $this->school->id,
+            (string) $this->amountDue,
+            '0', //expecting 'candidate_id' but using '0' to indicate teacher
+            'registration', //fee type
+            auth()->user()->name, //additional identification info
+        ];
+
+        return implode($separator, $properties);
+    }
+
+    private function getEpaymentId(): string
+    {
+        $ePaymentCredentials = EpaymentCredentials::query()
+            ->where('version_id', $this->versionId)
+            ->first();
+
+        $version = Version::find($this->versionId);
+        if (!$ePaymentCredentials) {
+
+            $ePaymentCredentials = EpaymentCredentials::query()
+                ->where('event_id', $version->event_id)
+                ->first();
+        }
+
+        return ($ePaymentCredentials)
+            ? $ePaymentCredentials->epayment_id
+            : '';
     }
 
     private function getRegistrationFee(): float
@@ -146,5 +236,18 @@ class EstimateComponent extends BasePage
                 'users.suffix_name')
             ->get()
             ->toArray();
+    }
+
+    private function getTabs(): array
+    {
+        $tabs = ['estimate', 'payments'];
+        $version = Version::find($this->versionId);
+
+        if ($version && $version->epayment_teacher) {
+
+            $tabs[] = 'payPal';
+        }
+
+        return $tabs;
     }
 }

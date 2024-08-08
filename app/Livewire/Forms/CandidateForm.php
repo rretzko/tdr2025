@@ -12,6 +12,7 @@ use App\Models\Events\Versions\VersionConfigAdjudication;
 use App\Models\Events\Versions\VersionConfigRegistrant;
 use App\Models\Geostate;
 use App\Models\PhoneNumber;
+use App\Models\Schools\Teacher;
 use App\Models\Students\Student;
 use App\Models\User;
 use App\Services\CalcApplicationRequirements;
@@ -72,10 +73,14 @@ class CandidateForm extends Form
     #[Validate('nullable|string')]
     public string $suffixName = '';
     #[Validate('required|int')]
+    public int $teacherId = 0;
+    public string $teacherName = "";
+    #[Validate('required|int')]
     public int $voicePartId = 0;
 
     protected array $propertyMap = [
         'classOf' => 'student',
+        'email' => 'user',
         'grade' => 'student',
         'height' => 'student',
         'firstName' => 'user',
@@ -89,7 +94,7 @@ class CandidateForm extends Form
         'signatureStudent' => 'signature',
         'signatureTeacher' => 'signature',
         'suffixName' => 'user',
-        'email' => 'user',
+        'teacherId' => 'candidate',
         'voicePartId' => 'candidate',
     ];
 
@@ -185,6 +190,8 @@ class CandidateForm extends Form
 
         $this->programName = $this->candidate->program_name;
         $this->status = $this->getStatus();
+        $this->teacherId = $this->candidate->teacher_id;
+        $this->teacherName = Teacher::find($this->teacherId)->user->name;
         $this->voicePartId = $this->testVoicePartId($this->candidate->voice_part_id);
 
         $this->classOf = $this->student->class_of;

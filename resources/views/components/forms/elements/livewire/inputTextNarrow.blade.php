@@ -11,7 +11,7 @@
     'type' => 'text',
 ])
 <div class="flex flex-col">
-    <label for="{{ $name }}" class="@if($required) required @endif">
+    <label for="{{ $name }}" class="text-left  text-sm ml-2 @if($required) required @endif">
         {!! ucwords($label) !!}
     </label>
     <input type="{{ $type }}"

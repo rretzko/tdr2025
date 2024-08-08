@@ -8,6 +8,7 @@ use App\Livewire\Forms\CandidateForm;
 use App\Models\Events\Event;
 use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Version;
+use App\Models\Schools\Teacher;
 use App\Models\UserConfig;
 use App\Services\CalcSeniorYearService;
 use App\Services\CoTeachersService;
@@ -42,6 +43,7 @@ class CandidatesTableComponent extends BasePage
     public int $showFormEdit = 0;
     public bool $showRegistrationPath = false;
     public bool $studentHomeAddress = false;
+    public array $teachers = [];
     public int $versionId = 0;
 
     public Filters $filters;
@@ -57,6 +59,8 @@ class CandidatesTableComponent extends BasePage
         $this->height = $this->version->height;
         $this->shirtSize = $this->version->shirt_size;
         $this->studentHomeAddress = $this->version->student_home_address;
+
+        $this->teachers = $this->getTeachers();
 
         $this->ensembleVoiceParts = $this->getEnsembleVoiceParts();
         $this->eventGrades = $this->getEventGrades();
@@ -96,6 +100,7 @@ class CandidatesTableComponent extends BasePage
             [
                 'columnHeaders' => $this->getColumnHeaders(),
                 'rows' => $this->getRows()->paginate($this->recordsPerPage),
+                'teachers' => $this->teachers,
             ]);
     }
 
@@ -241,6 +246,19 @@ class CandidatesTableComponent extends BasePage
             ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
             ->orderBy('users.last_name', 'asc') //secondary sort ALWAYS applied
             ->orderBy('users.first_name', 'asc'); //tertiary sort ALWAYS applied
+    }
+
+    private function getTeachers(): array
+    {
+        $coTeacherIds = CoTeachersService::getCoTeachersIds();
+
+        $teachers = [];
+        foreach ($coTeacherIds as $teacherId) {
+
+            $teachers[$teacherId] = Teacher::find($teacherId)->user->name;
+        }
+
+        return $teachers;
     }
 
     private function makeCandidateRecords()

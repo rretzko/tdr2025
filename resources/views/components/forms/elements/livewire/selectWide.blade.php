@@ -7,7 +7,7 @@
     'option0' => false,
     'options',
     'placeholder' => '',
-    'required',
+    'required' => false,
 ])
 <div class="flex flex-col">
     <label for="{{ $name }}" class="{{ $required }}">

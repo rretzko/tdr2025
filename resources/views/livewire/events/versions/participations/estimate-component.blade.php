@@ -69,13 +69,26 @@
                         sortColLabel="{{ $sortColLabel }}"
                     />
                 </div>
-            @endif
+                @endif
 
-            @if($selectedTab === 'payPal')
-                <div>
-                    PayPal Form
-                </div>
-            @endif
+                @if($selectedTab === 'payPal')
+                    <div>
+                        <x-forms.partials.teacherEpaymentForm
+                            amountDue="{{ $amountDue }}"
+                            customProperties="{{ $customProperties }}"
+                            email="{{ $email }}"
+                            ePaymentId="{{ $ePaymentId }}"
+                            :sandbox="$sandbox"
+                            sandboxId="{{ $sandboxId }}"
+                            sandboxPersonalEmail="{{ $sandboxPersonalEmail }}"
+                            showSuccessIndicator="{{ $showSuccessIndicator }}"
+                            successMessage="{{ $successMessage }}"
+                            teacherName="{{ $teacherName }}"
+                            versionId="{{ $versionId }}"
+                            versionShortName="{{ $versionShortName }}"
+                        />
+                    </div>
+                @endif
 
         </div>
     </div>

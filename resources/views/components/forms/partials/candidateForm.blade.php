@@ -13,6 +13,7 @@
     'showSuccessIndicator',
     'studentHomeAddress',
     'successMessage',
+    'teachers',
 ])
 <form wire:submit="save" class="space-y-2">
 
@@ -121,10 +122,30 @@
             />
         @endif
 
-        <x-forms.elements.livewire.inputTextCompressed
+        {{-- PROGRAM NAME --}}
+        <x-forms.elements.livewire.inputTextNarrow
             label="program name"
             name="form.programName"
         />
+    </fieldset>
+
+    {{-- SPONSORING TEACHER --}}
+    <fieldset class="flex flex-col space-y-1 text-sm pb-2 border border-transparent border-b-gray-200">
+        <h3 class="text-left font-semibold">Sponsoring Teacher</h3>
+        @if(count($teachers) === 1)
+            <x-forms.elements.livewire.labeledInfoOnly
+                label=""
+                wireModel="form.teacherName"
+            />
+        @else
+            <x-forms.elements.livewire.selectNarrow
+                label=""
+                name="form.teacherId"
+                :options="$teachers"
+                :required="true"
+            />
+        @endif
+
     </fieldset>
 
     {{-- EMERGENCY CONTACT(S) --}}

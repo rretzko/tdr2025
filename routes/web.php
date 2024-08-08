@@ -9,6 +9,10 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
+//ePayment
+Route::post('ePaymentReceipt', [\App\Http\Controllers\ePayments\EpaymentReceiptController::class, 'store'])
+    ->name('ePaymentReceipt');
+
 Route::middleware(['auth', 'verified'])->group(function () {
 
     //HOME

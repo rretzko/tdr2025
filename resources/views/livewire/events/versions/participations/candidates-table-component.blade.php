@@ -102,6 +102,7 @@
                                 :showSuccessIndicator="$showSuccessIndicator"
                                 :studentHomeAddress="$studentHomeAddress"
                                 successMessage="{{  $successMessage }}"
+                                :teachers="$teachers"
                             />
                         @else
                             Click name to complete form...

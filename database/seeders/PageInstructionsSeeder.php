@@ -501,8 +501,23 @@ student\'s participation in a past event.</p>'
             ],
             [
                 'header' => 'candidates',
-                'instructions' => '<p>Use this page to edit your students\'
-information for this event.</p>'
+                'instructions' => '<p>Use this page to edit your students\' information for this event.</p> <p>The candidates roster provides a robust set of options: <ul> <li><strong>Filters</strong>: Located on the left-hand side of the roster, filters allow you to restrict the display to: <ul> <li><strong>Grade</strong>: Limit the display to one-or-more grade levels.</li> <li><strong>Status</strong>: Limit the display to one-or-more of the current status values (ex. eligible, engaged, prohibited, registered, removed, withdrew). The following will provide a general definition of these status values: <ul> <li><strong>Eligible (gray)</strong>: The student is in eligible grade-level.</li> <li><strong>Engaged (yellow)</strong>: The student (or you) have created an action which indicates interest in participation in the current event version.  This will vary based on the event version requirements, but generally the engaged status indicates that an application has been downloaded or signed, or a recording has been uploaded.</li> <li><strong>Prohibited (red)</strong>: The student has been prohibited from engaging in the current event version by the event\'s management.  Once prohibited, the student will not be able to move further in the registration process.  Please contact the event manager if you believe that this status is in error.</li> <li><strong>Registered (green)</strong>: This will vary based on the event version requirements, but generally a registered status indicates that voice part is correct, the application signatures have been teacher-approved, and all recordings have been uploaded and approved.</li> <li><strong>Removed (red)</strong>: The student has been removed from engaging in the current event version by the student\'s teacher (generally you, but it may have been instated by the student\'s previous teacher). Please contact the event manager if you believe that this status is in error.</li> <li><strong>Withdrew (red)</strong>: The student has determined that they will not be participating and has requested that their candidacy be removed from consideration. </li> </ul></li> </ul></li> <li><strong>Candidates</strong>: All grade-eligible students will be displayed on the page along with their
+color-coded status.</li> </ul></p>
+<p><strong>Registration Information</strong></p><ul><li>Header</strong>: The form header will display with the student\'s status and a color-coded background.  As you update the student\'s information, an update message will display below the status value.</li><li><strong>Click for Path to Registration</strong>: Click this button to display a bulleted-list of registration requirements that have been completed (in green) and those that are incomplete (in red).</li>
+<li><strong>Biographic</strong>: Information like name, grade, email, phones are included in this section.
+Please note the following:
+<ul>
+<li><strong>Required fields</strong> are noted with a red asterisk.</li>
+<li><strong>Auditioning Voice Parts</strong>: The system maintains a default voice part which can be updated
+by you in the "Students" section of TheDirectorsRoom.com.  This value is used whenever possible to determine
+the most likely voice part that the student will be auditioning for the current event version.  However, the
+auditioning Voice Part is maintained separately from the default voice part so that the student is free to
+audition on any valid voice part without needing to change their default voice part.</li>
+<li><strong>Program Name</strong>: Student sometimes wish to have the event program display a different name
+than that used in the classroom.  This value will default to the student\'s name on the system but can be
+changed if needed.  The event management determines if the Program Name will be used on their program.</li>
+</ul></li>
+</ul>'
             ],
             [
                 'header' => 'obligations',
