@@ -83,9 +83,9 @@ class epaymentCredentialsResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListePaymentCredentials::route('/'),
-            'create' => Pages\CreateePaymentCredentials::route('/create'),
-            'edit' => Pages\EditePaymentCredentials::route('/{record}/edit'),
+            'index' => Pages\ListEpaymentCredentials::route('/'),
+            'create' => Pages\CreateEpaymentCredentials::route('/create'),
+            'edit' => Pages\EditEpaymentCredentials::route('/{record}/edit'),
         ];
     }
 

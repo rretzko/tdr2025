@@ -276,7 +276,9 @@ class CandidateForm extends Form
         //clear any artifacts
         $this->reset('homeAddress');
 
-        if ($address &&
+        //test for requirement and existence of home address data
+        $version = Version::find($this->candidate->version_id);
+        if ($version->student_home_address && $address &&
             strlen($address->address1) &&
             strlen($address->city) &&
             is_int($address->geostate_id) &&

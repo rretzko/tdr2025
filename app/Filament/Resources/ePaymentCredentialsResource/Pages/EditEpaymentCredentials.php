@@ -3,17 +3,17 @@
 namespace App\Filament\Resources\ePaymentCredentialsResource\Pages;
 
 use App\Filament\Resources\epaymentCredentialsResource;
-use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ListRecords;
+use Filament\Actions\DeleteAction;
+use Filament\Resources\Pages\EditRecord;
 
-class ListePaymentCredentials extends ListRecords
+class EditEpaymentCredentials extends EditRecord
 {
     protected static string $resource = epaymentCredentialsResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            DeleteAction::make(),
         ];
     }
 }
