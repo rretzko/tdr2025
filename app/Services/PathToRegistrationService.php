@@ -46,7 +46,7 @@ class PathToRegistrationService
 
     private static function candidateIsEligible(): string
     {
-        $eligibles = ['applied', 'eligible', 'no-app', 'preregistered', 'registered'];
+        $eligibles = ['eligible', 'engaged', 'no-app', 'preregistered', 'registered'];
         // not: prohibited, removed, withdrew
 
         return (in_array(self::$candidate->status, $eligibles))

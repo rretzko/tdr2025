@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\Events\EventManageEditController;
 use App\Http\Controllers\ProfileController;
-use App\Livewire\Ensembles\Assets\AssetsTableComponent;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
