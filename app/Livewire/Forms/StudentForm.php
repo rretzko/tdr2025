@@ -76,6 +76,8 @@ class StudentForm extends Form
     public function setSchool(School $school): void
     {
         $this->school = $school;
+
+        $this->schoolId = $this->school->id;
     }
 
     public function setShirtSizes(array $shirtSizes): void
@@ -83,28 +85,31 @@ class StudentForm extends Form
         $this->shirtSizes = $shirtSizes;
     }
 
-    public function setStudent(array $gradesITeach, Student $student = null, int $schoolStudentId = 0): void
+    public function setStudent(array $gradesITeach, Student $student = null): void
     {
         if ($student) {
 
             $this->first = $student->user->first_name;
-            $this->middle = $student->user->middle_name;
+            $this->middle = $student->user->middle_name ?? '';
             $this->last = $student->user->last_name;
-            $this->suffix = $student->user->suffix_name;
-            $this->email = $student->user->email;
+            $this->suffix = $student->user->suffix_name ?? '';
+            $this->email = $student->user->email ?? '';
             $this->pronounId = $student->user->pronoun_id;
             $this->classOf = $student->class_of;
-            $this->voicePartId = $student->voice_part_id;
+            $this->voicePartId = $student->voice_part_id ?? 63; //soprano i
             $this->heightInInches = $student->height;
-            $this->birthday = $student->birthday;
-            $this->shirtSize = $student->shirt_size;
+            $this->birthday = $student->birthday ?? '';
+            $this->shirtSize = $student->shirt_size ?? 1;
             $this->phoneMobile = $student->phoneMobile ?? '';
             $this->phoneHome = $student->phoneHome ?? '';
 
             $this->studentId = $student->id;
 
             //SchoolStudent
-            $schoolStudent = SchoolStudent::find($schoolStudentId);
+            $schoolStudent = SchoolStudent::query()
+                ->where('student_id', $student->id)
+                ->where('school_id', $this->schoolId)
+                ->first();
 
             $this->active = $schoolStudent->active;
 

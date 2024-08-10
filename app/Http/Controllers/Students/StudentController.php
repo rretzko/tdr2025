@@ -30,13 +30,13 @@ class StudentController extends Controller
         return view($dto['pageName'], compact('dto'));
     }
 
-    public function edit(SchoolStudent $schoolStudent)
+    public function edit(Student $student)
     {
-        $data = new ViewDataFactory(__METHOD__, $schoolStudent->id);
+        $data = new ViewDataFactory(__METHOD__, $student->id);
 
         $dto = $data->getDto();
 
-        $id = $schoolStudent->id;
+        $id = (int) $student->id;
 
         return view($dto['pageName'], compact('dto', 'id'));
     }

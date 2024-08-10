@@ -172,7 +172,7 @@ Breadcrumbs::for('new student', function (BreadcrumbTrail $trail) {
 //Student.edit
 Breadcrumbs::for('student edit', function (BreadcrumbTrail $trail, int $id) {
     $trail->parent('students');
-    $trail->push('Edit', route('student.edit', ['school_student' => $id]));
+    $trail->push('Edit', route('student.edit', ['student' => $id]));
 });
 
 //Student.comms.edit

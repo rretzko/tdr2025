@@ -124,6 +124,7 @@ class Filters extends Form
                 ->join('voice_parts', 'voice_parts.id', '=', 'version_pitch_files.voice_part_id')
                 ->where('version_pitch_files.version_id', UserConfig::getValue('versionId'))
                 ->distinct('version_pitch_files.voice_part_id')
+                ->select('voice_parts.id', 'voice_parts.order_by')
                 ->orderBy('voice_parts.order_by')
                 ->pluck('voice_parts.id')
                 ->toArray();
@@ -135,9 +136,7 @@ class Filters extends Form
                 ->orderBy('version_pitch_files.file_type')
                 ->pluck('version_pitch_files.file_type', 'version_pitch_files.file_type')
                 ->toArray();
-
         }
-
     }
 
     public function apply($query)
@@ -237,6 +236,7 @@ class Filters extends Form
         return (VersionPitchFile::where('version_id', $versionId)->exists())
             ? VersionPitchFile::where('version_id', $versionId)
                 ->join('voice_parts', 'voice_parts.id', '=', 'version_pitch_files.voice_part_id')
+                ->select('voice_parts.id', 'voice_parts.order_by')
                 ->distinct('voice_parts.id')
                 ->orderBy('voice_parts.order_by')
                 ->pluck('voice_parts.descr', 'voice_parts.id')

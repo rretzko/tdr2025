@@ -153,7 +153,6 @@ class StudentsTableComponent extends BasePage
                 'users.prefix_name', 'users.suffix_name'
             )
             ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'));
-
     }
 
     /**

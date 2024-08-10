@@ -46,7 +46,8 @@ class BasePageStudent extends BasePage
             //set selected student
             //$this->student = Student::find(SchoolStudent::find($this->dto['id'])->student_id);
             $this->student = Student::find($this->dto['id']);
-            $this->form->setStudent($this->getGradesITeach(), $this->student, $this->dto['id']);
+
+            $this->form->setStudent($this->getGradesITeach(), $this->student);
             $this->fullName = $this->student->user->name;
             $this->sysId = $this->student->id;
 
