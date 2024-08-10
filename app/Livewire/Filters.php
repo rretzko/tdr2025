@@ -47,8 +47,9 @@ class Filters extends Form
         $this->header = $header;
         $this->versionId = (int) UserConfig::getValue('versionId');
 
-        if ($this->header === 'schools') {
-
+        if ($this->header === 'school edit') {
+            Log::info($this->header.' found; no filters.');
+            logger($this->header.' found; no filters.');
         } elseif ($this->header === 'students') {
 
             //initially set schools filter to include ALL schools
