@@ -30,6 +30,8 @@ class EnsemblesTableComponent extends BasePageEnsemble
 
         $memberCounts = $this->getMemberCounts($rows);
 
+        $this->filters->setFilter('schoolsSelectedIds', $this->dto['header']);
+
         return view('livewire..ensembles.ensembles-table-component',
             [
                 'columnHeaders' => $this->getColumnHeaders(),
@@ -95,7 +97,7 @@ class EnsemblesTableComponent extends BasePageEnsemble
                 ->toArray();
         }
 
-        $this->updateUserFiltersTable();
+//        $this->updateUserFiltersTable();
 
         $this->buildEnsembleAssetsCsvs($a);
 
@@ -131,16 +133,16 @@ class EnsemblesTableComponent extends BasePageEnsemble
             ->toArray();
     }
 
-    private function updateUserFiltersTable(): void
-    {
-        UserFilter::create(
-            [
-                'user_id' => auth()->id(),
-                'header' => $this->dto['header'],
-                'filter' => 'schoolSelectedIds',
-                'values' => implode(',', $this->filters->schoolsSelectedIds)
-
-            ]
-        );
-    }
+//    private function updateUserFiltersTable(): void
+//    {
+//        UserFilter::create(
+//            [
+//                'user_id' => auth()->id(),
+//                'header' => $this->dto['header'],
+//                'filter' => 'schoolSelectedIds',
+//                'values' => implode(',', $this->filters->schoolsSelectedIds)
+//
+//            ]
+//        );
+//    }
 }

@@ -32,7 +32,8 @@ class EnsembleForm extends Form
         return [
             'name' => [
                 'required', 'string', Rule::unique('ensembles')->where(function ($query) {
-                    return $query->where('school_id', $this->schoolId);
+                    return $query->where('school_id', $this->schoolId)
+                        ->whereNot('id', $this->sysId);
                 })
             ]
         ];
