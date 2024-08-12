@@ -4,7 +4,9 @@ namespace App\Livewire\Students;
 
 use App\Exports\StudentsExport;
 use App\Livewire\BasePage;
+use App\Models\Schools\SchoolTeacher;
 use App\Models\Students\Student;
+use App\Models\StudentTeacher;
 use App\Models\UserSort;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -72,6 +74,21 @@ class StudentsTableComponent extends BasePage
     public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
     {
         return Excel::download(new StudentsExport, 'students.csv');
+    }
+
+    public function remove(int $studentId): void
+    {
+        $student = Student::find($studentId);
+
+        $studentTeacher = StudentTeacher::query()
+            ->where('student_id', $studentId)
+            ->where('teacher_id', auth()->user()->teacher->id)
+            ->first();
+
+        $studentTeacher->delete();
+
+        $this->showSuccessIndicator = true;
+        $this->successMessage = $student->user->name.' has been removed from your roster.';
     }
 
     public function sortBy(string $key): void

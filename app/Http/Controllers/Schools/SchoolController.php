@@ -6,6 +6,7 @@ use App\Data\ViewDataFactory;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Schools\SchoolRequest;
 use App\Models\Schools\School;
+use App\Models\UserConfig;
 
 class SchoolController extends Controller
 {
@@ -25,6 +26,9 @@ class SchoolController extends Controller
 
     public function edit(School $school)
     {
+        //set UserConfig property
+        UserConfig::setProperty('schoolId', $school->id);
+
         $data = new ViewDataFactory(__METHOD__, $school);
 
         $dto = $data->getDto();

@@ -44,18 +44,26 @@ class Filters extends Form
 
     public function init(string $header)
     {
+        Log::info(__METHOD__.': '.__LINE__);
+        Log::info('header: '.$header);
         $this->header = $header;
         $this->versionId = (int) UserConfig::getValue('versionId');
 
-        if ($this->header === 'school edit') {
+        if ($this->header === 'ensembles') {
+
+            //initially set schools filter to include ALL schools
+            $this->schoolsSelectedIds = $this->setSchoolsSelectedIds();
+
+        } elseif ($this->header === 'school edit') {
+
+            Log::info(__METHOD__.': '.__LINE__);
             Log::info($this->header.' found; no filters.');
             logger($this->header.' found; no filters.');
+
         } elseif ($this->header === 'students') {
 
             //initially set schools filter to include ALL schools
-            $this->schoolsSelectedIds = auth()->user()->teacher->schools
-                ->pluck('id')
-                ->toArray();
+            $this->schoolsSelectedIds = $this->setSchoolsSelectedIds();
 
             //initially set classOfs filter to include ALL classOfs for auth()->user()->teacher
             $this->classOfsSelectedIds = auth()->user()->teacher->students
@@ -63,13 +71,15 @@ class Filters extends Form
                 ->sortByDesc('class_of')
                 ->pluck('class_of')
                 ->toArray();
-
+//Log::info(__METHOD__ . ': ' . __LINE__);
+//Log::info('classOfsSelectedIds: ' . implode(',', $this->classOfsSelectedIds));
             //initially set voicePartIds filter to include ALL voicePartIds for auth()->user()->teacher
             $this->voicePartIdsSelectedIds = auth()->user()->teacher->students
                 ->unique('voice_part_id')
                 ->sortByDesc('voice_part_id')
                 ->pluck('voice_part_id')
                 ->toArray();
+
         } elseif ($this->header === 'candidates') {
 
             //initially set candidateGrades filter to include ALL candidate grades
@@ -267,7 +277,8 @@ class Filters extends Form
     public function filterStudentsByClassOfs($query)
     {
         $this->interpretAggregateClassOfValues();
-
+//Log::info(__METHOD__ . ': ' . __LINE__);
+//Log::info(implode(' | ' , $this->classOfsSelectedIds));
         return $query->whereIn('students.class_of', $this->classOfsSelectedIds);
     }
 
@@ -293,11 +304,19 @@ class Filters extends Form
 
     public function getPreviousFilterArray(string $filter, string $header): array
     {
+//Log::info(__METHOD__ . ': ' . __LINE__);
+//Log::info(implode(' | ', $this->classOfsSelectedIds));
         $row = UserFilter::query()
             ->where('user_id', auth()->id())
             ->where('header', $header)
             ->where('filter', $filter)
             ->first();
+//Log::info(__METHOD__ . ': ' . __LINE__);
+//Log::info( 'userFilter query: ' . UserFilter::query()
+//    ->where('user_id', auth()->id())
+//    ->where('header', $header)
+//    ->where('filter', $filter)
+//    ->toRawSql());
 
         return $row && strlen($row->values) ? explode(',', $row->values) : [];
     }
@@ -338,7 +357,7 @@ class Filters extends Form
         $str = '';
 
         $str = implode(',', $this->$filter);
-        Log::info('string: '.$str);
+
         UserFilter::updateOrCreate(
             [
                 'user_id' => auth()->id(),
@@ -380,20 +399,28 @@ class Filters extends Form
 
     private function interpretAggregateClassOfValues(): void
     {
+//Log::info(__METHOD__ . ': ' . __LINE__);
+//Log::info(implode(' | ' , $this->classOfsSelectedIds));
+
         if (in_array('current', $this->classOfsSelectedIds) ||
             in_array('alum', $this->classOfsSelectedIds)) {
-
+//Log::info(__METHOD__ . ': ' . __LINE__);
+//Log::info(implode(' | ' , $this->classOfsSelectedIds));
             $service = new CalcSeniorYearService();
             $srYear = $service->getSeniorYear();
 
             (in_array('alum', $this->classOfsSelectedIds))
                 ? $this->interpretAggregateClassOfValuesAlum($srYear)
                 : $this->interpretAggregateClassOfValuesCurrent($srYear);
+//Log::info(__METHOD__ . ': ' . __LINE__);
+//Log::info(implode(' | ' , $this->classOfsSelectedIds));
         }
     }
 
     private function interpretAggregateClassOfValuesAlum(int $srYear): void
     {
+//Log::info(__METHOD__ . ': ' . __LINE__);
+//Log::info(implode(' | ' , $this->classOfsSelectedIds));
         $this->reset('classOfsSelectedIds');
 
         foreach ($this->getTeacherClassOfs() as $classOf) {
@@ -403,10 +430,14 @@ class Filters extends Form
                 $this->classOfsSelectedIds[] = $classOf;
             }
         }
+//Log::info(__METHOD__ . ': ' . __LINE__);
+//Log::info(implode(' | ' , $this->classOfsSelectedIds));
     }
 
     private function interpretAggregateClassOfValuesCurrent(int $srYear): void
     {
+//Log::info(__METHOD__ . ': ' . __LINE__);
+//Log::info(implode(' | ' , $this->classOfsSelectedIds));
         $this->reset('classOfsSelectedIds');
 
         foreach ($this->getTeacherClassOfs() as $classOf) {
@@ -416,5 +447,14 @@ class Filters extends Form
                 $this->classOfsSelectedIds[] = $classOf;
             }
         }
+//Log::info(__METHOD__ . ': ' . __LINE__);
+//Log::info(implode(' | ' , $this->classOfsSelectedIds));
+    }
+
+    private function setSchoolsSelectedIds(): array
+    {
+        return auth()->user()->teacher->schools
+            ->pluck('id')
+            ->toArray();
     }
 }
