@@ -1,6 +1,7 @@
 @props([
     'advisory' => '',
     'autofocus' => false,
+    'blur' => false,
     'disabled' => 0,
     'hint' => '',
     'label',
@@ -15,7 +16,9 @@
     <label for="{{ $name }}" class="{{ $required }}">
         {!! ucwords($label) !!}
     </label>
-    <select wire:model.live="{{ $name }}"
+    <select @if($blur) wire:model.blur @else
+        wire:model.live
+    @endif ="{{ $name }}"
             @class([
                 'narrow',
                 'border border-red-600' => $errors->has($name),

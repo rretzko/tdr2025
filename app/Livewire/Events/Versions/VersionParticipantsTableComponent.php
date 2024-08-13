@@ -68,11 +68,6 @@ class VersionParticipantsTableComponent extends BasePage
 
         VersionParticipant::insert($data);
         $version = Version::find($this->dto['id']);
-        foreach ($version->versionParticipants as $participant) {
-
-            echo $participant->id.'<br />';
-        }
-        Log::info('participant count: '.$version->versionParticipants->count());
     }
 
     private function getColumnHeaders(): array

@@ -47,6 +47,8 @@
                     name="form.seniorClassId"
                     :options="$seniorClasses"
                     required="required"
+                    {{--                    hint="srClassId: {{ $form->seniorClassId }}"--}}
+                    :blur=true
                 />
 
                 {{-- STATUS --}}
