@@ -20,6 +20,9 @@ class CurrentVersionController extends Controller
 
         $version = $event->getCurrentVersion();
 
+        //persist versionId property
+        UserConfig::setProperty('versionId', $version->id);
+
         if ($version->id) { //existing version found
 
             UserConfig::updateOrCreate(

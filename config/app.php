@@ -27,6 +27,7 @@ return [
     */
 
     'env' => env('APP_ENV', 'production'),
+    'dbname' => env('DB_DATABASE', 'laravel'),
 
     /*
     |--------------------------------------------------------------------------

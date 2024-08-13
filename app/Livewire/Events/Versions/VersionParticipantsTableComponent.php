@@ -4,6 +4,8 @@ namespace App\Livewire\Events\Versions;
 
 use App\Exports\VersionParticipantsExport;
 use App\Livewire\BasePage;
+use App\Models\Events\Event;
+use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionParticipant;
 use App\Models\Schools\Teacher;
 use App\Models\User;
@@ -45,6 +47,34 @@ class VersionParticipantsTableComponent extends BasePage
             ]);
     }
 
+    private function cloneMostRecentParticipants(Version $mostRecentVersion): void
+    {
+        $participants = $mostRecentVersion->versionParticipants;
+
+        if (!$participants->count()) {
+            return;
+        }
+
+        $versionId = $this->dto['id'];
+        $data = [];
+
+        foreach ($participants as $participant) {
+            $data[] = [
+                'version_id' => $versionId,
+                'user_id' => $participant->user_id,
+                'status' => 'invited',
+            ];
+        }
+
+        VersionParticipant::insert($data);
+        $version = Version::find($this->dto['id']);
+        foreach ($version->versionParticipants as $participant) {
+
+            echo $participant->id.'<br />';
+        }
+        Log::info('participant count: '.$version->versionParticipants->count());
+    }
+
     private function getColumnHeaders(): array
     {
         return [
@@ -55,14 +85,49 @@ class VersionParticipantsTableComponent extends BasePage
         ];
     }
 
+    private function getCurrentOrMostRecentVersionId(): int
+    {
+        $currentVersionId = $this->dto['id'];
+        $statuses = ['invited', 'obligated', 'participating'];
+        $participantCount = VersionParticipant::query()
+            ->where('version_id', $currentVersionId)
+            ->whereIn('status', $statuses)
+            ->count();
+
+        return ($participantCount)
+            ? $currentVersionId
+            : $this->getMostRecentVersionId();
+    }
+
+    private function getMostRecentVersionId(): int
+    {
+        $version = Version::find($this->dto['id']);
+        $mostRecentVersion = $version->event->versions()
+            ->whereNot('id', $this->dto['id'])
+            ->first();
+
+        if ($mostRecentVersion->versionParticipants->count()) {
+
+            $this->cloneMostRecentParticipants($mostRecentVersion);
+
+            return $mostRecentVersion->id;
+        }
+
+        return $this->dto['id'];
+
+
+    }
+
     private function getRows(): Builder
     {
+        $versionId = $this->getCurrentOrMostRecentVersionId();
+
         return VersionParticipant::query()
             ->join('users', 'users.id', '=', 'version_participants.user_id')
             ->join('teachers', 'teachers.user_id', '=', 'users.id')
             ->join('school_teacher', 'school_teacher.teacher_id', '=', 'teachers.id')
             ->join('schools', 'schools.id', '=', 'school_teacher.school_id')
-            ->where('version_id', $this->dto['id'])
+            ->where('version_id', $versionId)
             ->where(function ($query) {
                 $query->where('users.name', 'LIKE', '%'.$this->search.'%')
                     ->orWhere('schools.name', 'LIKE', '%'.$this->search.'%');

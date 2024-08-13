@@ -15,7 +15,7 @@
             @endif
 
             {{-- RECORDS PER PAGE --}}
-            @if(count($rows) > 15)
+            @if($rows->total() > 15)
                 <x-forms.indicators.recordsPerPage/>
             @else
                 <div></div>

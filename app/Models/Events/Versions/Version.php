@@ -6,6 +6,7 @@ use App\Models\Events\Event;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Version extends Model
@@ -34,5 +35,10 @@ class Version extends Model
     public function event(): BelongsTo
     {
         return $this->belongsTo(Event::class);
+    }
+
+    public function versionParticipants(): HasMany
+    {
+        return $this->hasMany(VersionParticipant::class);
     }
 }

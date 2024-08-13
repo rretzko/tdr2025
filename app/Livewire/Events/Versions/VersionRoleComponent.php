@@ -37,7 +37,6 @@ class VersionRoleComponent extends BasePage
         $this->versionId = $this->dto['id'];
 
         $this->sortCol = 'users.last_name';
-
     }
 
     public function render()

@@ -462,6 +462,11 @@ adjudication work, to assign cut-off values, run final scoring reports, and rele
 <p>Using the "Search" box, you may search by the participant or school\'s  name.</p>
 <p>The table may be sorted by name, school or status by clicking the
 appropriate column header.</p>
+<p>When creating a new version, teachers who have completed the obligations form or who
+have participated in the last event version will be automatically added to your roster with
+the status of "invited".  The is done to save you the effort of re-loading participants who
+are likely to participate again.  You should review this list and remove any teachers who should
+not be included.</p>
 <p>There are two short forms embedded in the table:
 <ul>
 <li><strong>Add Participant</strong> form: Accessed by clicking the green button with the plus sign.
