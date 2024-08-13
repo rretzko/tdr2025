@@ -37,6 +37,15 @@ class Version extends Model
         return $this->belongsTo(Event::class);
     }
 
+    public function showPitchFiles(string $type = ''): bool
+    {
+        return match ($type) {
+            'student' => (bool) $this->pitch_files_student,
+            'teacher' => (bool) $this->pitch_files_teacher,
+            '' => (bool) ($this->pitch_files_student || $this->pitch_files_teacher),
+        };
+    }
+
     public function versionParticipants(): HasMany
     {
         return $this->hasMany(VersionParticipant::class);

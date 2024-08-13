@@ -141,9 +141,15 @@ class Filters extends Form
                 ->orderBy('version_pitch_files.file_type')
                 ->pluck('version_pitch_files.file_type', 'version_pitch_files.file_type')
                 ->toArray();
+        } elseif ($this->header === 'version pitch files') {
 
-        } else {
-
+            //initially set pitchFileFileTypes filter to include all file types for pitch files
+            $this->pitchFileFileTypesSelectedIds = VersionPitchFile::query()
+                ->where('version_pitch_files.version_id', UserConfig::getValue('versionId'))
+                ->distinct('version_pitch_files.file_type')
+                ->orderBy('version_pitch_files.file_type')
+                ->pluck('version_pitch_files.file_type', 'version_pitch_files.file_type')
+                ->toArray();
 
             //initially set pitchFileVoiceParts filter to include ALL voicePartIds for pitch files
             $this->pitchFileVoicePartsSelectedIds = VersionPitchFile::query()
@@ -155,13 +161,10 @@ class Filters extends Form
                 ->pluck('voice_parts.id')
                 ->toArray();
 
-            //initially set pitchFileFileTypes filter to include all file types for pitch files
-            $this->pitchFileFileTypesSelectedIds = VersionPitchFile::query()
-                ->where('version_pitch_files.version_id', UserConfig::getValue('versionId'))
-                ->distinct('version_pitch_files.file_type')
-                ->orderBy('version_pitch_files.file_type')
-                ->pluck('version_pitch_files.file_type', 'version_pitch_files.file_type')
-                ->toArray();
+        } else {
+
+            Log::info(__METHOD__.': '.__LINE__);
+            Log::info('no workflow for header: '.$this->header);
         }
     }
 

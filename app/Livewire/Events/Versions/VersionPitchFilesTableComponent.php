@@ -24,6 +24,7 @@ class VersionPitchFilesTableComponent extends BasePage
     public VersionPitchFileForm $form;
     public bool $showAddForm = false;
     public bool $showEditForm = false;
+    public bool $showPitchFiles = false;
     public int $versionId = 0;
     public int $eventId = 0;
     public array $voiceParts = [];
@@ -66,6 +67,9 @@ class VersionPitchFilesTableComponent extends BasePage
 
         //form
         $this->form->setDefaults($this->versionId, $this->voiceParts);
+
+        //pitchFileAvailability
+        $this->showPitchFiles = $version->showPitchFiles();
     }
 
     public function render()
@@ -219,10 +223,18 @@ class VersionPitchFilesTableComponent extends BasePage
             ->event
             ->eventEnsembles;
 
+        if (!$eventEnsembles) {
+            return [];
+        }
+
         // Collect all voice part IDs
         $voicePartIds = $eventEnsembles->flatMap(function ($ensemble) {
             return explode(',', $ensemble->voice_part_ids);
         })->unique()->toArray();
+
+        if (!$voicePartIds) {
+            return [];
+        }
 
         // Fetch and sort the voice parts
         return VoicePart::whereIn('id', $voicePartIds)

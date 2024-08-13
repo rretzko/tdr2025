@@ -20,20 +20,10 @@ class CurrentVersionController extends Controller
 
         $version = $event->getCurrentVersion();
 
-        //persist versionId property
-        UserConfig::setProperty('versionId', $version->id);
-
         if ($version->id) { //existing version found
 
-            UserConfig::updateOrCreate(
-                [
-                    'user_id' => auth()->id(),
-                    'property' => 'versionId',
-                ],
-                [
-                    'value' => $version->id,
-                ]
-            );
+            //persist versionId property
+            UserConfig::setProperty('versionId', $version->id);
 
             return redirect()->route('version.show', ['version' => $version]);
 
