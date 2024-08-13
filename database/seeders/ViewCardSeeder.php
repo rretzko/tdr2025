@@ -147,7 +147,7 @@ class ViewCardSeeder extends Seeder
             [
                 'header' => 'version dashboard',
                 'color' => 'red',
-                'description' => '<p>Scoring.</p>',
+                'description' => '<p>Add, edit, and remove adjudication scoring factors (best/worst scores, scoring order, multipliers, etc.).</p>',
                 'heroicon' => 'heroicons.star',
                 'href' => '/version/scoring',
                 'label' => 'scoring',
@@ -156,7 +156,8 @@ class ViewCardSeeder extends Seeder
             [
                 'header' => 'version dashboard',
                 'color' => 'yellow',
-                'description' => '<p>Attachments and PDFs</p>',
+                'description' => '<p>Notify Rick for any attachments or pdfs which need to be included within TheDirectorsRoom.com or StudentFolder.info.
+For example: applications, estimate forms/invoices, score copies, logos, etc.</p>',
                 'heroicon' => 'heroicons.documentCheck',
                 'href' => '/version/attachments',
                 'label' => 'attachments',
