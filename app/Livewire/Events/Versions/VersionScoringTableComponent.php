@@ -56,7 +56,7 @@ class VersionScoringTableComponent extends BasePage
             $version = $versions[1];
 
             $previousScorings = VersionScoring::query()
-                ->where('version_id', 2) //$version->id));
+                ->where('version_id', $version->id)
                 ->get();
 
             //use the previous scorings to create current models
@@ -102,6 +102,7 @@ class VersionScoringTableComponent extends BasePage
 
     private function getRows(): Builder
     {
+
         return (VersionScoring::query()
             ->where('version_id', $this->versionId)
             ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))->exists())
