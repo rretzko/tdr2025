@@ -54,6 +54,31 @@ class Filters extends Form
             //initially set schools filter to include ALL schools
             $this->schoolsSelectedIds = $this->setSchoolsSelectedIds();
 
+            //initially set ensembles filter to include ALL schools' ensembles
+            foreach (auth()->user()->teacher->schools as $school) {
+                foreach ($school->ensembles as $ensemble) {
+                    $this->ensemblesSelectedIds[] = $ensemble->id;
+                }
+            }
+
+            //initially set ensembleYears filter to include ALL ensembles' school years
+            $this->ensembleYearsSelectedIds = array_values($this->ensembleYears());
+
+        } elseif ($this->header === 'members') {
+
+            //initially set schools filter to include ALL schools
+            $this->schoolsSelectedIds = $this->setSchoolsSelectedIds();
+
+            //initially set ensembles filter to include ALL schools' ensembles
+            foreach (auth()->user()->teacher->schools as $school) {
+                foreach ($school->ensembles as $ensemble) {
+                    $this->ensemblesSelectedIds[] = $ensemble->id;
+                }
+            }
+
+            //initially set ensembleYears filter to include ALL ensembles' school years
+            $this->ensembleYearsSelectedIds = array_values($this->ensembleYears());
+
         } elseif ($this->header === 'school edit') {
 
             Log::info(__METHOD__.': '.__LINE__);
@@ -119,15 +144,6 @@ class Filters extends Form
 
         } else {
 
-            //initially set ensembles filter to include ALL schools' ensembles
-            foreach (auth()->user()->teacher->schools as $school) {
-                foreach ($school->ensembles as $ensemble) {
-                    $this->ensemblesSelectedIds[] = $ensemble->id;
-                }
-            }
-
-            //initially set ensembleYears filter to include ALL ensembles' school years
-            $this->ensembleYearsSelectedIds = array_values($this->ensembleYears());
 
             //initially set pitchFileVoiceParts filter to include ALL voicePartIds for pitch files
             $this->pitchFileVoicePartsSelectedIds = VersionPitchFile::query()

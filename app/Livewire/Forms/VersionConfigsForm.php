@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Forms;
 
+use App\Models\Events\Event;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionConfigAdjudication;
 use App\Models\Events\Versions\VersionConfigMembership;
@@ -19,7 +20,7 @@ class VersionConfigsForm extends Form
     public int $fileUploadCount = 1;
     public int $judgeCount = 1;
     public bool $roomMonitor = false;
-    public bool $scoresAscending = true;
+    public int $scoresAscending = 0;
     public string $sysId = 'new';
 
     //registrants vars
@@ -36,13 +37,26 @@ class VersionConfigsForm extends Form
 
     public function setRowAdjudication(int $versionId): void
     {
+        //check of a VersionConfigAdjudication row exists
+        $vca = VersionConfigAdjudication::where('version_id', $versionId)
+            ->first();
+
+        //else check if a previous $vca version exists.
+        // if so, clone it
+        if (!$vca && $this->canClonePreviousVersion($versionId)) {
+            $vca = $this->clonePreviousVersion($versionId);
+        }
+
+        //if neither of the above (first version of a new event),
+        //create a fresh $vsa using default values
+        if (!$vca) {
+            $vca = VersionConfigAdjudication::create(['version_id' => $versionId]);
+        }
+
         if (VersionConfigAdjudication::where('version_id', $versionId)->exists()) {
 
             $vca = VersionConfigAdjudication::where('version_id', $versionId)->first();
 
-        } else { //use default values
-
-            $vca = VersionConfigAdjudication::create(['version_id' => $versionId]);
         }
 
         $this->alternatingScores = $vca->alternating_scores ?? false;
@@ -51,7 +65,7 @@ class VersionConfigsForm extends Form
         $this->fileUploadCount = $vca->upload_count ?? 1;
         $this->judgeCount = $vca->judge_per_room_count ?? 1;
         $this->roomMonitor = $vca->room_monitor ?? 0;
-        $this->scoresAscending = $vca->scores_ascending;
+        $this->scoresAscending = $vca->scores_ascending ?? 0;
         $this->sysId = $vca->id;
     }
 
@@ -146,6 +160,40 @@ scores may contain multiple individuals.';
                     'audition_count' => $this->auditionCount,
                 ]
             );
+    }
+
+    private function canClonePreviousVersion(int $versionId): bool
+    {
+        $eventId = Version::find($versionId)->event_id;
+        $event = Event::find($eventId);
+        $versions = $event->versions();
+
+        return (bool) $versions->count();
+    }
+
+    private function clonePreviousVersion(int $versionId): VersionConfigAdjudication
+    {
+        $eventId = Version::find($versionId)->event_id;
+        $event = Event::find($eventId);
+        //exclude current version
+        $mostRecentVersion = $event->versions()
+            ->whereNot('id', $versionId)
+            ->first();
+        $mostRecentVca = VersionConfigAdjudication::where('version_id', $mostRecentVersion->id)
+            ->first();
+
+        return VersionConfigAdjudication::create(
+            [
+                'version_id' => $versionId,
+                'upload_count' => $mostRecentVca->upload_count,
+                'upload_types' => $mostRecentVca->upload_types,
+                'judge_per_room_count' => $mostRecentVca->judge_per_room_count,
+                'room_monitor' => $mostRecentVca->room_monitor,
+                'averaged_scores' => $mostRecentVca->averaged_scores,
+                'scores_ascending' => $mostRecentVca->scores_ascending,
+                'alternating_scores' => $mostRecentVca->alternating_scores,
+            ]
+        );
     }
 
     private function cleanFileTypes(): string

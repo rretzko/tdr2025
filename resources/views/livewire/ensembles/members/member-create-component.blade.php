@@ -62,7 +62,7 @@
                         blur=""
                         label="member name"
                         name="form.name"
-                        placeholder="Enter first or last and tab out to search"
+                        placeholder="Enter first or last name"
                         required
                         :results="$resultsName"
                     />

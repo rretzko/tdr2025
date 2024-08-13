@@ -46,7 +46,7 @@
                     {{ $loop->iteration + (($rows->currentPage() - 1) * $recordsPerPage) }}
                 </td>
                 <td class="border border-gray-200 px-1">
-                    <div>{{ $row['last_name'] . ($row['suffix_name'] ? ' ' . $row['suffix_name'] : '') . ', ' . $row['first_name'] . $row['middle_name'] }}</div> {{-- student name --}}
+                    <div>{{ $row['last_name'] . ($row['suffix_name'] ? ' ' . $row['suffix_name'] : '') . ', ' . $row['first_name'] . ' ' . $row['middle_name'] }}</div> {{-- student name --}}
                     <div class="ml-2 text-xs italic">{{ $row['schoolName'] }}</div>
                     <div class="ml-2 text-xs italic">{{ $row['email'] }}</div>
                     <div class="ml-2 text-xs italic">{{ $row['phoneMobile'] }}</div>

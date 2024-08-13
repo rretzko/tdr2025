@@ -15,6 +15,9 @@ class CurrentVersionController extends Controller
      */
     public function __invoke(Request $request, Event $event)
     {
+        //set eventId property
+        UserConfig::setProperty('eventId', $event->id);
+
         $version = $event->getCurrentVersion();
 
         if ($version->id) { //existing version found

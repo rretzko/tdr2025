@@ -415,7 +415,45 @@ ul>
             [
                 'header' => 'version dates edit',
                 'instructions' => '<p>Version Dates edit page</p>
-<p>Version Dated edit page instructions</p>'
+<p>If you are using this for the first time, please note the following:
+<ul>
+<li>Date values created by the system will use the current date and then set the "open"
+values to one second after midnight (12:00:01 AM) and the close values to one second after
+midnight (11:59:59 PM).</li>
+<li>
+If you are creating a new version and a previous version is available, the system will add one
+ year to the previous version\'s value to provide a suggested date.
+</li>
+<li>Dates control access to TheDirectorsRoom.com pages as follows:
+<ul>
+<li><strong>Administrative</strong>: ONLY members that you have identified with a management
+role will have access to Event Management pages between the dates/times indicated.</li>
+<li><strong>Membership</strong>: Registration pages will be made available to your membership
+between the dates/times indicated.</li>
+<li><strong>Final Teacher Changes</strong>: Your membership teachers will be able to edit
+their student\'s registration information up to the date/time indicated.  Note that the
+this date is typically set a few days after the <strong>Student Close Date</strong>
+to give the teachers time to review their student input. <br />It is recommended
+that you set this date\'s time to something <u>within normal business hours</u> otherwise you may
+find yourself monitoring system activity much later in the night for the procrastinators in
+your membership.</li>
+<li><strong>Postmark</strong>: This is advisory only and has not impact on the system processes,
+but it can be used to advise your membership of the postmark deadline if one exists.</li>
+<li><strong>Student</strong>: Your membership teacher\'s should remind their students that
+registration information updates is ONLY available from StudentFolder.info between these
+dates/times.  Note that the <strong>Final Teacher Changes</strong> are typically set a few
+days after this close date/time to give the teachers time to review their student input.</li>
+<li><strong>Judging</strong>: The adjudication pages will be available to those members with
+assigned judging roles between the dates/times indicated. <br />It is recommended
+that you set this date\'s time to something <u>within normal business hours</u> otherwise
+you may find yourself monitoring system activity much later in the night for the procrastinators in
+your membership.</li>
+<li><strong>Tab Room</strong>: The tab room pages will be available to those members with
+assigned Tab Room roles between the date/times indicated.  Tab Room pages are used to monitor
+adjudication work, to assign cut-off values, run final scoring reports, and release results.</li>
+</ul>
+</li>
+</ul></p>'
             ],
             [
                 'header' => 'version participants',

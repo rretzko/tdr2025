@@ -16,6 +16,7 @@ class VersionProfileController extends Controller
      */
     public function create(Request $request, Event $event)
     {
+        //set eventId property
         UserConfig::setProperty('eventId', $event->id);
 
         $data = new ViewDataFactory(__METHOD__);//, $event->id);

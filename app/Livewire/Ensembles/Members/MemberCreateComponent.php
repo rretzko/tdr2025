@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Ensembles\Members;
 
+use App\Models\Ensembles\Ensemble;
 use App\Models\Pronoun;
 use App\Models\Students\Student;
 use Illuminate\Support\Facades\DB;
@@ -23,8 +24,8 @@ class MemberCreateComponent extends BasePageMember
 
         if (count($this->filters->ensembles()) === 1) {
 
-            $this->form->ensembleId = array_key_first($this->getEnsembles());
-            $this->form->ensembleName = $this->getEnsembles()[$this->form->ensembleId];
+            $this->form->ensembleId = array_key_first($this->filters->ensembles());
+            $this->form->ensembleName = Ensemble::find($this->form->ensembleId)->name;
         }
     }
 
@@ -80,6 +81,7 @@ class MemberCreateComponent extends BasePageMember
                 ->join('users', 'users.id', '=', 'students.user_id')
                 ->join('school_student', 'school_student.student_id', '=', 'students.id')
                 ->where('users.name', 'LIKE', '%'.$this->form->name.'%')
+                ->where('school_student.school_id', $this->form->schoolId)
                 ->select(DB::raw("CONCAT(users.name, ' (', students.class_of, ')') as name_with_class"), 'students.id')
                 ->pluck('name_with_class', 'students.id')
                 ->toArray();

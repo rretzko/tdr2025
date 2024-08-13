@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Forms;
 
+use App\Models\Events\Event;
+use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionConfigDate;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
@@ -22,6 +24,8 @@ class VersionDatesForm extends Form
     public string $sysId = 'new';
     public string $tabRoomClose = '';
     public string $tabRoomOpen = '';
+
+    private Version $mostRecentVersion;
 
     public function rules(): array
     {
@@ -75,9 +79,11 @@ class VersionDatesForm extends Form
 
             } else {
 
+                $this->setMostRecentVersion();
+
                 //defaults
                 $defaults = [
-                    'adjudicationOpen' => Carbon::now()->setTime(7, 0, 0),
+                    'adjudicationOpen' => $this->cloneOrCreate($var),
                     'adjudicationClose' => Carbon::now()->setTime(15, 30, 0),
                     'adminOpen' => Carbon::now()->setTime(0, 0, 1),
                     'adminClose' => Carbon::now()->setTime(23, 59, 59),
@@ -127,6 +133,38 @@ class VersionDatesForm extends Form
             ->where('date_type', $date_type)
             ->update(['version_date' => $versionDate]);
 
+    }
+
+    private function cloneOrCreate(string $var): string
+    {
+        $date_type = Str::snake($var); //ex: adjudication_close
+        //Carbon object or null
+        $dateToClone = VersionConfigDate::query()
+            ->where('version_id', $this->mostRecentVersion->id)
+            ->where('date_type', $date_type)
+            ->first();
+
+        if ($dateToClone) { //add a year to the current value
+
+            return Carbon::parse($dateToClone->version_date)->addYear()->format('Y-m-d H:i:s');
+
+        } else {
+
+            return Carbon::now()
+                ->setTime(7, 0, 0)
+                ->format('Y-m-d H:m:s');
+        }
+
+    }
+
+    private function setMostRecentVersion(): void
+    {
+        $currentVersion = Version::find($this->sysId);
+        $event = Event::find($currentVersion->event_id);
+
+        $this->mostRecentVersion = $event->versions()
+            ->whereNot('id', $this->sysId)
+            ->first();
     }
 
 }

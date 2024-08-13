@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 class UserConfig extends Model
 {
@@ -21,10 +22,16 @@ class UserConfig extends Model
 
     public static function getValue(string $property): string
     {
-        return UserConfig::query()
+        $query = UserConfig::query()
             ->where('user_id', auth()->id())
             ->where('property', $property)
-            ->value('value') ?? '';
+            ->value('value');
+
+        if ($query === null) {
+            return '';
+        }
+
+        return Str::endsWith($property, 'Id') ? (int) $query : (string) $query;
     }
 
     public static function setProperty(string $property, string $value, string $header = 'all'): void
