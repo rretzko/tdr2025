@@ -6,6 +6,7 @@ use App\Models\Events\Event;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionConfigDate;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Livewire\Form;
 
@@ -67,47 +68,16 @@ class VersionDatesForm extends Form
             $vcds = VersionConfigDate::where('version_id', $versionId)->get();
         }
 
+        //loop through $dateTypes
+        //if date_type is found in the current version_id, use that to populate the dateType variable
+        //else clone that data_type from the most recent previous version
         foreach ($dateTypes as $dateType) { //ex. adjudication_close
 
-            $var = Str::camel($dateType); //ex adjudication_close === adjudicationClose
+            if (!$this->setDateTypeToDbValue($vcds, $dateType)) {
 
-            $versionDate = $vcds->where('date_type', $dateType)->first();
-
-            if ($versionDate) {
-
-                $this->$var = $versionDate->version_date;//->format('Y-m-d h:i a');
-
-            } else {
-
-                $this->setMostRecentVersion();
-
-                //defaults
-                $defaults = [
-                    'adjudicationOpen' => $this->cloneOrCreate($var),
-                    'adjudicationClose' => Carbon::now()->setTime(15, 30, 0),
-                    'adminOpen' => Carbon::now()->setTime(0, 0, 1),
-                    'adminClose' => Carbon::now()->setTime(23, 59, 59),
-                    'finalTeacherChanges' => Carbon::now()->setTime(0, 30, 0),
-                    'membershipOpen' => Carbon::now()->setTime(0, 0, 1),
-                    'membershipClose' => Carbon::now()->setTime(15, 30, 0),
-                    'postmarkDeadline' => Carbon::now()->setTime(17, 0, 0),
-                    'studentOpen' => Carbon::now()->setTime(0, 0, 1),
-                    'studentClose' => Carbon::now()->setTime(15, 30, 0),
-                    'tabRoomOpen' => Carbon::now()->setTime(0, 0, 1),
-                    'tabRoomClose' => Carbon::now()->setTime(23, 59, 59),
-                ];
-
-                //create row
-                VersionConfigDate::create([
-                    'version_id' => $versionId,
-                    'date_type' => $dateType,
-                    'version_date' => $defaults[Str::camel($dateType)],
-                ]);
-
-                $this->$var = VersionConfigDate::where('version_id', $versionId)
-                    ->where('date_type', $dateType)
-                    ->first()->version_date;
+                $this->setDateTypeToClonedValue($versionId, $dateType);
             }
+
         }
 
     }
@@ -148,13 +118,53 @@ class VersionDatesForm extends Form
 
             return Carbon::parse($dateToClone->version_date)->addYear()->format('Y-m-d H:i:s');
 
-        } else {
+        } else { //set value to 7am of the current date
 
             return Carbon::now()
                 ->setTime(7, 0, 0)
                 ->format('Y-m-d H:m:s');
         }
+    }
 
+    private function setDateTypeToClonedValue(int $versionId, string $date_type): void
+    {
+        //format $date_type to $dateType
+        $dateType = Str::camel($date_type);
+
+        //find the most recent previous version
+        $this->setMostRecentVersion();
+
+        //set the $default value to (previous version's value + one year) or the current date
+        $clonedDate = $this->cloneOrCreate($date_type);
+
+        //create row
+        VersionConfigDate::create([
+            'version_id' => $versionId,
+            'date_type' => $date_type,
+            'version_date' => $clonedDate,
+        ]);
+
+        //set $this->dateType to the found value
+        $this->$dateType = $clonedDate;
+    }
+
+    private function setDateTypeToDbValue(Collection $vcds, string $date_type): bool
+    {
+        //transform $dateType to $date_type
+        $dateType = Str::camel($date_type); //ex adjudication_close === adjudicationClose
+
+        //determine if $date_type exists for the current version_id
+        $versionDate = $vcds->where('date_type', $date_type)->first();
+
+        //if yes, use that $date_type to populate $this->dateType
+        if ($versionDate) {
+
+            $this->$dateType = $versionDate->version_date;//'Y-m-d H:i:s';
+
+            return true;
+        }
+
+        return false;
     }
 
     private function setMostRecentVersion(): void
