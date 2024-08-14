@@ -30,6 +30,8 @@ class Registrant
 
     public function getRegistrantArrayForEstimateForm(): array
     {
+//        $this->test();
+
         return DB::table('candidates')
             ->join('students', 'students.id', '=', 'candidates.student_id')
             ->join('users', 'users.id', '=', 'students.user_id')
@@ -59,5 +61,24 @@ class Registrant
             ->where('school_id', $this->schoolId)
             ->where('status', 'registered')
             ->get();
+    }
+
+    private function test(): void
+    {
+        dd(DB::table('candidates')
+            ->join('students', 'students.id', '=', 'candidates.student_id')
+            ->join('users', 'users.id', '=', 'students.user_id')
+            ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
+            ->where('version_id', $this->versionId)
+            ->whereIn('teacher_id', $this->coTeacherIds)
+            ->where('school_id', $this->schoolId)
+            ->where('status', 'registered')
+            ->select('candidates.id',
+                'users.first_name', 'users.middle_name', 'users.last_name', 'users.suffix_name',
+                'students.class_of',
+                'voice_parts.descr AS voicePartDescr',
+                DB::raw("(12 - (students.class_of - $this->seniorYear)) AS grade"))
+            ->get()
+            ->toArray());
     }
 }

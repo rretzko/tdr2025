@@ -25,12 +25,6 @@
         <x-buttons.export/>
     </div>
 
-    <div class="py-2 w-full flex justify-end">
-        <a href="{{ route('pdf.estimate', 4) }}" class="text-blue-500" title="Download estimate form">
-            <x-heroicons.tableCells/>
-        </a>
-    </div>
-
     <table class="px-4 shadow-lg w-full">
         <thead>
         <tr>

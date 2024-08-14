@@ -61,7 +61,7 @@
                     {{ $row->grade }} {{-- ex. 11 --}}
                 </td>
                 <td class="border border-gray-200 px-1 text-center">
-                    ${{ $registrationFee }} {{-- ex. 25.00 --}}
+                    ${{ $registrationFee * $loop->iteration }} {{-- ex. 25.00 --}}
                 </td>
             </tr>
 

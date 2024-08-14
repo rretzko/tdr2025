@@ -145,7 +145,15 @@ class PdfEstimateDataFactory
 //
     private function getLogo(): string
     {
-        return 'logos/nj-mea-logo.jpg';
+        $logos = [
+            1 => '',
+            9 => 'logos/nj-mea-logo.jpg',
+            19 => '',
+            25 => '',
+        ];
+
+
+        return $logos[$this->event->id]; //'logos/nj-mea-logo.jpg';
     }
 //
 //    private function getPostmarkDeadline(): string
