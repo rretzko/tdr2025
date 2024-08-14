@@ -127,10 +127,12 @@
 
 
     <div>
-        <h2 class="font-semibold underline mt-4">To-Dos</h2>
-        <ul>
-            <li>Event selection by roles</li>
-        </ul>
+        @if(auth()->user()->isFounder())
+            <h2 class="font-semibold underline mt-4">To-Dos</h2>
+            <ul>
+                <li>Event selection by roles</li>
+            </ul>
+        @endif
     </div>
 
     {{-- LOADING COMPONENT AND SPINNER --}}

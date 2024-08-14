@@ -8,7 +8,15 @@
 
         {{-- HEADER and ADD-NEW and EXPORT BUTTONS --}}
         <div class="flex justify-between mb-1">
-            <div>{{ ucwords($dto['header']) }} ({{ $rows->total() }})</div>
+            <div>{{ ucwords($header) }} ({{ $rows->total() }})</div>
+
+            {{-- RECORDS PER PAGE --}}
+            @if($rows->total() > 15)
+                <x-forms.indicators.recordsPerPage/>
+            @else
+                <div></div>
+            @endif
+
         </div>
 
         {{-- FILTERS and TABLE --}}
@@ -22,6 +30,7 @@
             @endif
 
             <div class="flex flex-col w-full">
+                <x-links.linkTop :recordsPerPage="$recordsPerPage" :rows="$rows"/>
                 <x-tables.participationPitchFilesTable
                     :rows="$rows"
                     :columnHeaders="$columnHeaders"
@@ -29,10 +38,12 @@
                     sortAsc="$sortAsc"
                     sortColLabel="$sortColLabel"
                 />
+                <x-links.linkBottom :rows="$rows"/>
 
             </div>
         </div>
     </div>
 
 </div>
+
 

@@ -49,7 +49,26 @@ class Filters extends Form
         $this->header = $header;
         $this->versionId = (int) UserConfig::getValue('versionId');
 
-        if ($this->header === 'ensembles') {
+        if (in_array($this->header, ['candidates', 'candidates table'])) {
+
+            //initially set candidateGrades filter to include ALL candidate grades
+            $this->candidateGradesSelectedIds = Candidate::query()
+                ->join('students', 'students.id', '=', 'candidates.student_id')
+                ->where('version_id', $this->versionId)
+                ->distinct('students.class_of')
+                ->orderBy('students.class_of')
+                ->pluck('students.class_of')
+                ->toArray();
+
+            //initially set candidateStatuses filter to include ALL candidate statuses
+            $this->candidateStatusesSelectedIds = Candidate::query()
+                ->where('version_id', $this->versionId)
+                ->distinct('status')
+                ->orderBy('status')
+                ->pluck('status')
+                ->toArray();
+
+        } elseif ($this->header === 'ensembles') {
 
             //initially set schools filter to include ALL schools
             $this->schoolsSelectedIds = $this->setSchoolsSelectedIds();
@@ -105,25 +124,7 @@ class Filters extends Form
                 ->pluck('voice_part_id')
                 ->toArray();
 
-        } elseif ($this->header === 'candidates') {
-
-            //initially set candidateGrades filter to include ALL candidate grades
-            $this->candidateGradesSelectedIds = Candidate::query()
-                ->join('students', 'students.id', '=', 'candidates.student_id')
-                ->where('version_id', $this->versionId)
-                ->distinct('students.class_of')
-                ->orderBy('students.class_of')
-                ->pluck('students.class_of')
-                ->toArray();
-
-            //initially set candidateStatuses filter to include ALL candidate statuses
-            $this->candidateStatusesSelectedIds = Candidate::query()
-                ->where('version_id', $this->versionId)
-                ->distinct('status')
-                ->orderBy('status')
-                ->pluck('status')
-                ->toArray();
-        } elseif ($this->header === 'pitchFiles') {
+        } elseif (in_array($this->header, ['pitchFiles', 'teacher pitch files', 'version pitch files'])) {
 
             //initially set pitchFileVoiceParts filter to include ALL voicePartIds for pitch files
             $this->pitchFileVoicePartsSelectedIds = VersionPitchFile::query()
@@ -140,25 +141,6 @@ class Filters extends Form
                 ->distinct('version_pitch_files.file_type')
                 ->orderBy('version_pitch_files.file_type')
                 ->pluck('version_pitch_files.file_type', 'version_pitch_files.file_type')
-                ->toArray();
-        } elseif ($this->header === 'version pitch files') {
-
-            //initially set pitchFileFileTypes filter to include all file types for pitch files
-            $this->pitchFileFileTypesSelectedIds = VersionPitchFile::query()
-                ->where('version_pitch_files.version_id', UserConfig::getValue('versionId'))
-                ->distinct('version_pitch_files.file_type')
-                ->orderBy('version_pitch_files.file_type')
-                ->pluck('version_pitch_files.file_type', 'version_pitch_files.file_type')
-                ->toArray();
-
-            //initially set pitchFileVoiceParts filter to include ALL voicePartIds for pitch files
-            $this->pitchFileVoicePartsSelectedIds = VersionPitchFile::query()
-                ->join('voice_parts', 'voice_parts.id', '=', 'version_pitch_files.voice_part_id')
-                ->where('version_pitch_files.version_id', UserConfig::getValue('versionId'))
-                ->distinct('version_pitch_files.voice_part_id')
-                ->select('voice_parts.id', 'voice_parts.order_by')
-                ->orderBy('voice_parts.order_by')
-                ->pluck('voice_parts.id')
                 ->toArray();
 
         } else {

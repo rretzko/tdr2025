@@ -75,6 +75,7 @@ class CandidateForm extends Form
     #[Validate('required|int')]
     public int $teacherId = 0;
     public string $teacherName = "";
+    public bool $uploadsRequired = false;
     #[Validate('required|int')]
     public int $voicePartId = 0;
 
@@ -205,8 +206,8 @@ class CandidateForm extends Form
         $this->email = $this->user->email;
         $this->firstName = $this->user->first_name;
         $this->lastName = $this->user->last_name;
-        $this->middleName = $this->user->middle_name;
-        $this->suffixName = $this->user->suffix_name;
+        $this->middleName = $this->user->middle_name ?? '';
+        $this->suffixName = $this->user->suffix_name ?? '';
 
         $this->emergencyContacts = EmergencyContact::query()
             ->where('student_id', $this->student->id)
@@ -221,6 +222,9 @@ class CandidateForm extends Form
             ->where('version_id', $this->candidate->version_id)
             ->first()
             ->upload_count;
+
+        //determine if any file upload is required
+        $this->uploadsRequired = in_array(Version::find($this->candidate->version_id)->upload_type, ['audio', 'video']);
 
         //file upload types (ex.scales, solo, quartet, etc.
         $this->fileUploads = explode(',', VersionConfigAdjudication::where('version_id', $this->candidate->version_id)

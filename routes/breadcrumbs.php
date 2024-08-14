@@ -15,8 +15,24 @@ Breadcrumbs::for('home', function (BreadcrumbTrail $trail) {
 
 //Candidates
 Breadcrumbs::for('candidates', function (BreadcrumbTrail $trail, $id) {
-    $trail->parent('participation active', $id);
+    $trail->parent('participation dashboard', $id);
     $trail->push('Candidates', route('candidates', $id));
+});
+Breadcrumbs::for('candidates table', function (BreadcrumbTrail $trail, $id) {
+    $trail->parent('participation dashboard', $id);
+    $trail->push('Candidates', route('candidates', $id));
+});
+
+//Teacher Pitch Files
+Breadcrumbs::for('teacher pitch files', function (BreadcrumbTrail $trail, $id) {
+    $trail->parent('participation dashboard', $id);
+    $trail->push('Pitch Files', route('pitchFiles', $id));
+});
+
+//Participation Dashboard
+Breadcrumbs::for('participation dashboard', function (BreadcrumbTrail $trail, $id) {
+    $trail->parent('events participation', $id);
+    $trail->push('Participation Dashboard', route('participation.dashboard', $id));
 });
 
 // Ensembles

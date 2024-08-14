@@ -53,8 +53,10 @@ class PdfApplicationDataFactory
         $this->dto['logo'] = $this->getLogo();
         $this->dto['logoPdf'] = $this->getLogo();
         $this->dto['organizationName'] = $this->event->organization;
+        $this->dto['participationFee'] = $this->getParticipationFee();
         $this->dto['postmarkDeadline'] = $this->getPostmarkDeadline();
         $this->dto['pronounObject'] = $this->getPronoun('object');
+        $this->dto['pronounPersonal'] = $this->getPronoun('personal');
         $this->dto['pronounPossessive'] = $this->getPronoun('possessive');
         $this->dto['schoolName'] = $this->school->name;
         $this->dto['schoolShortName'] = $this->school->shortName;
@@ -126,6 +128,13 @@ class PdfApplicationDataFactory
     private function getLogo(): string
     {
         return 'logos/nj-mea-logo.jpg';
+    }
+
+    private function getParticipationFee(): string
+    {
+        $fee = $this->version->fee_participation;
+
+        return ConvertToUsdService::penniesToUsd($fee);
     }
 
     private function getPostmarkDeadline(): string

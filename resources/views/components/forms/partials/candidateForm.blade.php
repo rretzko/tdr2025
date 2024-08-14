@@ -269,17 +269,19 @@
 
     {{-- RECORDINGS --}}
     <fieldset class="flex flex-col w-full space-y-1 text-sm space-x-2">
-        <h3 class="text-left font-semibold">Audition Recordings</h3>
+        @if($form->uploadsRequired)
+            <h3 class="text-left font-semibold">Audition Recordings</h3>
 
-        <div class="flex flex-col justify-start items-start space-y-2">
-            @foreach($form->fileUploads AS $uploadType)
-                <div class=" shadow-lg p-2" wire:key="auditionFile-{{ $uploadType }}">
-                    <h4 class="font-semibold">{{ ucwords($uploadType) }} Recording</h4>
-                    @if(array_key_exists($uploadType, $form->recordings) && count($form->recordings[$uploadType]))
-                        <div>
-                            <audio id="audioPlayer-{{ $uploadType }}" class="mx-auto" controls style="display: block">
-                                <source id="audioSource-{{ $uploadType }}"
-                                        src="https://auditionsuite-production.s3.amazonaws.com/{{ $form->recordings[$uploadType]['url'] }}"
+            <div class="flex flex-col justify-start items-start space-y-2">
+                @foreach($form->fileUploads AS $uploadType)
+                    <div class=" shadow-lg p-2" wire:key="auditionFile-{{ $uploadType }}">
+                        <h4 class="font-semibold">{{ ucwords($uploadType) }} Recording</h4>
+                        @if(array_key_exists($uploadType, $form->recordings) && count($form->recordings[$uploadType]))
+                            <div>
+                                <audio id="audioPlayer-{{ $uploadType }}" class="mx-auto" controls
+                                       style="display: block">
+                                    <source id="audioSource-{{ $uploadType }}"
+                                            src="https://auditionsuite-production.s3.amazonaws.com/{{ $form->recordings[$uploadType]['url'] }}"
                                         type="audio/mpeg"
                                 >
                                 " Your browser does not support the audio element. "
@@ -317,6 +319,7 @@
                 </div>
             @endforeach
         </div>
+        @endif
 
     </fieldset>
 

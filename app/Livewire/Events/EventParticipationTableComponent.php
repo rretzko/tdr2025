@@ -30,12 +30,15 @@ class EventParticipationTableComponent extends BasePage
     {
         $invited = $this->getRowsInvited();
         $past = $this->getRowsPast();
+        $sandbox = $this->getRowsSandbox();
 
-        return array_merge($invited, $past);
+        return array_merge($invited, $past, $sandbox);
     }
 
     private function getRowsInvited(): array
     {
+        //$this->test();
+
         return DB::table('version_participants')
             ->join('versions', 'versions.id', '=', 'version_participants.version_id')
             ->join('events', 'events.id', '=', 'versions.event_id')
@@ -64,18 +67,41 @@ class EventParticipationTableComponent extends BasePage
             ->toArray();
     }
 
+    private function getRowsSandbox(): array
+    {
+        //$this->test();
+
+        return DB::table('versions')
+            ->join('events', 'events.id', '=', 'versions.event_id')
+            ->join('version_participants', 'version_participants.version_id', '=', 'versions.id')
+            ->join('version_roles', 'version_roles.version_participant_id', '=', 'version_participants.id')
+            ->where('versions.status', 'sandbox')
+            ->where('version_participants.user_id', auth()->id())
+            ->distinct('versions.id')
+            ->select('version_participants.version_id AS id',
+                'events.short_name AS eventName',
+                'versions.short_name AS versionName', 'versions.status')
+            ->orderByDesc('versions.senior_class_of')
+            ->get()
+            ->toArray();
+    }
+
     private function test(): void
     {
-        dd(DB::table('version_participants')
-            ->join('versions', 'versions.id', '=', 'version_participants.version_id')
-            ->join('events', 'events.id', '=', 'versions.event_id')
-            ->where('version_participants.user_id', auth()->id())
-            ->where('versions.status', 'closed')
-            ->select('version_participants.id AS vpId'
-//                'events.short_name AS eventName',
-//                'versions.short_name AS versionName', 'versions.status'
-            )
-            ->get()
-            ->toArray());
+        dd(
+            DB::table('versions')
+                ->join('events', 'events.id', '=', 'versions.event_id')
+                ->join('version_participants', 'version_participants.version_id', '=', 'versions.id')
+                ->join('version_roles', 'version_roles.version_participant_id', '=', 'version_participants.id')
+                ->where('versions.status', 'sandbox')
+                ->where('version_participants.user_id', auth()->id())
+                ->distinct('versions.id')
+                ->select('version_participants.version_id AS id',
+                    'events.short_name AS eventName',
+                    'versions.short_name AS versionName', 'versions.status')
+                ->orderByDesc('versions.senior_class_of')
+                ->get()
+                ->toArray()
+        );
     }
 }

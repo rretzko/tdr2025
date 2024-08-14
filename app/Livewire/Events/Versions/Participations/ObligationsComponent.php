@@ -53,11 +53,12 @@ class ObligationsComponent extends BasePage
     {
         $fileName = 'obligations.blade.php';
         $basePath = base_path(); //ex. C:\xampp\htdocs\staging\tdr2025
-        $eventDirectory = $basePath.DIRECTORY_SEPARATOR.'resources\views\livewire\events\obligations'.DIRECTORY_SEPARATOR.$this->eventId;
+        $eventDirectory = $basePath.DIRECTORY_SEPARATOR.'resources\views\components\obligations'.DIRECTORY_SEPARATOR.$this->eventId;
         $versionDirectory = $eventDirectory.DIRECTORY_SEPARATOR.$this->versionId;
 
         $componentPath = 'components'.DIRECTORY_SEPARATOR.'obligations'.DIRECTORY_SEPARATOR.$this->eventId.DIRECTORY_SEPARATOR;
-
+//dd($versionDirectory.DIRECTORY_SEPARATOR.$fileName);
+//dd($eventDirectory.DIRECTORY_SEPARATOR.$fileName);
         //use the version-specific rendering of the obligations page if it exists
         if (file_exists($versionDirectory.DIRECTORY_SEPARATOR.$fileName)) {
 
@@ -71,7 +72,7 @@ class ObligationsComponent extends BasePage
                 .'obligations';
         } else {
 
-            dd('none found');
+            dd('none found at: '.$componentPath);
         }
 
 

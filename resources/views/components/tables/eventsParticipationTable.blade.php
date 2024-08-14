@@ -53,7 +53,7 @@
                 </td>
                 <td class="text-center border border-gray-200">
 
-                    <a href="@if($row->status === 'active'){{ route('participation.dashboard', ['version' => $row->id]) }} @else {{ route('participation.results', ['version' => $row->id]) }} @endif">
+                    <a href="@if(in_array($row->status,['active','sandbox'])){{ route('participation.dashboard', ['version' => $row->id]) }} @else {{ route('participation.results', ['version' => $row->id]) }} @endif">
                         <button
                             type="button"
                             class="bg-yellow-600 text-white text-xs px-2 rounded-full hover:bg-yellow-700"
@@ -71,26 +71,6 @@
         @endforelse
         </tbody>
     </table>
-
-    {{--    <script>--}}
-    {{--    function playAudio(url) {--}}
-    {{--        console.log('https://auditionsuite-production.s3.amazonaws.com/' + url);--}}
-    {{--    var audioPlayer = document.getElementById('audioPlayer');--}}
-    {{--    var audioSource = document.getElementById('audioSource');--}}
-
-    {{--    // Set the source of the audio player--}}
-    {{--    audioSource.src = 'https://auditionsuite-production.s3.amazonaws.com/' + url;--}}
-
-    {{--    // Load the new source--}}
-    {{--    audioPlayer.load();--}}
-
-    {{--    // Play the audio--}}
-    {{--    audioPlayer.play();--}}
-
-    {{--    // Optionally, display the audio controls--}}
-    {{--    audioPlayer.style.display = 'block';--}}
-    {{--    }--}}
-    {{--    </script>--}}
 
     {{-- LOADING COMPONENT AND SPINNER --}}
     <x-tables.loadingComponentAndSpinner/>

@@ -80,7 +80,9 @@ class CandidateStatusService
 
     private static function hasSignatures(Candidate $candidate): void
     {
-        $eApplication = VersionConfigRegistrant::find($candidate->version_id)->eapplication;
+        $eApplication = VersionConfigRegistrant::where('version_id', $candidate->version_id)
+            ->first()
+            ->eapplication;
 
         if ($eApplication) {
 

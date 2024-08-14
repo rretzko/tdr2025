@@ -29,47 +29,54 @@
 
         {{-- HEADER and ADD-NEW and EXPORT BUTTONS --}}
         <div class="flex justify-between mb-1">
-            <div>{{ ucwords($dto['header']) }} ({{ $rows->total() }})</div>
+            <div>{{ $version->short_name . ' ' . ucwords($dto['header']) }} ({{ $rows->total() }})</div>
+        </div>
+
+        <div class="my-1 text-red-500 text-sm w-2/3 mx-auto">
+            @if(! count($ensembleVoiceParts))
+                Please let your event manager know that candidate records cannot be displayed because
+                event ensembles are missing or the event ensembles have no assigned voice parts.
+            @endif
         </div>
 
         {{-- FILTERS and TABLE --}}
         <div class="flex flex-row">
+            @if(count($ensembleVoiceParts))
+                {{-- FILTERS --}}
+                @if($hasFilters && count($filterMethods))
+                    <div class="flex justify-center">
+                        <x-sidebars.filters :filters="$filters" :methods="$filterMethods"/>
+                    </div>
+                @endif
 
-            {{-- FILTERS --}}
-            @if($hasFilters && count($filterMethods))
-                <div class="flex justify-center">
-                    <x-sidebars.filters :filters="$filters" :methods="$filterMethods"/>
-                </div>
-            @endif
+                {{-- SCROLLABLE LIST OF LINKS --}}
+                <style>
+                    .eligible {
+                        background-color: gray;
+                        border-color: gray;
+                    }
 
-            {{-- SCROLLABLE LIST OF LINKS --}}
-            <style>
-                .eligible {
-                    background-color: gray;
-                    border-color: gray;
-                }
+                    .engaged {
+                        background-color: yellow;
+                        border-color: blanchedalmond;
+                    }
 
-                .engaged {
-                    background-color: yellow;
-                    border-color: blanchedalmond;
-                }
+                    .registered {
+                        background-color: mediumseagreen;
+                        border-color: mediumseagreen;
+                    }
 
-                .registered {
-                    background-color: mediumseagreen;
-                    border-color: mediumseagreen;
-                }
+                    .prohibited, .removed, .withdrew {
+                        background-color: indianred;
+                        border-color: indianred;
+                    }
 
-                .prohibited, .removed, .withdrew {
-                    background-color: indianred;
-                    border-color: indianred;
-                }
-
-            </style>
-            <div class="flex w-full">
-                <!-- Left side: Scrollable list of links -->
-                <div class="w-1/2 sm:w-1/4 overflow-y-auto h-screen">
-                    <ul class="list-none ml-1">
-                        {{--                        @for($i=0; $i<4; $i++)--}}{{-- for testing --}}
+                </style>
+                <div class="flex w-full">
+                    <!-- Left side: Scrollable list of links -->
+                    <div class="w-1/2 sm:w-1/4 overflow-y-auto h-screen">
+                        <ul class="list-none ml-1">
+                            {{--                        @for($i=0; $i<4; $i++)--}}{{-- for testing --}}
                             @foreach($rows as $row)
                                 <li>
                                     <button wire:click="selectCandidate({{ $row->candidateId }})"
@@ -79,38 +86,39 @@
                                     </button>
                                 </li>
                             @endforeach
-                        {{--                        @endfor--}}
-                    </ul>
-                </div>
-
-                <!-- Right side: form -->
-                <div class="w-full ml-2 overflow-y-auto h-screen">
-                    <div class="advisory text-center text-gray-500">
-                        @if($form->firstName)
-                            <x-forms.partials.candidateForm
-                                :auditionFiles="$auditionFiles"
-                                :ensembleVoiceParts="$ensembleVoiceParts"
-                                :eventGrades="$eventGrades"
-                                :missingApplicationRequirements="$form->missingApplicationRequirements"
-                                :height="$height"
-                                :heights="$heights"
-                                :form="$form"
-                                :pathToRegistration="$pathToRegistration"
-                                :shirtSize="$shirtSize"
-                                :shirtSizes="$shirtSizes"
-                                :showRegistrationPath="$showRegistrationPath"
-                                :showSuccessIndicator="$showSuccessIndicator"
-                                :studentHomeAddress="$studentHomeAddress"
-                                successMessage="{{  $successMessage }}"
-                                :teachers="$teachers"
-                            />
-                        @else
-                            Click name to complete form...
-                        @endif
+                            {{--                        @endfor--}}
+                        </ul>
                     </div>
-                </div>
 
-            </div>
+                    <!-- Right side: form -->
+                    <div class="w-full ml-2 overflow-y-auto h-screen">
+                        <div class="advisory text-center text-gray-500">
+                            @if($form->firstName)
+                                <x-forms.partials.candidateForm
+                                    :auditionFiles="$auditionFiles"
+                                    :ensembleVoiceParts="$ensembleVoiceParts"
+                                    :eventGrades="$eventGrades"
+                                    :missingApplicationRequirements="$form->missingApplicationRequirements"
+                                    :height="$height"
+                                    :heights="$heights"
+                                    :form="$form"
+                                    :pathToRegistration="$pathToRegistration"
+                                    :shirtSize="$shirtSize"
+                                    :shirtSizes="$shirtSizes"
+                                    :showRegistrationPath="$showRegistrationPath"
+                                    :showSuccessIndicator="$showSuccessIndicator"
+                                    :studentHomeAddress="$studentHomeAddress"
+                                    successMessage="{{  $successMessage }}"
+                                    :teachers="$teachers"
+                                />
+                            @else
+                                Click name to complete form...
+                            @endif
+                        </div>
+                    </div>
+
+                </div>
+            @endif
 
         </div>
 

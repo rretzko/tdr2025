@@ -134,6 +134,7 @@ class ViewDataFactory extends aViewData
     {
         $components = [
             'candidates' => 'events.versions.participations.candidates-table-component',
+            'candidates table' => 'events.versions.participations.candidates-table-component',
 
             'new school' => 'schools.school-create-component',
             'schools' => 'schools.schools-table-component',
@@ -183,6 +184,8 @@ class ViewDataFactory extends aViewData
 
             'versions' => 'events.versions.versions-table-component',
             'versions table' => 'events.versions.versions-table-component',
+
+            'teacher pitch files' => 'events.versions.participations.teacher-pitch-files-table-component',
 
         ];
 

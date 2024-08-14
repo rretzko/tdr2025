@@ -44,7 +44,7 @@ class CalcApplicationRequirements
 
         if (!$voicePartId || !array_key_exists($voicePartId, $voiceParts)) {
 
-            $this->missings[] = 'Incorrect or missing voice part. ('.Carbon::now()->format('H:i:s').')';
+            $this->missings[] = 'Incorrect or missing voice part. ';//('.Carbon::now()->format('H:i:s').')';
         }
     }
 
@@ -52,7 +52,7 @@ class CalcApplicationRequirements
     {
         if (!$this->candidate->student->emergencyContacts()->count()) {
 
-            $this->missings[] = 'No emergency contact found. ('.Carbon::now()->format('H:i:s').')';
+            $this->missings[] = 'No emergency contact found. ';//('.Carbon::now()->format('H:i:s').')';
         }
     }
 
@@ -69,7 +69,7 @@ class CalcApplicationRequirements
                 ->where('phone_mobile', "")
                 ->count()
             ) {
-                $this->missings[] = 'No emergency contact cell phone found. ('.Carbon::now()->format('H:i:s').')';
+                $this->missings[] = 'No emergency contact cell phone found. ';//('.Carbon::now()->format('H:i:s').')';
             }
 
         }

@@ -79,8 +79,8 @@ class MakeCandidateRecordsService
 
     private function getEligibleStudentIds(): array
     {
-        //only update active versions
-        if ($this->version->status === 'active') {
+        //only update active or sandbox versions
+        if (in_array($this->version->status, ['active', 'sandbox'])) {
 
             $event = Event::find($this->version->event_id);
 
