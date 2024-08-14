@@ -22,8 +22,10 @@ class VersionPitchFilesTableComponent extends BasePage
 
     public array $fileTypes = [];
     public VersionPitchFileForm $form;
+    public array $previousVersionPitchFiles = [];
     public bool $showAddForm = false;
     public bool $showEditForm = false;
+    public bool $showEventEnsemblesMissingAdvisory = false;
     public bool $showPitchFiles = false;
     public int $versionId = 0;
     public int $eventId = 0;
@@ -66,10 +68,15 @@ class VersionPitchFilesTableComponent extends BasePage
         $this->sortColLabel = $this->userSort ? $this->userSort->label : 'orderBy';
 
         //form
-        $this->form->setDefaults($this->versionId, $this->voiceParts);
+        if ($this->voiceParts) {
+            $this->form->setDefaults($this->versionId, $this->voiceParts);
+        }
 
         //pitchFileAvailability
         $this->showPitchFiles = $version->showPitchFiles();
+
+        //previous files
+        $this->previousVersionPitchFiles = $this->getPreviousVersionPitchFiles();
     }
 
     public function render()
@@ -176,6 +183,27 @@ class VersionPitchFilesTableComponent extends BasePage
         $this->form->url = 'pitchFiles/'.$fileName;
     }
 
+    private function clonePitchFiles(): void
+    {
+        $event = Version::find($this->versionId)->event;
+        $mostRecentPreviousVersion = $event->versions()->whereNot('id', $this->versionId)->first();
+        $pitchFiles = $mostRecentPreviousVersion->versionPitchFiles;
+
+        foreach ($pitchFiles as $pitchFile) {
+
+            VersionPitchFile::create(
+                [
+                    'version_id' => $this->versionId,
+                    'file_type' => $pitchFile->file_type,
+                    'voice_part_id' => $pitchFile->voice_part_id,
+                    'url' => $pitchFile->url,
+                    'description' => $pitchFile->description,
+                    'order_by' => $pitchFile->order_by,
+                ]
+            );
+        }
+    }
+
     private function getColumnHeaders(): array
     {
         return [
@@ -188,8 +216,29 @@ class VersionPitchFilesTableComponent extends BasePage
         ];
     }
 
+    private function getPreviousVersionPitchFiles(): array
+    {
+        $versionIds = Version::find($this->versionId)
+            ->event
+            ->versions()
+            ->whereNot('id', $this->versionId)
+            ->pluck('id');
+
+        return VersionPitchFile::whereNot('version_id', $this->versionId)
+            ->whereIn('version_id', $versionIds)
+            ->distinct('description')
+            ->orderBy('order_by')
+            ->pluck('description', 'id')
+            ->toArray();
+    }
+
     private function getRows(): Builder
     {
+        //if no pitch files are found, clone previous pitch files if possible
+        if (!$this->pitchFilesExist()) {
+            $this->clonePitchFiles();
+        }
+
         $secondarySortOrder = ($this->sortCol === 'version_pitch_files.order_by')
             ? ($this->sortAsc ? 'asc' : 'desc')
             : 'asc';
@@ -223,7 +272,9 @@ class VersionPitchFilesTableComponent extends BasePage
             ->event
             ->eventEnsembles;
 
-        if (!$eventEnsembles) {
+        //early exit
+        if (!$eventEnsembles->count()) {
+            $this->showEventEnsemblesMissingAdvisory = true;
             return [];
         }
 
@@ -257,5 +308,10 @@ class VersionPitchFilesTableComponent extends BasePage
         $fileName .= pathInfo($this->pitchFile->getClientOriginalName(), PATHINFO_EXTENSION);
 
         return $fileName;
+    }
+
+    private function pitchFilesExist(): bool
+    {
+        return VersionPitchFile::where('version_id', $this->versionId)->exists();
     }
 }

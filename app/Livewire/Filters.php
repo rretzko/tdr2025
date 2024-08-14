@@ -265,7 +265,7 @@ class Filters extends Form
         return (VersionPitchFile::where('version_id', $versionId)->exists())
             ? VersionPitchFile::where('version_id', $versionId)
                 ->join('voice_parts', 'voice_parts.id', '=', 'version_pitch_files.voice_part_id')
-                ->select('voice_parts.id', 'voice_parts.order_by')
+                ->select('voice_parts.id', 'voice_parts.order_by', 'voice_parts.descr')
                 ->distinct('voice_parts.id')
                 ->orderBy('voice_parts.order_by')
                 ->pluck('voice_parts.descr', 'voice_parts.id')

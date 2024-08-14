@@ -14,6 +14,8 @@ class VersionPitchFileForm extends Form
     public string $fileType = '';
     #[Validate('required|int|min:1')]
     public int $orderBy = 1;
+    #[Validate('nullable|int|exists:version_pitch_files,id')]
+    public int $previousPitchFileId = 0;
     public string $sysId = 'new';
     public int $versionId = 0;
     #[Validate('required', message: 'A file must be selected.')]
@@ -25,16 +27,22 @@ class VersionPitchFileForm extends Form
     {
         $this->validate();
 
-        VersionPitchFile::create(
-            [
-                'description' => $this->description,
-                'file_type' => $this->fileType,
-                'order_by' => $this->orderBy,
-                'version_id' => $this->versionId,
-                'voice_part_id' => $this->voicePartId,
-                'url' => $this->url,
-            ]
-        );
+        if ($this->previousPitchFileId) {
+
+            dd($this->previousPitchFileId);
+
+        } else {
+            VersionPitchFile::create(
+                [
+                    'description' => $this->description,
+                    'file_type' => $this->fileType,
+                    'order_by' => $this->orderBy,
+                    'version_id' => $this->versionId,
+                    'voice_part_id' => $this->voicePartId,
+                    'url' => $this->url,
+                ]
+            );
+        }
     }
 
     public function pitchFileUpdate(): void
@@ -63,7 +71,7 @@ class VersionPitchFileForm extends Form
     public function setDefaults(int $versionId, array $voiceParts): void
     {
         $this->versionId = $versionId;
-//dd(array_key_first($voiceParts));
+
         $this->voicePartId = array_key_first($voiceParts);
     }
 

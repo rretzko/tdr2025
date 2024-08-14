@@ -7,7 +7,7 @@
     <div class="flex flex-row justify-between px-4 w-full">
 
         {{--  SEARCH AND RECORDS PER ROW--}}
-        @if($hasSearch || (count($rows) > 15))
+        @if($hasSearch || ($rows->total() > 15))
             @if($hasSearch)
                 <x-tables.searchComponent placeholder="Search name & school"/>
             @else
@@ -15,7 +15,7 @@
             @endif
 
             {{-- RECORDS PER PAGE --}}
-            @if(count($rows) > 15)
+            @if($rows->total() > 15)
                 <x-forms.indicators.recordsPerPage/>
             @else
                 <div></div>
@@ -31,15 +31,28 @@
         <div class="flex justify-between mb-1">
             <div>{{ ucwords($dto['header']) }}</div>
 
+            {{-- MISSING ENSEMBLE ADVISORY --}}
+            <div class="text-red-500 text-sm">
+                @if($showEventEnsemblesMissingAdvisory)
+                    <div class="w-3/4 mx-auto">
+                        This event has no ensembles attached or those ensembles have no voice parts identified,
+                        therefore no pitch files can be uploaded.<br/>
+                        If this is incorrect, please update the record (My Events->edit button->Ensemble information).
+                    </div>
+                @endif
+            </div>
+
             @if($showPitchFiles)
                 <div class="flex items-center space-x-2">
 
                     {{-- ADD-NEW BUTTON OPENS ADD-PARTICIPANT-FORM --}}
-                    <button type="button" wire:click="$set('showAddForm', true)"
-                            class="bg-green-500 text-white text-3xl px-2 rounded-lg" title="Add New" tabindex="-1">
-                        +
-                    </button>
-                    <x-buttons.export/>
+                    @if(! $showEventEnsemblesMissingAdvisory)
+                        <button type="button" wire:click="$set('showAddForm', true)"
+                                class="bg-green-500 text-white text-3xl px-2 rounded-lg" title="Add New" tabindex="-1">
+                            +
+                        </button>
+                        <x-buttons.export/>
+                    @endif
                 </div>
             @else
                 <div class="w-1/2 mr-20 justify-end">
@@ -105,6 +118,17 @@
                             @enderror</div>
 
                     </div>
+                    <div class="text-start text-sm italic my-1">
+                        ...or select a file from previous versions...
+                    </div>
+                    <x-forms.elements.livewire.selectNarrow
+                        label="voice part"
+                        name="form.previousVoicePartId"
+                        :option0="true"
+                        :options="$previousVersionPitchFiles"
+                        required='true'
+                    />
+
 
                     {{-- SUBMIT --}}
                     <div class="flex -mt-8 ">{{-- offset for fauxSubmit label --}}

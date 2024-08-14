@@ -203,9 +203,11 @@
                     </div>
 
                     {{-- SUCCESS INDICATOR --}}
-                    <x-forms.indicators.successIndicator
-                        :showSuccessIndicator="$form->ensembles[$i]['showSuccessIndicator']"
-                        message="{{  $form->ensembles[$i]['successMessage'] }}"/>
+                    @if(array_key_exists($i, $form->ensembles))
+                        <x-forms.indicators.successIndicator
+                            :showSuccessIndicator="$form->ensembles[$i]['showSuccessIndicator']"
+                            message="{{  $form->ensembles[$i]['successMessage'] }}"/>
+                    @endif
 
                     {{-- ERROR INDICATOR --}}
                     <x-forms.indicators.errorIndicator :showErrorIndicator="$showErrorIndicator"

@@ -144,8 +144,10 @@ class EventForm extends Form
                 );
             }
 
-            $this->ensembles[$id]['showSuccessIndicator'] = true;
-            $this->ensembles[$id]['successMessage'] = 'Ensemble #'.($id + 1).' successfully updated.';
+            if (array_key_exists($id, $this->ensembles)) {
+                $this->ensembles[$id]['showSuccessIndicator'] = true;
+                $this->ensembles[$id]['successMessage'] = 'Ensemble #'.($id + 1).' successfully updated.';
+            }
 
             return true;
         }

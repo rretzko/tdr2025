@@ -50,4 +50,10 @@ class Version extends Model
     {
         return $this->hasMany(VersionParticipant::class);
     }
+
+    public function versionPitchFiles(): HasMany
+    {
+        return $this->hasMany(VersionPitchFile::class)
+            ->orderBy('order_by');
+    }
 }
