@@ -234,8 +234,8 @@ class CandidatesTableComponent extends BasePage
             ->whereIn('candidates.teacher_id', $coTeacherIds)
             ->where('candidates.school_id', $this->schoolId)
             ->tap(function ($query) {
-//                $this->filters->filterCandidatesByClassOfs($query);
-//                $this->filters->filterCandidatesByStatuses($query, $this->search);
+                $this->filters->filterCandidatesByClassOfs($query);
+                $this->filters->filterCandidatesByStatuses($query, $this->search);
             })
             ->select('candidates.id AS candidateId', 'candidates.ref', 'candidates.status',
                 'candidates.program_name',

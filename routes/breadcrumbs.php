@@ -22,6 +22,10 @@ Breadcrumbs::for('candidates table', function (BreadcrumbTrail $trail, $id) {
     $trail->parent('participation dashboard', $id);
     $trail->push('Candidates', route('candidates', $id));
 });
+Breadcrumbs::for('participation results', function (BreadcrumbTrail $trail, $id) {
+    $trail->parent('participation dashboard', $id);
+    $trail->push('Results', route('participation.results', $id));
+});
 
 //Teacher Pitch Files
 Breadcrumbs::for('teacher pitch files', function (BreadcrumbTrail $trail, $id) {

@@ -49,7 +49,7 @@ class Filters extends Form
         $this->header = $header;
         $this->versionId = (int) UserConfig::getValue('versionId');
 
-        if (in_array($this->header, ['candidates', 'candidates table'])) {
+        if (in_array($this->header, ['candidates', 'candidates table', 'participation results'])) {
 
             //initially set candidateGrades filter to include ALL candidate grades
             $this->candidateGradesSelectedIds = Candidate::query()

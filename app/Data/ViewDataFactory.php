@@ -153,6 +153,8 @@ class ViewDataFactory extends aViewData
 
             'events participation' => 'events.event-participation-table-component',
 
+            'participation results' => 'events.versions.participations.results-table-component',
+
             'assets' => 'ensembles.assets.assets-table-component',
             'asset create' => 'ensembles.assets.asset-create-component',
             'asset edit' => 'ensembles.assets.asset-edit-component',

@@ -102,8 +102,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //PDFs
     Route::get('pdf/application/{candidate}', \App\Http\Controllers\Pdfs\ApplicationPdfController::class)
         ->name('pdf.application');
+    Route::get('pdf/contract/{candidate}', \App\Http\Controllers\Pdfs\ContractPdfController::class)
+        ->name('pdf.contract');
     Route::get('pdf/estimate/{version}', \App\Http\Controllers\Pdfs\EstimatePdfController::class)
         ->name('pdf.estimate');
+    Route::get('pdf/candidateScore/{candidate}', \App\Http\Controllers\Pdfs\CandidateScorePdfController::class)
+        ->name('pdf.candidateScore');
 
     //PARTICIPATION.PITCHFILES
     Route::get('pitchFiles', \App\Http\Controllers\Events\Versions\Participations\PitchFileController::class)
