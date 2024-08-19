@@ -39,15 +39,26 @@
             {{-- HEADER and ADD-NEW and EXPORT BUTTONS --}}
             <div class="flex justify-between mb-1">
                 <div>{{ ucwords($dto['header']) }}</div>
-                {{--                <div class="flex items-center space-x-2">--}}
-                {{--                    <x-buttons.addNew route="student.create"/>--}}
-                {{--                    <x-buttons.export/>--}}
-                {{--                </div>--}}
-                <div wire:click="printResultsAll()"
-                     class="flex flex-row items-center my-2 text-blue-600 text-sm cursor-pointer"
-                >
-                    Print All Results
-                    <span class="ml-2"><x-heroicons.printer/></span>
+
+                <div class="flex flex-col justify-end">
+
+                    {{-- DOWNLOAD PDF WITH SCHOOL RESULTS --}}
+                    <div wire:click="printResultsAll()"
+                         class="flex flex-row items-center justify-end my-2 text-blue-600 text-sm cursor-pointer"
+                    >
+                        Print {{ $schoolName }} Results
+                        <span class="ml-2"><x-heroicons.printer/></span>
+                    </div>
+
+                    {{-- DOWNLOAD CONFIDENTIAL PDF WITH ALL SCORES --}}
+                    @if($showAllScores)
+                        <div wire:click="printResultsConfidential()"
+                             class="flex flex-row items-center justify-end my-2 text-blue-600 text-sm cursor-pointer"
+                        >
+                            Print All Results
+                            <span class="ml-2"><x-heroicons.printer/></span>
+                        </div>
+                    @endif
                 </div>
             </div>
 

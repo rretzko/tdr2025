@@ -5,11 +5,14 @@ namespace App\Livewire\Events\Versions\Participations;
 use App\Livewire\BasePage;
 use App\Models\Events\Event;
 use App\Models\Events\Versions\Version;
+use App\Models\Events\Versions\VersionConfigAdjudication;
 use App\Models\UserConfig;
 use App\Services\CoTeachersService;
 use App\Services\EventEnsemblesVoicePartsArrayService;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 
 class ResultsTableComponent extends BasePage
@@ -18,6 +21,7 @@ class ResultsTableComponent extends BasePage
     public Event $event;
     public bool $hasContract = false;
     public int $schoolId = 0;
+    public bool $showAllScores = false;
     public Version $version;
     public int $versionId = 0;
 
@@ -38,6 +42,10 @@ class ResultsTableComponent extends BasePage
         //successful auditionees has participation contracts in these events
         $eventsWithContracts = [19, 25];
         $this->hasContract = in_array($this->event->id, $eventsWithContracts);
+
+        //should user see all-scores pdf?
+        $vca = VersionConfigAdjudication::where('version_id', $this->versionId)->first();
+        $this->showAllScores = $vca->show_all_scores;
 
     }
 
@@ -120,6 +128,27 @@ class ResultsTableComponent extends BasePage
 
     public function printResultsAll(): \Livewire\Features\SupportRedirects\Redirector
     {
+        return redirect()->to('pdf/candidateScoresSchool/');
+    }
+
+    public function printResultsConfidential()//: \Livewire\Features\SupportRedirects\Redirector
+    {
+        $versionId = UserConfig::find('versionId');
+        $fileName = "combinedConfidentialPdfs/combinedConfidential_{$versionId}.pdf";
+        $disk = Storage::disk('s3');
+
+        if ($disk->exists($fileName)) {
+
+            return new StreamedResponse(function () use ($disk, $fileName) {
+                $stream = $disk->readStream($fileName);
+                fpassthru($stream);
+                fclose($stream);
+            }, 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="auditionResults.pdf"',
+            ]);
+        }
+
         return redirect()->to('pdf/candidateScoresSchool/');
     }
 
