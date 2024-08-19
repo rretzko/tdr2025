@@ -118,6 +118,11 @@ class ResultsTableComponent extends BasePage
         return redirect()->to('pdf/candidateScore/'.$candidateId);
     }
 
+    public function printResultsAll(): \Livewire\Features\SupportRedirects\Redirector
+    {
+        return redirect()->to('pdf/candidateScoresSchool/');
+    }
+
     private function test(): void
     {
         $coTeacherIds = CoTeachersService::getCoTeachersIds();

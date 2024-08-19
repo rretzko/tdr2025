@@ -22,28 +22,22 @@ use App\Services\ConvertToUsdService;
 use App\Services\FullNameService;
 use Illuminate\Support\Carbon;
 
-class PdfCandidateScoreDataFactory
+class PdfCandidateScoresSchoolDataFactory
 {
+    private Candidate $candidate;
     private int $candidateId = 0;
     private array $dto = [];
     private Event $event;
-    private School $school;
+    private int $eventId = 0;
     private Student $student;
-    private Teacher $teacher;
-    private Version $version;
-    private int $versionId;
     private User $user;
+    private int $versionId = 0;
 
-    public function __construct(private readonly Candidate $candidate)
+    public function __construct(private readonly School $school, private readonly Version $version)
     {
-        $this->candidateId = $this->candidate->id;
-        $this->school = School::find($this->candidate->school_id);
-        $this->student = Student::find($this->candidate->student_id);
-        $this->teacher = Teacher::find($this->candidate->teacher_id);
-        $this->user = User::find($this->student->user_id);
-        $this->version = Version::find($candidate->version_id);
         $this->versionId = (int) $this->version->id;
         $this->event = Event::find($this->version->event_id);
+        $this->eventId = (int) $this->event->id;
 
         $this->init();
     }
@@ -52,17 +46,18 @@ class PdfCandidateScoreDataFactory
     {
         $this->dto['auditionFee'] = $this->getAuditionFee();
         $this->dto['auditionPeriod'] = $this->getAuditionPeriod();
-        $this->dto['candidateVoicePartAbbr'] = $this->getCandidateVoicePartAbbr();
-        $this->dto['candidateVoicePartDescr'] = $this->getCandidateVoicePartDescr();
-        $this->dto['candidateFullName'] = $this->getCandidateFullName();
-        $this->dto['candidateId'] = $this->candidateId;
+        $this->dto['candidates'] = $this->getCandidates();
+//         $this->dto['candidateVoicePartAbbr'] = $this->getCandidateVoicePartAbbr();
+//        $this->dto['candidateVoicePartDescr'] = $this->getCandidateVoicePartDescr();
+//        $this->dto['candidateFullName'] = $this->getCandidateFullName();
+//         $this->dto['candidateId'] = $this->candidateId;
         $this->dto['emergencyContactName'] = $this->getEmergencyContact('name');
         $this->dto['emergencyContactMobile'] = $this->getEmergencyContact('phone_mobile');
         $this->dto['ensembleNames'] = $this->getEnsembleNames();
-        $this->dto['first'] = $this->user->first_name;
-        $this->dto['fullName'] = $this->candidate->program_name;
-        $this->dto['fullNameAlpha'] = $this->user->fullNameAlpha;
-        $this->dto['grade'] = $this->getGrade();
+//        $this->dto['first'] = $this->user->first_name;
+//        $this->dto['fullName'] = $this->candidate->program_name;
+//        $this->dto['fullNameAlpha'] = $this->user->fullNameAlpha;
+//        $this->dto['grade'] = $this->getGrade();
         $this->dto['judgeCount'] = $this->getJudgeCount();
         $this->dto['logo'] = $this->getLogo();
         $this->dto['logoPdf'] = $this->getLogo();
@@ -70,18 +65,18 @@ class PdfCandidateScoreDataFactory
         $this->dto['organizationName'] = $this->event->organization;
         $this->dto['participationFee'] = $this->getParticipationFee();
         $this->dto['postmarkDeadline'] = $this->getPostmarkDeadline();
-        $this->dto['pronounObject'] = $this->getPronoun('object');
-        $this->dto['pronounPersonal'] = $this->getPronoun('personal');
-        $this->dto['pronounPossessive'] = $this->getPronoun('possessive');
-        $this->dto['auditionResult'] = $this->getAuditionResult();
+//        $this->dto['pronounObject'] = $this->getPronoun('object');
+//        $this->dto['pronounPersonal'] = $this->getPronoun('personal');
+//        $this->dto['pronounPossessive'] = $this->getPronoun('possessive');
+//         $this->dto['auditionResult'] = $this->getAuditionResult();
         $this->dto['schoolName'] = $this->school->name;
         $this->dto['schoolShortName'] = $this->school->shortName;
         $this->dto['scoreCategories'] = $this->getScoreCategories();
         $this->dto['scoreCategoryFactorCount'] = $this->getScoreCategoryFactorCounts();
         $this->dto['scoreFactorAbbrs'] = $this->getScoreFactorAbbrs();
-        $this->dto['scores'] = $this->getScores();
-        $this->dto['studentName'] = $this->getStudentName();
-        $this->dto['teacherFullName'] = $this->teacher->user->name;
+//         $this->dto['scores'] = $this->getScores();
+//        $this->dto['studentName'] = $this->getStudentName();
+//        $this->dto['teacherFullName'] = $this->teacher->user->name;
         $this->dto['versionShortName'] = $this->version->short_name;
         $this->dto['versionName'] = $this->version->name;
 
@@ -117,6 +112,49 @@ class PdfCandidateScoreDataFactory
         return $openMd.' - '.$closeMd;
     }
 
+    private function getCandidates(): array
+    {
+        $a = [];
+
+        $candidates = Candidate::query()
+            ->join('students', 'students.id', '=', 'candidates.student_id')
+            ->join('users', 'users.id', '=', 'students.user_id')
+            ->where('school_id', $this->school->id)
+            ->where('version_id', $this->versionId)
+            ->where('status', 'registered')
+            ->select('candidates.*')
+            ->orderBy('users.last_name')
+            ->orderBy('users.first_name')
+            ->get();
+
+        foreach ($candidates as $key => $candidate) {
+
+            $this->candidate = $candidate;
+            $this->candidateId = $candidate->id;
+            $this->student = Student::find($candidate->student_id);
+            $this->user = User::find($this->student->user_id);
+
+            $a[$key]['candidateFullName'] = $this->getCandidateFullName();
+            $a[$key]['candidateId'] = $candidate->id;
+            $a[$key]['candidateVoicePartAbbr'] = $this->getCandidateVoicePartAbbr();
+            $a[$key]['auditionResult'] = $this->getAuditionResult();
+            $a[$key]['scores'] = $this->getScores();
+        }
+
+        return $a;
+    }
+
+    private function getCandidateFullName(): string
+    {
+        return FullNameService::getName($this->user);
+    }
+
+    private function getCandidateVoicePartAbbr()
+    {
+        return VoicePart::find($this->candidate->voice_part_id)
+            ->abbr;
+    }
+
     private function getAuditionResult(): array
     {
         return AuditionResult::query()
@@ -126,21 +164,18 @@ class PdfCandidateScoreDataFactory
             ->toArray();
     }
 
-    private function getCandidateVoicePartAbbr()
+    private function getScores(): array
     {
-        return VoicePart::find($this->candidate->voice_part_id)
-            ->abbr;
-    }
+        return Score::query()
+            ->where('candidate_id', $this->candidateId)
+            ->select('id', 'score',
+                'score_category_order_by', 'score_factor_order_by', 'judge_order_by')
+            ->orderBy('judge_order_by')
+            ->orderBy('score_category_order_by')
+            ->orderBy('score_factor_order_by')
+            ->pluck('score')
+            ->toArray();
 
-    private function getCandidateVoicePartDescr(): string
-    {
-        return VoicePart::find($this->candidate->voice_part_id)
-            ->descr;
-    }
-
-    private function getCandidateFullName(): string
-    {
-        return FullNameService::getName($this->user);
     }
 
     private function getEmergencyContact(string $property): string
@@ -157,15 +192,6 @@ class PdfCandidateScoreDataFactory
     private function getEnsembleNames(): array
     {
         return $this->event->eventEnsembles->pluck('name')->toArray();
-    }
-
-    private function getGrade(): string
-    {
-        $classOf = $this->student->class_of;
-
-        $service = new CalcGradeFromClassOfService();
-
-        return $service->getGrade($classOf);
     }
 
     private function getJudgeCount(): int
@@ -211,11 +237,6 @@ class PdfCandidateScoreDataFactory
             : '*** Postmark Deadline Not Found ***';
     }
 
-    private function getPronoun(string $column): string
-    {
-        return Pronoun::find($this->user->pronoun_id)->$column;
-    }
-
     private function getScoreCategories(): array
     {
         $query = ScoreCategory::query()
@@ -229,17 +250,6 @@ class PdfCandidateScoreDataFactory
             : $query->where('event_id', $this->version->event_id)
                 ->pluck('descr')
                 ->toArray();
-    }
-
-    private function getScoreCategoryFactorCount(ScoreCategory $scoreCategory): int
-    {
-        $query = ScoreFactor::where('score_category_id', $scoreCategory->id);
-
-        return (ScoreFactor::where('version_id', $this->versionId)->exists())
-            ? $query->where('version_id', $this->versionId)
-                ->count('id')
-            : $query->where('event_id', $this->version->event_id)
-                ->count('id');
     }
 
     private function getScoreCategoryFactorCounts(): array
@@ -259,6 +269,17 @@ class PdfCandidateScoreDataFactory
         return $a;
     }
 
+    private function getScoreCategoryFactorCount(ScoreCategory $scoreCategory): int
+    {
+        $query = ScoreFactor::where('score_category_id', $scoreCategory->id);
+
+        return (ScoreFactor::where('version_id', $this->versionId)->exists())
+            ? $query->where('version_id', $this->versionId)
+                ->count('id')
+            : $query->where('event_id', $this->version->event_id)
+                ->count('id');
+    }
+
     private function getScoreFactorAbbrs(): array
     {
         $query = ScoreFactor::query()
@@ -274,18 +295,29 @@ class PdfCandidateScoreDataFactory
                 ->toArray();
     }
 
-    private function getScores(): array
+    public function getDto(): array
     {
-        return Score::query()
-            ->where('candidate_id', $this->candidateId)
-            ->select('id', 'score',
-                'score_category_order_by', 'score_factor_order_by', 'judge_order_by')
-            ->orderBy('judge_order_by')
-            ->orderBy('score_category_order_by')
-            ->orderBy('score_factor_order_by')
-            ->pluck('score')
-            ->toArray();
+        return $this->dto;
+    }
 
+    private function getCandidateVoicePartDescr(): string
+    {
+        return VoicePart::find($this->candidate->voice_part_id)
+            ->descr;
+    }
+
+    private function getGrade(): string
+    {
+        $classOf = $this->student->class_of;
+
+        $service = new CalcGradeFromClassOfService();
+
+        return $service->getGrade($classOf);
+    }
+
+    private function getPronoun(string $column): string
+    {
+        return Pronoun::find($this->user->pronoun_id)->$column;
     }
 
     /**
@@ -295,11 +327,6 @@ class PdfCandidateScoreDataFactory
     private function getStudentName(): string
     {
         return $this->getCandidateFullName();
-    }
-
-    public function getDto(): array
-    {
-        return $this->dto;
     }
 
 

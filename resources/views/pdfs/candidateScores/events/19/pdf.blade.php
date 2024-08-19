@@ -28,9 +28,9 @@
 
             {{-- JUDGES --}}
             <tr>
-                <th colspan="4"></th>
+                <th colspan="4" style="border-color: transparent; border-right-color: black;"></th>
                 @for($i=0; $i<$dto['judgeCount'];$i++)
-                    <th colspan="{{ count($dto['scoringComponentAbbrs']) }}">
+                    <th colspan="{{ count($dto['scoreFactorAbbrs']) }}">
                         Judge {{ ($i + 1) }}
                     </th>
                 @endfor
@@ -38,26 +38,37 @@
 
             {{-- SCORING COMPONENT ABBRS --}}
             <tr>
-                <th colspan="4"></th>
+                <th colspan="4" style="border-color: transparent; border-right-color: black;"></th>
                 @for($i=0; $i<$dto['judgeCount'];$i++)
-                    @foreach($dto['scoringComponentAbbrs'] AS $abbr)
-                        <th>
-                            {{ $abbr }}
+                    @foreach($dto['scoreCategories'] AS $category)
+                        <th colspan="{{ $dto['scoreCategoryFactorCount'][$category] }}">
+                            {{ \Illuminate\Support\Str::substr($category, 0, 5) }}
                         </th>
                     @endforeach
                 @endfor
             </tr>
 
+            {{-- SCORE INDEX NUMBERS --}}
+            <tr style="font-size: 0.5rem;">
+                <th colspan="4" style="border-left-color: transparent;"></th>
+                @for($i=0; $i<(count($dto['scoreFactorAbbrs']) * $dto['judgeCount']); $i++)
+                    <td>
+                        {{ ($i + 1) }}
+                    </td>
+                @endfor
+            </tr>
 
             <tr>
-                <th>candidate id</th>
+                <th>cand #</th>
                 <th>vp</th>
                 <th>total</th>
                 <th>result</th>
-                @for($i=0; $i<$dto['maxScoringComponentCount']; $i++)
-                    <th>
-                        {{ ($i + 1) }}
-                    </th>
+                @for($i=0; $i<$dto['judgeCount']; $i++)
+                    @foreach($dto['scoreFactorAbbrs'] AS $scoreFactorAbbr)
+                        <th>
+                            {{ \Illuminate\Support\Str::substr($scoreFactorAbbr['abbr'],0, 5) }}
+                        </th>
+                    @endforeach
                 @endfor
             </tr>
 
@@ -69,19 +80,27 @@
                     {{ $dto['candidateId'] }}
                 </td>
                 <td class="text-center">
-                    {{ strtoupper($dto['voicePartAbbr']) }}
+                    {{ strtoupper($dto['candidateVoicePartAbbr']) }}
                 </td>
                 <td class="text-center">
-                    {{ $dto['results']['total'] }}
+                    {{ $dto['auditionResult']['total'] }}
                 </td>
                 <td class="text-center">
-                    {{ $dto['results']['abbr'] }}
+                    {{ $dto['auditionResult']['acceptance_abbr'] }}
                 </td>
-                @forelse($dto['scores'] AS $score)
-                    <td class="text-center">{{ $score }}</td>
-                @empty
-                    <td colspan="{{ $dto['maxScoringComponentCount'] }}">No scores found.</td>
-                @endforelse
+                @if(count($dto['scores']))
+                    @for($i=0; $i<($dto['maxScoreFactorCount'] * $dto['judgeCount']); $i++)
+                        <td class="text-center">
+                            @if(array_key_exists($i, $dto['scores']))
+                                {{ $dto['scores'][$i] }}
+                            @else
+                                -
+                            @endif
+                        </td>
+                    @endfor
+                @else
+                    <td colspan="{{ ($dto['maxScoreFactorCount'] * $dto['judgeCount']) }}">No scores found.</td>
+                @endif
             </tr>
 
             </tbody>

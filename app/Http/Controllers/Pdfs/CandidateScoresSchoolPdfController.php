@@ -4,15 +4,20 @@ namespace App\Http\Controllers\Pdfs;
 
 use App\Data\Pdfs\PdfApplicationDataFactory;
 use App\Data\Pdfs\PdfCandidateScoreDataFactory;
+use App\Data\Pdfs\PdfCandidateScoresSchoolDataFactory;
 use App\Data\Pdfs\PdfContractDataFactory;
 use App\Http\Controllers\Controller;
 use App\Models\Events\Versions\Participations\Candidate;
+use App\Models\Events\Versions\Version;
+use App\Models\Schools\School;
+use App\Models\UserConfig;
 use App\Services\FindPdfPathService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Str;
 
-class CandidateScorePdfController extends Controller
+class CandidateScoresSchoolPdfController extends Controller
 {
     /**
      * Handle the incoming request.
@@ -20,19 +25,20 @@ class CandidateScorePdfController extends Controller
      * @param  Candidate  $candidate
      * @return Response
      */
-    public function __invoke(Request $request, Candidate $candidate)
+    public function __invoke(Request $request)
     {
+        $version = Version::find(UserConfig::getValue('versionId'));
         $service = new FindPdfPathService;
-        $path = $service->findCandidateScorePath($candidate);
+        $path = $service->findCandidateScoresSchoolPath($version);
 
-        $data = new PdfCandidateScoreDataFactory($candidate);
+        $school = School::find(UserConfig::getValue('schoolId'));
+        $data = new PdfCandidateScoresSchoolDataFactory($school, $version);
         $dto = $data->getDto();
-
 
         $pdf = PDF::loadView($path, compact('dto'))
             ->setPaper('letter', 'landscape');
 
-        $prefix = $candidate->student->user->last_name.$candidate->student->user->first_name;
+        $prefix = Str::snake($school->name);
 
         return $pdf->download($prefix.'_scores.pdf');
     }

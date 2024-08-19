@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('abbr');
             $table->integer('best')->default(1);
             $table->integer('worst')->default(1);
+            $table->integer('interval_by')->default(1);
             $table->integer('multiplier')->default(1);
             $table->integer('tolerance')->default(0);
             $table->integer('order_by')->default(1);

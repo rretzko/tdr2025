@@ -7,11 +7,11 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('score_categories', function (Blueprint $table) {
+        Schema::create('rooms', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('event_id');
-            $table->unsignedBigInteger('version_id')->nullable();
-            $table->string('descr');
+            $table->foreignId('version_id');
+            $table->string('room_name');
+            $table->tinyInteger('tolerance');
             $table->tinyInteger('order_by');
             $table->timestamps();
         });
@@ -19,6 +19,6 @@ return new class extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('score_categories');
+        Schema::dropIfExists('rooms');
     }
 };

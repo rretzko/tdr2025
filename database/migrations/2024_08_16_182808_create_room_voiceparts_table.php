@@ -7,18 +7,17 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('score_categories', function (Blueprint $table) {
+        Schema::create('room_voiceparts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('event_id');
-            $table->unsignedBigInteger('version_id')->nullable();
-            $table->string('descr');
-            $table->tinyInteger('order_by');
+            $table->foreignId('room_id')->constrained();
+            $table->foreignId('voice_part_id')->constrained();
             $table->timestamps();
+            $table->unique(['room_id', 'voice_part_id']);
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('score_categories');
+        Schema::dropIfExists('room_voiceparts');
     }
 };

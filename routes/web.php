@@ -108,6 +108,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('pdf.estimate');
     Route::get('pdf/candidateScore/{candidate}', \App\Http\Controllers\Pdfs\CandidateScorePdfController::class)
         ->name('pdf.candidateScore');
+    Route::get('pdf/candidateScoresSchool/', \App\Http\Controllers\Pdfs\CandidateScoresSchoolPdfController::class)
+        ->name('pdf.candidateScoresSchool');
 
     //PARTICIPATION.PITCHFILES
     Route::get('pitchFiles', \App\Http\Controllers\Events\Versions\Participations\PitchFileController::class)
