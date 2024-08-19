@@ -98,6 +98,13 @@
                             />
                         @endif
 
+                        {{-- SHOW ALL SCORES PDF OPTION --}}
+                        <x-forms.elements.livewire.inputCheckbox
+                            label="Participating teachers should have access to all audition scores without identifying participants other than their own school."
+                            name="form.showAllScores"
+                            value="1"
+                        />
+
                         {{-- SUCCESS INDICATOR --}}
                         @if($showSuccessIndicator)
                             <div class="text-green-600 italic text-xs">

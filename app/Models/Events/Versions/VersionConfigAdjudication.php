@@ -15,6 +15,7 @@ class VersionConfigAdjudication extends Model
         'judge_per_room_count',
         'room_monitor',
         'scores_ascending',
+        'show_all_scores',
         'upload_count',
         'upload_types',
         'version_id',

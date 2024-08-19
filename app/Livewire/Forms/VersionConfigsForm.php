@@ -21,6 +21,7 @@ class VersionConfigsForm extends Form
     public int $judgeCount = 1;
     public bool $roomMonitor = false;
     public int $scoresAscending = 0;
+    public bool $showAllScores = true;
     public string $sysId = 'new';
 
     //registrants vars
@@ -66,6 +67,7 @@ class VersionConfigsForm extends Form
         $this->judgeCount = $vca->judge_per_room_count ?? 1;
         $this->roomMonitor = $vca->room_monitor ?? 0;
         $this->scoresAscending = $vca->scores_ascending ?? 0;
+        $this->showAllScores = $vca->show_all_scores ?? 1;
         $this->sysId = $vca->id;
     }
 
@@ -136,6 +138,7 @@ scores may contain multiple individuals.';
                     'averaged_scores' => $this->averagedScores,
                     'scores_ascending' => $this->scoresAscending,
                     'alternating_scores' => $this->alternatingScores,
+                    'show_all_scores' => $this->showAllScores,
                 ]
             );
     }
@@ -191,6 +194,7 @@ scores may contain multiple individuals.';
                 'room_monitor' => $mostRecentVca->room_monitor,
                 'averaged_scores' => $mostRecentVca->averaged_scores,
                 'scores_ascending' => $mostRecentVca->scores_ascending,
+                'show_all_scores' => $mostRecentVca->show_all_scores,
                 'alternating_scores' => $mostRecentVca->alternating_scores,
             ]
         );
