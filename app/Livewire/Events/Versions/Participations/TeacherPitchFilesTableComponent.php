@@ -86,7 +86,7 @@ class TeacherPitchFilesTableComponent extends BasePage
                 'version_pitch_files.file_type', 'version_pitch_files.voice_part_id',
                 'version_pitch_files.url', 'version_pitch_files.description',
                 'version_pitch_files.order_by',
-                'voice_parts.descr as voicePartDescr')
+                'voice_parts.descr as voicePartDescr', 'voice_parts.order_by')
             ->orderBy('version_pitch_files.order_by', 'asc');
     }
 
@@ -103,7 +103,7 @@ class TeacherPitchFilesTableComponent extends BasePage
                 'version_pitch_files.file_type', 'version_pitch_files.voice_part_id',
                 'version_pitch_files.url', 'version_pitch_files.description',
                 'version_pitch_files.order_by',
-                'voice_parts.descr')
+                'voice_parts.descr', 'voice_parts.order_by')
             ->orderBy('version_pitch_files.order_by', 'asc')
             ->get());
     }

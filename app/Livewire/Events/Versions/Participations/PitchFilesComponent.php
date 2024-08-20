@@ -71,7 +71,7 @@ class PitchFilesComponent extends BasePage
                 $this->filters->filterPitchFileFileTypes($query);
             })
             ->select('version_pitch_files.id', 'file_type', 'description', 'url', 'voice_part_id',
-                'voice_parts.descr AS voicePartDescr')
+                'voice_parts.descr AS voicePartDescr', 'voice_parts.order_by')
             ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
             ->orderBy('version_pitch_files.order_by')
             ->get()

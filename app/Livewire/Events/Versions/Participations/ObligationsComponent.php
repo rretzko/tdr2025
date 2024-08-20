@@ -6,6 +6,7 @@ use App\Livewire\BasePage;
 use App\Models\Events\Versions\Participations\Obligation;
 use App\Models\Events\Versions\Version;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class ObligationsComponent extends BasePage
 {
@@ -53,12 +54,25 @@ class ObligationsComponent extends BasePage
     {
         $fileName = 'obligations.blade.php';
         $basePath = base_path(); //ex. C:\xampp\htdocs\staging\tdr2025
-        $eventDirectory = $basePath.DIRECTORY_SEPARATOR.'resources\views\components\obligations'.DIRECTORY_SEPARATOR.$this->eventId;
-        $versionDirectory = $eventDirectory.DIRECTORY_SEPARATOR.$this->versionId;
+        $eventDirectory = $basePath
+            .DIRECTORY_SEPARATOR
+            .'resources'
+            .DIRECTORY_SEPARATOR
+            .'views'
+            .DIRECTORY_SEPARATOR
+            .'components'
+            .DIRECTORY_SEPARATOR
+            .'obligations'
+            .DIRECTORY_SEPARATOR
+            .$this->eventId;
+
+        $versionDirectory = $eventDirectory
+            .DIRECTORY_SEPARATOR
+            .$this->versionId;
 
         $componentPath = 'components'.DIRECTORY_SEPARATOR.'obligations'.DIRECTORY_SEPARATOR.$this->eventId.DIRECTORY_SEPARATOR;
-//dd($versionDirectory.DIRECTORY_SEPARATOR.$fileName);
-//dd($eventDirectory.DIRECTORY_SEPARATOR.$fileName);
+//dd('version path: ' . $versionDirectory.DIRECTORY_SEPARATOR.$fileName);
+        Log::info('event path: '.$eventDirectory.DIRECTORY_SEPARATOR.$fileName);
         //use the version-specific rendering of the obligations page if it exists
         if (file_exists($versionDirectory.DIRECTORY_SEPARATOR.$fileName)) {
 
@@ -72,7 +86,10 @@ class ObligationsComponent extends BasePage
                 .'obligations';
         } else {
 
-            dd('none found at: '.$componentPath);
+            Log::info($fileName.' not found at: '.$versionDirectory.DIRECTORY_SEPARATOR.$fileName);
+            Log::info($fileName.' not found at: '.$eventDirectory.DIRECTORY_SEPARATOR.$fileName);
+
+            abort(404, 'Obligations page was not found.  Please use your back key to return to the previous page.');
         }
 
 

@@ -3,6 +3,7 @@
 namespace App\Models\Events\Versions;
 
 use App\Models\Events\Event;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -35,6 +36,19 @@ class Version extends Model
     public function event(): BelongsTo
     {
         return $this->belongsTo(Event::class);
+    }
+
+    public function getVersionManager(): User
+    {
+        $versionRole = VersionRole::query()
+            ->where('version_id', $this->id)
+            ->where('role', 'event manager')
+            ->orderBy('id')
+            ->first();
+
+        $versionParticipant = VersionParticipant::find($versionRole->version_participant_id);
+
+        return User::find($versionParticipant->user_id);
     }
 
     public function showPitchFiles(string $type = ''): bool

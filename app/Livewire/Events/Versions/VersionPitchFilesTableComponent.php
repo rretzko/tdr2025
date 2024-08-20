@@ -254,7 +254,7 @@ class VersionPitchFilesTableComponent extends BasePage
                 'version_pitch_files.file_type', 'version_pitch_files.voice_part_id',
                 'version_pitch_files.url', 'version_pitch_files.description',
                 'version_pitch_files.order_by',
-                'voice_parts.descr')
+                'voice_parts.descr', 'voice_parts.order_by')
             ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
             //order_by is always a secondary sort and mimics if order_by is also the primary sort
             ->orderBy('version_pitch_files.order_by', $secondarySortOrder);

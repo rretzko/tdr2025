@@ -44,8 +44,8 @@ class Filters extends Form
 
     public function init(string $header)
     {
-        Log::info(__METHOD__.': '.__LINE__);
-        Log::info('header: '.$header);
+//        Log::info(__METHOD__.': '.__LINE__);
+//        Log::info('header: '.$header);
         $this->header = $header;
         $this->versionId = (int) UserConfig::getValue('versionId');
 
@@ -146,7 +146,7 @@ class Filters extends Form
         } else {
 
             Log::info(__METHOD__.': '.__LINE__);
-            Log::info('no workflow for header: '.$this->header);
+            Log::info('no filters workflow for header: '.$this->header);
         }
     }
 

@@ -38,7 +38,14 @@
         </thead>
         <tbody>
         @forelse($rows AS $key => $row)
-            <tr class=" odd:bg-green-50 @if($row->status !== 'active') text-gray-400 @endif">
+
+            <tr
+                @class([
+                    'odd:bg-green-50',
+                    'text-green-500' => ($row->status === 'request'),
+                    'text-gray-400' => (!in_array($row->status, ['active','request'])),
+                ])
+            >
                 <td class="text-center">
                     {{ $key + 1 }}
                 </td>
@@ -51,16 +58,36 @@
                 <td class="border border-gray-200 px-1 text-center">
                     {{ $row->status }}
                 </td>
-                <td class="text-center border border-gray-200">
 
-                    <a href="@if(in_array($row->status,['active','sandbox'])){{ route('participation.dashboard', ['version' => $row->id]) }} @else {{ route('participation.results', ['version' => $row->id]) }} @endif">
+                <td class="border border-gray-200 px-1 text-center">
+                    @if(in_array($row->status,['active','sandbox']))
+                        <a href="{{ route('participation.dashboard', ['version' => $row->id]) }}">
+                            <button
+                                type="button"
+                                class="bg-yellow-600 text-white text-xs px-2 rounded-full hover:bg-yellow-700"
+                            >
+                                Go To
+                            </button>
+                        </a>
+                    @elseif($row->status === 'request')
                         <button
+                            wire:click="requestInvitation({{ $row->id }})"
                             type="button"
-                            class="bg-yellow-600 text-white text-xs px-2 rounded-full hover:bg-yellow-700"
+                            class="bg-green-600 text-white text-xs px-2 rounded-full hover:bg-green-700"
+                            title="Request an invitation to participate."
                         >
-                            Go To
+                            Request
                         </button>
-                    </a>
+                    @else
+                        <a href="{{ route('participation.results', ['version' => $row->id]) }}">
+                            <button
+                                type="button"
+                                class="bg-yellow-600 text-white text-xs px-2 rounded-full hover:bg-yellow-700"
+                            >
+                                Results
+                            </button>
+                        </a>
+                    @endif
                 </td>
             </tr>
 
