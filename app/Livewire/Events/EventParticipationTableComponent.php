@@ -32,7 +32,7 @@ class EventParticipationTableComponent extends BasePage
     {
         $version = Version::find($versionId);
 
-        Mail::to('rretzko@hotmail.com')
+        Mail::to($version->getVersionManager()->email)
             ->send(new RequestInvitationToEventMail($version));
 
         $this->showSuccessIndicator = true;
