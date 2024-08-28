@@ -18,7 +18,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\URL;
 
-class RequestInvitationToEventMail extends Mailable
+class SendInvitationConfirmationToRequesterMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -27,7 +27,7 @@ class RequestInvitationToEventMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(private readonly Version $version)
+    public function __construct(private readonly User $user, private readonly Version $version)
     {
         //returns user object
         $this->eventManager = $version->getVersionManager();
@@ -40,7 +40,7 @@ class RequestInvitationToEventMail extends Mailable
     {
         return new Envelope(
             from: new Address('rick@mfrholdings.com', 'Rick Retzko'),
-            subject: 'Request Invitation To Event Mail',
+            subject: 'Your Requested Event Invitation Has Been Approved',
         );
     }
 
@@ -49,16 +49,16 @@ class RequestInvitationToEventMail extends Mailable
      */
     public function content(): Content
     {
-        $requester = auth()->user();
-        $teacher = Teacher::where('user_id', auth()->id())->first();
-        $school = School::find(UserConfig::getValue('schoolId'));
+        $requester = $this->user;
+        $teacher = $this->user->teacher;
+        $school = $teacher->schools->first();
         $schoolCounty = County::find($school->county_id)->name;
         $valueObject = TeacherNameAndSchoolValueObject::getVo($teacher);
-        $verificationUrl = $this->getUrl();
 
         return new Content(
-            view: 'mail.requestInvitationToEvent',
+            view: 'mail.invitationConfirmationToRequester',
             with: [
+                'eventManagerFullName' => $this->eventManager->name,
                 'firstName' => $this->eventManager->first_name,
                 'requesterFirstName' => $requester->first_name,
                 'requesterEmail' => $requester->email,
@@ -68,27 +68,8 @@ class RequestInvitationToEventMail extends Mailable
                 'schoolVo' => $valueObject,
                 'schoolCounty' => $schoolCounty,
                 'workEmail' => 'work@email.com',
-                'verificationUrl' => $verificationUrl,
                 'versionName' => $this->version->name,
             ],
-        );
-    }
-
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
-    public function attachments(): array
-    {
-        return [];
-    }
-
-    private function getUrl(): string
-    {
-        return URL::temporarySignedRoute(
-            'inviteVersionUser', now()->addMinutes(30), //addDays(1),
-            ['version' => $this->version->id, 'user' => auth()->id()]
         );
     }
 }

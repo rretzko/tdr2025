@@ -105,7 +105,7 @@ return [
 
     'from' => [
         'address' => env('MAIL_FROM_ADDRESS', 'rick@mfrholdings.com'),
-        'name' => env('MAIL_FROM_NAME', 'Rick Retzko'),
+        'name' => env('MAIL_FROM_NAME', 'TheDirectorsRoom.com'),
     ],
 
 ];

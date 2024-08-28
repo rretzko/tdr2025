@@ -11,6 +11,7 @@ use App\Models\Events\Versions\VersionPitchFile;
 use App\Models\Students\VoicePart;
 use App\Services\FileTypesArrayService;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Validate;
 use Livewire\WithFileUploads;
@@ -77,6 +78,7 @@ class VersionPitchFilesTableComponent extends BasePage
 
         //previous files
         $this->previousVersionPitchFiles = $this->getPreviousVersionPitchFiles();
+
     }
 
     public function render()
@@ -85,6 +87,9 @@ class VersionPitchFilesTableComponent extends BasePage
 
         $this->filters->setFilter('pitchFileVoicePartsSelectedIds', $this->dto['header']);
         $this->filters->setFilter('pitchFileFileTypesSelectedIds', $this->dto['header']);
+
+//Log::info(serialize($this->filters->pitchFileVoicePartsSelectedIds));
+//Log::info(serialize($this->filters->pitchFileFileTypesSelectedIds));
 
         return view('livewire..events.versions.version-pitch-files-table-component',
             [
@@ -227,6 +232,7 @@ class VersionPitchFilesTableComponent extends BasePage
         return VersionPitchFile::whereNot('version_id', $this->versionId)
             ->whereIn('version_id', $versionIds)
             ->distinct('description')
+            ->select('version_pitch_files.id', 'version_pitch_files.description', 'version_pitch_files.order_by')
             ->orderBy('order_by')
             ->pluck('description', 'id')
             ->toArray();

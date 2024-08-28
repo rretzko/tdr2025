@@ -15,7 +15,7 @@
                     <form class="flex flex-col space-y-2" method="post" action="{{ route('founder.logInAs') }}">
                         @csrf
                         <label>Log In As</label>
-                        <select name="user_id" class="w-fit">
+                        <select name="user_id" class="w-fit" autofocus>
                             @foreach($dto['users'] AS $user)
                                 <option value="{{ $user->id }}">
                                     {{ $user->last_name }}, {{ $user->first_name }}

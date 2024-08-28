@@ -9,7 +9,7 @@ class CalcSeniorYearService
         $mth = (int) date('n');
         $yr = (int) date('Y');
 
-        return ($mth > 6)
+        return ($mth < 7)
             ? $yr
             : ($yr + 1);
     }

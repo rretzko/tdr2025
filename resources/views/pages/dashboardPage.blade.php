@@ -21,13 +21,17 @@
                 <div class="flex flex-col justify-center sm:flex-row sm:space-x-2 sm:flex-wrap items-center space-y-2">
 
                     @forelse($dto['cards'] AS $card)
-                        <x-cards.dashboardCard
-                            color="{{ $card['color'] }}"
-                            descr="{!! $card['description'] !!}"
-                            heroicon="{{ $card['heroicon'] }}"
-                            href="{{ $card['href'] }}"
-                            label="{{ $card['label'] }}"
-                        />
+                        @if(in_array($card['label'], ['ensembles', 'libraries']) && (! auth()->user()->isFounder()))
+                            {{-- suppress display --}}
+                        @else
+                            <x-cards.dashboardCard
+                                color="{{ $card['color'] }}"
+                                descr="{!! $card['description'] !!}"
+                                heroicon="{{ $card['heroicon'] }}"
+                                href="{{ $card['href'] }}"
+                                label="{{ $card['label'] }}"
+                            />
+                        @endif
                     @empty
                         <div>None Found.</div>
                     @endforelse

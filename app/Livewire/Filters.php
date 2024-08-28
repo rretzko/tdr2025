@@ -115,8 +115,7 @@ class Filters extends Form
                 ->sortByDesc('class_of')
                 ->pluck('class_of')
                 ->toArray();
-//Log::info(__METHOD__ . ': ' . __LINE__);
-//Log::info('classOfsSelectedIds: ' . implode(',', $this->classOfsSelectedIds));
+
             //initially set voicePartIds filter to include ALL voicePartIds for auth()->user()->teacher
             $this->voicePartIdsSelectedIds = auth()->user()->teacher->students
                 ->unique('voice_part_id')
@@ -127,27 +126,37 @@ class Filters extends Form
         } elseif (in_array($this->header, ['pitchFiles', 'teacher pitch files', 'version pitch files'])) {
 
             //initially set pitchFileVoiceParts filter to include ALL voicePartIds for pitch files
-            $this->pitchFileVoicePartsSelectedIds = VersionPitchFile::query()
+            $voiceParts = VersionPitchFile::query()
                 ->join('voice_parts', 'voice_parts.id', '=', 'version_pitch_files.voice_part_id')
                 ->where('version_pitch_files.version_id', UserConfig::getValue('versionId'))
                 ->distinct('version_pitch_files.voice_part_id')
+                ->select('voice_parts.id', 'voice_parts.order_by')
                 ->orderBy('voice_parts.order_by')
                 ->pluck('voice_parts.id')
                 ->toArray();
 
+//            Log::info(serialize($voiceParts));
+
+            $this->pitchFileVoicePartsSelectedIds = $voiceParts;
+
             //initially set pitchFileFileTypes filter to include all file types for pitch files
-            $this->pitchFileFileTypesSelectedIds = VersionPitchFile::query()
+            $fileTypes = VersionPitchFile::query()
                 ->where('version_pitch_files.version_id', UserConfig::getValue('versionId'))
                 ->distinct('version_pitch_files.file_type')
                 ->orderBy('version_pitch_files.file_type')
                 ->pluck('version_pitch_files.file_type', 'version_pitch_files.file_type')
                 ->toArray();
 
+//            Log::info(serialize($fileTypes));
+
+            $this->pitchFileFileTypesSelectedIds = $fileTypes;
+
         } else {
 
             Log::info(__METHOD__.': '.__LINE__);
             Log::info('no filters workflow for header: '.$this->header);
         }
+
     }
 
     public function apply($query)

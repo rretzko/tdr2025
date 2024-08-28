@@ -10,17 +10,12 @@
     </ul>
 
     <div>
-        <a href="{{$verificationUrl}}">
-            <button type="button" class="bg-green-500 text-white rounded-full px-3 py-1">
-                Please click here to verify this work email address
+        <a href="{{$verificationUrl}}" class="mx-auto bg-green-500 text-white rounded-full">
+            <button type="button"
+                    style="background-color: royalblue; color: white; border-radius: 9999px;  padding: 0.5rem; cursor: pointer;">
+                Please click here to invite {{ $requesterName }} to {{ $versionName }}.
             </button>
         </a>
     </div>
-    <div>
-        <p>
-            Note: You will be <b>denied</b> access to student-entered information while your work email is
-            unverified.<br/>
-            Additionally, access to participate in events through TheDirectorsRoom.com may be limited.
-        </p>
-    </div>
+
 </div>

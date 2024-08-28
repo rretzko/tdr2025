@@ -33,7 +33,7 @@ class MakeCandidateRecordsService
 
     private function init(): void
     {
-        $versionIdLength = strlen($this->versionId);
+        $versionIdLength = strlen((string) $this->versionId);
 
         if ($this->schoolId) {
 

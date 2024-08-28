@@ -186,6 +186,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('events.versions.version-scorings',
         \App\Http\Controllers\Events\Versions\VersionScoringController::class);
 
+    //VERIFIED SIGNED ROUTES
+    Route::get('/invite/{version}/{user}', \App\Http\Controllers\Events\Versions\InviteVersionUserController::class)
+        ->name('inviteVersionUser');
 
 //    Route::get('event/edit/{event}', EventManageEditController::class)
 //        ->middleware('can:update,event') //check EventPolicy

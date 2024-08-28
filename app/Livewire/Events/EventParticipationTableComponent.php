@@ -113,7 +113,7 @@ class EventParticipationTableComponent extends BasePage
             ->join('version_participants', 'version_participants.version_id', '=', 'versions.id')
             ->join('version_roles', 'version_roles.version_participant_id', '=', 'version_participants.id')
             ->where('versions.status', 'active')
-            ->whereNot('version_participants.user_id', auth()->id())
+            ->where('version_participants.user_id', '<>', auth()->id())
             ->distinct('versions.id')
             ->select('version_participants.version_id AS id',
                 'events.short_name AS eventName',
@@ -160,15 +160,16 @@ class EventParticipationTableComponent extends BasePage
                 ->join('events', 'events.id', '=', 'versions.event_id')
                 ->join('version_participants', 'version_participants.version_id', '=', 'versions.id')
                 ->join('version_roles', 'version_roles.version_participant_id', '=', 'version_participants.id')
-                ->where('versions.status', 'sandbox')
-                ->where('version_participants.user_id', auth()->id())
+                ->where('versions.status', 'active')
+                ->where('version_participants.user_id', '<>', auth()->id())
                 ->distinct('versions.id')
                 ->select('version_participants.version_id AS id',
                     'events.short_name AS eventName',
-                    'versions.short_name AS versionName', 'versions.status')
+                    'versions.short_name AS versionName', 'versions.status',
+                    'versions.senior_class_of'
+                )
                 ->orderByDesc('versions.senior_class_of')
-                ->get()
-                ->toArray()
+                ->toRawSql()
         );
     }
 }
