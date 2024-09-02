@@ -92,6 +92,29 @@
 
                     <!-- Right side: form -->
                     <div class="w-full ml-2 overflow-y-auto h-screen">
+
+                        {{-- EPAYMENT STUDENT --}}
+                        <div id="Payments Checkbox"
+                             class="bg-gray-200 border border-gray-600 rounded-lg shadow-lg p-2 mb-2">
+                            @if($versionEpaymentStudent)
+                                <div class="">
+                                    <h3>{{ $version->name }} will accept PayPal payments from your students.</h3>
+                                    <div class="flex flex-row space-x-2 items-center">
+                                        <input type="checkbox" wire:model.live="teacherEpaymentStudent"/>
+                                        <label for="epayment_student">
+                                            Click here to allow your students to pay through PayPal.
+                                        </label>
+                                    </div>
+                                    <div class="text-xs italic text-green-600 ml-8">
+                                        @if($teacherEpaymentStudent)
+                                            Last Updated: {{ $teacherEpaymentStudentLastUpdated }}
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+
+                        {{-- FORM --}}
                         <div class="advisory text-center text-gray-500">
                             @if($form->firstName)
                                 <x-forms.partials.candidateForm

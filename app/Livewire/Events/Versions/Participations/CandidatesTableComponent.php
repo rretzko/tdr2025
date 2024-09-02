@@ -8,6 +8,7 @@ use App\Livewire\Forms\CandidateForm;
 use App\Models\Events\Event;
 use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Version;
+use App\Models\Events\Versions\VersionTeacherConfig;
 use App\Models\Schools\Teacher;
 use App\Models\UserConfig;
 use App\Services\CalcSeniorYearService;
@@ -15,6 +16,7 @@ use App\Services\CoTeachersService;
 use App\Services\EventEnsemblesVoicePartsArrayService;
 use App\Services\MakeCandidateRecordsService;
 use App\Services\PathToRegistrationService;
+use Carbon\Carbon;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -43,7 +45,10 @@ class CandidatesTableComponent extends BasePage
     public int $showFormEdit = 0;
     public bool $showRegistrationPath = false;
     public bool $studentHomeAddress = false;
+    public bool $teacherEpaymentStudent = false;
+    public string $teacherEpaymentStudentLastUpdated = '';
     public array $teachers = [];
+    public bool $versionEpaymentStudent = false;
     public int $versionId = 0;
 
     public Filters $filters;
@@ -55,6 +60,7 @@ class CandidatesTableComponent extends BasePage
 
         $this->versionId = $this->dto['id'];
         $this->version = Version::find($this->versionId);
+        $this->versionEpaymentStudent = $this->version->epayment_student;
         $this->event = $this->version->event;
         $this->height = $this->version->height;
         $this->shirtSize = $this->version->shirt_size;
@@ -81,6 +87,16 @@ class CandidatesTableComponent extends BasePage
 
         //pre-load empty model
         $this->form->candidate = new Candidate();
+
+        //determine if teacher allows student ePayments
+        $this->versionEpaymentStudent = $this->version->epayment_student;
+        $vtc = VersionTeacherConfig::query()
+            ->where('version_id', $this->versionId)
+            ->where('teacher_id', Teacher::where('user_id', auth()->id())->first()->id)
+            ->first();
+        $this->teacherEpaymentStudent = $vtc->epayment_student ?? false;
+        $this->teacherEpaymentStudentLastUpdated = Carbon::parse($vtc->updated_at)->diffForHumans();
+
     }
 
     public function render()
@@ -162,6 +178,25 @@ class CandidatesTableComponent extends BasePage
             $this->successMessage = ucwords($key).' recording saved.';
 
             $this->pathToRegistration = PathToRegistrationService::getPath($this->form->candidate->id);
+        }
+    }
+
+    public function updatedTeacherEpaymentStudent(): void
+    {
+        $updated = VersionTeacherConfig::updateOrCreate(
+            [
+                'teacher_id' => Teacher::where('user_id', auth()->id())->first()->id,
+                'version_id' => $this->versionId,
+            ],
+            [
+                'epayment_student' => $this->teacherEpaymentStudent,
+            ]
+        );
+
+        if ($updated) {
+            //pause for 2 seconds to prevent display from reading : 0 seconds ago
+            sleep(2);
+            $this->teacherEpaymentStudentLastUpdated = Carbon::parse($updated->updated_at)->diffForHumans();
         }
     }
 
@@ -277,6 +312,5 @@ class CandidatesTableComponent extends BasePage
 
         return $fileName;
     }
-
 
 }

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Address;
 use App\Models\Events\Event;
 use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Version;
@@ -11,11 +12,12 @@ class CalcApplicationRequirements
 {
     private array $missings = [];
     private Event $event;
+    private Version $version;
 
     public function __construct(private readonly Candidate $candidate)
     {
-        $version = Version::find($this->candidate->version_id);
-        $this->event = Event::find($version->event_id);
+        $this->version = Version::find($this->candidate->version_id);
+        $this->event = $this->version->event;
         $this->init();
     }
 
@@ -25,6 +27,32 @@ class CalcApplicationRequirements
         $this->evaluateVoicePartId();
         $this->evaluateEmergencyContact();
         $this->evaluateEmergencyContactPhoneMobile();
+        $this->evaluateHomeAddress();
+    }
+
+    private function evaluateHomeAddress(): void
+    {
+        if ($this->version->student_home_address) {
+
+            $address = Address::where('user_id', $this->candidate->student->user->id)->first();
+
+            if (!$address) {
+                $this->missings[] = "The candidate home address is missing.";
+
+            } elseif (!
+            (
+                strlen($address->address1) &&
+                strlen($address->city) &&
+                strlen($address->geostate_id) &&
+                strlen($address->postal_code)
+            )
+            ) {
+                $this->missings[] = "The candidate home address is missing or only partially completed.";
+            } else {
+
+                //all good, do nothing
+            }
+        }
     }
 
     private function evaluateStatus(): void

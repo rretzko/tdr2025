@@ -78,7 +78,7 @@
             </tr>
             <tr>
                 <td class="label">Height</td>
-                <td class="data">{{ $dto['footInch'] . ' (' . $dto['height'] . ')' }}</td>
+                <td class="data">{{ $dto['footInch'] . ' (' . $dto['height'] . '")' }}</td>
             </tr>
             <tr>
                 <td colspan="2" style="height: 6px;" note="spacer row"></td>
@@ -149,7 +149,7 @@
             </tr>
             <tr>
                 <td class="label">Voice Part</td>
-                <td class="data">{{ $dto['candidateVoicepartDescr'] }}</td>
+                <td class="data">{{ $dto['candidateVoicePartDescr'] }}</td>
             </tr>
         </table>
 

@@ -17,6 +17,7 @@ class Candidate extends Model
 
     protected $fillable = [
         'id',
+        'emergency_contact_id',
         'program_name',
         'ref',
         'school_id',
