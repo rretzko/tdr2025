@@ -1,177 +1,124 @@
-<div class="bg-white border hover:border-gray-500">
+<div>
 
-    <div class="border hover:border-gray-500 pb-2">
+    <style>
+        .pageBreak {
+            page-break-after: always;
+        }
+    </style>
 
-        <div class="px-4 sm:px-6 lg:px-8">
+    {{--    @foreach($dto['candidates'] AS $candidate)--}}
 
-            <div class="mt-4">
-
-                {{-- HEADER --}}
-                <header
-                    style="display: flex; flex-direction: row; justify-content: space-between; margin: 0 0.5rem; margin-bottom: 0.5rem;">
-                    <div>
-                        @if($dto['logo'])
-                            {{-- https://auditionsuite-production.s3.amazonaws.com/logos/testPublic.jpg --}}
-                            <img src="{{ Storage::disk('s3')->url($dto['logo']) }}"
-                                 alt="{{ $dto['organization'] }} logo" height="60" width="60"/>
-                        @endif
-                    </div>
-
-                    <div style="display: flex; flex-direction: column; justify-content: center;">
-                        <div
-                            style="text-align: center; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid darkgray;">
-                            {{ $dto['versionName'] }}
-                        </div>
-                        <div style="text-align: center; font-weight: bold; text-transform: uppercase;">
-                            {{ $dto['seniorClassOf'] }} TEACHER ESTIMATE FORM
-                        </div>
-                        <div style="text-align: center;">
-                            {{ $dto['teacherFullName'] }}
-                        </div>
-                        <div style="text-align: center">
-                            {{ $dto['schoolName'] }}
-                        </div>
-
-                    </div>
-
-                </header>
-
-                {{-- DATA SECTION --}}
-                <header style="text-align: center; border-bottom: 1px solid black; margin-bottom: 1rem;">
-                    @if($dto['maxCount'])
-                        {{ $dto['maxCount'] }} STUDENTS MAXIMUM
-                    @endif
-                </header>
-
-                <section id="table" style="margin-bottom: 1rem;">
-                    <style>
-                        table {
-                            border-collapse: collapse;
-                            margin: auto;
-                            margin-bottom: 1rem;
-                            width: 98%;
-                        }
-
-                        td, th {
-                            padding: 0 0.25rem;
-                            border: 1px solid darkgray;
-                        }
-                    </style>
-                    <table style="width: 98%; margin: auto;">
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Last Name</th>
-                            <th>First Name</th>
-                            <th>Voice Part</th>
-                            <th>Grade</th>
-                            <th>Fee</th>
-                        </tr>
-                        </thead>
-                        @forelse($dto['registrants'] AS $registrant)
-                            <tr style="background-color: {{ ($loop->odd ? 'rgba(0,255,0,0.1)' : 'white') }};">
-                                <td style="text-align: right">{{ $loop->iteration }}</td>
-                                <th>{{ $registrant->last_name }}</th>
-                                <th>{{ $registrant->first_name }}</th>
-                                <th>{{ $registrant->voicePartDescr }}</th>
-                                <th>{{ $registrant->grade }}</th>
-                                <th>${{ $dto['registrationFee'] * $loop->iteration }} </th>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" style="text-align: center;">
-                                    No registrants found.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </table>
-                </section>
-
-                <section id="voicePartSummary">
-
-                    <table>
-                        <thead>
-                        <tr>
-                            <th></th>
-                            @foreach($dto['voiceParts'] AS $key => $voicepart)
-                                <th style="background-color: {{ ((! ($key % 2)) ? 'lightgray' : 'white') }}">
-                                    {{ strtoupper($voicepart['abbr']) }}
-                                </th>
-                            @endforeach
-
-                            {{-- EPAYMENTS LABEL --}}
-                            @if($dto['ePaymentsAllowed'])
-                                <th>ePayments</th>
-                            @endif
-
-                            <th>Total Due</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <th>Voice Part Totals</th>
-                            @foreach($dto['voiceParts'] AS $key => $voicepart)
-                                <td style="text-align: center; background-color: {{ ((! ($key % 2)) ? 'lightgray' : 'white') }}">
-                                    {{ $voicepart['count'] }}
-                                </td>
-                            @endforeach
-
-                            {{-- EPAYMENTS --}}
-                            @if($dto['ePaymentsAllowed'])
-                                <th>{{ $dto['ePaymentsUsd'] }}</th>
-                            @endif
-
-                            <th>${{ $dto['totalDue'] }}</th>
-                        </tr>
-                        </tbody>
-                    </table>
-
-                </section>
-
-
-            </div>
-
-            {{-- ORGANIZATION CARD --}}
-            <div style="page-break-before: always">
-                <header
-                    style="display: flex; flex-direction: row; justify-content: space-between; margin: 0 0.5rem; margin-bottom: 0.5rem;">
-                    <div>
-                        @if($dto['logo'])
-                            {{-- https://auditionsuite-production.s3.amazonaws.com/logos/testPublic.jpg --}}
-                            <img src="{{ Storage::disk('s3')->url($dto['logo']) }}"
-                                 alt="{{ $dto['organization'] }} logo" height="60" width="60"/>
-                        @endif
-                    </div>
-
-                    <div style="display: flex; flex-direction: column; justify-content: center;">
-                        <div
-                            style="text-align: center; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid darkgray;">
-                            {{ $dto['versionName'] }}
-                        </div>
-                        <div style="text-align: center; font-weight: bold; text-transform: uppercase;">
-                            {{ $dto['seniorClassOf'] }} TEACHER ESTIMATE FORM
-                        </div>
-                        <div style="text-align: center;">
-                            {{ $dto['teacherFullName'] }}
-                        </div>
-                        <div style="text-align: center">
-                            {{ $dto['schoolName'] }}
-                        </div>
-
-                    </div>
-
-                </header>
-
-                <div
-                    style="margin-top: 12rem; margin-left: 25%; width: 50%; border: 1px solid black; text-align: center; height: 12rem; background-color: lightgray">
-                    <div style="margin-top: 5rem;">
-                        Attach NAfME CARD here...
-                    </div>
-                </div>
-
-            </div>
-        </div>
+    <div style="text-align: center; font-weight: bold; font-size: 1.15rem; margin-bottom: 1rem;">
+        {{ $dto['versionName'] }} Audition Results
     </div>
-</div>
 
+    <div style="font-size: x-large; text-align: center; margin: 2rem 0;">
+        {{ $dto['candidateFullName'] }}
+    </div>
+
+    {{-- REPORT --}}
+    <div class="mx-2 mb-2 pl-2 shadow-lg text-xs">
+        <style>
+            table {
+                border-collapse: collapse;
+                width: 98%;
+            }
+
+            td, th {
+                border: 1px solid black;
+                padding: 0 0.25rem;
+                text-align: center;
+            }
+        </style>
+
+        <table>
+            <thead>
+
+            {{-- JUDGES --}}
+            <tr>
+                <th colspan="4" style="border-color: transparent; border-right-color: black;"></th>
+                @for($i=0; $i<$dto['judgeCount'];$i++)
+                    <th colspan="{{ count($dto['scoreFactorAbbrs']) }}">
+                        Judge {{ ($i + 1) }}
+                    </th>
+                @endfor
+            </tr>
+
+            {{-- SCORING COMPONENT ABBRS --}}
+            <tr>
+                <th colspan="4" style="border-color: transparent; border-right-color: black;"></th>
+                @for($i=0; $i<$dto['judgeCount'];$i++)
+                    @foreach($dto['scoreCategories'] AS $category)
+                        <th colspan="{{ $dto['scoreCategoryFactorCount'][$category] }}">
+                            {{ \Illuminate\Support\Str::substr($category, 0, 5) }}
+                        </th>
+                    @endforeach
+                @endfor
+            </tr>
+
+            {{-- SCORE INDEX NUMBERS --}}
+            <tr style="font-size: 0.5rem;">
+                <th colspan="4" style="border-left-color: transparent;"></th>
+                @for($i=0; $i<(count($dto['scoreFactorAbbrs']) * $dto['judgeCount']); $i++)
+                    <td>
+                        {{ ($i + 1) }}
+                    </td>
+                @endfor
+            </tr>
+
+            <tr>
+                <th>cand #</th>
+                <th>vp</th>
+                <th>total</th>
+                <th>result</th>
+                @for($i=0; $i<$dto['judgeCount']; $i++)
+                    @foreach($dto['scoreFactorAbbrs'] AS $scoreFactorAbbr)
+                        <th>
+                            {{ \Illuminate\Support\Str::substr($scoreFactorAbbr['abbr'],0, 5) }}
+                        </th>
+                    @endforeach
+                @endfor
+            </tr>
+
+            </thead>
+            <tbody>
+
+            <tr>
+                <td>
+                    {{ $dto['candidateId'] }}
+                </td>
+                <td class="text-center">
+                    {{ strtoupper($dto['candidateVoicePartAbbr']) }}
+                </td>
+                <td class="text-center">
+                    {{ $dto['auditionResult']['total'] }}
+                </td>
+                <td class="text-center">
+                    {{ $dto['auditionResult']['acceptance_abbr'] }}
+                </td>
+                @if(count($dto['scores']))
+                    @for($i=0; $i<($dto['maxScoreFactorCount'] * $dto['judgeCount']); $i++)
+                        <td class="text-center">
+                            @if(array_key_exists($i, $dto['scores']))
+                                {{ $dto['scores'][$i] }}
+                            @else
+                                -
+                            @endif
+                        </td>
+                    @endfor
+                @else
+                    <td colspan="{{ ($dto['maxScoreFactorCount'] * $dto['judgeCount']) }}">No scores found.</td>
+                @endif
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <div class="pageBreak"></div>
+    {{--    @endforeach--}}
+
+</div>
 

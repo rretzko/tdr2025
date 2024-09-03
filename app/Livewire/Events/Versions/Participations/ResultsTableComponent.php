@@ -46,7 +46,6 @@ class ResultsTableComponent extends BasePage
         //should user see all-scores pdf?
         $vca = VersionConfigAdjudication::where('version_id', $this->versionId)->first();
         $this->showAllScores = $vca->show_all_scores;
-
     }
 
     private function getEnsembleVoiceParts(): array

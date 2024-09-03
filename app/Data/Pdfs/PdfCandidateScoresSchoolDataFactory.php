@@ -63,6 +63,7 @@ class PdfCandidateScoresSchoolDataFactory
         $this->dto['logoPdf'] = $this->getLogo();
         $this->dto['maxScoreFactorCount'] = $this->getMaxScoreFactorCount();
         $this->dto['organizationName'] = $this->event->organization;
+        $this->dto['organization'] = $this->event->organization; //old.  new=organizationName
         $this->dto['participationFee'] = $this->getParticipationFee();
         $this->dto['postmarkDeadline'] = $this->getPostmarkDeadline();
 //        $this->dto['pronounObject'] = $this->getPronoun('object');

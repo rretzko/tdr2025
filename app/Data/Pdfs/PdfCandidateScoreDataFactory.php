@@ -66,8 +66,10 @@ class PdfCandidateScoreDataFactory
         $this->dto['judgeCount'] = $this->getJudgeCount();
         $this->dto['logo'] = $this->getLogo();
         $this->dto['logoPdf'] = $this->getLogo();
+        $this->dto['maxCount'] = $this->version->event->max_registrant_count;
         $this->dto['maxScoreFactorCount'] = $this->getMaxScoreFactorCount();
         $this->dto['organizationName'] = $this->event->organization;
+        $this->dto['organization'] = $this->event->organization; //old new=organizationName
         $this->dto['participationFee'] = $this->getParticipationFee();
         $this->dto['postmarkDeadline'] = $this->getPostmarkDeadline();
         $this->dto['pronounObject'] = $this->getPronoun('object');
@@ -80,6 +82,7 @@ class PdfCandidateScoreDataFactory
         $this->dto['scoreCategoryFactorCount'] = $this->getScoreCategoryFactorCounts();
         $this->dto['scoreFactorAbbrs'] = $this->getScoreFactorAbbrs();
         $this->dto['scores'] = $this->getScores();
+        $this->dto['seniorClassOf'] = $this->version->senior_class_of;
         $this->dto['studentName'] = $this->getStudentName();
         $this->dto['teacherFullName'] = $this->teacher->user->name;
         $this->dto['versionShortName'] = $this->version->short_name;
