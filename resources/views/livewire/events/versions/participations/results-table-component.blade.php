@@ -80,6 +80,7 @@
                     {{-- TABLE --}}
                     <x-tables.auditionResultsTable
                         :columnHeaders="$columnHeaders"
+                        :hasContract="$hasContract"
                         :header="$dto['header']"
                         :recordsPerPage="$recordsPerPage"
                         :rows="$rows"

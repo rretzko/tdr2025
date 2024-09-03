@@ -40,7 +40,7 @@ class ResultsTableComponent extends BasePage
         $this->ensembleVoiceParts = $this->getEnsembleVoiceParts();
 
         //successful auditionees has participation contracts in these events
-        $eventsWithContracts = [19, 25];
+        $eventsWithContracts = [19];
         $this->hasContract = in_array($this->event->id, $eventsWithContracts);
 
         //should user see all-scores pdf?

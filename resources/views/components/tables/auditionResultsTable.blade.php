@@ -1,4 +1,5 @@
 @props([
+    'hasContract',
     'columnHeaders',
     'header',
     'recordsPerPage',
@@ -75,15 +76,16 @@
                 <td class="border border-gray-200 px-1 text-center">
                     {{ $row->acceptance_abbr }}
                 </td>
-                <td class="border border-gray-200 px-1 text-center">
-                    @if($row->accepted)
+                @if($row->accepted && $hasContract)
+                    <td class="border border-gray-200 px-1 text-center">
+
                         <div wire:click="printContract({{ $row->candidateId }})"
                              class="flex items-center justify-center text-green-600 cursor-pointer"
                         >
                             <x-heroicons.printer/>
                         </div>
-                    @endif
-                </td>
+                    </td>
+                @endif
             </tr>
 
         @empty
