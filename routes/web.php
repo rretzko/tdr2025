@@ -167,6 +167,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('version/roles', \App\Http\Controllers\Events\Versions\VersionRoleController::class)
         ->name('version.roles');
 
+    //VERSIONS.STUDENT TRANSFER
+    Route::get('version/studentTransfer', \App\Http\Controllers\Events\Versions\StudentTransferController::class)
+        ->name('studentTransfer');
+
+
     Route::get('version/profile', [\App\Http\Controllers\Events\Versions\VersionProfileController::class, 'edit'])
         ->name('version.edit');
     Route::get('versions/all/{event}', [\App\Http\Controllers\Events\Versions\VersionsController::class, 'index'])

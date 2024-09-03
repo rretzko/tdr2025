@@ -278,6 +278,12 @@ Breadcrumbs::for('version scoring', function (BreadcrumbTrail $trail, int $id) {
     $trail->parent('version dashboard', $id);
     $trail->push('Version Scoring', route('version.scoring'));
 });
+Breadcrumbs::for('student transfer', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('version dashboard', $id);
+    $trail->push('Student Transfer', route('studentTransfer'));
+});
+
+//Versions.StudentTransfer
 
 // Unknown = ViewData not found for the calling controller::method
 Breadcrumbs::for('unknown', function (BreadcrumbTrail $trail) {

@@ -70,7 +70,7 @@ class EventsTableComponent extends BasePage
 
     private function getRows(): Builder
     {
-//        $this->toSql();
+//        $this->test();
 
         return Event::query()
             ->join('event_management', 'event_management.event_id', '=', 'events.id')
@@ -114,9 +114,9 @@ class EventsTableComponent extends BasePage
 
     }
 
-    private function toSql(): void
+    private function test(): void
     {
-        Log::info(Event::query()
+        dd(Event::query()
             ->join('event_management', 'event_management.event_id', '=', 'events.id')
             ->leftJoin('versions', 'versions.event_id', '=', 'event_management.event_id')
             ->where('event_management.user_id', auth()->id())
@@ -135,6 +135,7 @@ class EventsTableComponent extends BasePage
                 'events.required_shirt_size', 'events.created_by'
             ])
             ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
-            ->toRawSql());
+            ->get()
+            ->toArray());
     }
 }

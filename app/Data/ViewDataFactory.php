@@ -3,9 +3,15 @@
 namespace App\Data;
 
 use App\Models\Events\Versions\Version;
+use App\Models\Events\Versions\VersionParticipant;
+use App\Models\Events\Versions\VersionRole;
 use App\Models\PageInstruction;
+use App\Models\UserConfig;
 use App\Models\ViewCard;
 use App\Services\VersionsTableService;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use JetBrains\PhpStorm\NoReturn;
 
 class ViewDataFactory extends aViewData
 {
@@ -72,6 +78,69 @@ class ViewDataFactory extends aViewData
         return html_entity_decode($encoded);
     }
 
+    /**
+     * Apply filters on roles held by user
+     * @return array
+     */
+    #[NoReturn]
+    private function filterCardsByRole(array $cards): array
+    {
+        //early exit
+        if ($this->dto['header'] !== 'version dashboard') {
+            return $cards;
+        }
+
+        $versionRoles = $this->getVersionRoles();
+
+        //founder and version's event manager(s) have access to all cards
+        if (auth()->user()->isFounder() || $versionRoles->contains('event manager')) {
+            return $cards;
+        }
+
+        //filter for online registration manager
+        if ($versionRoles->contains('online registration manager')) {
+            return $this->filterCardsForOnlineRegistrationManager($cards);
+        }
+
+        //filter for tab room
+        if ($versionRoles->contains('online registration manager')) {
+            return $this->filterCardsForTabRoom($cards);
+        }
+
+        return [];
+    }
+
+    /**
+     * This contains hard-coded values for the allowable cards to display to user
+     * @param  array  $cards
+     * @return array
+     * @todo: move the hard-coded values to db table or Enum structure
+     */
+    private function filterCardsForOnlineRegistrationManager(array $cards): array
+    {
+        $allowedLabels = ['student transfer'];
+
+        return array_filter($cards, function ($card) use ($allowedLabels) {
+            return in_array($card['label'], $allowedLabels);
+        });
+    }
+
+    /**
+     * This contains hard-coded values for the allowable cards to display to user
+     * @param  array  $cards
+     * @return array
+     * @todo: move the hard-coded values to db table or Enum structure
+     */
+    private function filterCardsForTabRoom(array $cards): array
+    {
+        return $cards;
+//        $allowedLabels = ['student transfer'];
+//
+//        return array_filter($cards, function($card) use ($allowedLabels) {
+//            return in_array($card['label'], $allowedLabels);
+//        });
+    }
+
     private function getColumnHeaders(): array
     {
         $headers = [];
@@ -114,20 +183,14 @@ class ViewDataFactory extends aViewData
      */
     private function getCards(): array
     {
-        $default = []; //no cards
-
-        if (ViewCard::query()
+        $viewCards = ViewCard::query()
             ->where('header', $this->dto['header'])
-            ->exists()) {
+            ->orderBy('order_by')
+            ->get();
 
-            return ViewCard::query()
-                ->where('header', $this->dto['header'])
-                ->orderBy('order_by')
-                ->get()
-                ->toArray();
-        }
-
-        return $default;
+        return ($viewCards->isNotEmpty())
+            ? $this->filterCardsByRole($viewCards->toArray())
+            : [];
     }
 
     private function getLivewireComponent(): string
@@ -174,6 +237,8 @@ class ViewDataFactory extends aViewData
             'my events' => 'events.events-table-component',
             'new event' => 'events.event-create-component',
 
+            'student transfer' => 'events.versions.version-student-transfer-component',
+
             'version configs edit' => 'events.versions.version-configs-edit-component',
             'version dates edit' => 'events.versions.version-dates-edit-component',
             'version edit' => 'events.versions.version-edit-component',
@@ -199,5 +264,24 @@ class ViewDataFactory extends aViewData
         $rows = [];
 
         return array_key_exists($this->dto['header'], $rows) ? $rows[$this->dto['header']] : [];
+    }
+
+    private function getVersionRoles(): Collection
+    {
+        $versionId = UserConfig::getValue('versionId');
+
+        $engageds = ['invited', 'obligated', 'participating'];
+
+        $versionParticipantId = VersionParticipant::query()
+            ->where('user_id', auth()->id())
+            ->where('version_id', $versionId)
+            ->whereIn('status', $engageds)
+            ->value('id');
+
+        return VersionRole::query()
+            ->where('version_participant_id', $versionParticipantId)
+            ->where('version_id', $versionId)
+            ->distinct('role')
+            ->pluck('role');
     }
 }
