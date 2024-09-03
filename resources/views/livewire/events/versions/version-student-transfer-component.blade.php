@@ -3,7 +3,78 @@
 
     <x-pageInstructions.instructions instructions="{!! $pageInstructions !!}" firstTimer="{{ $firstTimer }}"/>
 
-    <div id="container">
+    <div id="container" class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+
+        <div id="tranferFrom" class="bg-red-50 pb-2 px-2 items-center rounded-lg shadow-lg w-full">
+
+            <h3 class="font-semibold text-center">Transfer From</h3>
+
+            <fieldset id="fromVars">
+
+                {{-- SCHOOL FROM --}}
+                <div class="flex flex-col mb-2">
+                    <label for="schoolIdFrom">School</label>
+                    <select wire:model.live.debounce="schoolIdFrom" class="w-11/12" autofocus>
+                        <option value="0">- select -</option>
+                        @foreach($schools AS $school)
+                            <option value="{{ $school['id'] }}" class="text-sm">
+                                {{ $school['name'] }} ({{ $school['countyName'] . ' ' . $school['abbr'] }})
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                {{-- TEACHER FROM --}}
+                <div class="flex flex-col mb-2">
+                    <label for="teacherIdFrom">Teacher</label>
+                    <select wire:model.live.debounce="teacherIdFrom" class="w-11/12">
+                        <option value="0">- select -</option>
+                        @foreach($teacherFroms AS $teacherFrom)
+                            <option value="{{ $teacherFrom['id'] }}" class="text-sm">
+                                {{ $teacherFrom['name'] }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+            </fieldset>{{-- end of fromVars --}}
+
+        </div>
+
+        <div id="tranferTo" class="bg-green-50 pb-2 px-2 items-center shadow-lg w-full">
+
+            <h3 class="font-semibold text-center">Transfer To</h3>
+
+            <fieldset id="toVars">
+
+                {{-- SCHOOL TO --}}
+                <div class="flex flex-col mb-2">
+                    <label for="schoolIdTo">School</label>
+                    <select wire:model.live.debounce="schoolIdTo" class="w-11/12">
+                        <option value="0">- select -</option>
+                        @foreach($schools AS $school)
+                            <option value="{{ $school['id'] }}" class="text-sm">
+                                {{ $school['name'] }} ({{ $school['countyName'] . ' ' . $school['abbr'] }})
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                {{-- TEACHER TO --}}
+                <div class="flex flex-col mb-2">
+                    <label for="teacherIdTo">Teacher</label>
+                    <select wire:model.live.debounce="teacherIdTo" class="w-11/12">
+                        <option value="0">- select -</option>
+                        @foreach($teacherTos AS $teacherTo)
+                            <option value="{{ $teacherTo['id'] }}" class="text-sm">
+                                {{ $teacherTo['name'] }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+            </fieldset>{{-- end of toVars --}}
+        </div>
 
         {{-- FORM --}}
         {{--        <form wire:submit="save" class="my-4 p-4 border border-gray-200 rounded-lg shadow-lg">--}}
