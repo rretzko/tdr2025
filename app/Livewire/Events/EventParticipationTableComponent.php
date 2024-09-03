@@ -84,8 +84,10 @@ class EventParticipationTableComponent extends BasePage
         return DB::table('version_participants')
             ->join('versions', 'versions.id', '=', 'version_participants.version_id')
             ->join('events', 'events.id', '=', 'versions.event_id')
+            ->join('candidates', 'candidates.version_id', '=', 'version_participants.version_id')
             ->where('version_participants.user_id', auth()->id())
             ->where('versions.status', 'closed')
+            ->distinct('versions.id')
             ->select('version_participants.version_id AS id',
                 'events.short_name AS eventName',
                 'versions.short_name AS versionName', 'versions.status',
@@ -156,12 +158,12 @@ class EventParticipationTableComponent extends BasePage
     private function test(): void
     {
         dd(
-            DB::table('versions')
+            DB::table('version_participants')
+                ->join('versions', 'versions.id', '=', 'version_participants.version_id')
                 ->join('events', 'events.id', '=', 'versions.event_id')
-                ->join('version_participants', 'version_participants.version_id', '=', 'versions.id')
-                ->join('version_roles', 'version_roles.version_participant_id', '=', 'version_participants.id')
-                ->where('versions.status', 'active')
-                ->where('version_participants.user_id', '<>', auth()->id())
+                ->join('candidates', 'candidates.version_id', '=', 'version_participants.version_id')
+                ->where('version_participants.user_id', 351)
+                ->where('versions.status', 'closed')
                 ->distinct('versions.id')
                 ->select('version_participants.version_id AS id',
                     'events.short_name AS eventName',
@@ -169,7 +171,8 @@ class EventParticipationTableComponent extends BasePage
                     'versions.senior_class_of'
                 )
                 ->orderByDesc('versions.senior_class_of')
-                ->toRawSql()
+                ->get()
+                ->toArray()
         );
     }
 }

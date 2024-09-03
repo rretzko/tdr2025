@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Models\Events\Versions\Version;
-use App\Moduels\Events\Versions\Version as VersionsVersion;
+//use App\Moduels\Events\Versions\Version as VersionsVersion;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,6 +25,6 @@ class EpaymentCredentials extends Model
 
     public function version(): BelongsTo
     {
-        return $this->belongsTo(VersionsVersion::class);
+        return $this->belongsTo(Version::class);
     }
 }
