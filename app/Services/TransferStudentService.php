@@ -25,7 +25,7 @@ class TransferStudentService
     private function transferStudent($studentId)
     {
         try {
-            $result = DB::transaction(function () use ($studentId) {
+            $transactionResult = DB::transaction(function () use ($studentId) {
 
                 //inactivate student at current school if different from new school
                 $res1 = ($this->schoolIdFrom !== $this->schoolIdTo)
@@ -61,15 +61,32 @@ class TransferStudentService
                         : DB::insert("insert into student_teacher (student_id, teacher_id) VALUES ($studentId, $this->teacherIdTo)"));
 
                 //change candidate school, teacher, and statuses at current versions
+                $res4 = 1;
                 if ($this->FromCandidateExists($studentId)) {
 
+                    $candidates = Candidate::query()
+                        ->join('versions', 'versions.id', '=', 'candidates.version_id')
+                        ->where('candidates.student_id', $studentId)
+                        ->where('candidates.school_id', $this->schoolIdFrom)
+                        ->where('versions.status', 'active')
+                        ->get();
+
+                    $res4 = 0;
+                    foreach ($candidates as $candidate) {
+
+                        $res4 += $candidate->update(
+                            [
+                                'school_id' => $this->schoolIdTo,
+                                'teacher_id' => $this->teacherIdTo,
+                            ]
+                        );
+                    }
                 }
 
-                return ($res1 && $res2 && $res3);
+                return ($res1 && $res2 && $res3 && $res4);
             });
 
-            if ($result === 0) {
-
+            if ($transactionResult === 0) {
                 return false;
             }
 
@@ -89,14 +106,12 @@ class TransferStudentService
      */
     private function FromCandidateExists(int $studentId): bool
     {
-        $candidates = Candidate::query()
+        return Candidate::query()
             ->join('versions', 'versions.id', '=', 'candidates.version_id')
             ->where('candidates.student_id', $studentId)
             ->where('candidates.school_id', $this->schoolIdFrom)
             ->where('versions.status', 'active')
-            ->get();
-
-        return (bool) $candidates->count();
+            ->exists();
     }
 
 
