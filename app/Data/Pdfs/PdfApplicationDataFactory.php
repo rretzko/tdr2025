@@ -51,6 +51,7 @@ class PdfApplicationDataFactory
     private function init()
     {
         $this->dto['addressString'] = $this->getAddressString();
+        $this->dto['applicationDeadline'] = $this->getApplicationDeadline();
         $this->dto['auditionFee'] = $this->getAuditionFee();
         $this->dto['auditionPeriod'] = $this->getAuditionPeriod();
         $this->dto['candidateVoicepartDescr'] = $this->getCandidateVoicePartDescr(); //synonym to candidateVoicePartDescr below
@@ -98,6 +99,16 @@ class PdfApplicationDataFactory
         }
 
         return AddressValueObject::getStringVo($address);
+    }
+
+    private function getApplicationDeadline(): string
+    {
+        $postmarkDeadline = VersionConfigDate::query()
+            ->where('version_id', $this->version->id)
+            ->where('date_type', 'postmark_deadline')
+            ->value('version_date') ?? date('Y-m-d');
+
+        return Carbon::parse($postmarkDeadline)->format('l, F jS, Y');
     }
 
     private function getAuditionFee(): string
