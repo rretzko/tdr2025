@@ -32,6 +32,8 @@
                             {{ $dto['schoolName'] }}
                         </div>
 
+                        @include('components.forms.partials.timestamp')
+
                     </div>
 
                 </header>

@@ -60,6 +60,7 @@
                                 Please send one check for all students auditioning at your school.<br/>
                                 Please make out all checks to "All-Shore Chorus Inc."
                             </div>
+                            @include('components.forms.partials.timestamp')
                         </div>
 
                         {{-- INVOICE DETAIL --}}
