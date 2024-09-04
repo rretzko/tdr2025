@@ -1,6 +1,6 @@
 <h2 class="mb-4 text-center">
     <div>
-        Please acknowledge the Director obligations necessary to participate in {{ $dto['versionName'] }}.
+        Please acknowledge the Director obligations necessary to participate in {{ $versionShortName }}.
     </div>
     <div class="font-semibold">
         YOUR STUDENTS CANNOT ACCESS SELF-REGISTRATION UNTIL YOU ACKNOWLEDGE THIS OBLIGATION.

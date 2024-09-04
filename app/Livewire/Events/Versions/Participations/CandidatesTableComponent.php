@@ -7,6 +7,7 @@ use App\Livewire\Filters;
 use App\Livewire\Forms\CandidateForm;
 use App\Models\Events\Event;
 use App\Models\Events\Versions\Participations\Candidate;
+use App\Models\Events\Versions\Participations\Obligation;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionTeacherConfig;
 use App\Models\Schools\Teacher;
@@ -36,6 +37,7 @@ class CandidatesTableComponent extends BasePage
     public array $eventGrades = [];
     public bool $height = false;
     public array $heights = [];
+    public bool $obligationAccepted = false;
     public string $pathToRegistration = '';
     public int $schoolId = 0;
     public int $seniorYear = 0;
@@ -93,9 +95,17 @@ class CandidatesTableComponent extends BasePage
         $vtc = VersionTeacherConfig::query()
             ->where('version_id', $this->versionId)
             ->where('teacher_id', Teacher::where('user_id', auth()->id())->first()->id)
-            ->first();
+            ->first() ?? new VersionTeacherConfig();
         $this->teacherEpaymentStudent = $vtc->epayment_student ?? false;
         $this->teacherEpaymentStudentLastUpdated = Carbon::parse($vtc->updated_at)->diffForHumans();
+
+        //check for obligation acceptance
+        $teacherId = Teacher::where('user_id', auth()->id())->first()->id;
+        $this->obligationAccepted = (bool) Obligation::query()
+            ->where('version_id', $this->versionId)
+            ->where('teacher_id', $teacherId)
+            ->whereNotNull('accepted')
+            ->first();
 
     }
 

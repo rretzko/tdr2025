@@ -37,6 +37,39 @@
                     </select>
                 </div>
 
+                {{-- TRANSFER ERROR --}}
+                @if(count($transferErrors))
+                    @foreach($transferErrors AS $message)
+                        <div class="text-red-600">
+                            {{ $message }}
+                        </div>
+                    @endforeach
+                @endif
+
+                {{-- STUDENTS FROM --}}
+                <div class="flex flex-col mb-2">
+                    <label for="studentIdFrom" class="font-semibold underline">
+                        Students <span class="text-xs">({{ count($studentFroms) }})</span>
+                    </label>
+                    @forelse($studentFroms AS $studentFrom)
+                        <div class="flex flex-row space-x-2 ml-2 items-center"
+                             wire:key="studentFrom-{{ $studentFrom['id'] }}">
+                            <input
+                                type="checkbox"
+                                wire:model.live="studentIdFroms"
+                                value="{{ $studentFrom['id'] }}"
+                                class="w-3 h-3"
+                            />
+                            <label for="" class="text-xs">{{ $studentFrom['name'] }} ({{ $studentFrom['class_of'] }}
+                                )</label>
+                        </div>
+                    @empty
+                        <div class="text-xs ml-2">
+                            No current students found.
+                        </div>
+                    @endforelse
+                </div>
+
             </fieldset>{{-- end of fromVars --}}
 
         </div>
@@ -72,6 +105,38 @@
                         @endforeach
                     </select>
                 </div>
+
+                {{-- CURRENT STUDENTS --}}
+                <div class="flex flex-col mb-2">
+                    <label for="studentIdTo" class="font-semibold underline">
+                        Current Students <span class="text-xs">({{ count($studentTos) }})</span>
+                    </label>
+                    @forelse($studentTos AS $studentTo)
+                        <div class="flex flex-row space-x-2 ml-2">
+                            <label for="" class="ml-2 text-xs">{{ $studentTo['name'] }} ({{ $studentTo['class_of'] }}
+                                )</label>
+                        </div>
+                    @empty
+                        <div class="ml-2 text-xs">
+                            No current students found.
+                        </div>
+                    @endforelse
+                </div>{{-- end of toVars --}}
+
+                {{-- TRANSFER BUTTON --}}
+                <button
+                    type="button"
+                    wire:click="transferStudents"
+                    @class([
+                        'bg-gray-500 text-gray-300 text-sm px-2 rounded-lg shadow-lg ',
+                        'bg-green-500 text-white' => ($schoolIdTo && $teacherIdTo && count($studentIdFroms))
+                    ])
+                    @disabled(! (count($studentIdFroms) && $schoolIdTo && $teacherIdTo))
+                >
+                    Transfer {{ count($studentIdFroms) }} Students
+                </button>
+
+                <div>@json($studentIdFroms)</div>
 
             </fieldset>{{-- end of toVars --}}
         </div>

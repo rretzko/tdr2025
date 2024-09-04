@@ -35,7 +35,7 @@
     </li>
 
     <li class="mb-2">
-        <b>I understand</b> that failure to fulfill my responsibilities to the {{ $dto['versionShortName'] }}
+        <b>I understand</b> that failure to fulfill my responsibilities to the {{ $versionShortName }}
         <span class="underline">will result in forfeiture</span> of my students' participation the next-year's
         auditions.
     </li>
