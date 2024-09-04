@@ -14,6 +14,7 @@ use App\Models\Geostate;
 use App\Models\PhoneNumber;
 use App\Models\Schools\Teacher;
 use App\Models\Students\Student;
+use App\Models\Students\VoicePart;
 use App\Models\User;
 use App\Services\CalcApplicationRequirements;
 use App\Services\CalcClassOfFromGradeService;
@@ -78,6 +79,7 @@ class CandidateForm extends Form
     public bool $uploadsRequired = false;
     #[Validate('required|int')]
     public int $voicePartId = 0;
+    public string $voicePartDescr = '';
 
     protected array $propertyMap = [
         'classOf' => 'student',
@@ -194,6 +196,7 @@ class CandidateForm extends Form
         $this->teacherId = $this->candidate->teacher_id;
         $this->teacherName = Teacher::find($this->teacherId)->user->name;
         $this->voicePartId = $this->testVoicePartId($this->candidate->voice_part_id);
+        $this->voicePartDescr = VoicePart::find($this->voicePartId)->descr;
 
         $this->classOf = $this->student->class_of;
         $this->grade = $this->student->grade;
@@ -254,12 +257,14 @@ class CandidateForm extends Form
     {
         $this->validateOnly($key);
 
+        //convert grade to class_of value
         if ($key === 'grade') {
             $key = 'classOf';
             $service = new CalcClassOfFromGradeService;
             $value = $service->getClassOf($value);
         }
 
+        //see map above ~line 85
         $property = $this->propertyMap[$key] ?? null;
 
         if (!$property) {
@@ -270,6 +275,9 @@ class CandidateForm extends Form
             return $this->updatedPhoneNumber($value, $key);
         } elseif (str_starts_with($property, 'signature')) {
             return $this->updatedSignature($value, $key);
+        } elseif ($key === 'voicePartId') {
+            $this->voicePartDescr = VoicePart::find($value)->descr;
+            return $this->$property->update([Str::snake($key) => $value]);
         } else {
             return $this->$property->update([Str::snake($key) => $value]);
         }

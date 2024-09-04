@@ -275,17 +275,20 @@
             <div class="flex flex-col justify-start items-start space-y-2">
                 @foreach($form->fileUploads AS $uploadType)
                     <div class=" shadow-lg p-2" wire:key="auditionFile-{{ $uploadType }}">
-                        <h4 class="font-semibold">{{ ucwords($uploadType) }} Recording</h4>
+                        <h4 class="font-semibold">
+                            <span class="text-lg uppercase text-red-600">{{ $form->voicePartDescr }}</span>
+                            {{ ucwords($uploadType) }} Recording
+                        </h4>
                         @if(array_key_exists($uploadType, $form->recordings) && count($form->recordings[$uploadType]))
                             <div>
                                 <audio id="audioPlayer-{{ $uploadType }}" class="mx-auto" controls
                                        style="display: block">
                                     <source id="audioSource-{{ $uploadType }}"
                                             src="https://auditionsuite-production.s3.amazonaws.com/{{ $form->recordings[$uploadType]['url'] }}"
-                                        type="audio/mpeg"
-                                >
-                                " Your browser does not support the audio element. "
-                            </audio>
+                                            type="audio/mpeg"
+                                    >
+                                    " Your browser does not support the audio element. "
+                                </audio>
                             <div class="flex flex-row w-full mt-2 space-x-4 justify-center">
                                 @if(array_key_exists('approved', $form->recordings[$uploadType]) &&
                                     strlen($form->recordings[$uploadType]['approved']))
