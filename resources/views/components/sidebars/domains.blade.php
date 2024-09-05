@@ -10,7 +10,7 @@
             <x-heroicons.mortarBoard/>
         </a>
     </div>
-    @if(auth()->user()->isFounder())
+    @if( auth()->user()->isFounder())
         <div class="text-blue-600">
             <a href="{{ route('ensembles') }}" title="Ensembles">
                 <x-heroicons.userGroup/>
