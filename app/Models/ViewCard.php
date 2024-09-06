@@ -9,5 +9,5 @@ class ViewCard extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['color', 'description', 'header', 'heroicon', 'href', 'label', 'order_by'];
+    protected $fillable = ['color', 'description', 'header', 'heroicon', 'href', 'label', 'order_by', 'role'];
 }

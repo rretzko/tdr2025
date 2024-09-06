@@ -97,9 +97,19 @@ class ViewDataFactory extends aViewData
             return $cards;
         }
 
+        //filter for coRegistration manager
+        if ($versionRoles->contains('coregistration manager')) {
+            return $this->filterCardsForRegistrationManager($cards);
+        }
+
         //filter for online registration manager
         if ($versionRoles->contains('online registration manager')) {
             return $this->filterCardsForOnlineRegistrationManager($cards);
+        }
+
+        //filter for registration manager
+        if ($versionRoles->contains('registration manager')) {
+            return $this->filterCardsForRegistrationManager($cards);
         }
 
         //filter for tab room
@@ -111,34 +121,47 @@ class ViewDataFactory extends aViewData
     }
 
     /**
-     * This contains hard-coded values for the allowable cards to display to user
      * @param  array  $cards
      * @return array
-     * @todo: move the hard-coded values to db table or Enum structure
      */
-    private function filterCardsForOnlineRegistrationManager(array $cards): array
+    private function filterCardsForCoRegistrationManager(array $cards): array
     {
-        $allowedLabels = ['student transfer'];
-
-        return array_filter($cards, function ($card) use ($allowedLabels) {
-            return in_array($card['label'], $allowedLabels);
+        return array_filter($cards, function ($card) {
+            return ($card['role'] === 'coregistration manager');
         });
     }
 
     /**
-     * This contains hard-coded values for the allowable cards to display to user
      * @param  array  $cards
      * @return array
-     * @todo: move the hard-coded values to db table or Enum structure
+     */
+    private function filterCardsForOnlineRegistrationManager(array $cards): array
+    {
+        return array_filter($cards, function ($card) {
+            return ($card['role'] === 'online registration manager');
+        });
+    }
+
+    /**
+     * @param  array  $cards
+     * @return array
+     */
+    private function filterCardsForRegistrationManager(array $cards): array
+    {
+        return array_filter($cards, function ($card) {
+            return ($card['role'] === 'registration manager');
+        });
+    }
+
+    /**
+     * @param  array  $cards
+     * @return array
      */
     private function filterCardsForTabRoom(array $cards): array
     {
-        return $cards;
-//        $allowedLabels = ['student transfer'];
-//
-//        return array_filter($cards, function($card) use ($allowedLabels) {
-//            return in_array($card['label'], $allowedLabels);
-//        });
+        return array_filter($cards, function ($card) {
+            return ($card['role'] === 'tab room');
+        });
     }
 
     private function getColumnHeaders(): array
