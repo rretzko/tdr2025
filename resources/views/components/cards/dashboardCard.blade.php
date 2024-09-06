@@ -5,7 +5,7 @@
     'href',
     'label',
 ])
-<div class="card w-3/4 md:w-1/4 md:min-h-64 border border-gray-500 p-2 rounded-lg mt-1">
+<div class="card w-3/4 md:w-1/4 md:min-h-40 border border-gray-500 p-2 rounded-lg mt-1 ">
     <a href="{{ $href }}" class="space-y-2">
         <div class="flex flex-row space-x-2 text-{{ $color }}-600">
             <div class=" mb-4">

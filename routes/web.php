@@ -79,6 +79,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         [\App\Http\Controllers\Ensembles\Inventories\InventoryController::class, 'edit'])
         ->name('inventory.edit');
 
+    //JUDGE ASSIGNMENTS
+    Route::get('version/judgeAssignments', \App\Http\Controllers\Events\Versions\JudgeAssignmentController::class)
+        ->name('judgeAssignments');
+
     //LIBRARIES
     Route::get('libraries', [\App\Http\Controllers\Libraries\libraryController::class, 'index'])
         ->name('libraries');
@@ -162,6 +166,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //VERSIONS.PITCHFILES
     Route::get('version/pitchFiles', \App\Http\Controllers\Events\Versions\VersionPitchFileController::class)
         ->name('version.pitchFiles');
+
+    //VERSIONS.REPORTS
+    Route::get('version/reports', \App\Http\Controllers\Events\Versions\VersionReportController::class)
+        ->name('version.reports');
 
     //VERSIONS.ROLES
     Route::get('version/roles', \App\Http\Controllers\Events\Versions\VersionRoleController::class)

@@ -30,6 +30,7 @@
                             @if($card['role'])
                                 @php
 
+                                    //INITIAL ROLE HEADER
                                     if(!isset($role)){  //print header row
                                         //initialize var $role if not set
                                         $role = $card['role'];
@@ -46,6 +47,7 @@
 
                             @if(isset($role) && ($role !== $card['role']))
                                 @php
+                                    //subsequent role headers
                                     //close preceding div
                                     echo "</div>";
                                     //open header for role identification

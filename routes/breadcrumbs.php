@@ -129,6 +129,12 @@ Breadcrumbs::for('events participation', function (BreadcrumbTrail $trail) {
     $trail->push('Event Participation', route('events.participation.table'));
 });
 
+//Judge Assignments
+Breadcrumbs::for('judge assignments', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('version dashboard', $id);
+    $trail->push('Judge Assignments', route('judgeAssignments'));
+});
+
 //Obligations
 Breadcrumbs::for('obligations', function (BreadcrumbTrail $trail, $id) {
     $trail->parent('participation active', $id);
@@ -273,17 +279,23 @@ Breadcrumbs::for('version dashboard', function (BreadcrumbTrail $trail, int $id)
     $trail->push('Version Dashboard', route('version.show', ['version' => $id]));
 });
 
+//Versions.Report
+Breadcrumbs::for('version reports', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('version dashboard', $id);
+    $trail->push('Version Reports', route('version.reports'));
+});
+
 //Version.Scoring
 Breadcrumbs::for('version scoring', function (BreadcrumbTrail $trail, int $id) {
     $trail->parent('version dashboard', $id);
     $trail->push('Version Scoring', route('version.scoring'));
 });
+
+//Versions.StudentTransfer
 Breadcrumbs::for('student transfer', function (BreadcrumbTrail $trail, int $id) {
     $trail->parent('version dashboard', $id);
     $trail->push('Student Transfer', route('studentTransfer'));
 });
-
-//Versions.StudentTransfer
 
 // Unknown = ViewData not found for the calling controller::method
 Breadcrumbs::for('unknown', function (BreadcrumbTrail $trail) {
