@@ -13,12 +13,12 @@ use App\Services\TransferStudentService;
 
 class VersionStudentTransferComponent extends BasePage
 {
-    public int $schoolIdFrom = 4190;
-    public int $schoolIdTo = 4190;
+    public int $schoolIdFrom = 0;
+    public int $schoolIdTo = 0;
     public array $schools = [];
     public array $studentIdFroms = [];
-    public int $teacherIdFrom = 8454;
-    public int $teacherIdTo = 45;
+    public int $teacherIdFrom = 0;
+    public int $teacherIdTo = 0;
     public array $transferErrors = [];
 
     public function mount(): void
