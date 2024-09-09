@@ -255,6 +255,12 @@ Breadcrumbs::for('version pitch files', function (BreadcrumbTrail $trail, int $i
     $trail->push('Version Pitch Files', route('version.pitchFiles'));
 });
 
+//Version.Reports
+Breadcrumbs::for('obligated teachers', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('version dashboard', $id);
+    $trail->push('Obligated Teachers', route('version.reports.obligatedTeachers'));
+});
+
 //Version.Roles
 Breadcrumbs::for('version roles', function (BreadcrumbTrail $trail, int $id) {
     $trail->parent('version dashboard', $id);

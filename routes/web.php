@@ -170,6 +170,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //VERSIONS.REPORTS
     Route::get('version/reports', \App\Http\Controllers\Events\Versions\VersionReportController::class)
         ->name('version.reports');
+    Route::get('version/reports/obligatedTeachers',
+        \App\Http\Controllers\Events\Versions\VersionReportObligatedTeachersController::class)
+        ->name('version.reports.obligatedTeachers');
 
     //VERSIONS.ROLES
     Route::get('version/roles', \App\Http\Controllers\Events\Versions\VersionRoleController::class)

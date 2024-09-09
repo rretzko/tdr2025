@@ -275,6 +275,9 @@ class ViewDataFactory extends aViewData
             'versions' => 'events.versions.versions-table-component',
             'versions table' => 'events.versions.versions-table-component',
 
+            //version reports
+            'obligated teachers' => 'events.versions.reports.obligated-teachers-component',
+
             'teacher pitch files' => 'events.versions.participations.teacher-pitch-files-table-component',
 
         ];
