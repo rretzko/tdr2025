@@ -33,7 +33,6 @@ class VersionStatusChangedMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address(auth()->user()->email, auth()->user()->name),
             subject: 'Version Status Changed Mail',
         );
     }
@@ -49,7 +48,7 @@ class VersionStatusChangedMail extends Mailable
                 'name' => 'Rick',
                 'versionName' => $this->version->name,
                 'status' => $this->statusId,
-                'sender' => auth()->user()->name.' ('.auth()->user()->email.')',
+                'changedBy' => auth()->user()->name.' ('.auth()->user()->email.')',
             ]
         );
     }
