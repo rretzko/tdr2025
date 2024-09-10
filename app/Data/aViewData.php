@@ -2,6 +2,7 @@
 
 namespace App\Data;
 
+use App\Models\UserConfig;
 use App\Models\ViewPage;
 
 abstract class aViewData
@@ -10,6 +11,7 @@ abstract class aViewData
     protected ViewPage $viewPage;
     private string $controller = '';
     private string $method = '';
+    protected int $versionId = 0;
 
     public function __construct(private readonly string $__method)
     {
@@ -18,6 +20,9 @@ abstract class aViewData
 
         //use controller and method to identify view target
         $this->viewPage = $this->getViewPage();
+
+        //make commonly used variable quickly available
+        $this->versionId = UserConfig::getValue('versionId') ?? 0;
     }
 
     private function buildMethod($str): void

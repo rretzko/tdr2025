@@ -289,6 +289,11 @@ Breadcrumbs::for('obligated teachers', function (BreadcrumbTrail $trail, int $id
     $trail->parent('version reports', $id);
     $trail->push('Obligated Teachers', route('version.reports.obligatedTeachers'));
 });
+//Version.Reports.ParticipatingSchools
+Breadcrumbs::for('participating schools', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('version reports', $id);
+    $trail->push('Participating Schools', route('version.reports.participatingSchools'));
+});
 //Version.Reports.ParticipatingTeachers
 Breadcrumbs::for('participating teachers', function (BreadcrumbTrail $trail, int $id) {
     $trail->parent('version reports', $id);

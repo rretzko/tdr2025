@@ -34,6 +34,9 @@ class ViewDataFactory extends aViewData
         //anything else until a school is added
         $this->dto['schoolCount'] = auth()->user()->teacher->schools->count();
 
+        //common variable
+        $this->dto['versionId'] = $this->versionId;
+
         //register pageName, header, and page instructions in $dto
         if ($this->viewPage->id) {
 
@@ -277,6 +280,7 @@ class ViewDataFactory extends aViewData
 
             //version reports
             'obligated teachers' => 'events.versions.reports.obligated-teachers-component',
+            'participating schools' => 'events.versions.reports.participating-schools-component',
             'participating teachers' => 'events.versions.reports.participating-teachers-component',
 
             'teacher pitch files' => 'events.versions.participations.teacher-pitch-files-table-component',
