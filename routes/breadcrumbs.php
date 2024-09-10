@@ -257,7 +257,7 @@ Breadcrumbs::for('version pitch files', function (BreadcrumbTrail $trail, int $i
 
 //Version.Reports
 Breadcrumbs::for('obligated teachers', function (BreadcrumbTrail $trail, int $id) {
-    $trail->parent('version dashboard', $id);
+    $trail->parent('version reports', $id);
     $trail->push('Obligated Teachers', route('version.reports.obligatedTeachers'));
 });
 
