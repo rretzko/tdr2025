@@ -3,7 +3,6 @@
 namespace App\Livewire\Events\Versions\Reports;
 
 use App\Exports\ObligatedTeachersExport;
-use App\Livewire\BasePage;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionConfigMembership;
 use App\Models\UserConfig;
@@ -11,12 +10,11 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
-class ObligatedTeachersComponent extends BasePage
+class ObligatedTeachersComponent extends BasePageReports
 {
     public array $columnHeaders = [];
     public bool $membershipCardRequired = false;
     public Version $version;
-    public int $versionId = 0;
 
     public function mount(): void
     {
@@ -26,7 +24,6 @@ class ObligatedTeachersComponent extends BasePage
         $this->sortCol = 'users.last_name';
 
         $this->columnHeaders = $this->getColumnHeaders();
-        $this->versionId = UserConfig::getValue('versionId');
         $this->version = Version::find($this->versionId);
 
         $this->membershipCardRequired = VersionConfigMembership::where('version_id', $this->versionId)

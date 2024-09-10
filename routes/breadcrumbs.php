@@ -255,12 +255,6 @@ Breadcrumbs::for('version pitch files', function (BreadcrumbTrail $trail, int $i
     $trail->push('Version Pitch Files', route('version.pitchFiles'));
 });
 
-//Version.Reports
-Breadcrumbs::for('obligated teachers', function (BreadcrumbTrail $trail, int $id) {
-    $trail->parent('version reports', $id);
-    $trail->push('Obligated Teachers', route('version.reports.obligatedTeachers'));
-});
-
 //Version.Roles
 Breadcrumbs::for('version roles', function (BreadcrumbTrail $trail, int $id) {
     $trail->parent('version dashboard', $id);
@@ -285,11 +279,22 @@ Breadcrumbs::for('version dashboard', function (BreadcrumbTrail $trail, int $id)
     $trail->push('Version Dashboard', route('version.show', ['version' => $id]));
 });
 
-//Versions.Report
+//Versions.Reports
 Breadcrumbs::for('version reports', function (BreadcrumbTrail $trail, int $id) {
     $trail->parent('version dashboard', $id);
     $trail->push('Version Reports', route('version.reports'));
 });
+//Version.Reports.ObligatedTeachers
+Breadcrumbs::for('obligated teachers', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('version reports', $id);
+    $trail->push('Obligated Teachers', route('version.reports.obligatedTeachers'));
+});
+//Version.Reports.ParticipatingTeachers
+Breadcrumbs::for('participating teachers', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('version reports', $id);
+    $trail->push('Participating Teachers', route('version.reports.participatingTeachers'));
+});
+
 
 //Version.Scoring
 Breadcrumbs::for('version scoring', function (BreadcrumbTrail $trail, int $id) {

@@ -1,7 +1,6 @@
 @props([
     'columnHeaders',
     'header',
-    'membershipCardRequired',
     'recordsPerPage',
     'rows',
     'sortAsc',
@@ -33,46 +32,28 @@
                 </th>
             @endforeach
 
-            @if($membershipCardRequired)
-                <th class="border border-transparent px-1 sr-only">
-                    edit
-                </th>
-            @endif
-            <th class="border border-gray-200 px-1 sr-only">
-                remove
-            </th>
         </tr>
         </thead>
         <tbody>
         @forelse($rows AS $row)
             <tr class=" odd:bg-green-50 ">
+
                 <td class="text-center">
                     {{ $loop->iteration + (($rows->currentPage() - 1) * $recordsPerPage) }}
                 </td>
+
                 <td class="border border-gray-200 px-1">
-                    <div>{{ $row->last_name . ($row->suffix_name ? ' ' . $row->suffix_name : '') . ', ' . $row->first_name . ' ' . $row->middle_name }}</div> {{-- student name --}}
-                    <div class="ml-2 text-xs italic">
-                        Accepted: {{ \Carbon\Carbon::parse($row->accepted)->format('M j, g:m a') }}</div>
-                </td>
-                <td class="border border-gray-200 px-1">
-                    <div class="">{{ $row->schoolName }} </div>
-                    <div class="ml-2 text-xs italic">Grades: {{ $row->grades }}</div>
+                    {{ $row->last_name . ($row->suffix_name ? ' ' . $row->suffix_name : '') . ', ' . $row->first_name . ' ' . $row->middle_name . ($row->prefix_name ? ' (' . $row->prefix_name . ')' : '') }}
                 </td>
 
-                @if($membershipCardRequired)
-                    {{-- @todo Missing identifier and wire:click function --}}
-                    <td class="border border-gray-200 px-1">
-                        <div>{{ \Carbon\Carbon::parse($row->expiration)->format('M j, Y') }}</div>
-                    </td>
-                    <td class="text-center border border-gray-200">
-                        <x-buttons.edit id="$row['studentId'] " route="student.edit"/>
-                    </td>
-                @endif
-
-                <td class="text-center border border-gray-200">
-                    {{-- @todo Missing identifier and wire:click function --}}
-                    <x-buttons.remove id="$row['studentId'] " livewire="1"/>
+                <td class="border border-gray-200 px-1">
+                    {{ $row->schoolName }}
                 </td>
+
+                <td class="border border-gray-200 px-1 text-center">
+                    {{ $row->candidateCount }}
+                </td>
+
             </tr>
 
         @empty

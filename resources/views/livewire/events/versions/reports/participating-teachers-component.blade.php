@@ -21,7 +21,7 @@
         <div class="flex justify-between mb-1">
             <div>{{ ucwords($dto['header']) }}</div>
             <div class="flex items-center space-x-2">
-{{--                <x-buttons.addNew route="student.create"/>--}}
+                {{--                <x-buttons.addNew route="student.create"/>--}}
                 <x-buttons.export/>
             </div>
         </div>
@@ -42,10 +42,9 @@
                 <x-links.linkTop :recordsPerPage="$recordsPerPage" :rows="$rows"/>
 
                 {{--                 TABLE--}}
-                <x-tables.teacherObligationsTable
+                <x-tables.participatingTeachersTable
                     :columnHeaders="$columnHeaders"
                     :header="$dto['header']"
-                    :membershipCardRequired="$membershipCardRequired"
                     :recordsPerPage="$recordsPerPage"
                     :rows="$rows"
                     :sortAsc="$sortAsc"
@@ -65,4 +64,5 @@
     </div>
 
 </div>
+
 
