@@ -37,7 +37,7 @@ class ObligatedTeachersComponent extends BasePage
     private function getColumnHeaders(): array
     {
         $headers = [
-            ['label' => '###', 'sortBy' => ''],
+            ['label' => '###', 'sortBy' => null],
             ['label' => 'name', 'sortBy' => 'name'], //users.last_name
             ['label' => 'school', 'sortBy' => 'school'],
         ];
