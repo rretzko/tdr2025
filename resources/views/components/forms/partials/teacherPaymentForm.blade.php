@@ -100,6 +100,15 @@
                 Close Form
             </button>
 
+            <div>
+                <button
+                    wire:click="exportPaymentsRoster"
+                    class="bg-indigo-700 text-white text-sm px-2 rounded-lg shadow-lg"
+                >
+                    Export Payments Roster
+                </button>
+            </div>
+
         </form>
     @endif
 

@@ -4,6 +4,7 @@ namespace App\Livewire\Events\Versions\Reports;
 
 
 use App\Exports\ParticipatingSchoolsExport;
+use App\Exports\TeacherPaymentsRosterExport;
 use App\Livewire\Forms\TeacherPaymentForm;
 use App\Models\Epayment;
 use App\Models\Events\Versions\Participations\Candidate;
@@ -191,6 +192,13 @@ class ParticipatingSchoolsComponent extends BasePageReports
             $this->versionId,
             $this->schoolIds,
         ), 'participatingSchools.csv');
+    }
+
+    public function exportPaymentsRoster(): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    {
+        return Excel::download(new TeacherPaymentsRosterExport(
+            $this->versionId,
+        ), 'paymentsRoster.csv');
     }
 
     public function save(): void
