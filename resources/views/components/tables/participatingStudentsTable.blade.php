@@ -35,7 +35,7 @@
         </tr>
         </thead>
         <tbody>
-        @forelse($rows AS $row)
+        @forelse($rows AS $key => $row)
             <tr class=" odd:bg-green-50 ">
 
                 {{-- COUNTER --}}
@@ -44,18 +44,34 @@
                 </td>
 
                 {{-- SCHOOL --}}
-                <td class="border border-gray-200 px-1">
+                <td
+                    @class(
+                        [
+                            "border border-gray-200 px-1",
+                            'text-gray-400' => ($key && ($rows[$key - 1]->schoolName === $row->schoolName)),
+                        ])
+                >
                     {{ $row->schoolName }}
                 </td>
 
                 {{-- TEACHER --}}
-                <td class="border border-gray-200 px-1">
+                <td
+                    @class([
+                          "border border-gray-200 px-1",
+                          'text-gray-400' => ($key && ($rows[$key - 1]->teacherFullName === $row->teacherFullName)),
+                    ])
+                >
                     {{ $row->last_name . ($row->suffix_name ? ' ' . $row->suffix_name : '') . ', ' . $row->first_name . ' ' . $row->middle_name . ($row->prefix_name ? ' (' . $row->prefix_name . ')' : '') }}
                 </td>
 
                 {{-- REGISTRANT --}}
                 <td class="border border-gray-200 px-1 ">
                     {{ $row->studentLastName . ($row->studentSuffix ? ' ' . $row->studentSuffix : '') . ', ' . $row->studentFirstName . ' ' . $row->studentMiddleName  }}
+                </td>
+
+                {{-- GRADE --}}
+                <td class="border border-gray-200 px-1 text-center">
+                    {{ $row->grade  }}
                 </td>
 
                 {{-- Voice Part --}}

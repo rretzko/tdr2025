@@ -21,6 +21,7 @@ class BasePageReports extends BasePage
         $this->sortColLabel = $key;
 
         $properties = [
+            'classOf' => 'students.class_of',
             'count' => 'candidateCount',
             'name' => 'users.last_name',
             'registrant' => 'studentLastName',

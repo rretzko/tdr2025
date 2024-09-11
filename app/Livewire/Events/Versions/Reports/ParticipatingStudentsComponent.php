@@ -34,6 +34,7 @@ class ParticipatingStudentsComponent extends BasePageReports
             ['label' => 'school', 'sortBy' => 'school'],
             ['label' => 'teacher', 'sortBy' => 'teacher'], //users.last_name
             ['label' => 'registrant', 'sortBy' => 'registrant'],
+            ['label' => 'grade', 'sortBy' => 'classOf'],
             ['label' => 'voice part', 'sortBy' => 'voicePart'],
         ];
     }
@@ -76,12 +77,14 @@ class ParticipatingStudentsComponent extends BasePageReports
             })
             ->select('candidates.id', 'candidates.voice_part_id',
                 'schools.name as schoolName',
-                DB::raw("CONCAT(teacher.last_name, ' ', teacher.suffix_name, ', ', teacher.first_name, ' ', teacher.middle_name) AS teacherFullName"),
+                DB::raw("CONCAT(teacher.last_name, ', ', teacher.first_name, ' ', teacher.middle_name) AS teacherFullName"),
                 'teacher.prefix_name', 'teacher.first_name', 'teacher.middle_name', 'teacher.last_name',
                 'teacher.suffix_name',
                 'student.first_name AS studentFirstName', 'student.middle_name AS studentMiddleName',
                 'student.last_name AS studentLastName', 'student.suffix_name AS studentSuffix',
-                'voice_parts.descr AS voicePartDescr', 'voice_parts.order_by'
+                'voice_parts.descr AS voicePartDescr', 'voice_parts.order_by',
+                'students.class_of',
+                DB::raw("((12 - (students.class_of - 2025))) AS grade")
             )
             ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
             ->orderBy('schools.name')
