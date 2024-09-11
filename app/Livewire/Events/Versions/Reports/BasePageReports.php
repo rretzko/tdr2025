@@ -23,7 +23,10 @@ class BasePageReports extends BasePage
         $properties = [
             'count' => 'candidateCount',
             'name' => 'users.last_name',
+            'registrant' => 'studentLastName',
             'school' => 'schools.name',
+            'teacher' => 'teacher.last_name',
+            'voicePart' => 'voice_parts.order_by',
         ];
 
         $requestedSort = $properties[$key];
