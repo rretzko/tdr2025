@@ -31,6 +31,11 @@ class Filters extends Form
     public array $ensemblesSelectedIds = [];
     public array $ensembleYearsSelectedIds = [];
     public string $header = '';
+
+    public array $participatingClassOfsSelectedIds = [];
+    public array $participatingSchoolsSelectedIds = [];
+    public array $participatingVoicePartsSelectedIds = [];
+
     #[Url]
     public array $pitchFileFileTypesSelectedIds = [];
     #[Url]
@@ -98,10 +103,14 @@ class Filters extends Form
             //initially set ensembleYears filter to include ALL ensembles' school years
             $this->ensembleYearsSelectedIds = array_values($this->ensembleYears());
 
+        } elseif ($this->header === 'participating students') {
+
+            $this->participatingClassOfsSelectedIds = array_keys($this->participatingClassOfs());
+            $this->participatingSchoolsSelectedIds = array_keys($this->participatingSchools());
+            $this->participatingVoicePartsSelectedIds = array_keys($this->participatingVoiceParts());
+
         } elseif ($this->header === 'school edit') {
 
-            Log::info(__METHOD__.': '.__LINE__);
-            Log::info($this->header.' found; no filters.');
             logger($this->header.' found; no filters.');
 
         } elseif ($this->header === 'students') {
@@ -269,6 +278,21 @@ class Filters extends Form
         return $query->whereIn('students.class_of', $this->candidateGradesSelectedIds);
     }
 
+    public function filterCandidatesByParticipatingClassOfs($query)
+    {
+        return $query->whereIn('students.class_of', $this->participatingClassOfsSelectedIds);
+    }
+
+    public function filterCandidatesByParticipatingSchools($query)
+    {
+        return $query->whereIn('candidates.school_id', $this->participatingSchoolsSelectedIds);
+    }
+
+    public function filterCandidatesByParticipatingVoiceParts($query)
+    {
+        return $query->whereIn('candidates.voice_part_id', $this->participatingVoicePartsSelectedIds);
+    }
+
     public function filterCandidatesByStatuses($query)
     {
         return $query->whereIn('candidates.status', $this->candidateStatusesSelectedIds);
@@ -355,6 +379,27 @@ class Filters extends Form
             ->unique('class_of')
             ->pluck('class_of', 'class_of')
             ->toArray();
+    }
+
+    public function participatingClassOfs(): array
+    {
+        $basePage = new BasePage();
+
+        return $basePage->getParticipatingClassOfs();
+    }
+
+    public function participatingSchools(): array
+    {
+        $basePage = new BasePage();
+
+        return $basePage->getParticipatingSchools();
+    }
+
+    public function participatingVoiceParts(): array
+    {
+        $basePage = new BasePage();
+
+        return $basePage->getParticipatingVoiceParts();
     }
 
     public function schools(): array

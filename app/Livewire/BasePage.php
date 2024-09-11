@@ -6,8 +6,10 @@ use App\Models\PageView;
 use App\Models\Schools\School;
 use App\Models\UserConfig;
 use App\Models\UserSort;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Support\Collection;
 
 class BasePage extends Component
 {
@@ -21,6 +23,9 @@ class BasePage extends Component
     public bool $hasSearch = false;
     public string $header = 'header';
     public string $pageInstructions = "no instructions found...";
+    public array $participatingSchools = [];
+    public array $participatingClassOfs = [];
+    public array $participatingVoiceParts = [];
     public int $recordsPerPage = 15;
     public School $school;
     public int $schoolCount = 0;
@@ -51,6 +56,10 @@ class BasePage extends Component
 
     public function mount(): void
     {
+        $this->participatingSchools = $this->getParticipatingSchools();
+        $this->participatingClassOfs = $this->getParticipatingClassOfs();
+        $this->participatingVoiceParts = $this->getParticipatingVoiceParts();
+
         $this->header = $this->dto['header'];
         $this->pageInstructions = $this->dto['pageInstructions'];
         $this->setFirstTimer($this->dto['header']);
@@ -148,5 +157,44 @@ class BasePage extends Component
     {
         $this->pageInstructions = $dto['instructions'];
     }
+
+    public function getParticipatingClassOfs(): array
+    {
+        return DB::table('candidates')
+            ->join('students', 'students.id', '=', 'candidates.student_id')
+            ->where('version_id', UserConfig::getValue('versionId'))
+            ->where('status', 'registered')
+            ->distinct('students.class_of')
+            ->orderBy('students.class_of')
+            ->select('students.class_of')
+            ->pluck('students.class_of', 'students.class_of')
+            ->toArray();
+    }
+
+    public function getParticipatingSchools(): array
+    {
+        return DB::table('candidates')
+            ->join('schools', 'schools.id', '=', 'candidates.school_id')
+            ->where('version_id', UserConfig::getValue('versionId'))
+            ->where('status', 'registered')
+            ->distinct('school_id')
+            ->select(DB::raw('LEFT(schools.name,10) AS shortName'), 'schools.id')
+            ->pluck('shortName', 'schools.id')
+            ->toArray();
+    }
+
+    public function getParticipatingVoiceParts(): array
+    {
+        return DB::table('candidates')
+            ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
+            ->where('version_id', UserConfig::getValue('versionId'))
+            ->where('status', 'registered')
+            ->distinct('school_id')
+            ->select('voice_parts.id', 'voice_parts.abbr', 'voice_parts.order_by')
+            ->orderBy('voice_parts.order_by')
+            ->pluck('voice_parts.abbr', 'voice_parts.id')
+            ->toArray();
+    }
+
 
 }

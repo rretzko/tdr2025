@@ -26,7 +26,10 @@ class ParticipatingSchoolsComponent extends BasePageReports
     {
         parent::mount();
 
-        $this->sortCol = 'schools.name';
+        //sorts
+        $this->sortCol = $this->userSort ? $this->userSort->column : 'schools.name';
+        $this->sortAsc = $this->userSort ? $this->userSort->asc : $this->sortAsc;
+        $this->sortColLabel = $this->userSort ? $this->userSort->label : 'school';
 
         $this->columnHeaders = $this->getColumnHeaders();
     }
@@ -46,11 +49,14 @@ class ParticipatingSchoolsComponent extends BasePageReports
 
     public function render()
     {
+
         //refresh schoolIds
         $this->schoolIds = $this->getSchoolIds();
         $payments = $this->getPayments();
         $paymentsDue = $this->getPaymentsDue();
         $paymentsStatus = $this->getPaymentsStatus($payments, $paymentsDue);
+
+        $this->saveSortParameters();
 
         return view('livewire..events.versions.reports.participating-schools-component',
             [

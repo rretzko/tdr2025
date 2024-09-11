@@ -21,7 +21,6 @@ class ObligatedTeachersComponent extends BasePageReports
         parent::mount();
 
         $this->hasFilters = false;
-        $this->sortCol = 'users.last_name';
 
         $this->columnHeaders = $this->getColumnHeaders();
         $this->version = Version::find($this->versionId);
@@ -29,6 +28,12 @@ class ObligatedTeachersComponent extends BasePageReports
         $this->membershipCardRequired = VersionConfigMembership::where('version_id', $this->versionId)
             ->first()
             ->membership_card;
+
+        //sorts
+        $this->sortCol = $this->userSort ? $this->userSort->column : 'users.last_name';
+        $this->sortAsc = $this->userSort ? $this->userSort->asc : $this->sortAsc;
+        $this->sortColLabel = $this->userSort ? $this->userSort->label : 'name';
+
     }
 
     private function getColumnHeaders(): array
@@ -48,6 +53,8 @@ class ObligatedTeachersComponent extends BasePageReports
 
     public function render()
     {
+        $this->saveSortParameters();
+
         return view('livewire..events.versions.reports.obligated-teachers-component',
             [
                 'rows' => $this->getRows()->paginate($this->recordsPerPage), //obligatedTeachers(),

@@ -72,6 +72,7 @@
                 {{-- GRADE --}}
                 <td class="border border-gray-200 px-1 text-center">
                     {{ $row->grade  }}
+                    <span class="text-xs italic"> ({{ $row->class_of }})</span>
                 </td>
 
                 {{-- Voice Part --}}

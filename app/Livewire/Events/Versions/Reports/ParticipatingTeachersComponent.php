@@ -21,6 +21,11 @@ class ParticipatingTeachersComponent extends BasePageReports
         $this->columnHeaders = $this->getColumnHeaders();
 
         $this->sortCol = 'users.last_name';
+        //sorts
+        $this->sortCol = $this->userSort ? $this->userSort->column : 'users.last_name';
+        $this->sortAsc = $this->userSort ? $this->userSort->asc : $this->sortAsc;
+        $this->sortColLabel = $this->userSort ? $this->userSort->label : 'teacher';
+
     }
 
     private function getColumnHeaders(): array
@@ -35,6 +40,8 @@ class ParticipatingTeachersComponent extends BasePageReports
 
     public function render()
     {
+        $this->saveSortParameters();
+
         return view('livewire..events.versions.reports.participating-teachers-component',
             [
                 'rows' => $this->getRows()->paginate($this->recordsPerPage),

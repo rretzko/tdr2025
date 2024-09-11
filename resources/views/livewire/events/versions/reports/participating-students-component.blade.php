@@ -28,45 +28,16 @@
 
         {{-- VOICE PART SUMMARY TABLE --}}
         <div id="summaryTable" class="w-full bg-gray-100 px-2 py-1 my-2 rounded-lg">
-            <table class="max-w-fit mx-auto my-1">
-                <thead>
-                <tr>
-                    @foreach($summaryColumnHeaders AS $summaryHeader)
-                        <th class="w-8 text-center border border-gray-600">
-                            {{ $summaryHeader }}
-                        </th>
-                    @endforeach
-                    <th class="w-8 text-center border border-gray-600">
-                        Total
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    @forelse($summaryCounts AS $count)
-                        <td class="w-8 text-center border border-gray-600">
-                            {{ $count }}
-                        </td>
-                    @empty
-                        <td class="w-8 text-center border border-gray-600" colspan="{{ count($summaryColumnHeaders) }}">
-                            No counts found.
-                        </td>
-                    @endforelse
-                    <th class="w-8 text-center border border-gray-600">
-                        {{ array_sum($summaryCounts) }}
-                    </th>
-                </tr>
-                </tbody>
-            </table>
+            @include('components.forms.partials.voicePartSummaryTable')
         </div>
 
         {{-- FILTERS and TABLE --}}
         <div class="flex flex-row ">
 
-            {{--             FILTERS--}}
+            {{-- FILTERS--}}
             @if($hasFilters && count($filterMethods))
                 <div class="flex justify-center">
-                    <x-sidebars.filters :filters="$filters" :methods="$filterMethods"/>
+                    <x-sidebars.filters :filters="$filters" :methods="$filterMethods" :values="$participatingSchools"/>
                 </div>
             @endif
 
