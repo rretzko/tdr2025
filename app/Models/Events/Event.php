@@ -4,11 +4,13 @@ namespace App\Models\Events;
 
 use App\Models\Ensembles\Ensemble;
 use App\Models\Events\Versions\Version;
+use App\Models\Students\VoicePart;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 
 class Event extends Model
 {
@@ -54,6 +56,26 @@ class Event extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Return a collection of unique VoicePart models used by $this->eventEnsembles
+     * @return Collection
+     */
+    public function getVoicePartsAttribute(): Collection
+    {
+        return $this->eventEnsembles
+            ->flatMap(fn($eventEnsemble) => $eventEnsemble->voiceParts)
+            ->unique();
+//        $voiceParts = collect();
+//
+//        foreach($this->eventEnsembles AS $eventEnsemble){
+//
+//            $voiceParts = $voiceParts->merge($eventEnsemble->voiceParts);
+//
+//        }
+//
+//        return $voiceParts->unique();
     }
 
     public function versions(): HasMany
