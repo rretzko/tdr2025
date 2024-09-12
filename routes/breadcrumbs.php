@@ -304,6 +304,11 @@ Breadcrumbs::for('participating teachers', function (BreadcrumbTrail $trail, int
     $trail->parent('version reports', $id);
     $trail->push('Participating Teachers', route('version.reports.participatingTeachers'));
 });
+//Version.Reports.Student Counts
+Breadcrumbs::for('student counts', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('version reports', $id);
+    $trail->push('Student Counts', route('version.reports.studentCounts'));
+});
 
 
 //Version.Scoring

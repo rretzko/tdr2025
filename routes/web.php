@@ -182,6 +182,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('version/reports/participatingStudents',
         \App\Http\Controllers\Events\Versions\VersionReportParticipatingStudentsController::class)
         ->name('version.reports.participatingStudents');
+    Route::get('version/reports/studentCounts',
+        \App\Http\Controllers\Events\Versions\Reports\StudentCountsController::class)
+        ->name('version.reports.studentCounts');
 
     //VERSIONS.ROLES
     Route::get('version/roles', \App\Http\Controllers\Events\Versions\VersionRoleController::class)
