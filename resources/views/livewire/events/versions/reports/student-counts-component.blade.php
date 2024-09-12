@@ -47,7 +47,7 @@
                 <x-links.linkTop :recordsPerPage="$recordsPerPage" :rows="$rows"/>
 
                 {{-- TABLE--}}
-                <x-tables.participatingStudentsTable
+                <x-tables.studentCountsTable
                     :columnHeaders="$columnHeaders"
                     :header="$dto['header']"
                     :recordsPerPage="$recordsPerPage"
@@ -56,7 +56,7 @@
                     :sortColLabel="$sortColLabel"
                 />
 
-                {{--                 LINKS:BOTTOM--}}
+                {{-- LINKS:BOTTOM--}}
                 <x-links.linkBottom :rows="$rows"/>
 
             </div>

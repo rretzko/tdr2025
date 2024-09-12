@@ -103,7 +103,10 @@ class Filters extends Form
             //initially set ensembleYears filter to include ALL ensembles' school years
             $this->ensembleYearsSelectedIds = array_values($this->ensembleYears());
 
-        } elseif ($this->header === 'participating students') {
+        } elseif (
+            ($this->header === 'participating students') ||
+            ($this->header === 'student counts')
+        ) {
 
             $this->participatingClassOfsSelectedIds = array_keys($this->participatingClassOfs());
             $this->participatingSchoolsSelectedIds = array_keys($this->participatingSchools());

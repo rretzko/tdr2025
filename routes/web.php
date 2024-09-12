@@ -171,19 +171,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('version/reports', \App\Http\Controllers\Events\Versions\VersionReportController::class)
         ->name('version.reports');
     Route::get('version/reports/obligatedTeachers',
-        \App\Http\Controllers\Events\Versions\VersionReportObligatedTeachersController::class)
+        \App\Http\Controllers\Tdr\LivewireController::class)
         ->name('version.reports.obligatedTeachers');
     Route::get('version/reports/participatingTeachers',
-        \App\Http\Controllers\Events\Versions\VersionReportParticipatingTeachersController::class)
+        \App\Http\Controllers\Tdr\LivewireController::class)
         ->name('version.reports.participatingTeachers');
     Route::get('version/reports/participatingSchools',
-        \App\Http\Controllers\Events\Versions\VersionReportParticipatingSchoolsController::class)
+        \App\Http\Controllers\Tdr\LivewireController::class)
         ->name('version.reports.participatingSchools');
     Route::get('version/reports/participatingStudents',
-        \App\Http\Controllers\Events\Versions\VersionReportParticipatingStudentsController::class)
+        \App\Http\Controllers\Tdr\LivewireController::class)
         ->name('version.reports.participatingStudents');
     Route::get('version/reports/studentCounts',
-        \App\Http\Controllers\Events\Versions\Reports\StudentCountsController::class)
+        \App\Http\Controllers\Tdr\LivewireController::class)
         ->name('version.reports.studentCounts');
 
     //VERSIONS.ROLES

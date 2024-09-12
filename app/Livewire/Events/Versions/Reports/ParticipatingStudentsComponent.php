@@ -14,7 +14,6 @@ class ParticipatingStudentsComponent extends BasePageReports
 {
     public array $columnHeaders = [];
     public array $summaryColumnHeaders = [];
-    public Version $version;
 
     public function mount(): void
     {
@@ -22,7 +21,6 @@ class ParticipatingStudentsComponent extends BasePageReports
 
         $this->hasFilters = true;
         $this->columnHeaders = $this->getColumnHeaders();
-        $this->version = Version::find($this->versionId);
         $this->summaryColumnHeaders = $this->getSummaryColumnHeaders();
 
         //sorts
@@ -45,7 +43,6 @@ class ParticipatingStudentsComponent extends BasePageReports
             $this->dto['header'])
             ? $this->filters->getPreviousFilterArray('participatingVoicePartsSelectedIds', $this->dto['header'])
             : $this->filters->participatingVoicePartsSelectedIds;
-
 
         //filterMethods
         if (count($this->filters->participatingSchoolsSelectedIds) > 1) {
@@ -103,6 +100,7 @@ class ParticipatingStudentsComponent extends BasePageReports
     {
         $search = $this->search;
 
+        $this->test();
         return DB::table('candidates')
             ->join('schools', 'schools.id', '=', 'candidates.school_id')
             ->join('teachers', 'teachers.id', '=', 'candidates.teacher_id')
@@ -172,5 +170,25 @@ class ParticipatingStudentsComponent extends BasePageReports
         return Excel::download(new ParticipatingStudentsExport(
             $this->versionId,
         ), 'participatingStudents.csv');
+    }
+
+    private function test(): void
+    {
+        $search = $this->search;
+        $query = DB::table('candidates')
+            ->join('schools', 'schools.id', '=', 'candidates.school_id')
+            ->join('teachers', 'teachers.id', '=', 'candidates.teacher_id')
+            ->join('users AS teacher', 'teacher.id', '=', 'teachers.user_id')
+            ->join('students', 'students.id', '=', 'candidates.student_id')
+            ->join('users AS student', 'student.id', '=', 'students.user_id')
+            ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
+            ->where('candidates.version_id', $this->versionId)
+            ->where('candidates.status', 'registered')
+            ->where(function ($query) use ($search) {
+                return $query->where('schools.name', 'LIKE', '%'.$search.'%')
+                    ->orWhere('teacher.last_name', 'LIKE', '%'.$search.'%')
+                    ->orWhere('student.last_name', 'LIKE', '%'.$search.'%');
+            })
+            ->get();
     }
 }
