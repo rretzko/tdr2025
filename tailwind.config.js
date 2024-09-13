@@ -19,6 +19,8 @@ export default {
         'bg-red-200',
         'bg-yellow-200',
         'border-indigo-500',
+        'border-b-black',
+        'border-b-blue-500',
         'text-green-800',
         'text-lime-600',
         'text-orange-600',
