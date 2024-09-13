@@ -43,6 +43,7 @@ class BasePageReports extends BasePage
             'registrant' => 'studentLastName',
             'school' => 'schools.name',
             'teacher' => 'teacher.last_name',
+            'total' => 'schools.name', //use default and re-sort array in StudentCountsComponent
             'voicePart' => 'voice_parts.order_by',
         ];
 
@@ -65,7 +66,6 @@ class BasePageReports extends BasePage
 
         $voicePartCounts = [];
         foreach ($this->version->event->voiceParts as $voicePart) {
-
             $voicePartCounts[] = $this->getCountOfRegistrants($voicePart->id);
         }
 
@@ -79,9 +79,9 @@ class BasePageReports extends BasePage
             ->where('candidates.version_id', $this->versionId)
             ->where('candidates.status', 'registered')
             ->where('candidates.voice_part_id', $voicePartId)
-            ->whereIn('candidates.school_id', $this->filters->participatingSchoolsSelectedIds)
-            ->whereIn('students.class_of', $this->filters->participatingClassOfsSelectedIds)
-            ->whereIn('candidates.voice_part_id', $this->filters->participatingVoicePartsSelectedIds)
+//            ->whereIn('candidates.school_id', $this->filters->participatingSchoolsSelectedIds)
+//            ->whereIn('students.class_of', $this->filters->participatingClassOfsSelectedIds)
+//            ->whereIn('candidates.voice_part_id', $this->filters->participatingVoicePartsSelectedIds)
             ->count('candidates.id');
     }
 

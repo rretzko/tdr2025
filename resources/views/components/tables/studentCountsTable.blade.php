@@ -38,47 +38,59 @@
         @forelse($rows AS $key => $row)
             <tr class=" odd:bg-green-50 ">
 
+                @foreach($row AS $item)
+                    <td
+                        @class([
+        "",
+        'text-center' => (is_numeric($item)),
+        'text-gray-300' => ($item === 0),
+                        ])
+                    >
+                        {{ $item }}
+                    </td>
+                @endforeach
+
                 {{-- COUNTER --}}
-                <td class="text-center">
-                    {{ $loop->iteration + (($rows->currentPage() - 1) * $recordsPerPage) }}
-                </td>
+                {{--                <td class="text-center">--}}
+                {{--                    {{ $row['counter'] }}--}}
+                {{--                </td>--}}
 
                 {{-- SCHOOL --}}
-                <td
-                    @class(
-                        [
-                            "border border-gray-200 px-1",
-                            'text-gray-400' => ($key && ($rows[$key - 1]->schoolName === $row->schoolName)),
-                        ])
-                >
-                    {{ $row->schoolName }}
-                </td>
+                {{--                <td--}}
+                {{--                    @class(--}}
+                {{--                        [--}}
+                {{--                            "border border-gray-200 px-1",--}}
+                {{--//                            'text-gray-400' => ($key && ($rows[$key - 1]->schoolName === $row->schoolName)),--}}
+                {{--                        ])--}}
+                {{--                >--}}
+                {{--                    {{ $row->schoolName }}--}}
+                {{--                </td>--}}
 
                 {{-- TEACHER --}}
-                <td
-                    @class([
-                          "border border-gray-200 px-1",
-                          'text-gray-400' => ($key && ($rows[$key - 1]->teacherName === $row->teacherName)),
-                    ])
-                >
-                    {{ $row->teacherName  }}
-                </td>
+                {{--                <td--}}
+                {{--                    @class([--}}
+                {{--                          "border border-gray-200 px-1",--}}
+                {{--//                          'text-gray-400' => ($key && ($rows[$key - 1]->teacherName === $row->teacherName)),--}}
+                {{--                    ])--}}
+                {{--                >--}}
+                {{--                    {{ $row->teacherName  }}--}}
+                {{--                </td>--}}
 
                 {{-- REGISTRANT --}}
-                <td class="border border-gray-200 px-1 ">
-                    {{--                    {{ $row->studentLastName . ($row->studentSuffix ? ' ' . $row->studentSuffix : '') . ', ' . $row->studentFirstName . ' ' . $row->studentMiddleName  }}--}}
-                </td>
+                {{--                <td class="border border-gray-200 px-1 ">--}}
+                {{--                    {{ $row->studentLastName . ($row->studentSuffix ? ' ' . $row->studentSuffix : '') . ', ' . $row->studentFirstName . ' ' . $row->studentMiddleName  }}--}}
+                {{--                </td>--}}
 
                 {{-- GRADE --}}
-                <td class="border border-gray-200 px-1 text-center">
-                    {{--                    {{ $row->grade  }}--}}
-                    {{--                    <span class="text-xs italic"> ({{ $row->class_of }})</span>--}}
-                </td>
+                {{--                <td class="border border-gray-200 px-1 text-center">--}}
+                {{--                    {{ $row->grade  }}--}}
+                {{--                    <span class="text-xs italic"> ({{ $row->class_of }})</span>--}}
+                {{--                </td>--}}
 
                 {{-- Voice Part --}}
-                <td class="border border-gray-200 px-1 ">
-                    {{--                    {{ $row->voicePartDescr }}--}}
-                </td>
+                {{--                <td class="border border-gray-200 px-1 ">--}}
+                {{--                    {{ $row->voicePartDescr }}--}}
+                {{--                </td>--}}
 
             </tr>
 

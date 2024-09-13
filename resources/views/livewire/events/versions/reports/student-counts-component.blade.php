@@ -44,7 +44,7 @@
             {{-- PAYMENT FORM AND TABLE WITH LINKS--}}
             <div class="flex flex-col space-y-2 mb-2 w-full">
 
-                <x-links.linkTop :recordsPerPage="$recordsPerPage" :rows="$rows"/>
+{{--                <x-links.linkTop :recordsPerPage="$recordsPerPage" :rows="$rows"/>--}}
 
                 {{-- TABLE--}}
                 <x-tables.studentCountsTable
@@ -57,7 +57,7 @@
                 />
 
                 {{-- LINKS:BOTTOM--}}
-                <x-links.linkBottom :rows="$rows"/>
+                {{--                <x-links.linkBottom :rows="$rows"/>--}}
 
             </div>
 

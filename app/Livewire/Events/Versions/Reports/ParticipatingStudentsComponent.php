@@ -98,9 +98,10 @@ class ParticipatingStudentsComponent extends BasePageReports
 
     private function getRows(): Builder
     {
+        //$this->test();
+
         $search = $this->search;
 
-        $this->test();
         return DB::table('candidates')
             ->join('schools', 'schools.id', '=', 'candidates.school_id')
             ->join('teachers', 'teachers.id', '=', 'candidates.teacher_id')
@@ -138,33 +139,6 @@ class ParticipatingStudentsComponent extends BasePageReports
             ->orderBy('voice_parts.order_by');
     }
 
-    public function getSummaryColumnHeaders(): array
-    {
-        //early exit
-        if (!$this->version->event) {
-            return [];
-        }
-
-        $voiceParts = $this->version->event->voiceParts;
-
-        return $voiceParts->pluck('abbr')->toArray();
-    }
-
-    private function getSummaryCounts(): array
-    {
-        if (!$this->version->event) {
-            return [];
-        }
-
-        $voicePartCounts = [];
-        foreach ($this->version->event->voiceParts as $voicePart) {
-
-            $voicePartCounts[] = $this->getCountOfRegistrants($voicePart->id);
-        }
-
-        return $voicePartCounts;
-    }
-
     public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
     {
         return Excel::download(new ParticipatingStudentsExport(
@@ -174,21 +148,6 @@ class ParticipatingStudentsComponent extends BasePageReports
 
     private function test(): void
     {
-        $search = $this->search;
-        $query = DB::table('candidates')
-            ->join('schools', 'schools.id', '=', 'candidates.school_id')
-            ->join('teachers', 'teachers.id', '=', 'candidates.teacher_id')
-            ->join('users AS teacher', 'teacher.id', '=', 'teachers.user_id')
-            ->join('students', 'students.id', '=', 'candidates.student_id')
-            ->join('users AS student', 'student.id', '=', 'students.user_id')
-            ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
-            ->where('candidates.version_id', $this->versionId)
-            ->where('candidates.status', 'registered')
-            ->where(function ($query) use ($search) {
-                return $query->where('schools.name', 'LIKE', '%'.$search.'%')
-                    ->orWhere('teacher.last_name', 'LIKE', '%'.$search.'%')
-                    ->orWhere('student.last_name', 'LIKE', '%'.$search.'%');
-            })
-            ->get();
+
     }
 }

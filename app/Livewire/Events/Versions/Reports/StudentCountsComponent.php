@@ -24,31 +24,31 @@ class StudentCountsComponent extends BasePageReports
         $this->summaryColumnHeaders = $this->getSummaryColumnHeaders();
 
         //filters
-        $this->filters->participatingClassOfsSelectedIds = $this->filters->previousFilterExists('participatingClassOfsSelectedIds',
-            $this->dto['header'])
-            ? $this->filters->getPreviousFilterArray('participatingClassOfsSelectedIds', $this->dto['header'])
-            : $this->filters->participatingClassOfsSelectedIds;
-
-        $this->filters->participatingSchoolsSelectedIds = $this->filters->previousFilterExists('participatingSchoolsSelectedIds',
-            $this->dto['header'])
-            ? $this->filters->getPreviousFilterArray('participatingSchoolsSelectedIds', $this->dto['header'])
-            : $this->filters->participatingSchoolsSelectedIds;
-
-        $this->filters->participatingVoicePartsSelectedIds = $this->filters->previousFilterExists('participatingVoicePartsSelectedIds',
-            $this->dto['header'])
-            ? $this->filters->getPreviousFilterArray('participatingVoicePartsSelectedIds', $this->dto['header'])
-            : $this->filters->participatingVoicePartsSelectedIds;
-
-        //filterMethods
-        if (count($this->filters->participatingSchoolsSelectedIds) > 1) {
-            $this->filterMethods[] = 'participatingSchools';
-        }
-        if (count($this->filters->participatingClassOfsSelectedIds) > 1) {
-            $this->filterMethods[] = 'participatingClassOfs';
-        }
-        if (count($this->filters->participatingVoicePartsSelectedIds) > 1) {
-            $this->filterMethods[] = 'participatingVoiceParts';
-        }
+//        $this->filters->participatingClassOfsSelectedIds = $this->filters->previousFilterExists('participatingClassOfsSelectedIds',
+//            $this->dto['header'])
+//            ? $this->filters->getPreviousFilterArray('participatingClassOfsSelectedIds', $this->dto['header'])
+//            : $this->filters->participatingClassOfsSelectedIds;
+//
+//        $this->filters->participatingSchoolsSelectedIds = $this->filters->previousFilterExists('participatingSchoolsSelectedIds',
+//            $this->dto['header'])
+//            ? $this->filters->getPreviousFilterArray('participatingSchoolsSelectedIds', $this->dto['header'])
+//            : $this->filters->participatingSchoolsSelectedIds;
+//
+//        $this->filters->participatingVoicePartsSelectedIds = $this->filters->previousFilterExists('participatingVoicePartsSelectedIds',
+//            $this->dto['header'])
+//            ? $this->filters->getPreviousFilterArray('participatingVoicePartsSelectedIds', $this->dto['header'])
+//            : $this->filters->participatingVoicePartsSelectedIds;
+//
+//        //filterMethods
+//        if (count($this->filters->participatingSchoolsSelectedIds) > 1) {
+//            $this->filterMethods[] = 'participatingSchools';
+//        }
+//        if (count($this->filters->participatingClassOfsSelectedIds) > 1) {
+//            $this->filterMethods[] = 'participatingClassOfs';
+//        }
+//        if (count($this->filters->participatingVoicePartsSelectedIds) > 1) {
+//            $this->filterMethods[] = 'participatingVoiceParts';
+//        }
     }
 
     public function render()
@@ -63,8 +63,12 @@ class StudentCountsComponent extends BasePageReports
 
     public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
     {
+        //clear any artifacts
+        $this->reset('search');
+
         return Excel::download(new StudentCountsExport(
-            $this->versionId,
+            $this->getRows(),
+            $this->version->event->voiceParts
         ), 'studentCounts.csv');
     }
 
@@ -85,6 +89,11 @@ class StudentCountsComponent extends BasePageReports
         ];
     }
 
+    private function generateKey(int $schoolId, int $teacherId): string
+    {
+        return $schoolId.'_'.$teacherId;
+    }
+
     private function getVoicePartHeaders(): array
     {
         $voiceParts = $this->version->event->VoiceParts->toArray();
@@ -98,11 +107,20 @@ class StudentCountsComponent extends BasePageReports
         return $voicePartHeaders;
     }
 
-    private function getRows(): array
+    /**
+     * @return Collection of individual row for
+     * - school_id
+     * - schoolName
+     * - teacherName
+     * - last_name (of teacher for sorting)
+     * - voice_part_id
+     * - vpCount (count of voice_part_id instances within registered candidates in school_id at version_id)
+     */
+    private function getVoicePartCountsQuery(): Collection
     {
         $search = $this->search;
-
-        $detail = DB::table('candidates')
+//$this->test($search);
+        return DB::table('candidates')
             ->join('schools', 'schools.id', '=', 'candidates.school_id')
             ->join('teachers', 'teachers.id', '=', 'candidates.teacher_id')
             ->join('users AS teacher', 'teacher.id', '=', 'teachers.user_id')
@@ -112,90 +130,138 @@ class StudentCountsComponent extends BasePageReports
                 return $query->where('schools.name', 'LIKE', '%'.$search.'%')
                     ->orWhere('teacher.last_name', 'LIKE', '%'.$search.'%');
             })
-            ->distinct('candidates.school_id')
-            ->select('schools.name AS schoolName', 'schools.id AS schoolId',
-                'teacher.name AS teacherName', 'teacher.last_name', 'teacher.first_name', 'teacher.id AS teacherId',
-                'candidates.voice_part_id',
-                DB::raw('COUNT(voice_part_id) AS voicePartCount')
-            )->groupBy('schoolName')
-            ->groupBy('teacherName')
-            ->groupBy('teacher.last_name')
-            ->groupBy('teacher.first_name')
-            ->groupBy('candidates.voice_part_id')
-            ->groupBy('schoolId')
-            ->groupBy('teacherId')
-            ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
-            ->orderBy('schoolName')
-            ->orderBy('teacher.last_name')
-            ->orderBy('teacher.first_name')
-            ->get();
-
-        return $this->flattenDetail($detail);
-//        return DB::table('candidates')
-//            ->join('schools', 'schools.id', '=', 'candidates.school_id')
-//            ->join('teachers', 'teachers.id', '=', 'candidates.teacher_id')
-//            ->join('users AS teacher', 'teacher.id', '=', 'teachers.user_id')
-//            ->join('students', 'students.id', '=', 'candidates.student_id')
-//            ->join('users AS student', 'student.id', '=', 'students.user_id')
-//            ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
-//            ->where('candidates.version_id', $this->versionId)
-//            ->where('candidates.status', 'registered')
-//            ->where(function ($query) use ($search) {
-//                return $query->where('schools.name', 'LIKE', '%'.$search.'%')
-//                    ->orWhere('teacher.last_name', 'LIKE', '%'.$search.'%')
-//                    ->orWhere('student.last_name', 'LIKE', '%'.$search.'%');
-//            })
-//            ->tap(function ($query) {
+            ->tap(function ($query) {
 //                $this->filters->filterCandidatesByParticipatingSchools($query);
 //                $this->filters->filterCandidatesByParticipatingClassOfs($query);
 //                $this->filters->filterCandidatesByParticipatingVoiceParts($query);
-//            })
-//            ->select('candidates.id', 'candidates.voice_part_id',
-//                'schools.name as schoolName',
-//                DB::raw("CONCAT(teacher.last_name, ', ', teacher.first_name, ' ', teacher.middle_name) AS teacherFullName"),
-//                'teacher.prefix_name', 'teacher.first_name', 'teacher.middle_name', 'teacher.last_name',
-//                'teacher.suffix_name',
-//                'student.first_name AS studentFirstName', 'student.middle_name AS studentMiddleName',
-//                'student.last_name AS studentLastName', 'student.suffix_name AS studentSuffix',
-//                'voice_parts.descr AS voicePartDescr', 'voice_parts.order_by',
-//                'students.class_of',
-//                DB::raw("((12 - (students.class_of - 2025))) AS grade")
-//            )
-//            ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
-//            ->orderBy('schools.name')
-//            ->orderBy('studentLastName')
-//            ->orderBy('studentFirstName')
-//            ->orderBy('voice_parts.order_by');
+            })
+            ->select('candidates.school_id',
+                'schools.name AS schoolName',
+                'candidates.teacher_id',
+                'teacher.name AS teacherName',
+                'teacher.last_name',
+                'candidates.voice_part_id',
+                DB::raw('COUNT(candidates.voice_part_id) AS vpCount'),
+            )
+            ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
+            ->orderBy('schoolName')
+            ->orderBy('teacher.last_name')
+            ->orderBy('candidates.voice_part_id')
+            ->groupBy('schools.name')
+            ->groupBy('candidates.school_id')
+            ->groupBy('teacher.name')
+            ->groupBy('teacher.last_name')
+            ->groupBy('candidates.teacher_id')
+            ->groupBy('candidates.voice_part_id')
+            ->get();
     }
 
-    private function flattenDetail(\Illuminate\Support\Collection $detail): array
+    private function getRows(): array
     {
-        $voicePartIds = $this->version->event->voiceParts->pluck('id')->toArray();
-
-        dd($detail);
         $rows = [];
-        foreach ($detail as $item) {
+        $collection = $this->getVoicePartCountsQuery();
+        $voiceParts = $this->version->event->VoiceParts;
+        $counter = 1;
 
-            $key = $item->schoolId.'_'.$item->teacherId;
+        //iterate through schools to build array
+        foreach ($collection as $row) {
 
-            $rows[$key] = [
-                'schoolName' => $item->schoolName,
-                'teacherName' => $item->teacherName,
-            ];
+            //generate array $key
+            $key = $this->generateKey($row->school_id, $row->teacher_id);
 
-            foreach ($voicePartIds as $voicePartId) {
+            //initialize array
+            if (!isset($rows[$key])) {
+                $rows[$key] = $this->initializeRow(
+                    $counter++,
+                    $row->schoolName,
+                    $row->teacherName,
+                    $voiceParts
+                );
+            }
 
-                //initialize value
-                if (!array_key_exists($voicePartId, $rows[$key])) {
-                    $rows[$key][$voicePartId] = 0;
-                }
+            //update voice part counts with correct values
+            $this->updateVoicePartCounts($rows[$key], $row, $voiceParts);
+        } //end foreach
 
-                if ((!$rows[$key][$voicePartId]) && ($item->voice_part_id == $voicePartId)) {
-                    $rows[$key][$voicePartId] = $item->voicePartCount;
+        //re-sort final array by totals if requested
+        if ($this->sortColLabel === 'total') {
+
+            $rows = $this->reSortRowsByTotal($rows);
+        }
+
+        return $rows;
+    }
+
+    /**
+     * Note: The order of the array properties matches the column layout in studentCountsTable
+     * DO NOT re-order these properties!
+     * @param  int  $counter
+     * @param  string  $schoolName
+     * @param  string  $teacherName
+     * @param  Collection  $voiceParts
+     * @return array
+     */
+    private function initializeRow(
+        int $counter,
+        string $schoolName,
+        string $teacherName,
+        Collection $voiceParts
+    ): array {
+        $row = [
+            'counter' => $counter,
+            'schoolName' => $schoolName,
+            'teacherName' => $teacherName,
+        ];
+
+        //if missing, initialize all possible voice parts values @ 0
+        foreach ($voiceParts as $voicePart) {
+            $row[$voicePart->id] = 0;
+        }
+
+        $row['total'] = 0;
+
+        return $row;
+    }
+
+    private function reSortRowsByTotal(array $rows): array
+    {
+        // Extract the values and sort them
+        $values = array_values($rows);
+        usort($values, function ($a, $b) {
+            return ($this->sortAsc)
+                ? $a['total'] <=> $b['total']
+                : $b['total'] <=> $a['total'];
+        });
+
+        // Rebuild the array with the original keys
+        $sortedArray = [];
+        foreach ($values as $value) {
+            foreach ($rows as $key => $originalValue) {
+                if ($value === $originalValue) {
+                    $sortedArray[$key] = $value;
+                    break;
                 }
             }
         }
-        dd($rows);
-        return $rows;
+
+        return $sortedArray;
+    }
+
+    private function updateVoicePartCounts(
+        array &$row,
+        \stdClass $dataRow,
+        Collection $voiceParts
+    ) {
+        foreach ($voiceParts as $voicePart) {
+            if ($dataRow->voice_part_id == $voicePart->id) {
+                $row[$voicePart->id] = $dataRow->vpCount;
+                $row['total'] += $dataRow->vpCount;
+            }
+        }
+    }
+
+    private function test(): void
+    {
+
     }
 }
