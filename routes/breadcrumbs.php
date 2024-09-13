@@ -130,9 +130,9 @@ Breadcrumbs::for('events participation', function (BreadcrumbTrail $trail) {
 });
 
 //Judge Assignments
-Breadcrumbs::for('judge assignments', function (BreadcrumbTrail $trail, int $id) {
+Breadcrumbs::for('judge assignment', function (BreadcrumbTrail $trail, int $id) {
     $trail->parent('version dashboard', $id);
-    $trail->push('Judge Assignments', route('judgeAssignments'));
+    $trail->push('Judge Assignment', route('judgeAssignment'));
 });
 
 //Obligations

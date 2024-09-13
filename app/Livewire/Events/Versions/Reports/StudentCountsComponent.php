@@ -22,37 +22,12 @@ class StudentCountsComponent extends BasePageReports
         $this->sortCol = 'schoolName';
         $this->columnHeaders = $this->getColumnHeaders();
         $this->summaryColumnHeaders = $this->getSummaryColumnHeaders();
-
-        //filters
-//        $this->filters->participatingClassOfsSelectedIds = $this->filters->previousFilterExists('participatingClassOfsSelectedIds',
-//            $this->dto['header'])
-//            ? $this->filters->getPreviousFilterArray('participatingClassOfsSelectedIds', $this->dto['header'])
-//            : $this->filters->participatingClassOfsSelectedIds;
-//
-//        $this->filters->participatingSchoolsSelectedIds = $this->filters->previousFilterExists('participatingSchoolsSelectedIds',
-//            $this->dto['header'])
-//            ? $this->filters->getPreviousFilterArray('participatingSchoolsSelectedIds', $this->dto['header'])
-//            : $this->filters->participatingSchoolsSelectedIds;
-//
-//        $this->filters->participatingVoicePartsSelectedIds = $this->filters->previousFilterExists('participatingVoicePartsSelectedIds',
-//            $this->dto['header'])
-//            ? $this->filters->getPreviousFilterArray('participatingVoicePartsSelectedIds', $this->dto['header'])
-//            : $this->filters->participatingVoicePartsSelectedIds;
-//
-//        //filterMethods
-//        if (count($this->filters->participatingSchoolsSelectedIds) > 1) {
-//            $this->filterMethods[] = 'participatingSchools';
-//        }
-//        if (count($this->filters->participatingClassOfsSelectedIds) > 1) {
-//            $this->filterMethods[] = 'participatingClassOfs';
-//        }
-//        if (count($this->filters->participatingVoicePartsSelectedIds) > 1) {
-//            $this->filterMethods[] = 'participatingVoiceParts';
-//        }
     }
 
     public function render()
     {
+        $this->saveSortParameters();
+
         return view('livewire..events.versions.reports.student-counts-component',
             [
                 'rows' => $this->getRows(),
@@ -258,10 +233,5 @@ class StudentCountsComponent extends BasePageReports
                 $row['total'] += $dataRow->vpCount;
             }
         }
-    }
-
-    private function test(): void
-    {
-
     }
 }
