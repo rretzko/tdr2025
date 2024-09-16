@@ -2,14 +2,14 @@
 
 namespace Database\Factories\Events\Versions;
 
-use App\Models\Events\Versions\Rooms;
+use App\Models\Events\Versions\Room;
 use App\Models\Events\Versions\Version;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
 class RoomsFactory extends Factory
 {
-    protected $model = Rooms::class;
+    protected $model = Room::class;
 
     public function definition(): array
     {

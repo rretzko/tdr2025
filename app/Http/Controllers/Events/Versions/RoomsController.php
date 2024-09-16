@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Events\Versions;
 
 use App\Http\Controllers\Controller;
-use App\Models\Events\Versions\Rooms;
+use App\Models\Events\Versions\Room;
 use Illuminate\Http\Request;
 
 class RoomsController extends Controller
 {
     public function index()
     {
-        return Rooms::all();
+        return Room::all();
     }
 
     public function store(Request $request)
@@ -22,15 +22,15 @@ class RoomsController extends Controller
             'order_by' => ['required', 'integer'],
         ]);
 
-        return Rooms::create($data);
+        return Room::create($data);
     }
 
-    public function show(Rooms $rooms)
+    public function show(Room $rooms)
     {
         return $rooms;
     }
 
-    public function update(Request $request, Rooms $rooms)
+    public function update(Request $request, Room $rooms)
     {
         $data = $request->validate([
             'version_id' => ['required', 'exists:versions'],
@@ -44,7 +44,7 @@ class RoomsController extends Controller
         return $rooms;
     }
 
-    public function destroy(Rooms $rooms)
+    public function destroy(Room $rooms)
     {
         $rooms->delete();
 

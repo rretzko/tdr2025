@@ -3,6 +3,7 @@
 namespace App\Models\Events\Versions;
 
 use App\Models\Events\Event;
+use App\Models\Events\Versions\Scoring\Room;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -49,6 +50,11 @@ class Version extends Model
         $versionParticipant = VersionParticipant::find($versionRole->version_participant_id);
 
         return User::find($versionParticipant->user_id);
+    }
+
+    public function rooms(): HasMany
+    {
+        return $this->hasMany(Room::class);
     }
 
     public function showPitchFiles(string $type = ''): bool

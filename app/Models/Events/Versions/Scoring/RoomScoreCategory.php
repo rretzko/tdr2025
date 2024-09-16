@@ -2,18 +2,17 @@
 
 namespace App\Models\Events\Versions\Scoring;
 
-use App\Models\Students\VoicePart;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class RoomVoicepart extends Model
+class RoomScoreCategory extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'room_id',
-        'voice_part_id',
+        'score_category_id',
     ];
 
     public function room(): BelongsTo
@@ -21,8 +20,8 @@ class RoomVoicepart extends Model
         return $this->belongsTo(Room::class);
     }
 
-    public function voicePart(): BelongsTo
+    public function scoreCategory(): BelongsTo
     {
-        return $this->belongsTo(VoicePart::class);
+        return $this->belongsTo(ScoreCategory::class);
     }
 }

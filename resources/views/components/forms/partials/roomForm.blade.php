@@ -5,6 +5,9 @@
             width: 50%;
         }
     </style>
+    @if($errors->any())
+        {{ implode('', $errors->all('<div>:message</div>')) }}
+    @endif
     {{-- SYSID, NAME --}}
     <fieldset class="flex flex-col space-y-2">
         <div class="flex flex-row space-x-2">
@@ -22,11 +25,11 @@
     </fieldset>
 
     <fieldset class="flex flex-col space-y-2">
-        <legend for="form.contentTypes" class="text-sm">Content to be auditioned</legend>
-        @foreach($contentTypes AS $contentType)
+        <legend for="form.contentTypes" class="text-sm">Scoring Categories To Be Auditioned</legend>
+        @foreach($versionScoreCategories AS $key => $versionScoreCategory)
             <div class="flex flex-row space-x-2 ml-2 items-center">
-                <input type="checkbox" wire:model.live="form.contentTypeIds" value="{{ $contentType }}">
-                <label for="contentTypeIds[$contentType]">{{ ucwords($contentType) }}</label>
+                <input type="checkbox" wire:model.live="form.scoreCategoryIds" value="{{ $key }}">
+                <label for="scoreCategoryIds[$contentType]">{{ ucwords($versionScoreCategory) }}</label>
             </div>
         @endforeach
 
@@ -53,6 +56,17 @@
                     {{ $tolerance }}
                 </option>
             @endforeach
+        </select>
+    </fieldset>
+
+    <fieldset class="flex flex-col space-y-2 max-w-fit">
+        <label for="form.orderBy">Room Order</label>
+        <select wire:model="form.orderBy">
+            @for($i=1; $i<51; $i++)
+                <option value="{{ $i }}">
+                    {{ $i }}
+                </option>
+            @endfor
         </select>
     </fieldset>
 

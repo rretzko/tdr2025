@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\Events\Versions;
 
 use App\Filament\Resources\Events\Versions\RoomsResource\Pages;
-use App\Models\Events\Versions\Rooms;
+use App\Models\Events\Versions\Room;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class RoomsResource extends Resource
 {
-    protected static ?string $model = Rooms::class;
+    protected static ?string $model = Room::class;
 
     protected static ?string $slug = 'events/versions/rooms';
 
@@ -32,11 +32,11 @@ class RoomsResource extends Resource
             ->schema([
                 Placeholder::make('created_at')
                     ->label('Created Date')
-                    ->content(fn(?Rooms $record): string => $record?->created_at?->diffForHumans() ?? '-'),
+                    ->content(fn(?Room $record): string => $record?->created_at?->diffForHumans() ?? '-'),
 
                 Placeholder::make('updated_at')
                     ->label('Last Modified Date')
-                    ->content(fn(?Rooms $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
+                    ->content(fn(?Room $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
 
                 Select::make('version_id')
                     ->relationship('version', 'name')

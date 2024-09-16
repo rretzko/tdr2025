@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Events\Versions\Scoring;
 
 use App\Http\Controllers\Controller;
-use App\Models\Events\Versions\Scoring\RoomVoicepart;
+use App\Models\Events\Versions\Scoring\RoomVoicePart;
 use Illuminate\Http\Request;
 
 class RoomVoicepartController extends Controller
 {
     public function index()
     {
-        return RoomVoicepart::all();
+        return RoomVoicePart::all();
     }
 
     public function store(Request $request)
@@ -20,15 +20,15 @@ class RoomVoicepartController extends Controller
             'voice_part_id' => ['required', 'exists:voice_parts'],
         ]);
 
-        return RoomVoicepart::create($data);
+        return RoomVoicePart::create($data);
     }
 
-    public function show(RoomVoicepart $roomVoicepart)
+    public function show(RoomVoicePart $roomVoicepart)
     {
         return $roomVoicepart;
     }
 
-    public function update(Request $request, RoomVoicepart $roomVoicepart)
+    public function update(Request $request, RoomVoicePart $roomVoicepart)
     {
         $data = $request->validate([
             'room_id' => ['required', 'exists:rooms'],
@@ -40,7 +40,7 @@ class RoomVoicepartController extends Controller
         return $roomVoicepart;
     }
 
-    public function destroy(RoomVoicepart $roomVoicepart)
+    public function destroy(RoomVoicePart $roomVoicepart)
     {
         $roomVoicepart->delete();
 

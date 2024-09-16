@@ -4,6 +4,9 @@
     'rows',
     'sortAsc',
     'sortColLabel',
+    'roomJudges',
+    'roomScoreCategories',
+    'roomVoiceParts',
 ])
 <div class="relative">
 
@@ -31,6 +34,13 @@
                 </th>
             @endforeach
 
+            <th class="sr-only">
+                Edit
+            </th>
+            <th class="sr-only">
+                Remove
+            </th>
+
         </tr>
         </thead>
         <tbody>
@@ -39,44 +49,59 @@
 
                 {{-- COUNTER --}}
                 <td class="text-center">
-                    {{ $loop->iteration + (($rows->currentPage() - 1) * $recordsPerPage) }}
+                    {{ ($key + 1) }}
                 </td>
 
-                {{-- SCHOOL --}}
+                {{-- ROOM NAME --}}
                 <td
                     @class(
                         [
                             "border border-gray-200 px-1",
-                            'text-gray-400' => ($key && ($rows[$key - 1]->schoolName === $row->schoolName)),
                         ])
                 >
-                    {{ $row->schoolName }}
+                    {{ $row->room_name }}
                 </td>
 
-                {{-- TEACHER --}}
+                {{-- VOICE PARTS --}}
                 <td
                     @class([
                           "border border-gray-200 px-1",
-                          'text-gray-400' => ($key && ($rows[$key - 1]->teacherFullName === $row->teacherFullName)),
                     ])
                 >
-                    {{ $row->last_name . ($row->suffix_name ? ' ' . $row->suffix_name : '') . ', ' . $row->first_name . ' ' . $row->middle_name . ($row->prefix_name ? ' (' . $row->prefix_name . ')' : '') }}
+                    {{ isset($roomVoiceParts[$row->id]) ? $roomVoiceParts[$row->id] : 'none found'}}
                 </td>
 
-                {{-- REGISTRANT --}}
+                {{-- CONTENT --}}
                 <td class="border border-gray-200 px-1 ">
-                    {{ $row->studentLastName . ($row->studentSuffix ? ' ' . $row->studentSuffix : '') . ', ' . $row->studentFirstName . ' ' . $row->studentMiddleName  }}
+                    {{ isset($roomScoreCategories[$row->id]) ? $roomScoreCategories[$row->id] : 'none found'}}
                 </td>
 
-                {{-- GRADE --}}
+                {{--  JUDGES --}}
                 <td class="border border-gray-200 px-1 text-center">
-                    {{ $row->grade  }}
-                    <span class="text-xs italic"> ({{ $row->class_of }})</span>
+                    {{ ($roomJudges[$row->id]) ? $roomJudges[$row->id] : 'none found'}}
                 </td>
 
-                {{-- Voice Part --}}
-                <td class="border border-gray-200 px-1 ">
-                    {{ $row->voicePartDescr }}
+                {{-- TOLERANCE --}}
+                <td class="border border-gray-200 px-1 text-center">
+                    {{ $row->tolerance }}
+                </td>
+
+                <td class="border border-gray-200 px-1 text-center">
+                    <button
+                        wire:click="edit({{ $row->id }})"
+                        class="bg-indigo-500 text-white text-xs px-2 rounded-lg"
+                    >
+                        Edit
+                    </button>
+                </td>
+
+                <td class="border border-gray-200 px-1 text-center">
+                    <button
+                        wire:click="remove({{ $row->id }})"
+                        class="bg-red-500 text-white text-xs px-2 rounded-lg"
+                    >
+                        Remove
+                    </button>
                 </td>
 
             </tr>

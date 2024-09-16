@@ -3,14 +3,14 @@
 namespace Database\Factories\Events\Versions\Scoring;
 
 use App\Models\Events\Versions\Scoring\Room;
-use App\Models\Events\Versions\Scoring\RoomVoicePart;
-use App\Models\Students\VoicePart;
+use App\Models\Events\Versions\Scoring\RoomScoreCategory;
+use App\Models\Events\Versions\Scoring\ScoreCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
-class RoomVoicepartFactory extends Factory
+class RoomScoreCategoriesFactory extends Factory
 {
-    protected $model = RoomVoicePart::class;
+    protected $model = RoomScoreCategory::class;
 
     public function definition(): array
     {
@@ -19,7 +19,7 @@ class RoomVoicepartFactory extends Factory
             'updated_at' => Carbon::now(),
 
             'room_id' => Room::factory(),
-            'voice_part_id' => VoicePart::factory(),
+            'score_category_id' => ScoreCategory::factory(),
         ];
     }
 }
