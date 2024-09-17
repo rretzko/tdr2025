@@ -7,8 +7,17 @@
     'roomJudges',
     'roomScoreCategories',
     'roomVoiceParts',
+    'showSuccessIndicator' => false,
+    'successMessage' => '',
 ])
 <div class="relative">
+
+    {{-- SUCCESS INDICATOR --}}
+    @if($showSuccessIndicator)
+        <div class="text-green-600 italic text-xs">
+            {{ $successMessage }}
+        </div>
+    @endif
 
     <table class="px-4 mt-4 shadow-lg w-full">
         <thead>
@@ -77,8 +86,10 @@
                 </td>
 
                 {{--  JUDGES --}}
-                <td class="border border-gray-200 px-1 text-center">
-                    {{ ($roomJudges[$row->id]) ? $roomJudges[$row->id] : 'none found'}}
+                <td class="border border-gray-200 px-1 text-left">
+                    @foreach($roomJudges[$row->id] AS $judge)
+                        <div class="@if($judge === 'none found') text-center @endif">{{ $judge }}</div>
+                    @endforeach
                 </td>
 
                 {{-- TOLERANCE --}}
@@ -87,21 +98,18 @@
                 </td>
 
                 <td class="border border-gray-200 px-1 text-center">
-                    <button
-                        wire:click="edit({{ $row->id }})"
-                        class="bg-indigo-500 text-white text-xs px-2 rounded-lg"
-                    >
-                        Edit
-                    </button>
+                    <x-buttons.edit
+                        id="{{ $row->id }}"
+                        livewire="1"
+                    />
                 </td>
 
                 <td class="border border-gray-200 px-1 text-center">
-                    <button
-                        wire:click="remove({{ $row->id }})"
-                        class="bg-red-500 text-white text-xs px-2 rounded-lg"
-                    >
-                        Remove
-                    </button>
+                    <x-buttons.remove
+                        id="{{ $row->id }}"
+                        livewire="1"
+                        message="Are you sure you want to remove this room?"
+                    />
                 </td>
 
             </tr>

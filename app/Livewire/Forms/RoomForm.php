@@ -2,10 +2,14 @@
 
 namespace App\Livewire\Forms;
 
+use App\Models\Events\Versions\Judge;
 use App\Models\Events\Versions\Room;
 use App\Models\Events\Versions\Scoring\RoomScoreCategory;
 use App\Models\Events\Versions\Scoring\RoomVoicePart;
+use App\Models\Events\Versions\Scoring\ScoreCategory;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
 
@@ -29,11 +33,19 @@ class RoomForm extends Form
     public int $judgeMonitor = 0;
     public int $monitor = 0;
 
-    public function save(): bool
+    public function resetVariables(): void
+    {
+        $this->reset('orderBy', 'roomName', 'scoreCategoryIds', 'sysId',
+            'tolerance', 'userId', 'versionId', 'voicePartIds');
+
+        $this->reset('headJudge', 'judge2', 'judge3', 'judge4', 'judgeMonitor', 'monitor');
+    }
+
+    public function save(int $versionId): bool
     {
         return ($this->sysId)
             ? $this->updateRoom()
-            : $this->addRoom();
+            : $this->addRoom($versionId);
     }
 
     public function setRoom(int $roomId): bool
@@ -43,6 +55,7 @@ class RoomForm extends Form
         $this->orderBy = $room->order_by;
         $this->roomName = $room->room_name;
         $this->tolerance = $room->tolerance;
+        $this->versionId = $room->version_id;
 
         $this->scoreCategoryIds = $this->getScoreCategoryIds();
 
@@ -51,7 +64,26 @@ class RoomForm extends Form
             ->pluck('voice_part_id')
             ->toArray();
 
+        $this->setRoomJudges($room->version_id);
+
         return true;
+    }
+
+    public function updateJudge(string $judgeType): bool
+    {
+        $var = Str::camel($judgeType);
+
+        return (bool) Judge::updateOrCreate(
+            [
+                'version_id' => $this->versionId,
+                'room_id' => $this->sysId,
+                'judge_type' => $judgeType,
+            ],
+            [
+                'user_id' => $this->$var,
+                'status_type' => 'assigned',
+            ]
+        );
     }
 
     public function updateRoom(): bool
@@ -66,54 +98,104 @@ class RoomForm extends Form
             ]
         );
 
-        $this->updateRoomScoreCategories($room);
+        $this->addRoomScoreCategories($room->id);
 
-        $this->updateRoomVoiceParts($room);
+        $this->addRoomVoiceParts($room->id);
 
         return true;
     }
 
-    public function updateRoomScoreCategories(Room $room): void
+    public function addRoom(int $versionId): bool
     {
-        //delete all current score categories for $room
-        RoomScoreCategory::query()
-            ->where('room_id', $room->id)
-            ->delete();
-
-        //add new score categories for $room
-        foreach ($this->scoreCategoryIds as $scoreCategoryId) {
-
-            RoomScoreCategory::create(
+        return DB::transaction(function () use ($versionId) {
+            $room = Room::create(
                 [
-                    'room_id' => $room->id,
+                    'order_by' => $this->orderBy,
+                    'room_name' => $this->roomName,
+                    'tolerance' => $this->tolerance,
+                    'version_id' => $versionId,
+                ]
+            );
+
+            //early exit
+            if (!$room) {
+                return false;
+            }
+
+            $this->sysId = $room->id;
+
+            $this->addRoomJudges();
+            $this->addRoomScoreCategories();
+            $this->addRoomVoiceParts();
+
+            return true;
+        });
+
+    }
+
+    private function addRoomJudge(string $judgeType): void
+    {
+        Judge::updateOrCreate(
+            [
+                'judge_type' => $judgeType,
+                'room_id' => $this->sysId,
+                'version_id' => $this->versionId,
+            ],
+            [
+                'status_type' => 'assigned',
+                'user_id' => auth()->id(),
+            ]
+        );
+    }
+
+    private function addRoomJudges(): void
+    {
+        $judges = ['headJudge', 'judge2', 'judge3', 'judge4', 'judgeMonitor', 'monitor'];
+
+        foreach ($judges as $judge) {
+            if ($this->$judge) {
+                $this->addRoomJudge($judge, $this->sysId);
+            }
+        }
+    }
+
+    private function addRoomScoreCategories(): void
+    {
+        $roomId = $this->sysId;
+
+        // Start a transaction
+        DB::transaction(function () use ($roomId) {
+            // Ensure none exist by directly deleting
+            RoomScoreCategory::where('room_id', $roomId)->delete();
+
+            // Insert new records
+            foreach ($this->scoreCategoryIds as $scoreCategoryId) {
+                RoomScoreCategory::create([
+                    'room_id' => $roomId,
                     'score_category_id' => $scoreCategoryId,
-                ]
-            );
-        }
+                ]);
+            }
+        });
+
     }
 
-    public function updateRoomVoiceParts(Room $room): void
+    private function addRoomVoiceParts(): void
     {
-        //delete all current voice parts for $room
-        RoomVoicePart::query()
-            ->where('room_id', $room->id)
-            ->delete();
+        $roomId = $this->sysId;
 
-        //add new voice parts for $room
-        foreach ($this->voicePartIds as $voicePartId) {
+        // Start a transaction
+        DB::transaction(function () use ($roomId) {
+            // Ensure none exist by directly deleting
+            RoomVoicePart::where('room_id', $roomId)->delete();
 
-            RoomVoicePart::create(
-                [
-                    'room_id' => $room->id,
+            // Insert new records
+            foreach ($this->voicePartIds as $voicePartId) {
+                RoomVoicePart::create([
+                    'room_id' => $roomId,
                     'voice_part_id' => $voicePartId,
-                ]
-            );
-        }
-    }
-
-    public function addRoom(): bool
-    {
-        return false;
+                ]);
+            }
+        });
     }
 
     private function getScoreCategoryIds(): array
@@ -122,6 +204,37 @@ class RoomForm extends Form
             ->where('room_id', $this->sysId)
             ->pluck('score_category_id')
             ->toArray() ?? [];
+    }
+
+    private function setRoomJudges(int $versionId): void
+    {
+        $query = Judge::query()
+            ->where('version_id', $versionId)
+            ->where('room_id', $this->sysId);
+
+        $this->headJudge = $query->clone()
+            ->where('judge_type', 'head judge')
+            ->value('user_id');
+
+        $this->judge2 = $query->clone()
+            ->where('judge_type', 'judge 2')
+            ->value('user_id') ?? 0;
+
+        $this->judge3 = $query->clone()
+            ->where('judge_type', 'judge 3')
+            ->value('user_id') ?? 0;
+
+        $this->judge4 = $query->clone()
+            ->where('judge_type', 'judge 4')
+            ->value('user_id') ?? 0;
+
+        $this->judgeMonitor = $query->clone()
+            ->where('judge_type', 'judge monitor')
+            ->value('user_id') ?? 0;
+
+        $this->monitor = $query->clone()
+            ->where('judge_type', 'monitor')
+            ->value('user_id') ?? 0;
     }
 
 }

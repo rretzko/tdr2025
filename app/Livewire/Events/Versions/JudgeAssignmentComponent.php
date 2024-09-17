@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Events\Versions;
 
+use App\Exports\JudgeAssignmentsExport;
 use App\Livewire\BasePage;
 use App\Livewire\Forms\RoomForm;
 use App\Models\Events\Versions\Judge;
@@ -13,10 +14,12 @@ use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionConfigAdjudication;
 use App\Models\Events\Versions\VersionScoring;
 use App\Models\UserConfig;
+use App\ValueObjects\PreviousJudgingHistoryVO;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 
 class JudgeAssignmentComponent extends BasePage
 {
@@ -29,6 +32,22 @@ class JudgeAssignmentComponent extends BasePage
     public Version $version;
     public array $versionScoreCategories = [];
     public Collection $voiceParts;
+
+    //judge flags
+    public bool $headJudgeSaved = false;
+    public bool $judge2Saved = false;
+    public bool $judge3Saved = false;
+    public bool $judge4Saved = false;
+    public bool $judgeMonitorSaved = false;
+    public bool $monitorSaved = false;
+
+    //previous history
+    public string $previousHistoryHeadJudge = '';
+    public string $previousHistoryJudge2 = '';
+    public string $previousHistoryJudge3 = '';
+    public string $previousHistoryJudge4 = '';
+    public string $previousHistoryJudgeMonitor = '';
+    public string $previousHistoryMonitor = '';
 
     public function mount(): void
     {
@@ -59,27 +78,151 @@ class JudgeAssignmentComponent extends BasePage
             ]);
     }
 
+    public function add(): void
+    {
+        $this->reset('showSuccessIndicator', 'successMessage');
+
+        $this->form->resetVariables();
+
+        $this->showForm = (!$this->showForm);
+    }
+
     public function edit(int $roomId): void
     {
         $this->reset('showSuccessIndicator', 'successMessage');
 
         $this->showForm = (bool) $this->form->setRoom($roomId);
+
+        //ensure that required judge user_ids are available from $this->form
+        if ($this->showForm) {
+            $this->loadPreviousHistories();
+        }
+    }
+
+    public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    {
+        //clear any artifacts
+        $this->reset('search');
+
+        return Excel::download(new JudgeAssignmentsExport(), 'judgeAssignments.csv');
     }
 
     public function remove(int $roomId): void
     {
-        dd(__METHOD__);
+        $room = Room::find($roomId);
+
+        if ($room) {
+
+            $this->removeRoomJudges($roomId);
+            $this->removeRoomScoreCategories($roomId);
+            $this->removeRoomVoiceParts($roomId);
+
+            $roomName = $room->room_name;
+            $room->delete();
+
+            $this->showSuccessIndicator = true;
+            $this->successMessage = 'Room: '.$roomName.' has been removed.';
+        }
+    }
+
+    private function removeRoomJudges(int $roomId): void
+    {
+        Judge::where('room_id', $roomId)->delete();
+    }
+
+    private function removeRoomScoreCategories(int $roomId): void
+    {
+        RoomScoreCategory::where('room_id', $roomId)->delete();
+    }
+
+    private function removeRoomVoiceParts(int $roomId): void
+    {
+        RoomVoicePart::where('room_id', $roomId)->delete();
     }
 
     public function save(): void
     {
+        $addingNewRoom = ($this->form->sysId == 'new');
         $roomName = $this->form->roomName;
-        $this->form->save();
+        $this->form->save($this->versionId);
 
         $this->showSuccessIndicator = true;
-        $this->successMessage = $roomName.' has been saved.';
+        $this->successMessage = ($addingNewRoom)
+            ? $roomName.' has been added.'
+            : $roomName.' has been saved.';
+
+        //switch to edit mode
+        if ($addingNewRoom) {
+            $this->edit($this->form->sysId);
+        }
 
         $this->dispatch('savedRoomForm', auth()->id());
+    }
+
+    public function updatedFormHeadJudge(): void
+    {
+        $this->headJudgeSaved = $this->form->updateJudge('head judge');
+
+        $vo = new PreviousJudgingHistoryVO($this->version, $this->form->headJudge);
+
+        $this->previousHistoryHeadJudge = $vo->getHistory();
+    }
+
+    public function updatedFormJudge2(): void
+    {
+        $this->judge2Saved = $this->form->updateJudge('judge 2');
+
+        $vo = new PreviousJudgingHistoryVO($this->version, $this->form->judge2);
+
+        $this->previousHistoryJudge2 = $vo->getHistory();
+    }
+
+    public function updatedFormJudge3(): void
+    {
+        $this->judge3Saved = $this->form->updateJudge('judge 3');
+
+        $vo = new PreviousJudgingHistoryVO($this->version, $this->form->judge3);
+
+        $this->previousHistoryJudge3 = $vo->getHistory();
+    }
+
+    public function updatedFormJudge4(): void
+    {
+        $this->judge4Saved = $this->form->updateJudge('judge 4');
+
+        $vo = new PreviousJudgingHistoryVO($this->version, $this->form->judge4);
+
+        $this->previousHistoryJudge4 = $vo->getHistory();
+    }
+
+    public function updatedFormJudgeMonitor(): void
+    {
+        $this->judgeMonitorSaved = $this->form->updateJudge('judge monitor');
+
+        $vo = new PreviousJudgingHistoryVO($this->version, $this->form->judgeMonitor);
+
+        $this->previousHistoryJudgeMonitor = $vo->getHistory();
+    }
+
+    public function updatedFormMonitor(): void
+    {
+        $this->monitorSaved = $this->form->updateJudge('monitor');
+
+        $vo = new PreviousJudgingHistoryVO($this->version, $this->form->judgeMonitor);
+
+        $this->previousHistoryJudgeMonitor = $vo->getHistory();
+    }
+
+    private function abbreviateJudgeType(string $judgeType): string
+    {
+        //early exit
+        if (empty(trim($judgeType))) {
+            return 'none';
+        }
+
+        $parts = explode(' ', $judgeType);
+
+        return implode('', array_map(fn($part) => $part[0], $parts));;
     }
 
     /**
@@ -157,6 +300,26 @@ class JudgeAssignmentComponent extends BasePage
         }
     }
 
+    private function formatJudgesByRoom(array $judgesByRoom): array
+    {
+        $formattedJudges = [];
+
+        foreach ($judgesByRoom as $roomId => $judges) {
+            if (count($judges)) {
+                $formattedJudges[$roomId] = array_map(function ($judge) {
+                    return $judge['name']
+                        .' ('
+                        .$this->abbreviateJudgeType($judge['judge_type'])
+                        .')';
+                }, $judges);
+            } else {
+                $formattedJudges[$roomId] = ['none found'];
+            }
+        }
+
+        return $formattedJudges;
+    }
+
     private function getColumnHeaders(): array
     {
         return [
@@ -167,6 +330,24 @@ class JudgeAssignmentComponent extends BasePage
             ['label' => 'judges', 'sortBy' => null],
             ['label' => 'tolerance', 'sortBy' => null],
         ];
+    }
+
+    private function getJudgesByRoom(array $roomIds): array
+    {
+        $judgesByRoom = [];
+
+        foreach ($roomIds as $roomId) {
+            $judgesByRoom[$roomId] = Judge::query()
+                ->join('users', 'users.id', '=', 'judges.user_id')
+                ->where('judges.room_id', $roomId)
+                ->where('version_id', $this->versionId)
+                ->select('users.name', 'judges.judge_type')
+                ->orderBy('judges.judge_type')
+                ->get()
+                ->toArray();
+        }
+
+        return $judgesByRoom;
     }
 
     private function getMembers(): array
@@ -199,20 +380,11 @@ class JudgeAssignmentComponent extends BasePage
     private function getRoomJudges(): array
     {
         $a = [];
+        $raw = [];
         $roomIds = $this->getRoomIds();
+        $judgesByRoom = $this->getJudgesByRoom($roomIds);
 
-        foreach ($roomIds as $roomId) {
-
-            $a[$roomId] = implode(', ', Judge::query()
-                ->join('users', 'users.id', '=', 'judges.user_id')
-                ->where('judges.room_id', $roomId)
-                ->select('users.name', 'judges.judge_type')
-                ->orderBy('judges.judge_type')
-                ->pluck('users.name')
-                ->toArray());
-        }
-
-        return $a;
+        return $this->formatJudgesByRoom($judgesByRoom);
     }
 
     private function getRoomScoreCategories(): array
@@ -283,5 +455,23 @@ class JudgeAssignmentComponent extends BasePage
     private function hasRows(): bool
     {
         return Room::where('version_id', $this->versionId)->exists();
+    }
+
+    private function loadPreviousHistories(): void
+    {
+        $judgeTypes = ['headJudge', 'judge2', 'judge3', 'judge4', 'judgeMonitor', 'monitor'];
+
+        foreach ($judgeTypes as $judgeType) {
+
+            if ($this->form->$judgeType) {
+
+                $vo = new PreviousJudgingHistoryVO($this->version, $this->form->$judgeType);
+
+                $previousHistoryType = 'previousHistory'.ucwords(($judgeType));
+
+                $this->$previousHistoryType = $vo->getHistory();
+            }
+        }
+
     }
 }

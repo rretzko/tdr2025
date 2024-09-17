@@ -10,7 +10,7 @@
             <div>{{ ucwords($dto['header']) }}</div>
             <div class="flex items-center space-x-2">
                 <button type="button"
-                        wire:click="$toggle('showForm')"
+                        wire:click="add()"
                         class="bg-green-500 text-white text-3xl px-2 rounded-lg"
                         title="Add New Room"
                         tabindex="-1"
@@ -40,6 +40,8 @@
             :sortAsc="$sortAsc"
             sortColLabel="{{ $sortColLabel }}"
             :roomVoiceParts="$roomVoiceParts"
+            :showSuccessIndicator="$showSuccessIndicator"
+            successMessage="{{ $successMessage }}"
         />
 
     </div>{{-- END OF ID=CONTAINER --}}

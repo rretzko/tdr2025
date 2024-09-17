@@ -14,8 +14,8 @@
     </fieldset>
 
     <fieldset class="flex flex-row space-y-2 items-center">
-        <label for="form.judge2" class="text-sm w-24">Head Judge</label>
-        <select wire:model="form.headJudge">
+        <label for="form.headJudge" class="text-sm w-24">Head Judge</label>
+        <select wire:model.live="form.headJudge">
             <option value="0">- Select -</option>
             @foreach($members AS $key=>$member)
                 <option value="{{ $key }}" wire:key="headJudge-{{ $key }}">
@@ -23,11 +23,17 @@
                 </option>
             @endforeach
         </select>
+        @if($headJudgeSaved)
+            <x-save-fade/>
+        @endif
+        <div class="ml-2 text-xs">
+            {!! $previousHistoryHeadJudge !!}
+        </div>
     </fieldset>
 
     <fieldset class="flex flex-row space-y-2 items-center">
         <label for="form.judge2" class="text-sm w-24">Judge 2</label>
-        <select wire:model="form.judge2">
+        <select wire:model.live="form.judge2">
             <option value="0">- Select -</option>
             @foreach($members AS $key=>$member)
                 <option value="{{ $key }}" wire:key="judge2-{{ $key }}">
@@ -35,11 +41,17 @@
                 </option>
             @endforeach
         </select>
+        @if($judge2Saved)
+            <x-save-fade/>
+        @endif
+        <div class="ml-2 text-xs">
+            {!! $previousHistoryJudge2 !!}
+        </div>
     </fieldset>
 
     <fieldset class="flex flex-row space-y-2 items-center">
         <label for="form.judge3" class="text-sm w-24">Judge 3</label>
-        <select wire:model="form.judge3">
+        <select wire:model.live="form.judge3">
             <option value="0">- Select -</option>
             @foreach($members AS $key=>$member)
                 <option value="{{ $key }}" wire:key="judge3-{{ $key }}">
@@ -47,11 +59,17 @@
                 </option>
             @endforeach
         </select>
+        @if($judge3Saved)
+            <x-save-fade/>
+        @endif
+        <div class="ml-2 text-xs">
+            {!! $previousHistoryJudge3 !!}
+        </div>
     </fieldset>
 
     <fieldset class="flex flex-row space-y-2 items-center">
         <label for="form.judge4" class="text-sm w-24">Judge 4</label>
-        <select wire:model="form.judge4">
+        <select wire:model.live="form.judge4">
             <option value="0">- Select -</option>
             @foreach($members AS $key=>$member)
                 <option value="{{ $key }}" wire:key="judge4-{{ $key }}">
@@ -59,11 +77,17 @@
                 </option>
             @endforeach
         </select>
+        @if($judge4Saved)
+            <x-save-fade/>
+        @endif
+        <div class="ml-2 text-xs">
+            {!! $previousHistoryJudge4 !!}
+        </div>
     </fieldset>
 
     <fieldset class="flex flex-row space-y-2 items-center">
         <label for="form.judgeMonitor" class="text-sm w-24">Judge Monitor</label>
-        <select wire:model="form.judgeMonitor">
+        <select wire:model.live="form.judgeMonitor">
             <option value="0">- Select -</option>
             @foreach($members AS $key=>$member)
                 <option value="{{ $key }}" wire:key="judgeMonitor-{{ $key }}">
@@ -71,11 +95,17 @@
                 </option>
             @endforeach
         </select>
+        @if($judgeMonitorSaved)
+            <x-save-fade/>
+        @endif
+        <div class="ml-2 text-xs">
+            {!! $previousHistoryJudgeMonitor !!}
+        </div>
     </fieldset>
 
     <fieldset class="flex flex-row space-y-2 items-center">
         <label for="form.monitor" class="text-sm w-24">Monitor</label>
-        <select wire:model="form.monitor">
+        <select wire:model.live="form.monitor">
             <option value="0">- Select -</option>
             @foreach($members AS $key=>$member)
                 <option value="{{ $key }}" wire:key="monitor2-{{ $key }}">
@@ -83,28 +113,12 @@
                 </option>
             @endforeach
         </select>
-    </fieldset>
-
-    <fieldset class="flex flex-row space-x-2 pb-2 ">
-        <button wire:click="saveJudge"
-                class="bg-gray-800 text-white rounded-full px-2 text-xs"
-                type="submit"
-        >
-            Save Judge(s)
-        </button>
-
-        <button wire:click="$toggle('showForm')"
-                class="bg-gray-800 text-white rounded-full px-2 text-xs"
-                type="button"
-        >
-            Close Form
-        </button>
-    </fieldset>
-
-    {{-- SUCCESS INDICATOR --}}
-    @if($showSuccessIndicator)
-        <div class="text-green-600 italic text-xs">
-            {{ $successMessage }}
+        @if($monitorSaved)
+            <x-save-fade/>
+        @endif
+        <div class="ml-2 text-xs">
+            {!! $previousHistoryMonitor !!}
         </div>
-    @endif
+    </fieldset>
+
 </form>

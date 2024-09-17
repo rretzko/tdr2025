@@ -5,9 +5,9 @@
             width: 50%;
         }
     </style>
-    @if($errors->any())
-        {{ implode('', $errors->all('<div>:message</div>')) }}
-    @endif
+    {{--    @if($errors->any())--}}
+    {{--        {{ implode('', $errors->all('<div>:message</div>')) }}--}}
+    {{--    @endif--}}
     {{-- SYSID, NAME --}}
     <fieldset class="flex flex-col space-y-2">
         <div class="flex flex-row space-x-2">
