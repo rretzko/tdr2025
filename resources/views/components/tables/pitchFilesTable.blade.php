@@ -41,7 +41,7 @@
         </thead>
         <tbody>
         @forelse($rows AS $row)
-            <tr class=" odd:bg-green-50 ">
+            <tr class=" odd:bg-green-50 " wire:key="pitch-file-{{ $loop->iteration }}">
                 <td class="text-center">
                     {{ $loop->iteration + (($rows->currentPage() - 1) * $recordsPerPage) }}
                 </td>
