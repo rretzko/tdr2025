@@ -62,6 +62,7 @@ class JudgeAssignmentComponent extends BasePage
         $this->tolerances = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
         $this->voiceParts = $this->version->event->voiceParts;
 
+        //clone records to current version from most-previous version
         if (!$this->hasRows()) {
             $this->cloneRooms();
         }
@@ -232,7 +233,7 @@ class JudgeAssignmentComponent extends BasePage
     private function cloneRooms(): void
     {
         $previousVersionRooms = $this->version->event->versions[1]->rooms;
-
+        Log::info('previousVersionRooms count: '.$previousVersionRooms->count());
         foreach ($previousVersionRooms as $oldRoom) {
 
             $newRoom = Room::create(

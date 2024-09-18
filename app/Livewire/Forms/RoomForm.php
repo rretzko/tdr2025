@@ -214,7 +214,7 @@ class RoomForm extends Form
 
         $this->headJudge = $query->clone()
             ->where('judge_type', 'head judge')
-            ->value('user_id');
+            ->value('user_id') ?? 0;
 
         $this->judge2 = $query->clone()
             ->where('judge_type', 'judge 2')
