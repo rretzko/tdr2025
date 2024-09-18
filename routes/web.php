@@ -173,6 +173,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //VERSIONS.REPORTS
     Route::get('version/reports', \App\Http\Controllers\Events\Versions\VersionReportController::class)
         ->name('version.reports');
+    Route::get('version/reports/backupPaper', \App\Http\Controllers\Tdr\LivewireController::class)
+        ->name('version.reports.backupPaper');
+    Route::get('version/reports/backupCsv', \App\Http\Controllers\Tdr\LivewireController::class)
+        ->name('version.reports.backupCsv');
+    Route::get('version/reports/monitorChecklist', \App\Http\Controllers\Tdr\LivewireController::class)
+        ->name('version.reports.monitorChecklist');
     Route::get('version/reports/obligatedTeachers',
         \App\Http\Controllers\Tdr\LivewireController::class)
         ->name('version.reports.obligatedTeachers');

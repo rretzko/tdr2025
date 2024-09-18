@@ -44,6 +44,8 @@ class VersionPitchFilesTableComponent extends BasePage
         $this->versionId = $version->id;
         $this->eventId = $version->event_id;
         $this->fileTypes = FileTypesArrayService::getArray($this->versionId);
+        //append pdf FileType
+        $this->fileTypes = array_merge($this->fileTypes, ['pdf' => 'PDF']);
         $this->voiceParts = $this->getVoiceParts();
 
         //default values
@@ -108,6 +110,15 @@ class VersionPitchFilesTableComponent extends BasePage
 
     public function addPitchFile(): void
     {
+        //preemptory strike to avoid potential
+        //run condition in setting the file from
+        //$this->updatePitchFile
+        if (!$this->form->url) {
+            sleep(5);
+            Log::info(__METHOD__.': '.__LINE__);
+            Log::info('race condition potentially avoided with pitch file upload.');
+        }
+
         $this->form->add();
 
         $this->form->resetAll();
@@ -182,10 +193,11 @@ class VersionPitchFilesTableComponent extends BasePage
     {
         $fileName = $this->makeFileName();
 
-        $this->pitchFile->storePubliclyAs('pitchFiles', $fileName, 's3');
+        $stored = $this->pitchFile->storePubliclyAs('pitchFiles', $fileName, 's3');
 
-        //save new logo if $this->form->sysId
+        //store new url identifier
         $this->form->url = 'pitchFiles/'.$fileName;
+
     }
 
     private function clonePitchFiles(): void
@@ -292,6 +304,9 @@ class VersionPitchFilesTableComponent extends BasePage
         if (!$voicePartIds) {
             return [];
         }
+
+        //add ALL to voice parts
+        $voicePartIds[] = VoicePart::where('descr', 'ALL')->first()->id;
 
         // Fetch and sort the voice parts
         return VoicePart::whereIn('id', $voicePartIds)

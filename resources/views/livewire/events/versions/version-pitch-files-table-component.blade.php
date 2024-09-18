@@ -73,6 +73,13 @@
                     <div
                         class="flex flex-col lg:flex-row space-y-2 lg:space-y-0 lg:space-x-2 items-start"
                     >
+                        {{-- PRESERVE FOR FUTURE TROUBLESHOOTING 2024-09-18 --}}
+                        {{--                        <div>--}}
+                        {{--                            @if($errors->any())--}}
+                        {{--                                {{ implode('', $errors->all('<div class="text-red-500">:message</div>')) }}--}}
+                        {{--                            @endif--}}
+                        {{--                        </div>--}}
+                        <div>PreviousPitchFileId: @json($form->previousPitchFileId)</div>
                         {{-- SELECT VOICE PART --}}
                         <x-forms.elements.livewire.selectNarrow
                             autofocus='true'
