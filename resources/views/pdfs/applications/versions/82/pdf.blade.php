@@ -385,7 +385,7 @@
             </tr>
         </table>
 
-        {{-- ENDORESEMENTS --}}
+        {{-- ENDORSEMENTS --}}
         <table>
             <tr>
                 <th colspan="2" class="rowHeader">Endorsements</th>
