@@ -162,9 +162,7 @@
                 <td colspan="2">
                     An audition Fee of ${{ $dto['auditionFee'] }} per student will be charged. In addition, chorus
                     students
-                    accepted will be assessed a participation fee of ${{ $dto['participationFee'] }}. The music is
-                    theirs
-                    to keep.<br/>
+                    accepted will be assessed a participation fee of ${{ $dto['participationFee'] }}. <br/>
                     Payment Method: <b>none found</b>
                 </td>
             </tr>
@@ -423,8 +421,7 @@
                     to be an applicant for this organization. I understand that neither {{ $dto['schoolName'] }} nor
                     Morris Area
                     Choral Directors Association assumes responsibility for illness or accident. I further attest the
-                    statement signed by {{ $dto['fullName'] }} and will assist {{ $dto['pronounObject'] }} in fulfilling
-                    the obligations
+                    statement signed by {{ $dto['fullName'] }} and will assist in fulfilling the obligations
                     incurred.
                 </td>
             </tr>

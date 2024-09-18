@@ -159,8 +159,6 @@ class Filters extends Form
                 ->pluck('version_pitch_files.file_type', 'version_pitch_files.file_type')
                 ->toArray();
 
-//            Log::info(serialize($fileTypes));
-
             $this->pitchFileFileTypesSelectedIds = $fileTypes;
 
         } else {
