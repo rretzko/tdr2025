@@ -3,6 +3,7 @@
 namespace App\Livewire\Forms;
 
 use App\Models\Events\Versions\VersionPitchFile;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
 
@@ -25,14 +26,23 @@ class VersionPitchFileForm extends Form
 
     public function add(): void
     {
-        $this->validate();
+        $this->validate(
+            [
+                'description' => 'required|string|min:3',
+                'fileType' => 'required|string|min:3',
+                'orderBy' => 'required|int|min:1',
+                'versionId' => 'required|int|exists:versions,id',
+                'url' => 'required|string',
+                'voicePartId' => 'required|int|min:0|exists:voice_parts,id',
+            ]);
 
         if ($this->previousPitchFileId) {
 
             dd($this->previousPitchFileId);
 
         } else {
-            VersionPitchFile::create(
+
+            $vpf = VersionPitchFile::create(
                 [
                     'description' => $this->description,
                     'file_type' => $this->fileType,
@@ -42,12 +52,21 @@ class VersionPitchFileForm extends Form
                     'url' => $this->url,
                 ]
             );
+
         }
     }
 
     public function pitchFileUpdate(): void
     {
-        $this->validate();
+        $this->validate(
+            [
+                'description' => 'required|string|min:3',
+                'fileType' => 'required|string|min:3',
+                'orderBy' => 'required|int|min:1',
+                'versionId' => 'required|int|exists:versions,id',
+                'url' => 'required|string',
+                'voicePartId' => 'required|int|min:0|exists:voice_parts,id',
+            ]);
 
         VersionPitchFile::find($this->sysId)
             ->update(
@@ -101,5 +120,7 @@ class VersionPitchFileForm extends Form
         $this->versionId = $vpf->version_id;
         $this->voicePartId = $vpf->voice_part_id;
         $this->url = $vpf->url;
+
+
     }
 }
