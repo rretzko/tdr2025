@@ -200,7 +200,7 @@ class BasePage extends Component
      * Placeholder for troubleshooting
      * @return void
      */
-    protected function test(): void
+    protected function troubleShooting(): void
     {
 
     }

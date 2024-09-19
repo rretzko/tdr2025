@@ -113,29 +113,4 @@ class EventsTableComponent extends BasePage
         $this->sortCol = $properties[$key];
 
     }
-
-    private function test(): void
-    {
-        dd(Event::query()
-            ->join('event_management', 'event_management.event_id', '=', 'events.id')
-            ->leftJoin('versions', 'versions.event_id', '=', 'event_management.event_id')
-            ->where('event_management.user_id', auth()->id())
-            ->whereNull('event_management.deleted_at')
-            ->select('events.id', 'events.name', 'events.short_name', 'events.organization',
-                'events.audition_count', 'events.max_registrant_count', 'events.max_upper_voice_count',
-                'events.ensemble_count', 'events.frequency', 'events.grades', 'events.status',
-                'events.logo_file', 'events.logo_file_alt', 'events.required_height',
-                'events.required_shirt_size', 'events.created_by',
-                DB::raw('COUNT(versions.id) as versionsCount'))
-            ->groupBy([
-                'events.id', 'events.name', 'events.short_name', 'events.organization',
-                'events.audition_count', 'events.max_registrant_count', 'events.max_upper_voice_count',
-                'events.ensemble_count', 'events.frequency', 'events.grades', 'events.status',
-                'events.logo_file', 'events.logo_file_alt', 'events.required_height',
-                'events.required_shirt_size', 'events.created_by'
-            ])
-            ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
-            ->get()
-            ->toArray());
-    }
 }

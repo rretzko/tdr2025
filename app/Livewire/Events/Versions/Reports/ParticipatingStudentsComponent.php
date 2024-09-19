@@ -146,9 +146,4 @@ class ParticipatingStudentsComponent extends BasePageReports
             $this->versionId,
         ), 'participatingStudents.csv');
     }
-
-    private function test(): void
-    {
-
-    }
 }

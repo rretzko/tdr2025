@@ -89,22 +89,4 @@ class TeacherPitchFilesTableComponent extends BasePage
                 'voice_parts.descr as voicePartDescr', 'voice_parts.order_by')
             ->orderBy('version_pitch_files.order_by', 'asc');
     }
-
-    private function test(): void
-    {
-        dd(VersionPitchFile::query()
-            ->leftJoin('voice_parts', 'voice_parts.id', '=', 'version_pitch_files.voice_part_id')
-            ->where('version_id', $this->versionId)
-            ->tap(function ($query) {
-                $this->filters->filterPitchFileVoiceParts($query);
-                $this->filters->filterPitchFileFileTypes($query);
-            })
-            ->select('version_pitch_files.id', 'version_pitch_files.version_id',
-                'version_pitch_files.file_type', 'version_pitch_files.voice_part_id',
-                'version_pitch_files.url', 'version_pitch_files.description',
-                'version_pitch_files.order_by',
-                'voice_parts.descr', 'voice_parts.order_by')
-            ->orderBy('version_pitch_files.order_by', 'asc')
-            ->get());
-    }
 }

@@ -3,11 +3,35 @@
 namespace App\Services;
 
 use App\Models\Events\Versions\Participations\Candidate;
+use App\Models\Events\Versions\Room;
 use App\Models\Events\Versions\Version;
 use App\Models\Schools\School;
+use App\Models\UserConfig;
+use Illuminate\Support\Collection;
 
 class FindPdfPathService
 {
+    public function findAdjudicationBackupPaperPath(int $roomId): string
+    {
+        $versionId = UserConfig::getValue('versionId');
+        $version = Version::find($versionId);
+
+        if (!$version) {
+            throw new \Exception("Version with ID {$versionId} not found.");
+        }
+
+        $header = "../resources/views/";
+        $path = "pdfs/adjudications/backupPapers/versions/{$versionId}/pdf.blade.php";
+        $file = $header.$path;
+        $view = "pdfs.adjudications.backupPapers.versions.{$versionId}.pdf";
+
+        if (file_exists($file)) {
+            return $view;
+        }
+
+        return "pdfs.adjudications.backupPapers.events.{$version->event_id}.pdf";
+    }
+
     public function findApplicationPath(Candidate $candidate): string
     {
         $versionId = $candidate->version_id;

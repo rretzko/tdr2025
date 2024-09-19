@@ -42,17 +42,22 @@ class AdjudicationPaperBackupComponent extends BasePage
 
     private function getRows(): array
     {
-        return DB::table('rooms')
+        $rooms = [];
+        $rooms[] = (object) ['id' => 0, 'room_name' => 'All Rooms', 'order_by' => 0];
+
+        $singleRooms = DB::table('rooms')
             ->where('rooms.version_id', $this->versionId)
             ->select('rooms.id', 'rooms.room_name', 'rooms.order_by')
             ->orderBy('rooms.order_by')
             ->get()
             ->toArray();
+
+        return array_merge($rooms, $singleRooms);
     }
 
-    public function pdf(string $pdfType, int $roomId): void
+    public function pdf(string $pdfType, int $roomId)
     {
-        dd($pdfType.': '.$roomId);
-        return;
+        $uri = '/pdf/adjudicationBackupPaper/'.$roomId;
+        return $this->redirect($uri);
     }
 }

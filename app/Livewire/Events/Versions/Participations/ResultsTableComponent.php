@@ -150,33 +150,4 @@ class ResultsTableComponent extends BasePage
 
         return redirect()->to('pdf/candidateScoresSchool/');
     }
-
-    private function test(): void
-    {
-        $coTeacherIds = CoTeachersService::getCoTeachersIds();
-        dd(DB::table('candidates')
-//            ->join('students', 'students.id', '=', 'candidates.student_id')
-//            ->join('users', 'users.id', '=', 'students.user_id')
-//            ->join('teachers', 'teachers.id', '=', 'candidates.teacher_id')
-//            ->join('users AS tusers', 'tusers.id', '=', 'teachers.user_id')
-//            ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
-            ->where('candidates.version_id', $this->versionId)
-            ->whereIn('candidates.teacher_id', $coTeacherIds)
-            ->where('candidates.school_id', $this->schoolId)
-            ->where('status', 'registered')
-            ->tap(function ($query) {
-                $this->filters->filterCandidatesByClassOfs($query);
-                $this->filters->filterCandidatesByStatuses($query, $this->search);
-            })
-            ->get());
-//            ->select('candidates.id AS candidateId', 'candidates.ref', 'candidates.status',
-//                'candidates.program_name',
-//                'users.last_name', 'users.first_name', 'users.middle_name', 'users.suffix_name',
-//                'students.class_of',
-//                'voice_parts.abbr AS voicePart'
-//            )
-//            ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
-//            ->orderBy('users.last_name', 'asc') //secondary sort ALWAYS applied
-//            ->orderBy('users.first_name', 'asc'); //tertiary sort ALWAYS applied);
-    }
 }

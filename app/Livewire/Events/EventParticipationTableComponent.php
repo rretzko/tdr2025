@@ -154,25 +154,4 @@ class EventParticipationTableComponent extends BasePage
             ->get()
             ->toArray();
     }
-
-    private function test(): void
-    {
-        dd(
-            DB::table('version_participants')
-                ->join('versions', 'versions.id', '=', 'version_participants.version_id')
-                ->join('events', 'events.id', '=', 'versions.event_id')
-                ->join('candidates', 'candidates.version_id', '=', 'version_participants.version_id')
-                ->where('version_participants.user_id', 351)
-                ->where('versions.status', 'closed')
-                ->distinct('versions.id')
-                ->select('version_participants.version_id AS id',
-                    'events.short_name AS eventName',
-                    'versions.short_name AS versionName', 'versions.status',
-                    'versions.senior_class_of'
-                )
-                ->orderByDesc('versions.senior_class_of')
-                ->get()
-                ->toArray()
-        );
-    }
 }
