@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Services\FindPdfPathService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class AdjudicationBackupPaperController extends Controller
 {
@@ -21,12 +22,15 @@ class AdjudicationBackupPaperController extends Controller
         $data = new PdfAdjudicationBackupPaperDataFactory($roomId);
         $dto = $data->getDto();
 
-
         $pdf = PDF::loadView($path, compact('dto'))
             ->setPaper('letter', 'landscape');
 
-        $prefix = $candidate->student->user->last_name.$candidate->student->user->first_name;
+        $prefix = (is_a($dto['rooms'], 'App\Models\Events\Versions\Room'))
+            ? Str::camel($dto['rooms']->room_name)
+            : 'allRooms';
 
-        return $pdf->download($prefix.'_scores.pdf');
+        $pdfName = 'adjudicationBackup'.'_'.$prefix.'.pdf';
+
+        return $pdf->download($pdfName);
     }
 }
