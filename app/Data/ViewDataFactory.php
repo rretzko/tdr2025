@@ -222,6 +222,10 @@ class ViewDataFactory extends aViewData
     private function getLivewireComponent(): string
     {
         $components = [
+            'adjudication paper backup' => 'events.versions.reports.adjudication-paper-backup-component',
+            'adjudication csv backup' => 'events.versions.reports.adjudication-csv-backup-component',
+            'adjudication monitor checklist' => 'events.versions.reports.adjudication-monitor-checklist-component',
+
             'candidates' => 'events.versions.participations.candidates-table-component',
             'candidates table' => 'events.versions.participations.candidates-table-component',
 
