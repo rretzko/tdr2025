@@ -98,6 +98,7 @@ class VersionPitchFilesTableComponent extends BasePage
                 'columnHeaders' => $this->getColumnHeaders(),
                 'fileTypes' => $this->fileTypes,
                 'options1Thru50' => range(0, 50),
+                'options1Thru150' => range(0, 150),
                 'rows' => $this->getRows()->paginate($this->recordsPerPage),
                 'voiceParts' => $this->voiceParts,
             ]);

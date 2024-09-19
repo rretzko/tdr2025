@@ -64,7 +64,7 @@
             @endif
         </div>
 
-        {{-- ADD ROLE FORM --}}
+        {{-- ADD PITCH FILE FORM --}}
         <div>
             @if($showAddForm)
 
@@ -102,7 +102,7 @@
                         <x-forms.elements.livewire.selectNarrow
                             label="order"
                             name="form.orderBy"
-                            :options="$options1Thru50"
+                            :options="$options1Thru150"
                             :required="true"
                         />
 
@@ -140,7 +140,7 @@
             @endif
         </div>
 
-        {{-- EDIT ROLE FORM --}}
+        {{-- EDIT PITCH FILE FORM --}}
         <div>
             @if($showEditForm)
                 <div class="bg-gray-100 p-2">
@@ -178,7 +178,7 @@
                             <x-forms.elements.livewire.selectNarrow
                                 label="order"
                                 name="form.orderBy"
-                                :options="$options1Thru50"
+                                :options="$options1Thru150"
                                 :required="true"
                             />
 
