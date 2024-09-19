@@ -196,5 +196,14 @@ class BasePage extends Component
             ->toArray();
     }
 
+    /**
+     * Placeholder for troubleshooting
+     * @return void
+     */
+    protected function test(): void
+    {
+
+    }
+
 
 }

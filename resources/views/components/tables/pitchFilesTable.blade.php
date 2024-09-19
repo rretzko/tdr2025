@@ -74,7 +74,7 @@
                     @endif
                 </td>
                 <td class="border border-gray-200 px-1 text-center">
-                    {{ $row['order_by'] }}
+                    {{ $row['pitchFileOrderBy'] }}
                 </td>
                 <td class="text-center border border-gray-200">
                     {{-- CLICKING EDIT-BUTTON OPENS EDIT-PARTICIPANT-FORM --}}
