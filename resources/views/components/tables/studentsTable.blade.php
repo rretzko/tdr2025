@@ -1,5 +1,6 @@
 @props([
     'columnHeaders',
+    'disabled' => false,
     'header',
     'recordsPerPage',
     'rows',
@@ -79,7 +80,7 @@
                     @endif
                 </td>
                 <td class="text-center border border-gray-200">
-                    <x-buttons.edit id="{{ $row['studentId'] }}" route="student.edit"/>
+                    <x-buttons.edit id="{{ $row['studentId'] }}" route="student.edit" :disabled="$disabled"/>
                 </td>
                 <td class="text-center border border-gray-200">
                     <x-buttons.remove id="{{ $row['studentId'] }}" livewire="1"/>

@@ -17,11 +17,26 @@
     {{-- PAGE CONTENT --}}
     <div class="w-11/12">
 
+        <div @class([
+            "",
+            "bg-red-50 border border-red-800 px-2 my-2 rounded-lg text-red-800 " => $gradesAreMissing,
+        ])
+        >
+            @if($gradesAreMissing)
+                WARNING: The add-student and edit-student buttons have been temporarily disabled because
+                we were unable to find grades for you.
+                Please click the
+                <a href="{{ route('schools') }}" class="text-red-800 underline">Schools</a>
+                {{--                <a href="{{ route('schools') }}" >Schools</a>--}}
+                link on the left, and then the Edit button on your school to update this information.
+            @endif
+        </div>
+
         {{-- HEADER and ADD-NEW and EXPORT BUTTONS --}}
         <div class="flex justify-between mb-1">
             <div>{{ ucwords($dto['header']) }}</div>
             <div class="flex items-center space-x-2">
-                <x-buttons.addNew route="student.create"/>
+                <x-buttons.addNew route="student.create" :disabled="$gradesAreMissing"/>
                 <x-buttons.export/>
             </div>
         </div>
@@ -44,6 +59,7 @@
                 {{-- TABLE --}}
                 <x-tables.studentsTable
                     :columnHeaders="$columnHeaders"
+                    :disabled="$gradesAreMissing"
                     :header="$dto['header']"
                     :recordsPerPage="$recordsPerPage"
                     :rows="$rows"

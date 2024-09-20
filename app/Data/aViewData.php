@@ -22,7 +22,7 @@ abstract class aViewData
         $this->viewPage = $this->getViewPage();
 
         //make commonly used variable quickly available
-        $this->versionId = UserConfig::getValue('versionId') ?? 0;
+        $this->versionId = (int) UserConfig::getValue('versionId') ?? 0;
     }
 
     private function buildMethod($str): void

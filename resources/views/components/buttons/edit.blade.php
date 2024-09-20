@@ -1,4 +1,5 @@
 @props([
+    'disabled' => false,
     'id',
     'livewire' => 0,
     'route' => '',
@@ -11,6 +12,7 @@
                 @if($livewire) wire:click="edit({{ $id }})" @endif
             type="button"
                 class="bg-indigo-600 text-white text-xs px-2 rounded-full hover:bg-indigo-700"
+                @disabled($disabled)
             >
                 Edit
             </button>

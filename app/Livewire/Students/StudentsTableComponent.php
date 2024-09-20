@@ -4,9 +4,13 @@ namespace App\Livewire\Students;
 
 use App\Exports\StudentsExport;
 use App\Livewire\BasePage;
+use App\Models\Schools\GradesITeach;
+use App\Models\Schools\SchoolGrade;
 use App\Models\Schools\SchoolTeacher;
+use App\Models\Schools\Teacher;
 use App\Models\Students\Student;
 use App\Models\StudentTeacher;
+use App\Models\UserConfig;
 use App\Models\UserSort;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -16,6 +20,8 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class StudentsTableComponent extends BasePage
 {
+    public $gradesAreMissing = true;
+
     public function mount(): void
     {
         parent::mount();
@@ -54,6 +60,9 @@ class StudentsTableComponent extends BasePage
         $this->sortCol = $this->userSort ? $this->userSort->column : 'users.last_name';
         $this->sortAsc = $this->userSort ? $this->userSort->asc : $this->sortAsc;
         $this->sortColLabel = $this->userSort ? $this->userSort->label : 'name';
+
+        //confirm that users has grades for the current school
+        $this->gradesAreMissing = $this->checkForGrades();
     }
 
     public function render()
@@ -115,6 +124,27 @@ class StudentsTableComponent extends BasePage
     }
 
     /** END OF PUBLIC FUNCTIONS **************************************************/
+
+    /**
+     * return true if grades are missing, else
+     * return false, i.e. grades are found
+     * @return bool
+     */
+    private function checkForGrades(): bool
+    {
+        $schoolId = UserConfig::getValue('schoolId');
+        $teacherId = Teacher::where('user_id', auth()->id())->first()->id;
+        $hasGradesITeach = GradesITeach::query()
+            ->where('school_id', $schoolId)
+            ->where('teacher_id', $teacherId)
+            ->exists();
+
+        $hasSchoolGrades = SchoolGrade::query()
+            ->where('school_id', $schoolId)
+            ->exists();
+
+        return !($hasGradesITeach && $hasSchoolGrades);
+    }
 
     private function getColumnHeaders(): array
     {
