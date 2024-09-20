@@ -5,6 +5,7 @@ namespace App\Livewire\Events\Versions\Participations;
 use App\Livewire\BasePage;
 use App\Models\Events\Versions\Participations\Obligation;
 use App\Models\Events\Versions\Version;
+use App\Models\Events\Versions\VersionParticipant;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
@@ -48,6 +49,13 @@ class ObligationsComponent extends BasePage
                 'accepted' => Carbon::now(),
             ]
         );
+
+        $versionParticipant = VersionParticipant::query()
+            ->where('user_id', auth()->id())
+            ->where('version_id', $this->versionId)
+            ->first();
+
+        $versionParticipant->update(['status' => 'obligated']);
     }
 
     private function getObligations(): string
@@ -108,7 +116,12 @@ class ObligationsComponent extends BasePage
             ]
         );
 
+        $versionParticipant = VersionParticipant::query()
+            ->where('user_id', auth()->id())
+            ->where('version_id', $this->versionId)
+            ->first();
 
+        $versionParticipant->update(['status' => 'invited']);
     }
 
     private function getAcceptanceDate(): string

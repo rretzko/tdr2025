@@ -75,6 +75,7 @@ class MakeCandidateRecordsService
         return array_filter($studentIds, function ($studentId) use ($candidateStudentIds) {
             return !in_array($studentId, $candidateStudentIds);
         });
+
     }
 
     private function getEligibleStudentIds(): array
