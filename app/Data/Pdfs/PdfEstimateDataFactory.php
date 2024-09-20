@@ -2,6 +2,7 @@
 
 namespace App\Data\Pdfs;
 
+use App\Models\Epayment;
 use App\Models\Events\Event;
 use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Participations\Registrant;
@@ -126,7 +127,13 @@ class PdfEstimateDataFactory
 
     private function getEpayments(): float
     {
-        return 0.00;
+
+        $pennies = Epayment::query()
+            ->where('school_id', $this->school->id)
+            ->where('version_id', $this->version->id)
+            ->sum('amount');
+
+        return ConvertToUsdService::penniesToUsd($pennies);
     }
 //
 //    private function getEnsembleNames(): array

@@ -120,7 +120,7 @@
 
                             {{-- EPAYMENTS --}}
                             @if($dto['ePaymentsAllowed'])
-                                <th>{{ $dto['ePaymentsUsd'] }}</th>
+                                <th>${{ number_format($dto['ePaymentsUsd'],2) }}</th>
                             @endif
 
                             <th>${{ $dto['totalDue'] }}</th>

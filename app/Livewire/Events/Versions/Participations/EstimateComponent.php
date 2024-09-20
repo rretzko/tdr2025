@@ -148,6 +148,7 @@ class EstimateComponent extends BasePage
             ['label' => 'name', 'sortBy' => 'name'],
             ['label' => 'voice part', 'sortBy' => 'voicePartDescr'],
             ['label' => 'grade', 'sortBy' => 'grade'],
+            ['label' => 'payment', 'sortBy' => null],
             ['label' => 'fee', 'sortBy' => null],
         ];
     }

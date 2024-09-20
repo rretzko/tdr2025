@@ -60,6 +60,13 @@
                 <td class="border border-gray-200 px-1 text-center">
                     {{ $row->grade }} {{-- ex. 11 --}}
                 </td>
+                <td @class([
+        "border border-gray-200 px-1 text-center",
+        "text-gray-300" => ($row->payment == 0),
+        ])
+                >
+                    ${{ number_format($row->payment, 2) }}
+                </td>
                 <td class="border border-gray-200 px-1 text-center">
                     ${{ $registrationFee * $loop->iteration }} {{-- ex. 25.00 --}}
                 </td>
