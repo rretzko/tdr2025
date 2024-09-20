@@ -89,6 +89,9 @@ class MakeCandidateRecordsService
 
             return Student::query()
                 ->join('student_teacher', 'student_teacher.student_id', '=', 'students.id')
+                ->join('school_student', 'school_student.student_id', '=', 'students.id')
+                ->where('school_student.school_id', $this->schoolId)
+                ->where('school_student.active', 1)
                 ->whereIn('student_teacher.teacher_id', $this->coTeachers)
                 ->whereIn('class_of', $classOfs)
                 ->pluck('students.id')
