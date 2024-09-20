@@ -23,12 +23,11 @@
         ])
         >
             @if($gradesAreMissing)
-                WARNING: The add-student and edit-student buttons have been temporarily disabled because
+                WARNING: The <b>add-student</b> and <b>edit-student</b> buttons have been temporarily disabled because
                 we were unable to find grades for you.
-                Please click the
-                <a href="{{ route('schools') }}" class="text-red-800 underline">Schools</a>
-                {{--                <a href="{{ route('schools') }}" >Schools</a>--}}
-                link on the left, and then the Edit button on your school to update this information.
+                Please click
+                <a href="{{ route('school.edit',['school' => $school]) }}" class="text-red-800 underline">here</a>
+                or use the Schools link on the left, and then the Edit button on your school to update this information.
             @endif
         </div>
 
