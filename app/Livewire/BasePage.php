@@ -2,6 +2,8 @@
 
 namespace App\Livewire;
 
+use App\Models\Events\Versions\Version;
+use App\Models\Events\Versions\VersionParticipant;
 use App\Models\PageView;
 use App\Models\Schools\School;
 use App\Models\UserConfig;
@@ -202,7 +204,11 @@ class BasePage extends Component
      */
     protected function troubleShooting(): void
     {
-
+//        $activeVersionIds = Version::where('status', 'active')->pluck('id');
+//        $engagedVersionIds = VersionParticipant::where('user_id', auth()->id())->pluck('version_id');
+//
+//        $filteredVersionIds = $activeVersionIds->diff($engagedVersionIds);
+//        return $filteredVersionIds->toArray();
     }
 
 

@@ -5,6 +5,7 @@ namespace App\Livewire\Events;
 use App\Livewire\BasePage;
 use App\Mail\RequestInvitationToEventMail;
 use App\Models\Events\Versions\Version;
+use App\Models\Events\Versions\VersionParticipant;
 use App\Models\UserConfig;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -80,7 +81,6 @@ class EventParticipationTableComponent extends BasePage
 
     private function getRowsPast(): array
     {
-//        $this->test();
         return DB::table('version_participants')
             ->join('versions', 'versions.id', '=', 'version_participants.version_id')
             ->join('events', 'events.id', '=', 'versions.event_id')
@@ -108,15 +108,15 @@ class EventParticipationTableComponent extends BasePage
      */
     private function getRowsPotential(): array
     {
-        //$this->test();
+        //get potential version ids
+        $potentialVersionIds = $this->filterActiveVersionIdsFromEngagedVersionIds();
 
+        //pull the required values
         $rows = DB::table('versions')
             ->join('events', 'events.id', '=', 'versions.event_id')
             ->join('version_participants', 'version_participants.version_id', '=', 'versions.id')
             ->join('version_roles', 'version_roles.version_participant_id', '=', 'version_participants.id')
-            ->where('versions.status', 'active')
-            ->where('version_participants.user_id', '<>', auth()->id())
-            ->distinct('versions.id')
+            ->whereIn('versions.id', $potentialVersionIds)
             ->select('version_participants.version_id AS id',
                 'events.short_name AS eventName',
                 'versions.short_name AS versionName', 'versions.status',
@@ -126,12 +126,22 @@ class EventParticipationTableComponent extends BasePage
             ->get()
             ->toArray();
 
+        //update status
         foreach ($rows as $row) {
 
             $row->status = 'request';
         }
 
         return $rows;
+    }
+
+    private function filterActiveVersionIdsFromEngagedVersionIds(): array
+    {
+        $activeVersionIds = Version::where('status', 'active')->pluck('id');
+        $engagedVersionIds = VersionParticipant::where('user_id', auth()->id())->pluck('version_id');
+
+        $filteredVersionIds = $activeVersionIds->diff($engagedVersionIds);
+        return ($filteredVersionIds->toArray());
     }
 
     private function getRowsSandbox(): array
