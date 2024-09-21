@@ -11,8 +11,8 @@
         <div>
             @if($dto['logo'])
                 {{-- https://auditionsuite-production.s3.amazonaws.com/logos/testPublic.jpg --}}
-                <img src="{{ Storage::disk('s3')->url($dto['logo']) }}" alt="{{ $dto['organizationName'] }} logo"
-                     height="60" width="60"/>
+                {{--                <img src="{{ Storage::disk('s3')->url($dto['logo']) }}" alt="{{ $dto['organizationName'] }} logo"--}}
+                {{--                     height="60" width="60"/>--}}
             @endif
         </div>
 
@@ -71,10 +71,6 @@
             <tr>
                 <td class="label">Student Name</td>
                 <td class="data">{{ $dto['fullNameAlpha'] }}</td>
-            </tr>
-            <tr>
-                <td class="label">Address</td>
-                <td class="data">{{ $dto['addressString'] }}</td>
             </tr>
             <tr>
                 <td class="label">Height</td>
@@ -162,10 +158,8 @@
                 <td colspan="2">
                     An audition Fee of ${{ $dto['auditionFee'] }} per student will be charged. In addition, chorus
                     students
-                    accepted will be assessed a participation fee of ${{ $dto['participationFee'] }}. The music is
-                    theirs
-                    to keep.<br/>
-                    Payment Method: <b>none found</b>
+                    accepted will be assessed a participation fee of ${{ $dto['participationFee'] }}.
+                    {{--                    Payment Method: <b>none found</b>--}}
                 </td>
             </tr>
         </table>
@@ -178,8 +172,8 @@
             <div>
                 @if($dto['logo'])
                     {{-- https://auditionsuite-production.s3.amazonaws.com/logos/testPublic.jpg --}}
-                    <img src="{{ Storage::disk('s3')->url($dto['logo']) }}" alt="{{ $dto['organizationName'] }} logo"
-                         height="60" width="60"/>
+                    {{--                    <img src="{{ Storage::disk('s3')->url($dto['logo']) }}" alt="{{ $dto['organizationName'] }} logo"--}}
+                    {{--                         height="60" width="60"/>--}}
                 @endif
             </div>
 

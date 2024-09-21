@@ -67,20 +67,45 @@ class Event extends Model
         return $this->eventEnsembles
             ->flatMap(fn($eventEnsemble) => $eventEnsemble->voiceParts)
             ->unique();
-//        $voiceParts = collect();
-//
-//        foreach($this->eventEnsembles AS $eventEnsemble){
-//
-//            $voiceParts = $voiceParts->merge($eventEnsemble->voiceParts);
-//
-//        }
-//
-//        return $voiceParts->unique();
     }
 
     public function versions(): HasMany
     {
         return $this->hasMany(Version::class)->orderByDesc('senior_class_of');
+    }
+
+    /**
+     * Return collection of unique VoicePart objects from
+     * EventEnsembles owned by the event
+     * matching the grade of the user
+     * @return Collection
+     */
+    public function voicePartsByGrade(int $grade): Collection
+    {
+        return $this->eventEnsembles
+            ->filter(function ($ensemble) use ($grade) {
+                $grades = explode(',', $ensemble->grades);
+                return in_array($grade, $grades);
+            })
+            ->flatMap(function ($ensemble) {
+                return $ensemble->voiceParts;
+            })
+            ->unique('id')
+            ->sortBy('order_by');
+
+//        $voiceParts = collect();
+//
+//        foreach($this->eventEnsembles AS $ensemble){
+//            $grades = explode(',', $ensemble->grades);
+//            if(in_array($grade, $grades)) {
+//
+//                $voiceParts = $voiceParts->merge($ensemble->voiceParts())
+//                    ->unique('id')
+//                    ->sortBy('order_by');
+//            }
+//        }
+//
+//        return $voiceParts;
     }
 
 }

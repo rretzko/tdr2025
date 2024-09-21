@@ -11,7 +11,9 @@ use App\Models\Events\Versions\Participations\Obligation;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionTeacherConfig;
 use App\Models\Schools\Teacher;
+use App\Models\Students\Student;
 use App\Models\UserConfig;
+use App\Services\CalcGradeFromClassOfService;
 use App\Services\CalcSeniorYearService;
 use App\Services\CoTeachersService;
 use App\Services\EventEnsemblesVoicePartsArrayService;
@@ -166,7 +168,11 @@ class CandidatesTableComponent extends BasePage
     {
         $this->form->setCandidate($candidateId);
 
+        //return a <ul></ul> string of registration requirements, completed and pending
         $this->pathToRegistration = PathToRegistrationService::getPath($candidateId);
+
+        //set audition voicing to grade-specific options matching the selected Candidate's grade
+        $this->ensembleVoiceParts = $this->setEnsembleVoiceParts($candidateId);
     }
 
     public function updatedAuditionFiles($value, $key): void
@@ -191,6 +197,11 @@ class CandidatesTableComponent extends BasePage
         }
     }
 
+    public function updatedFormGrade(): void
+    {
+        $this->ensembleVoiceParts = $this->setEnsembleVoiceParts($this->form->candidate->id);
+    }
+
     public function updatedTeacherEpaymentStudent(): void
     {
         $updated = VersionTeacherConfig::updateOrCreate(
@@ -210,7 +221,7 @@ class CandidatesTableComponent extends BasePage
         }
     }
 
-    public function updatedForm($value, $key)
+    public function updatedForm($value, $key): void
     {
         $this->reset('showSuccessIndicator', 'successMessage');
 
@@ -238,6 +249,8 @@ class CandidatesTableComponent extends BasePage
 
     private function getEnsembleVoiceParts(): array
     {
+        $service = new CalcGradeFromClassOfService();
+//        $grade = $service->getGrade($this->)
         $service = new EventEnsemblesVoicePartsArrayService($this->event->eventEnsembles);
 
         return $service->getArray();
@@ -259,7 +272,7 @@ class CandidatesTableComponent extends BasePage
         for ($inches = 30; $inches < 94; $inches++) {
             $feet = floor($inches / 12);
             $remainingInches = $inches % 12;
-            $heights[$inches] = "{$inches}\" ({$feet}'{$remainingInches}\")";
+            $heights[$inches] = "$inches\" ($feet'$remainingInches\")";
         }
 
         return $heights;
@@ -323,4 +336,25 @@ class CandidatesTableComponent extends BasePage
         return $fileName;
     }
 
+    /**
+     * $this->ensembleVoiceParts is initialized in mount();
+     * Re-set that array based on the candidate's grade and the available event ensemble voice parts
+     * @param  int  $candidateId
+     * @return array
+     */
+    private function setEnsembleVoiceParts(int $candidateId): array
+    {
+        $candidate = Candidate::find($candidateId);
+        $student = Student::find($candidate->student_id);
+        $classOf = $student->class_of;
+        $service = new CalcGradeFromClassOfService();
+        $grade = $service->getGrade($classOf);
+        $voiceParts = [];
+
+        foreach ($this->event->voicePartsByGrade($grade) as $voicePart) {
+            $voiceParts[$voicePart->id] = $voicePart->descr;
+        }
+
+        return $voiceParts;
+    }
 }
