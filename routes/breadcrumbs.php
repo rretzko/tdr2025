@@ -269,7 +269,7 @@ Breadcrumbs::for('version profile', function (BreadcrumbTrail $trail, int $id) {
 
 //Version.Edit Profile
 Breadcrumbs::for('version edit profile', function (BreadcrumbTrail $trail, int $id) {
-    $trail->parent('my events');
+    $trail->parent('version dashboard', $id);
     $trail->push('Version Edit Profile', route('version.edit', ['event' => $id]));
 });
 
