@@ -16,20 +16,31 @@ class FindPdfPathService
         $versionId = UserConfig::getValue('versionId');
         $version = Version::find($versionId);
 
+        //early exit
         if (!$version) {
             throw new \Exception("Version with ID {$versionId} not found.");
         }
 
+        //version
         $header = "../resources/views/";
-        $path = "pdfs/adjudications/backupPapers/versions/{$versionId}/pdf.blade.php";
-        $file = $header.$path;
+        $versionPath = "pdfs/adjudications/backupPapers/versions/{$versionId}/pdf.blade.php";
+        $versionFile = $header.$versionPath;
         $view = "pdfs.adjudications.backupPapers.versions.{$versionId}.pdf";
 
-        if (file_exists($file)) {
+        if (file_exists($versionFile)) {
             return $view;
         }
 
-        return "pdfs.adjudications.backupPapers.events.{$version->event_id}.pdf";
+        //event
+        $eventPath = "pdfs/adjudications/backupPapers/events.{$version->event_id}/pdf.blade.php";
+        $eventFile = $header.$eventPath;
+        $view = "pdfs.adjudications.backupPapers.events.{$version->event_id}.pdf";
+        if (file_exists($eventFile)) {
+            return $view;
+        }
+
+        //generic
+        return "pdfs.adjudications.backupPapers.pdf";
     }
 
     public function findApplicationPath(Candidate $candidate): string

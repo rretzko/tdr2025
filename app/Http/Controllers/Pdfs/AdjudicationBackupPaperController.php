@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Pdfs;
 
 use App\Data\Pdfs\PdfAdjudicationBackupPaperDataFactory;
 use App\Http\Controllers\Controller;
+use App\Models\Events\Versions\Scoring\Room;
 use App\Services\FindPdfPathService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -23,10 +24,10 @@ class AdjudicationBackupPaperController extends Controller
         $dto = $data->getDto();
 
         $pdf = PDF::loadView($path, compact('dto'))
-            ->setPaper('letter', 'landscape');
+            ->setPaper('letter', 'portrait');
 
-        $prefix = (is_a($dto['rooms'], 'App\Models\Events\Versions\Room'))
-            ? Str::camel($dto['rooms']->room_name)
+        $prefix = ($roomId)
+            ? Str::camel(Room::find($roomId)->room_name)
             : 'allRooms';
 
         $pdfName = 'adjudicationBackup'.'_'.$prefix.'.pdf';
