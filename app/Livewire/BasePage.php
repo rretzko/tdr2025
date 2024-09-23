@@ -204,11 +204,8 @@ class BasePage extends Component
      */
     protected function troubleShooting(): void
     {
-//        $activeVersionIds = Version::where('status', 'active')->pluck('id');
-//        $engagedVersionIds = VersionParticipant::where('user_id', auth()->id())->pluck('version_id');
-//
-//        $filteredVersionIds = $activeVersionIds->diff($engagedVersionIds);
-//        return $filteredVersionIds->toArray();
+
+
     }
 
 

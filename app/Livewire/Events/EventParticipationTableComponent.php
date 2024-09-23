@@ -111,12 +111,15 @@ class EventParticipationTableComponent extends BasePage
         //get potential version ids
         $potentialVersionIds = $this->filterActiveVersionIdsFromEngagedVersionIds();
 
+        $this->troubleShooting($potentialVersionIds);
+
         //pull the required values
         $rows = DB::table('versions')
             ->join('events', 'events.id', '=', 'versions.event_id')
             ->join('version_participants', 'version_participants.version_id', '=', 'versions.id')
             ->join('version_roles', 'version_roles.version_participant_id', '=', 'version_participants.id')
             ->whereIn('versions.id', $potentialVersionIds)
+            ->distinct('version_participants.version_id')
             ->select('version_participants.version_id AS id',
                 'events.short_name AS eventName',
                 'versions.short_name AS versionName', 'versions.status',
