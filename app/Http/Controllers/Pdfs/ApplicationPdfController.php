@@ -9,6 +9,7 @@ use App\Services\FindPdfPathService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Str;
 
 class ApplicationPdfController extends Controller
 {
@@ -32,7 +33,9 @@ class ApplicationPdfController extends Controller
             $candidate->addApplicationDownloadCount();
         }
 
-        return $pdf->download('application.pdf');
+        $prefix = Str::camel($candidate->student->user->name);
+
+        return $pdf->download($prefix.'_application.pdf');
     }
 
 }
