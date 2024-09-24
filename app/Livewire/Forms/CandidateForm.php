@@ -24,6 +24,7 @@ use App\Services\FormatPhoneService;
 use App\ValueObjects\AddressValueObject;
 use http\Exception\InvalidArgumentException;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Validate;
@@ -413,7 +414,7 @@ class CandidateForm extends Form
     {
         $role = Str::lower(Str::remove('signature', $key)); //i.e. guardian, student, or teacher
 
-        return (bool) Signature::updateOrCreate(
+        $signature = (bool) Signature::updateOrCreate(
             [
                 'version_id' => $this->candidate->version_id,
                 'candidate_id' => $this->candidate->id,
@@ -424,6 +425,10 @@ class CandidateForm extends Form
                 'signed' => $value,
             ]
         );
+
+        $this->status = CandidateStatusService::getStatus($this->candidate);
+
+        return $signature;
     }
 
 }

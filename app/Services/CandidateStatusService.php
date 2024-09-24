@@ -40,7 +40,7 @@ class CandidateStatusService
         }
 
         //is engaged
-        self::hasDownloadedApplication($candidate);
+        self::hasDownloadedApplication($candidate); //will ALWAYS return true
         self::hasSignatures($candidate);
         self::hasRecording($candidate);
 
@@ -68,6 +68,13 @@ class CandidateStatusService
 
     private static function hasRecording(Candidate $candidate): void
     {
+        $vca = VersionConfigAdjudication::where('version_id', $candidate->version_id)->first();
+
+        //early exit : no change to self::$status
+        if ($vca->upload_count == 0) {
+            return;
+        }
+
         $recordingCount = Recording::query()
             ->where('candidate_id', $candidate->id)
             ->where('version_id', $candidate->version_id)
@@ -130,9 +137,10 @@ class CandidateStatusService
 
         //early exit
         $version = Version::find($candidate->version_id);
-        if ($version->upload_type === 'none') { //confirm that file uploads are expected
-            return;
-        }
+
+//        if ($version->upload_type === 'none') { //confirm that file uploads are expected
+//            return;
+//        }
 
         $versionConfig = VersionConfigAdjudication::where('version_id', $candidate->version_id)->first();
         if (!$versionConfig) {
@@ -145,9 +153,30 @@ class CandidateStatusService
             ->where('version_id', $candidate->version_id)
             ->whereNotNull('approved')
             ->count();
-
-        if ($uploadCount === $approvedCount) {
+//dd(self::hasTeacherSignature($candidate));
+        if (($uploadCount === $approvedCount) && self::hasTeacherSignature($candidate)) {
             self::$status = 'registered';
         }
+    }
+
+    private static function hasTeacherSignature($candidate): bool
+    {
+        $vcr = VersionConfigRegistrant::where('version_id', $candidate->version_id)->first();
+        $eapplication = $vcr->eapplication;
+
+        return ($eapplication)
+            ? Signature::query()
+                ->join('signatures AS guardian', 'guardian.candidate_id', '=', 'signatures.candidate_id')
+                ->where('signatures.candidate_id', $candidate->id)
+                ->where('signatures.role', 'student')
+                ->where('signatures.signed', 1)
+                ->where('guardian.role', 'guardian')
+                ->where('guardian.signed', 1)
+                ->exists()
+            : Signature::query()
+                ->where('signatures.candidate_id', $candidate->id)
+                ->where('signatures.role', 'teacher')
+                ->where('signatures.signed', 1)
+                ->exists();
     }
 }
