@@ -53,6 +53,7 @@ class Filters extends Form
 //        Log::info('header: '.$header);
         $this->header = $header;
         $this->versionId = (int) UserConfig::getValue('versionId');
+        $versionSeniorClass = Version::find($this->versionId)->senior_class_of;
 
         if (in_array($this->header, ['candidates', 'candidates table', 'participation results'])) {
 
@@ -60,6 +61,7 @@ class Filters extends Form
             $this->candidateGradesSelectedIds = Candidate::query()
                 ->join('students', 'students.id', '=', 'candidates.student_id')
                 ->where('version_id', $this->versionId)
+                ->where('students.class_of', '>=', $versionSeniorClass)
                 ->distinct('students.class_of')
                 ->orderBy('students.class_of')
                 ->pluck('students.class_of')
@@ -177,11 +179,13 @@ class Filters extends Form
     public function candidateGrades(): array
     {
         $teacherIds = CoTeachersService::getCoTeachersIds();
+        $versionSeniorClass = Version::find($this->versionId)->senior_class_of;
 
         $classOfs = Candidate::query()
             ->join('students', 'students.id', '=', 'candidates.student_id')
             ->whereIn('candidates.teacher_id', $teacherIds)
             ->where('version_id', $this->versionId)
+            ->where('students.class_of', '>=', $versionSeniorClass)
             ->distinct('students.class_of')
             ->orderByDesc('students.class_of')
             ->pluck('students.class_of')

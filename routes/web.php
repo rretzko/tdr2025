@@ -83,8 +83,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('version/judgeAssignment',
         \App\Http\Controllers\Tdr\LivewireController::class)
         ->name('judgeAssignment');
-//    Route::get('version/judgeAssignments', \App\Http\Controllers\Events\Versions\JudgeAssignmentController::class)
-//        ->name('judgeAssignments');
 
     //LIBRARIES
     Route::get('libraries', [\App\Http\Controllers\Libraries\libraryController::class, 'index'])
@@ -127,6 +125,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //PARTICIPATION.PITCHFILES
     Route::get('pitchFiles', \App\Http\Controllers\Events\Versions\Participations\PitchFileController::class)
         ->name('pitchFiles');
+
+    //SCHOOL TIMESLOTS
+    Route::get('version/timeslots',
+        \App\Http\Controllers\Tdr\LivewireController::class)
+        ->name('timeslotAssignment');
 
     //SCHOOLS
     Route::get('schools', \App\Http\Controllers\Schools\SchoolsController::class)

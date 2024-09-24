@@ -271,6 +271,8 @@ class ViewDataFactory extends aViewData
 
             'student transfer' => 'events.versions.version-student-transfer-component',
 
+            'timeslot assignment' => 'events.versions.timeslot-assignment-component',
+
             'version configs edit' => 'events.versions.version-configs-edit-component',
             'version dates edit' => 'events.versions.version-dates-edit-component',
             'version edit' => 'events.versions.version-edit-component',

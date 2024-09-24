@@ -8,6 +8,7 @@
     x-transition:leave.duration.500ms
     class="ml-2 text-green-600 italic"
 >
-    <div>Saved!</div>
-    {{ $message }}
+    <div class="flex items-center">
+        {{ $message }}
+    </div>
 </div>

@@ -164,7 +164,7 @@ class CandidatesTableComponent extends BasePage
         }
     }
 
-    public function selectCandidate(int $candidateId): void
+    public function selectCandidate(int $candidateId): void //819164
     {
         $this->form->setCandidate($candidateId);
 
@@ -173,6 +173,7 @@ class CandidatesTableComponent extends BasePage
 
         //set audition voicing to grade-specific options matching the selected Candidate's grade
         $this->ensembleVoiceParts = $this->setEnsembleVoiceParts($candidateId);
+
     }
 
     public function updatedAuditionFiles($value, $key): void
@@ -281,6 +282,7 @@ class CandidatesTableComponent extends BasePage
     private function getRows(): Builder
     {
         $coTeacherIds = CoTeachersService::getCoTeachersIds();
+        $versionSeniorYear = $this->version->senior_class_of;
 
         return DB::table('candidates')
             ->join('students', 'students.id', '=', 'candidates.student_id')
@@ -291,6 +293,7 @@ class CandidatesTableComponent extends BasePage
             ->where('candidates.version_id', $this->versionId)
             ->whereIn('candidates.teacher_id', $coTeacherIds)
             ->where('candidates.school_id', $this->schoolId)
+            ->where('students.class_of', '>=', $versionSeniorYear)
             ->tap(function ($query) {
                 $this->filters->filterCandidatesByClassOfs($query);
                 $this->filters->filterCandidatesByStatuses($query, $this->search);
@@ -347,6 +350,7 @@ class CandidatesTableComponent extends BasePage
         $candidate = Candidate::find($candidateId);
         $student = Student::find($candidate->student_id);
         $classOf = $student->class_of;
+
         $service = new CalcGradeFromClassOfService();
         $grade = $service->getGrade($classOf);
         $voiceParts = [];
