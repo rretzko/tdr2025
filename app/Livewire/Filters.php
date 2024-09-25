@@ -55,7 +55,7 @@ class Filters extends Form
         $this->versionId = (int) UserConfig::getValue('versionId');
 
         $versionSeniorClass = Version::find($this->versionId)->senior_class_of ?? 0;
-        Log::info('***** '.$versionSeniorClass.' @ '.__LINE__.' *****');
+
         if ($this->versionId && in_array($this->header, ['candidates', 'candidates table', 'participation results'])) {
 
             //initially set candidateGrades filter to include ALL candidate grades
@@ -181,7 +181,7 @@ class Filters extends Form
     {
         $teacherIds = CoTeachersService::getCoTeachersIds();
         $versionSeniorClass = Version::find($this->versionId)->senior_class_of ?? 0;
-        Log::info('***** '.$versionSeniorClass.' @ '.__LINE__.' *****');
+
         $classOfs = [];
         if ($versionSeniorClass) {
             $classOfs = Candidate::query()
