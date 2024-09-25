@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Pdfs;
 use App\Data\Pdfs\PdfApplicationDataFactory;
 use App\Http\Controllers\Controller;
 use App\Models\Events\Versions\Participations\Candidate;
+use App\Services\CandidateStatusService;
 use App\Services\FindPdfPathService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -31,6 +32,7 @@ class ApplicationPdfController extends Controller
 
         if ($pdf) {
             $candidate->addApplicationDownloadCount();
+            CandidateStatusService::getStatus($candidate);
         }
 
         $prefix = Str::camel($candidate->student->user->name);

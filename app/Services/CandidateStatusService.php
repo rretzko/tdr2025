@@ -9,11 +9,14 @@ use App\Models\Events\Versions\Participations\Signature;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionConfigAdjudication;
 use App\Models\Events\Versions\VersionConfigRegistrant;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules\Can;
 
 class CandidateStatusService
 {
-    private static string $status = 'eligible';
+    private static bool $applicationDownloaded = false;
+    private static bool $signaturesVerified = false;
+    private static bool $recordingsApproved = false;
 
     /**
      * Status definitions:
@@ -35,148 +38,152 @@ class CandidateStatusService
 
         //early exit
         if (in_array($candidate->status, $immutables)) {
-            self::$status = $candidate->status;
-            return self::$status;
+            return $candidate->status;
         }
 
-        //is engaged
-        self::hasDownloadedApplication($candidate); //will ALWAYS return true
-        self::hasSignatures($candidate);
-        self::hasRecording($candidate);
+        //evaluate registration status conditions
+        self::$applicationDownloaded = self::hasDownloadedApplication($candidate);
+        self::$signaturesVerified = self::hasSignatures($candidate);
+        self::$recordingsApproved = self::hasApprovedRecording($candidate);
 
-        //is registered
-        self::isRegistered($candidate);
+        //determine registration status
+        $status = self::getRegistrationStatus($candidate);
 
         //update $candidate if status is changed
-        if (self::$status !== $candidate->status) {
-            $candidate->update(['status' => self::$status]);
+        if ($candidate->status !== $status) {
+            $candidate->update(['status' => $status]);
         }
 
-        return self::$status;
+        return $status;
     }
 
-    private static function hasDownloadedApplication(Candidate $candidate): void
+    /**
+     * registered: Candidate has the following:
+     *      - Application downloaded
+     *      - Signatures verified
+     *      - If file uploads are required, all files have been approved
+     * @return string
+     */
+    private static function getRegistrationStatus(Candidate $candidate): string
     {
-        $downloaded = Application::query()
-            ->where('candidate_id', $candidate->id)
-            ->exists();
+        $requirements = self::getVersionRequirements($candidate);
+        $hasRequirementsCount = 0;
 
-        self::$status = ($downloaded)
-            ? 'engaged'
-            : self::$status;
+        if (in_array('applicationDownloaded', $requirements) && self::$applicationDownloaded) {
+            $hasRequirementsCount++;
+        }
+
+        if (in_array('recordingsApproved', $requirements) && self::$recordingsApproved) {
+            $hasRequirementsCount++;
+        }
+
+        if (in_array('signatureVerified', $requirements) && self::$signaturesVerified) {
+            $hasRequirementsCount++;
+        }
+
+        if (count($requirements) == $hasRequirementsCount) {
+            return 'registered';
+        }
+
+        //partial completion of requirements
+        if ($hasRequirementsCount && ($hasRequirementsCount < count($requirements))) {
+            return 'engaged';
+        }
+
+        //default
+        return 'eligible';
     }
 
-    private static function hasRecording(Candidate $candidate): void
+    private static function getVersionRequirements(Candidate $candidate): array
+    {
+        $versionId = $candidate->version_id;
+        $vca = VersionConfigAdjudication::where('version_id', $versionId)->first();
+        $vcr = VersionConfigRegistrant::where('version_id', $versionId)->first();
+
+        $requirements = [];
+        $requirements[] = 'signatureVerified';
+
+        $applicationDownloaded = (bool) $vcr->eapplication;
+        $recordingsApproved = (bool) $vca->upload_count;
+
+        if (!$applicationDownloaded) {
+            $requirements[] = 'applicationDownloaded';
+        }
+
+        if ($recordingsApproved) {
+            $requirements[] = 'recordingsApproved';
+        }
+
+        return $requirements;
+    }
+
+    private static function hasDownloadedApplication(Candidate $candidate): bool
+    {
+        //early exit; version uses eApplication, no download necessary
+        $vcr = VersionConfigRegistrant::where('version_id', $candidate->version_id)->first();
+        if ($vcr->eapplication) {
+            return true;
+        }
+
+        return Application::where('candidate_id', $candidate->id)
+            ->where('downloads', '>', 0)
+            ->exists();
+    }
+
+    private static function hasApprovedRecording(Candidate $candidate): bool
     {
         $vca = VersionConfigAdjudication::where('version_id', $candidate->version_id)->first();
 
-        //early exit : no change to self::$status
-        if ($vca->upload_count == 0) {
-            return;
+        $expectedUploads = $vca->upload_count;
+
+        //early exit : if no uploads are required, default to true
+        if ($expectedUploads == 0) {
+            return true;
         }
 
         $recordingCount = Recording::query()
             ->where('candidate_id', $candidate->id)
             ->where('version_id', $candidate->version_id)
+            ->whereNotNull('approved')
             ->count();
 
-        self::$status = ($recordingCount)
-            ? 'engaged'
-            : self::$status;
+        return ($expectedUploads == $recordingCount);
     }
 
-    private static function hasSignatures(Candidate $candidate): void
+    private static function hasSignatures(Candidate $candidate): bool
     {
         $eApplication = VersionConfigRegistrant::where('version_id', $candidate->version_id)
             ->first()
             ->eapplication;
 
-        if ($eApplication) {
+        $roles = ($eApplication)
+            ? ['guardian', 'student']
+            : ['teacher'];
 
-            self::$status = self::$status = self::checkSignatures($candidate, ['student', 'guardian'])
-                ? 'engaged'
-                : self::$status;
-
-        } else { //paper app
-
-            self::$status = self::checkSignatures($candidate, ['teacher'])
-                ? 'engaged'
-                : self::$status;
-        }
+        return self::checkSignatures($candidate, $roles);
     }
 
+    /**
+     * if any check fails, return false,
+     * else return true
+     * @param  Candidate  $candidate
+     * @param  array  $roles
+     * @return bool
+     */
     private static function checkSignatures(Candidate $candidate, array $roles): bool
     {
         foreach ($roles as $role) {
+
             if (!Signature::query()
                 ->where('candidate_id', $candidate->id)
                 ->where('role', $role)
                 ->where('signed', 1)
                 ->first()) {
+
                 return false;
             }
         }
 
         return true;
-    }
-
-    /**
-     * registered: Candidate has the following:
-     *      - Signatures verified
-     *      - If file uploads are required, all files have been uploaded
-     *      - If file uploads are required, all files have been approved
-     * @param  Candidate  $candidate
-     * @return void
-     */
-    private static function isRegistered(Candidate $candidate): void
-    {
-        //early exit
-        if (self::$status !== 'engaged') { //confirm that appropriate signatures have been verified
-            return;
-        }
-
-        //early exit
-        $version = Version::find($candidate->version_id);
-
-//        if ($version->upload_type === 'none') { //confirm that file uploads are expected
-//            return;
-//        }
-
-        $versionConfig = VersionConfigAdjudication::where('version_id', $candidate->version_id)->first();
-        if (!$versionConfig) {
-            return;
-        }
-
-        $uploadCount = $versionConfig->upload_count;
-        $approvedCount = Recording::query()
-            ->where('candidate_id', $candidate->id)
-            ->where('version_id', $candidate->version_id)
-            ->whereNotNull('approved')
-            ->count();
-//dd(self::hasTeacherSignature($candidate));
-        if (($uploadCount === $approvedCount) && self::hasTeacherSignature($candidate)) {
-            self::$status = 'registered';
-        }
-    }
-
-    private static function hasTeacherSignature($candidate): bool
-    {
-        $vcr = VersionConfigRegistrant::where('version_id', $candidate->version_id)->first();
-        $eapplication = $vcr->eapplication;
-
-        return ($eapplication)
-            ? Signature::query()
-                ->join('signatures AS guardian', 'guardian.candidate_id', '=', 'signatures.candidate_id')
-                ->where('signatures.candidate_id', $candidate->id)
-                ->where('signatures.role', 'student')
-                ->where('signatures.signed', 1)
-                ->where('guardian.role', 'guardian')
-                ->where('guardian.signed', 1)
-                ->exists()
-            : Signature::query()
-                ->where('signatures.candidate_id', $candidate->id)
-                ->where('signatures.role', 'teacher')
-                ->where('signatures.signed', 1)
-                ->exists();
     }
 }

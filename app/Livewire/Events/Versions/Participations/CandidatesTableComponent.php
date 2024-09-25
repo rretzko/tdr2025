@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Events\Versions\Participations;
 
+use App\Data\Pdfs\PdfApplicationDataFactory;
+use App\Http\Controllers\Pdfs\ApplicationPdfController;
 use App\Livewire\BasePage;
 use App\Livewire\Filters;
 use App\Livewire\Forms\CandidateForm;
@@ -15,10 +17,13 @@ use App\Models\Students\Student;
 use App\Models\UserConfig;
 use App\Services\CalcGradeFromClassOfService;
 use App\Services\CalcSeniorYearService;
+use App\Services\CandidateStatusService;
 use App\Services\CoTeachersService;
 use App\Services\EventEnsemblesVoicePartsArrayService;
+use App\Services\FindPdfPathService;
 use App\Services\MakeCandidateRecordsService;
 use App\Services\PathToRegistrationService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
@@ -108,7 +113,6 @@ class CandidatesTableComponent extends BasePage
             ->where('teacher_id', $teacherId)
             ->whereNotNull('accepted')
             ->first();
-
     }
 
     public function render()
@@ -142,6 +146,8 @@ class CandidatesTableComponent extends BasePage
             $this->successMessage = 'Recording accepted';
 
             $this->pathToRegistration = PathToRegistrationService::getPath($this->form->candidate->id);
+
+            $this->form->status = CandidateStatusService::getStatus($this->form->candidate);
         }
     }
 
@@ -161,6 +167,8 @@ class CandidatesTableComponent extends BasePage
             $this->successMessage = 'Recording rejected';
 
             $this->pathToRegistration = PathToRegistrationService::getPath($this->form->candidate->id);
+
+            $this->form->status = CandidateStatusService::getStatus($this->form->candidate);
         }
     }
 

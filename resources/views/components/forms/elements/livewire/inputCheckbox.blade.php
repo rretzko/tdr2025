@@ -17,7 +17,7 @@
            value="{{ $value }}"
 
            @class([
-            'mt-0.5 rounded',
+            'ml-2 mt-0.5 rounded',
             'border border-red-600' => $errors->has($name),
             ])
 

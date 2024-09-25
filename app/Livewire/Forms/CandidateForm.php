@@ -162,6 +162,8 @@ class CandidateForm extends Form
                 $this->setRecordingsArray();
             }
 
+            $this->resetStatus();
+
             return $deleted;
         }
     }
@@ -311,7 +313,7 @@ class CandidateForm extends Form
             'engaged' => ['bg-yellow-200', 'text-yellow-800'],
             'registered' => ['bg-green-200', 'text-green-800'],
         ];
-
+        Log::info('status: '.$this->status.': length: '.strlen($this->status));
         if (isset($statusStyles[$this->status])) {
             [$this->statusBg, $this->statusTextColor] = $statusStyles[$this->status];
         } else {

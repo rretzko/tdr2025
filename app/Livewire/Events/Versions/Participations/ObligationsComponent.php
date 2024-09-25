@@ -50,12 +50,7 @@ class ObligationsComponent extends BasePage
             ]
         );
 
-        $versionParticipant = VersionParticipant::query()
-            ->where('user_id', auth()->id())
-            ->where('version_id', $this->versionId)
-            ->first();
-
-        $versionParticipant->update(['status' => 'obligated']);
+        $this->setObligation('obligated');
     }
 
     private function getObligations(): string
@@ -116,12 +111,7 @@ class ObligationsComponent extends BasePage
             ]
         );
 
-        $versionParticipant = VersionParticipant::query()
-            ->where('user_id', auth()->id())
-            ->where('version_id', $this->versionId)
-            ->first();
-
-        $versionParticipant->update(['status' => 'invited']);
+        $this->setObligation('invited');
     }
 
     private function getAcceptanceDate(): string
@@ -130,5 +120,25 @@ class ObligationsComponent extends BasePage
             ->where('version_id', $this->versionId)
             ->where('teacher_id', auth()->user()->teacher->id)
             ->value('accepted') ?? '';
+    }
+
+    private function setObligation(string $status)
+    {
+        $versionParticipant = VersionParticipant::query()
+            ->where('version_id', $this->versionId)
+            ->where('user_id', auth()->id())
+            ->first();
+
+        if (!$versionParticipant) {
+            $versionParticipant = VersionParticipant::create(
+                [
+                    'version_id' => $this->versionId,
+                    'user_id' => auth()->id(),
+                    'status' => 'invited'
+                ]
+            );
+        }
+
+        $versionParticipant->update(['status' => $status]);
     }
 }
