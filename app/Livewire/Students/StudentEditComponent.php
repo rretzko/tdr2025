@@ -26,7 +26,7 @@ class StudentEditComponent extends BasePageStudent
 
         $schoolStudent = SchoolStudent::query()
             ->where('student_id', $this->dto['id'])
-            ->where('active', 1)
+//            ->where('active', 1)
             ->first();
 
         $this->school = School::find($schoolStudent->school_id);

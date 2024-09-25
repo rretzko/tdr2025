@@ -54,8 +54,8 @@ class Filters extends Form
         $this->header = $header;
         $this->versionId = (int) UserConfig::getValue('versionId');
 
-        $versionSeniorClass = Version::find($this->versionId)->senior_class_of;
-
+        $versionSeniorClass = Version::find($this->versionId)->senior_class_of ?? 0;
+        Log::info('***** '.$versionSeniorClass.' @ '.__LINE__.' *****');
         if ($this->versionId && in_array($this->header, ['candidates', 'candidates table', 'participation results'])) {
 
             //initially set candidateGrades filter to include ALL candidate grades
@@ -180,17 +180,20 @@ class Filters extends Form
     public function candidateGrades(): array
     {
         $teacherIds = CoTeachersService::getCoTeachersIds();
-        $versionSeniorClass = Version::find($this->versionId)->senior_class_of;
-
-        $classOfs = Candidate::query()
-            ->join('students', 'students.id', '=', 'candidates.student_id')
-            ->whereIn('candidates.teacher_id', $teacherIds)
-            ->where('version_id', $this->versionId)
-            ->where('students.class_of', '>=', $versionSeniorClass)
-            ->distinct('students.class_of')
-            ->orderByDesc('students.class_of')
-            ->pluck('students.class_of')
-            ->toArray();
+        $versionSeniorClass = Version::find($this->versionId)->senior_class_of ?? 0;
+        Log::info('***** '.$versionSeniorClass.' @ '.__LINE__.' *****');
+        $classOfs = [];
+        if ($versionSeniorClass) {
+            $classOfs = Candidate::query()
+                ->join('students', 'students.id', '=', 'candidates.student_id')
+                ->whereIn('candidates.teacher_id', $teacherIds)
+                ->where('version_id', $this->versionId)
+                ->where('students.class_of', '>=', $versionSeniorClass)
+                ->distinct('students.class_of')
+                ->orderByDesc('students.class_of')
+                ->pluck('students.class_of')
+                ->toArray();
+        }
 
         $serviceSeniorYear = new CalcSeniorYearService;
         $seniorYear = $serviceSeniorYear->getSeniorYear();
