@@ -8,6 +8,7 @@ use App\Models\Schools\GradesITeach;
 use App\Models\Schools\School;
 use App\Models\Schools\SchoolGrade;
 use App\Models\Schools\SchoolTeacher;
+use App\Models\Schools\Teacher;
 use App\Models\Schools\Teachers\TeacherSubject;
 use App\ValueObjects\SchoolResultsValueObject;
 use Illuminate\Support\Str;
@@ -30,7 +31,7 @@ class SchoolForm extends Form
     public array $gradesITeach = [];
     public array $gradesTaught = [];
     #[Validate('required', message: 'A school name is required.')]
-    public string $name = '';
+    public string $name = 'S';
     #[Validate('required', message: 'A zip code is required.')]
     public string $postalCode = '';
 
@@ -43,14 +44,6 @@ class SchoolForm extends Form
     public array $subjects = [];
     public string $sysId = 'new';
     public TeacherSubject $teacherSubject;
-
-    public function rules()
-    {
-        return [
-            'gradesITeach' => ['required', 'array', 'min:1'],
-            'gradesTaught' => ['required', 'array', 'min:1'],
-        ];
-    }
 
     public function setSchool(School $school): void
     {
@@ -80,13 +73,28 @@ class SchoolForm extends Form
 
     public function update(): void
     {
-        $this->validate();
+        $this->validate([
+            'gradesITeach' => ['required', 'array', 'min:1'],
+            'gradesTaught' => ['required', 'array', 'min:1'],
+        ]);
 
         if ($this->sysId === 'new') {
 
+            $this->subjects[] = 'chorus';
+
             $this->school = $this->add();
+
             //link school to teacher
             $this->schoolTeacher = $this->addSchoolTeacher($this->school);
+
+            //link subject to teacher
+            $this->teacherSubject = TeacherSubject::create(
+                [
+                    'teacher_id' => Teacher::where('user_id', auth()->id())->first()->id,
+                    'school_id' => $this->school->id,
+                    'subject' => 'chorus',
+                ]
+            );
         } else {
 
             $this->school->update(

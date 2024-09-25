@@ -49,13 +49,13 @@ class StudentCountsComponent extends BasePageReports
 
     private function getColumnHeaders(): array
     {
-        $staticHeaders = $this->getStaticColumnHeaders();
-        $voicePartHeaders = $this->getVoicePartHeaders();
+        $staticHeaders = $this->getColumnHeadersStatic();
+        $voicePartHeaders = $this->getColumnHeadersVoiceParts();
 
         return array_merge($staticHeaders, $voicePartHeaders);
     }
 
-    private function getStaticColumnHeaders(): array
+    private function getColumnHeadersStatic(): array
     {
         return [
             ['label' => '###', 'sortBy' => null],
@@ -64,12 +64,7 @@ class StudentCountsComponent extends BasePageReports
         ];
     }
 
-    private function generateKey(int $schoolId, int $teacherId): string
-    {
-        return $schoolId.'_'.$teacherId;
-    }
-
-    private function getVoicePartHeaders(): array
+    private function getColumnHeadersVoiceParts(): array
     {
         $voiceParts = $this->version->event->VoiceParts->toArray();
 
@@ -80,6 +75,11 @@ class StudentCountsComponent extends BasePageReports
         $voicePartHeaders[] = ['label' => 'total', 'sortBy' => 'total'];
 
         return $voicePartHeaders;
+    }
+
+    private function generateKey(int $schoolId, int $teacherId): string
+    {
+        return $schoolId.'_'.$teacherId;
     }
 
     /**
@@ -135,7 +135,7 @@ class StudentCountsComponent extends BasePageReports
     {
         $rows = [];
         $collection = $this->getVoicePartCountsQuery();
-        $voiceParts = $this->version->event->VoiceParts;
+        $voiceParts = $this->version->event->voiceParts;
         $counter = 1;
 
         //iterate through schools to build array
@@ -160,7 +160,6 @@ class StudentCountsComponent extends BasePageReports
 
         //re-sort final array by totals if requested
         if ($this->sortColLabel === 'total') {
-
             $rows = $this->reSortRowsByTotal($rows);
         }
 

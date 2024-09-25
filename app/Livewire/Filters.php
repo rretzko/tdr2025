@@ -166,8 +166,8 @@ class Filters extends Form
 
         } else {
 
-            Log::info(__METHOD__.': '.__LINE__);
-            Log::info('no filters workflow for header: '.$this->header);
+//            Log::info(__METHOD__.': '.__LINE__);
+//            Log::info('no filters workflow for header: '.$this->header);
         }
 
     }

@@ -40,8 +40,6 @@ class SchoolCreateComponent extends BasePage
 
     public function save()
     {
-        $this->validate();
-
         $this->form->update();
 
         $this->successMessage = '"'.$this->form->name.'" has been saved to your Schools roster.';

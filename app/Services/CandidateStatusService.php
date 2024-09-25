@@ -41,6 +41,9 @@ class CandidateStatusService
             return $candidate->status;
         }
 
+        Log::info(__METHOD__.': '.__LINE__);
+        Log::info('*** candidate status @ start: '.$candidate->status.' ***');
+
         //evaluate registration status conditions
         self::$applicationDownloaded = self::hasDownloadedApplication($candidate);
         self::$signaturesVerified = self::hasSignatures($candidate);
@@ -53,7 +56,8 @@ class CandidateStatusService
         if ($candidate->status !== $status) {
             $candidate->update(['status' => $status]);
         }
-
+        Log::info('*** status @ end: '.$status.' ***');
+        Log::info('*** candidate status @ end: '.$candidate->status.' ***');
         return $status;
     }
 
@@ -155,11 +159,12 @@ class CandidateStatusService
         $eApplication = VersionConfigRegistrant::where('version_id', $candidate->version_id)
             ->first()
             ->eapplication;
-
+        Log::info(__METHOD__.': '.__LINE__);
+        Log::info('*** eApplication: '.$eApplication);
         $roles = ($eApplication)
             ? ['guardian', 'student']
             : ['teacher'];
-
+        Log::info('*** roles: '.serialize($roles));
         return self::checkSignatures($candidate, $roles);
     }
 
@@ -172,8 +177,20 @@ class CandidateStatusService
      */
     private static function checkSignatures(Candidate $candidate, array $roles): bool
     {
+
+        Log::info(__METHOD__.': '.__LINE__);
         foreach ($roles as $role) {
 
+            Log::info('*** sql: '.Signature::query()
+                    ->where('candidate_id', $candidate->id)
+                    ->where('role', $role)
+                    ->where('signed', 1)
+                    ->toRawSql().' ***');
+            Log::info('*** result: '.Signature::query()
+                ->where('candidate_id', $candidate->id)
+                ->where('role', $role)
+                ->where('signed', 1)
+                ->first() ?? 'not found'.' ***');
             if (!Signature::query()
                 ->where('candidate_id', $candidate->id)
                 ->where('role', $role)
