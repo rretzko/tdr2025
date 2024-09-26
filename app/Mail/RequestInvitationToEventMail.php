@@ -87,7 +87,7 @@ class RequestInvitationToEventMail extends Mailable
     private function getUrl(): string
     {
         return URL::temporarySignedRoute(
-            'inviteVersionUser', now()->addMinutes(30), //addDays(1),
+            'inviteVersionUser', now()->addDays(2), //addDays(1),
             ['version' => $this->version->id, 'user' => auth()->id()]
         );
     }
