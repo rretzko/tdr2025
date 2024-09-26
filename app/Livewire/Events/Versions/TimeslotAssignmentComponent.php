@@ -22,6 +22,7 @@ class TimeslotAssignmentComponent extends BasePage
     public string $successDuration = '';
     public string $successEndTime = '';
     public string $successStartTime = '';
+    public string $timeslot = '';
     public array $timeslots = [];
     public Version $version;
     public int $versionId = 0;
@@ -108,6 +109,16 @@ class TimeslotAssignmentComponent extends BasePage
         $this->successStartTime = 'Updated.';
     }
 
+    public function updatedTimeslot(): void
+    {
+        $parts = explode('_', $this->timeslot);
+        $schoolId = $parts[0];
+        $teacherId = $parts[1];
+        $timeslot = $this->timeslots[$parts[2]];
+
+        dd($schoolId.'.'.$teacherId.'.'.$timeslot);
+    }
+
     /** END OF PUBLIC FUNCTIONS **********************************************/
 
     private function generateKey(int $schoolId, int $teacherId): string
@@ -183,10 +194,11 @@ class TimeslotAssignmentComponent extends BasePage
 
     private function getTimeslots(): array
     {
+        $defaultTime = Carbon::now('America/New_York')->addHours(5);
         $vct = VersionConfigTimeslot::where('version_id', $this->versionId)->first();
-        $startTime = Carbon::parse($vct->start_time)->subHours(5);
-        $endTime = Carbon::parse($vct->end_time)->subHours(5);
-        $duration = $vct->duration; // minutes
+        $startTime = Carbon::parse($vct->start_time ?? $defaultTime)->subHours(5);
+        $endTime = Carbon::parse($vct->end_time ?? $defaultTime)->subHours(5);
+        $duration = $vct->duration ?? 15; // minutes
 
         $start = new DateTime($startTime);
         $end = new DateTime($endTime);
@@ -314,9 +326,10 @@ class TimeslotAssignmentComponent extends BasePage
             ]
         );
 
-        $this->duration = $configs->duration ?? 1;
-        $this->endTime = Carbon::parse($configs->end_time)->subHours(5)->format('Y-m-d H:i:s') ?? '';
-        $this->startTime = Carbon::parse($configs->start_time)->subHours(5)->format('Y-m-d H:i:s') ?? '';
+        $this->duration = $configs->duration ?? 15;
+        $defaultTime = Carbon::now()->addHours(5);
+        $this->endTime = Carbon::parse($configs->end_time ?? $defaultTime)->subHours(5)->format('Y-m-d H:i:s') ?? '';
+        $this->startTime = Carbon::parse($configs->start_time ?? $defaultTime)->subHours(5)->format('Y-m-d H:i:s') ?? '';
     }
 
     private function updateVoicePartCounts(

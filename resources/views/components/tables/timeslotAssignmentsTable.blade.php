@@ -46,9 +46,9 @@
                     @endif
                 @endforeach
                 <td class='border border-gray-200 px-1 text-center'>
-                    <select name="timeslot" wire:key="{{ $key }}">
-                        @foreach($timeslots AS $key=>$value)
-                            <option value="$key">
+                    <select name="timeslot" wire:key="{{ $key }}" wire:model.live="timeslot">
+                        @foreach($timeslots AS $ndx=>$value)
+                            <option value="{{ $key .'_' . $ndx}}">
                                 {{ $value }}
                             </option>
                         @endforeach

@@ -267,8 +267,6 @@ class StudentForm extends Form
 
     private function addStudent(User $user): void
     {
-        Log::info('birthday: '.$this->birthday);
-
         $student = new Student();
         $student->id = $user->id;
         $student->user_id = $user->id;
@@ -282,7 +280,7 @@ class StudentForm extends Form
 
         $student->save();
 
-        $student->schools()->attach($this->school);
+        $student->schools()->attach($this->school, ['active' => 1]);
 
         $student->teachers()->attach(auth()->id());
     }

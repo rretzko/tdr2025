@@ -6,7 +6,10 @@
     <div id="container">
 
         {{-- TABS --}}
-        <x-tabs.studentEditTabs :tabs="$tabs" :selected-tab="$selectedTab"/>
+        {{-- Display tabs for ACTIVE students only --}}
+        @if($form->active)
+            <x-tabs.studentEditTabs :tabs="$tabs" :selected-tab="$selectedTab"/>
+        @endif
 
         {{-- FORM --}}
         <form wire:submit="save" class="my-4 p-4 border border-gray-200 rounded-lg shadow-lg">
@@ -95,10 +98,19 @@
                         <x-forms.elements.livewire.inputCheckbox
                             hint='' {{-- For students, only one school can be active at a time.' --}}
                         label='active?'
+                            live="true"
                             name="form.active"
                             type='bool'
                             value='1'
                         />
+                        @if(! $form->active)
+                            <div class="block border border-red-800 rounded-lg p-2 mt-2 text-red-600 bg-red-50 w-2/3">
+                                You have marked this student as <b>inactive</b>.<br/>
+                                When you leave this page, the "Edit" button will be removed from the Students table for
+                                this student.
+                                You will lose the ability to further edit this student's record.
+                            </div>
+                        @endif
                     </div>
 
                     <div class="mb-2 text-green-600 italic text-xs">

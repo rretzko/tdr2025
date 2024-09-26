@@ -8,6 +8,7 @@ use App\Models\Schools\School;
 use App\Models\SchoolStudent;
 use App\Models\Students\Student;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use JetBrains\PhpStorm\NoReturn;
 
 /**
@@ -26,8 +27,14 @@ class StudentEditComponent extends BasePageStudent
 
         $schoolStudent = SchoolStudent::query()
             ->where('student_id', $this->dto['id'])
-//            ->where('active', 1)
+            ->where('active', 1)
             ->first();
+
+        //if student is inactive, no further edits are permitted
+        //the user will be redirected to the Students table
+        if (is_null($schoolStudent)) {
+            $this->redirectToStudentsTable();
+        }
 
         $this->school = School::find($schoolStudent->school_id);
 
@@ -141,6 +148,11 @@ class StudentEditComponent extends BasePageStudent
         $this->student->update(['voice_part_id' => $this->form->voicePartId]);
 
         $this->successMessageSchool = 'Voice part updated.';
+    }
+
+    private function redirectToStudentsTable()
+    {
+        return $this->redirect('students');
     }
 
 }
