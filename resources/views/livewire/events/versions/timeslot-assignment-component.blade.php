@@ -7,12 +7,7 @@
 
         @include('components.forms.partials.timeslotConfigurationsForm')
 
-        <div class="bg-gray-100 px-2 rounded-lg my-2">
-            <div class="flex flex-row justify-between">
-                <div>Summary Table</div>
-                <div>Show/Hide</div>
-            </div>
-        </div>
+        @include('components.tables.timeslotSummaryTable')
 
         @if($startTime && $endTime && $duration)
             @include('components.forms.partials.timeslotAssignmentForm')
