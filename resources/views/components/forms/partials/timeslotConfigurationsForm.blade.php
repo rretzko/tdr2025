@@ -27,4 +27,9 @@
             <x-save-fade message="{{ $successDuration }}"/>
         @endif
     </fieldset>
+    <div class="advisory w-2/3 text-xs border border-gray-600 rounded-lg p-2">
+        Please note: Setting the time interval should be done at the <b>beginning</b> of the timeslot assignment
+        process. Changing the time interval <u>after</u> timeslots have been assigned will reset the values and
+        require timeslot re-assignment for each school.
+    </div>
 </div>

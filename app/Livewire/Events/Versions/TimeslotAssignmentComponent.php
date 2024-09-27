@@ -6,6 +6,9 @@ use App\Exports\TimeslotsExport;
 use App\Livewire\BasePage;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionConfigTimeslot;
+use App\Models\Events\Versions\VersionTimeslot;
+use App\Services\ConvertToNewYorkFromUtcService;
+use App\Services\ConvertToUtcFromNewYorkService;
 use Carbon\Carbon;
 use DateInterval;
 use DateTime;
@@ -15,9 +18,12 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class TimeslotAssignmentComponent extends BasePage
 {
+    public array $assignedTimeslotSelectors = [];
     public array $columnHeaders = [];
     public int $duration = 0;
     public string $endTime = '';
+    public int $lastTimeslotId = 0;
+    public array $participatingSchoolIds = [];
     public string $startTime = '';
     public string $successDuration = '';
     public string $successEndTime = '';
@@ -33,20 +39,29 @@ class TimeslotAssignmentComponent extends BasePage
 
         $this->versionId = $this->dto['versionId'];
         $this->version = Version::find($this->versionId);
-        $this->sortCol = 'schoolName';
+        $this->sortCol = 'timeslot';
 
         $this->columnHeaders = $this->getColumnHeaders();
+
+        $this->participatingSchoolIds = array_keys($this->getParticipatingSchools());
 
         $this->setTimeslotConfigurations();
 
         $this->timeslots = $this->getTimeslots();
+
+        $this->lastTimeslotId = array_key_last($this->timeslots);
+
     }
 
     /** @todo */
     public function render()
     {
+        $this->assignedTimeslotSelectors = $this->getAssignedTimeslotSelectors();
+
         return view('livewire..events.versions.timeslot-assignment-component',
             [
+                'assignedTimeslots' => $this->getAssignedTimes(),
+                'assignedTimeslotSelectors' => $this->getAssignedTimeslotSelectors(),
                 'rows' => $this->getRows(),
             ]);
     }
@@ -54,6 +69,28 @@ class TimeslotAssignmentComponent extends BasePage
     public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
     {
         return Excel::download(new TimeslotsExport, 'timeslots.csv');
+    }
+
+    public function sortBy(string $key): void
+    {
+        $this->sortColLabel = $key;
+
+        $properties = [
+            'school' => 'schools.name',
+            'teacher' => 'teacher.last_name',
+            'total' => 'vpCount',
+            'timeslot' => 'timeslot',
+        ];
+
+        $requestedSort = $properties[$key];
+
+        //toggle $this->sortAsc if user clicks on the same column header twice
+        if ($requestedSort === $this->sortCol) {
+
+            $this->sortAsc = (!$this->sortAsc);
+        }
+
+        $this->sortCol = $properties[$key];
     }
 
     public function updatedDuration(): void
@@ -109,14 +146,13 @@ class TimeslotAssignmentComponent extends BasePage
         $this->successStartTime = 'Updated.';
     }
 
-    public function updatedTimeslot(): void
+    public function updatedAssignedTimeslotSelectors(): void
     {
-        $parts = explode('_', $this->timeslot);
-        $schoolId = $parts[0];
-        $teacherId = $parts[1];
-        $timeslot = $this->timeslots[$parts[2]];
+        foreach ($this->assignedTimeslotSelectors as $schoolId => $timeslotIndex) {
 
-        dd($schoolId.'.'.$teacherId.'.'.$timeslot);
+            VersionTimeslot::where('version_id', $this->versionId)->where('school_id', $schoolId)
+                ->update(['timeslot' => $this->timeslots[$timeslotIndex]['timestamp']]);
+        }
     }
 
     /** END OF PUBLIC FUNCTIONS **********************************************/
@@ -124,6 +160,77 @@ class TimeslotAssignmentComponent extends BasePage
     private function generateKey(int $schoolId, int $teacherId): string
     {
         return $schoolId.'_'.$teacherId;
+    }
+
+    private function getAssignedTimes(): array
+    {
+        $timeslots = VersionTimeslot::query()
+            ->where('version_id', $this->versionId)
+            ->orderBy('school_id')
+            ->get(['school_id', 'timeslot'])
+            ->mapWithKeys(function ($item) {
+                return [
+                    $item->school_id => Carbon::createFromTimestamp($item->timeslot,
+                        'America/New_York')->format('g:i a')
+                ];
+            })
+            ->toArray();
+
+        $this->addDefaultTimeslots($timeslots);
+
+        return $timeslots;
+    }
+
+    /**
+     * Return an arroy of [schoolId => timeslot index]
+     * that captures the index of $this->timeslots based on the
+     * timeslot value in VersionTimeslots
+     * @return array
+     */
+    private function getAssignedTimeslotSelectors(): array
+    {
+        $selectors = [];
+
+        foreach ($this->participatingSchoolIds as $schoolId) {
+
+            $versionTimeslot = $this->getVersionTimeslot($schoolId);
+
+            //isolate the full text value (YYYY-MM-DD HH:MM:SS) from UNIX timestamp
+            $timestampToFind = ConvertToNewYorkFromUtcService::convert($versionTimeslot->timeslot);
+
+            $index = $this->findTimeslotIndex($timestampToFind);
+
+            //build the array
+            if ($index !== false) {
+                $selectors[$schoolId] = $index;
+            }
+
+        }
+
+        return $selectors;
+    }
+
+    private function addDefaultTimeslots(array &$timeslots): void
+    {
+        foreach ($this->participatingSchoolIds as $schoolId) {
+
+            if (!in_array($schoolId, $timeslots)) {
+
+                $timeslots[$schoolId] = $this->timeslots[$this->lastTimeslotId];
+            }
+        }
+    }
+
+    private function findTimeslotIndex(string $timestampToFind): int
+    {
+        //isolate the full text value (YYYY-MM-DD HH:MM:SS) from the available event times
+        static $timestamps = [];
+        if (empty($timestamps)) {
+            $timestamps = array_column($this->timeslots, 'timestamp');
+        }
+
+        //isolate the index from $timestamps matching the $timestampToFInd
+        return array_search($timestampToFind, $timestamps);
     }
 
     private function getColumnHeaders(): array
@@ -175,6 +282,7 @@ class TimeslotAssignmentComponent extends BasePage
                 $rows[$key] = $this->initializeRow(
                     $counter++,
                     $row->schoolName,
+                    $row->school_id,
                     $row->teacherName,
                     $voiceParts
                 );
@@ -207,11 +315,29 @@ class TimeslotAssignmentComponent extends BasePage
         $timeslots = [];
 
         while ($start < $latestTimeslot) {
-            $timeslots[] = $start->format('h:i a');
+            $timeslots[] = [
+                'timestamp' => $start->format('Y-m-d G:i:s'),
+                'selector' => $start->format('g:i a')
+            ];
+
+            //increment start
             $start->add($interval);
         }
 
         return $timeslots;
+    }
+
+    private function getVersionTimeslot(int $schoolId): VersionTimeslot
+    {
+        return VersionTimeslot::firstOrCreate(
+            [
+                'version_id' => $this->versionId,
+                'school_id' => $schoolId,
+            ],
+            [
+                'timeslot' => $this->timeslots[$this->lastTimeslotId]['timestamp'],
+            ]
+        );
     }
 
     /**
@@ -231,6 +357,7 @@ class TimeslotAssignmentComponent extends BasePage
             ->join('schools', 'schools.id', '=', 'candidates.school_id')
             ->join('teachers', 'teachers.id', '=', 'candidates.teacher_id')
             ->join('users AS teacher', 'teacher.id', '=', 'teachers.user_id')
+            ->join('version_timeslots', 'version_timeslots.school_id', '=', 'schools.id')
             ->where('candidates.version_id', $this->versionId)
             ->where('candidates.status', 'registered')
             ->where(function ($query) use ($search) {
@@ -249,11 +376,13 @@ class TimeslotAssignmentComponent extends BasePage
                 'teacher.last_name',
                 'candidates.voice_part_id',
                 DB::raw('COUNT(candidates.voice_part_id) AS vpCount'),
+                'version_timeslots.timeslot'
             )
             ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
             ->orderBy('schoolName')
             ->orderBy('teacher.last_name')
             ->orderBy('candidates.voice_part_id')
+            ->groupBy('version_timeslots.timeslot')
             ->groupBy('schools.name')
             ->groupBy('candidates.school_id')
             ->groupBy('teacher.name')
@@ -275,11 +404,13 @@ class TimeslotAssignmentComponent extends BasePage
     private function initializeRow(
         int $counter,
         string $schoolName,
+        int $schoolId,
         string $teacherName,
         Collection $voiceParts
     ): array {
         $row = [
 //            'counter' => $counter,
+            'schoolId' => $schoolId,
             'schoolName' => $schoolName,
             'teacherName' => $teacherName,
         ];

@@ -32,8 +32,9 @@
                 <td class='border border-gray-200 px-1 text-center'>{{ $loop->iteration }}</td>
                 <td class='border border-gray-200 px-1'>{{ $row['schoolName'] }}</td>
                 <td class='border border-gray-200 px-1'>{{ $row['teacherName'] }}</td>
-                @foreach($row AS $item)
-                    @if(is_numeric($item))
+                @foreach($row AS $key => $item)
+                    {{-- voice parts --}}
+                    @if(is_numeric($key))
                         <td
                             @class([
                                 "border border-gray-200 px-1",
@@ -45,12 +46,16 @@
                         </td>
                     @endif
                 @endforeach
-                <td class='border border-gray-200 px-1 text-center'>
-                    <select name="timeslot" wire:key="{{ $key }}" wire:model.live="timeslot">
-                        @foreach($timeslots AS $ndx=>$value)
-                            <option value="{{ $key .'_' . $ndx}}">
-                                {{ $value }}
+                <td class='border border-gray-200 px-1 text-center'>{{ $row['total'] }}</td>
+                <td class='border border-gray-200 px-1 text-center'>{{-- @dd(array_key_exists($row['schoolId'], $assignedTimeslots) && ($assignedTimeslots[$row['schoolId']] == $timeslots[1]['selector'])) --}}
+                    <select name="timeslot" wire:key="{{ $key }}"
+                            wire:model.live="assignedTimeslotSelectors.{{ $row['schoolId'] }}">
+                        @foreach($timeslots AS $ndx => $value)
+
+                            <option value="{{ $ndx }}">
+                                {{ $value['selector'] }}
                             </option>
+
                         @endforeach
                     </select>
                 </td>
