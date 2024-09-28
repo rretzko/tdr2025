@@ -13,6 +13,8 @@ export default {
         'bg-yellow-600',
         'bg-yellow-700',
         'bg-gray-200',
+        'bg-gray-300',
+        'bg-gray-400',
         'bg-green-200',
         'bg-green-400',
         'bg-green-600',

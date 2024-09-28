@@ -25,7 +25,7 @@ class TimeslotAssignmentComponent extends BasePage
     public string $endTime = '';
     public int $lastTimeslotId = 0;
     public array $participatingSchoolIds = [];
-    public bool $showSummaryTable = true;
+    public bool $showSummaryTable = false;
     public string $startTime = '';
     public string $successDuration = '';
     public string $successEndTime = '';
@@ -42,7 +42,8 @@ class TimeslotAssignmentComponent extends BasePage
 
         $this->versionId = $this->dto['versionId'];
         $this->version = Version::find($this->versionId);
-        $this->sortCol = 'timeslot';
+        $this->sortCol = $this->getSavedSortColumn('timeslot');
+        $this->sortAsc = $this->getSavedSortAsc();
 
         $this->columnHeaders = $this->getColumnHeaders();
 
@@ -60,6 +61,8 @@ class TimeslotAssignmentComponent extends BasePage
     /** @todo */
     public function render()
     {
+        $this->saveSortParameters();
+
         return view('livewire..events.versions.timeslot-assignment-component',
             [
                 'assignedTimeslots' => $this->getAssignedTimes(),
@@ -308,70 +311,38 @@ class TimeslotAssignmentComponent extends BasePage
 
     public function getSummary(): array
     {
+        /**
+         * array:8 [▼ // app\Livewire\Events\Versions\TimeslotAssignmentComponent.php:312
+         * 0 => "2024-11-20 16:30:00"
+         * 1 => "2024-11-20 16:46:00"
+         * 2 => "2024-11-20 17:02:00"
+         * 3 => "2024-11-20 17:18:00"
+         * 4 => "2024-11-20 17:34:00"
+         * 5 => "2024-11-20 17:50:00"
+         * 6 => "2024-11-20 18:06:00"
+         * 7 => "2024-11-20 18:22:00"
+         * ]
+         */
         $timeslots = VersionConfigTimeslot::where('version_id', $this->versionId)->first()->buildTimeslots();
 
-        /**
-         * array:3 [▼ // app\Livewire\Events\Versions\TimeslotAssignmentComponent.php:311
-         * 0 => 1732138200
-         * 1 => 1732145400
-         * 2 => 1732139400
-         * ]
-         */
-        $unixDateTimes = VersionTimeslot::query()
-            ->where('version_id', $this->versionId)
-            ->distinct('timeslot')
-            ->pluck('timeslot')
-            ->toArray();
-
-        /**
-         * array:3 [▼ // app\Livewire\Events\Versions\TimeslotAssignmentComponent.php:325
-         * 0 => "2024-11-20 16:30:00"
-         * 1 => "2024-11-20 18:30:00"
-         * 2 => "2024-11-20 16:50:00"
-         * ]
-         */
-        $timeslots = array_map(function ($timeslot) {
-            return Carbon::createFromTimestamp($timeslot, 'America/New_York')
-                ->format('Y-m-d H:i:s');
-        }, $unixDateTimes);
-
         $summary = [];
-        foreach ($timeslots as $timeslot) {
-            $summary[] = [
-                'timeslot' => $this->getTimeslotGia($timeslot),
-                'schools' => $this->getTimeslotSchools($timeslot),
-
+        foreach ($timeslots as $key => $timeslot) {
+            $summary[$key] = [
+                'timeslot' => Carbon::parse($timeslot)->format('g:i a'),
+                'schools' => $this->getTimeslotSchoolsCount($timeslot),
+                'voiceparts' => $this->getTimeslotVoicePartCounts($timeslot),
             ];
-
         }
 
         return $summary;
     }
 
-    private function getTimeslotGia(string $timeslot): string
+    private function getTimeslotSchoolsCount(string $timeslot): int
     {
-        return Carbon::parse($timeslot)->format('g:i a');
-    }
-
-    private function getTimeslotSchools(string $timeslot): array
-    {
-        $summary = [];
-
-        $schoolIds = VersionTimeslot::query()
+        return VersionTimeslot::query()
             ->join('schools', 'schools.id', '=', 'version_timeslots.school_id')
             ->where('timeslot', $timeslot)
-            ->pluck('schools.name AS schoolName', 'school_id')
-            ->toArray();
-
-        foreach ($schoolIds as $schoolId => $schoolName) {
-
-            $summary[$schoolId] = [
-                'schoolName' => $schoolName,
-                'voicePartCounts' => $this->getTimeslotVoicePartCounts($timeslot, $schoolId),
-            ];
-        }
-
-        return $summary;
+            ->count('schools.id');
     }
 
     private function getTimeslots(): array
@@ -401,7 +372,7 @@ class TimeslotAssignmentComponent extends BasePage
         return $timeslots;
     }
 
-    private function getTimeslotVoicePartCounts(string $timeslot, int $schoolId): array
+    private function getTimeslotVoicePartCounts(string $timeslot): array
     {
         $voicePartCounts = [];
 
@@ -411,7 +382,6 @@ class TimeslotAssignmentComponent extends BasePage
             $voicePartCounts[] = DB::table('candidates')
                 ->join('version_timeslots', 'version_timeslots.school_id', '=', 'candidates.school_id')
                 ->where('candidates.version_id', $this->versionId)
-                ->where('candidates.school_id', $schoolId)
                 ->where('candidates.status', 'registered')
                 ->where('candidates.voice_part_id', $voicePartId)
                 ->where('version_timeslots.timeslot', $timeslot)

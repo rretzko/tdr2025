@@ -21,24 +21,40 @@
                 padding: 0 0.25rem;
             }
         </style>
-        <table id="summaryTable" class="mx-4 w-5/6">
+        <table id="summaryTable" class="mx-auto w-5/6">
             <thead>
             <tr>
-                <th class="text-center">###</th>
                 <th>timeslot</th>
-                <th>school</th>
+                <th>schools#</th>
                 @foreach($voicePartHeaders AS $voicePartHeader)
                     <th>{{ $voicePartHeader['label'] }}</th>
                 @endforeach
             </tr>
             </thead>
             <tbody>
-            @forelse($summary AS $details)
+            @forelse($summary AS $summaryRow)
                 <tr>
-                    @foreach($details AS $detail)
-                        <td class="text-center">
-                            {{ $detail }}
-                        </td>
+                    @foreach($summaryRow AS $detail)
+                        @if(is_array($detail))
+                            @foreach($detail AS $item)
+                                <td
+                                    @class([
+                                        "text-center",
+                                        'text-gray-300' => ($item === 0),
+                                    ])
+                                >
+                                    {{ $item }}
+                                </td>
+                            @endforeach
+                        @else
+                            <td @class([
+                                        "text-center",
+                                        'text-gray-300' => ($detail === 0),
+                                    ])
+                            >
+                                {{ $detail }}
+                            </td>
+                        @endif
                     @endforeach
                 </tr>
             @empty

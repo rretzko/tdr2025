@@ -96,6 +96,22 @@ class BasePage extends Component
             ->first();
     }
 
+    public function getSavedSortColumn(string $default): string
+    {
+        return UserSort::query()
+            ->where('user_id', auth()->id())
+            ->where('header', $this->dto['header'])
+            ->value('column') ?? $default;
+    }
+
+    public function getSavedSortAsc(): bool
+    {
+        return (bool) UserSort::query()
+            ->where('user_id', auth()->id())
+            ->where('header', $this->dto['header'])
+            ->value('asc') ?? true;
+    }
+
     public function updatedRecordsPerPage(): void
     {
         UserConfig::updateOrCreate(

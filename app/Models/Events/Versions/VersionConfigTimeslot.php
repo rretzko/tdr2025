@@ -7,6 +7,7 @@ use DateInterval;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Log;
 
 class VersionConfigTimeslot extends Model
 {
@@ -31,7 +32,7 @@ class VersionConfigTimeslot extends Model
         $timeslots = [];
 
         while ($start < $end) {
-            $timeslots[] = $start;
+            $timeslots[] = Carbon::parse($start)->format('Y-m-d H:i:s'); //ex 2024-11-20 16:30:40
             $start->addMinutes($duration);
         }
 
