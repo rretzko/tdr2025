@@ -25,11 +25,17 @@ class VersionConfigTimeslot extends Model
      */
     public function buildTimeslots(): array
     {
-        $start = Carbon::createFromTimestamp($this->start_time, 'America/New_York');
-        $end = Carbon::createFromTimestamp($this->end_time, 'America/New_York');
-        $duration = $interval = new DateInterval('PT'.$this->duration.'M');
+        $start = Carbon::createFromTimestamp($this->start_time ?? date('NOW'), 'America/New_York');
+        $end = Carbon::createFromTimestamp($this->end_time ?? date('NOW'), 'America/New_York');
+        $duration = $this->duration ?? 15;
+        $timeslots = [];
 
-        dd($duration);
+        while ($start < $end) {
+            $timeslots[] = $start;
+            $start->addMinutes($duration);
+        }
+
+        return $timeslots;
     }
 
     public function version(): BelongsTo

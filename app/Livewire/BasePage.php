@@ -205,7 +205,6 @@ class BasePage extends Component
     protected function troubleShooting(): void
     {
 
-
     }
 
 

@@ -14,6 +14,7 @@ use DateInterval;
 use DateTime;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 
 class TimeslotAssignmentComponent extends BasePage
@@ -53,17 +54,15 @@ class TimeslotAssignmentComponent extends BasePage
 
         $this->lastTimeslotId = array_key_last($this->timeslots);
 
+        $this->assignedTimeslotSelectors = $this->getAssignedTimeslotSelectors();
     }
 
     /** @todo */
     public function render()
     {
-        $this->assignedTimeslotSelectors = $this->getAssignedTimeslotSelectors();
-
         return view('livewire..events.versions.timeslot-assignment-component',
             [
                 'assignedTimeslots' => $this->getAssignedTimes(),
-                'assignedTimeslotSelectors' => $this->getAssignedTimeslotSelectors(),
                 'rows' => $this->getRows(),
                 'summary' => $this->getSummary(),
             ]);
@@ -152,9 +151,11 @@ class TimeslotAssignmentComponent extends BasePage
     public function updatedAssignedTimeslotSelectors(): void
     {
         foreach ($this->assignedTimeslotSelectors as $schoolId => $timeslotIndex) {
-
-            VersionTimeslot::where('version_id', $this->versionId)->where('school_id', $schoolId)
-                ->update(['timeslot' => $this->timeslots[$timeslotIndex]['timestamp']]);
+            $timeslot = $this->timeslots[$timeslotIndex]['timestamp'];
+            VersionTimeslot::query()
+                ->where('version_id', $this->versionId)
+                ->where('school_id', $schoolId)
+                ->update(['timeslot' => $timeslot]);
         }
     }
 
@@ -308,7 +309,7 @@ class TimeslotAssignmentComponent extends BasePage
     public function getSummary(): array
     {
         $timeslots = VersionConfigTimeslot::where('version_id', $this->versionId)->first()->buildTimeslots();
-        return [];
+
         /**
          * array:3 [▼ // app\Livewire\Events\Versions\TimeslotAssignmentComponent.php:311
          * 0 => 1732138200
@@ -447,14 +448,16 @@ class TimeslotAssignmentComponent extends BasePage
      */
     private function getVoicePartCountsQuery(): Collection
     {
+//        $this->troubleShooting();
         $search = $this->search;
-//$this->test($search);
+
         return DB::table('candidates')
             ->join('schools', 'schools.id', '=', 'candidates.school_id')
             ->join('teachers', 'teachers.id', '=', 'candidates.teacher_id')
             ->join('users AS teacher', 'teacher.id', '=', 'teachers.user_id')
             ->join('version_timeslots', 'version_timeslots.school_id', '=', 'schools.id')
             ->where('candidates.version_id', $this->versionId)
+            ->where('version_timeslots.version_id', $this->versionId)
             ->where('candidates.status', 'registered')
             ->where(function ($query) use ($search) {
                 return $query->where('schools.name', 'LIKE', '%'.$search.'%')

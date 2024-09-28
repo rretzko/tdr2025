@@ -7,7 +7,7 @@
 
         @include('components.forms.partials.timeslotConfigurationsForm')
 
-        @include('components.tables.timeslotSummaryTable')
+{{--        @include('components.tables.timeslotSummaryTable')--}}
 
         @if($startTime && $endTime && $duration)
             @include('components.forms.partials.timeslotAssignmentForm')

@@ -30,11 +30,11 @@
         @forelse($rows AS $key => $row)
             <tr class=" odd:bg-green-50 ">
                 <td class='border border-gray-200 px-1 text-center'>{{ $loop->iteration }}</td>
-                <td class='border border-gray-200 px-1'>{{ $row['schoolName'] }}</td>
+                <td class='border border-gray-200 px-1'>{{ $row['schoolName'] }} - {{$row['schoolId']}}</td>
                 <td class='border border-gray-200 px-1'>{{ $row['teacherName'] }}</td>
-                @foreach($row AS $key => $item)
+                @foreach($row AS $itemKey => $item)
                     {{-- voice parts --}}
-                    @if(is_numeric($key))
+                    @if(is_numeric($itemKey))
                         <td
                             @class([
                                 "border border-gray-200 px-1",
