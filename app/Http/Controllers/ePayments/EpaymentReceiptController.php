@@ -5,7 +5,9 @@ namespace App\Http\Controllers\ePayments;
 use AllowDynamicProperties;
 use App\Http\Controllers\Controller;
 use App\Models\Epayment;
-use App\Models\Events\Paypal\PaypalIPN;
+
+//use App\Models\Events\Paypal\PaypalIPN;
+use App\Services\PayPal\PaypalIPN;
 use App\Models\Events\Versions\Version;
 use App\Services\ConvertToPenniesService;
 use Illuminate\Http\Request;

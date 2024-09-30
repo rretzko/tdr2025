@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Events\Paypal;
+namespace App\Services\Paypal;
 
 use Exception;
 

@@ -2,6 +2,8 @@
     <form method="POST" action="{{ route('register') }}" class="shadow-lg">
         @csrf
 
+        @honeypot
+
         <!-- Name -->
         <div>
             <x-input-label for="name" :value="__('Name')"/>
