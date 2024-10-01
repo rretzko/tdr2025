@@ -43,6 +43,38 @@ class FindPdfPathService
         return "pdfs.adjudications.backupPapers.pdf";
     }
 
+    public function findAdjudicationMonitorChecklistPath(int $roomId): string
+    {
+        $versionId = UserConfig::getValue('versionId');
+        $version = Version::find($versionId);
+        dd(__LINE__);
+        //early exit
+        if (!$version) {
+            throw new \Exception("Version with ID {$versionId} not found.");
+        }
+
+        //version
+        $header = "../resources/views/";
+        $versionPath = "pdfs/adjudications/monitorChecklists/versions/{$versionId}/pdf.blade.php";
+        $versionFile = $header.$versionPath;
+        $view = "pdfs.adjudications.monitorChecklists.versions.{$versionId}.pdf";
+
+        if (file_exists($versionFile)) {
+            return $view;
+        }
+
+        //event
+        $eventPath = "pdfs/adjudications/monitorChecklists/events.{$version->event_id}/pdf.blade.php";
+        $eventFile = $header.$eventPath;
+        $view = "pdfs.adjudications.monitorChecklists.events.{$version->event_id}.pdf";
+        if (file_exists($eventFile)) {
+            return $view;
+        }
+
+        //generic
+        return "pdfs.adjudications.monitorChecklists.pdf";
+    }
+
     public function findApplicationPath(Candidate $candidate): string
     {
         $versionId = $candidate->version_id;

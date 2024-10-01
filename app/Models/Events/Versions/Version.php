@@ -3,7 +3,7 @@
 namespace App\Models\Events\Versions;
 
 use App\Models\Events\Event;
-use App\Models\Events\Versions\Scoring\Room;
+use App\Models\Events\Versions\Room;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

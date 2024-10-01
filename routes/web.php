@@ -121,6 +121,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('pdf/adjudicationBackupPaper/{roomId}',
         \App\Http\Controllers\Pdfs\AdjudicationBackupPaperController::class)
         ->name('pdf.adjudicationBackupPaper');
+    Route::get('pdf/adjudicationMonitorChecklist/{roomId}',
+        \App\Http\Controllers\Pdfs\AdjudicationMonitorChecklistController::class)
+        ->name('pdf.adjudicationMonitorChecklist');
 
     //PARTICIPATION.PITCHFILES
     Route::get('pitchFiles', \App\Http\Controllers\Events\Versions\Participations\PitchFileController::class)

@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->foreignId('room_id');
             $table->foreignId('user_id');
             $table->enum('judge_role',
-                ['head judge', 'judge 2', 'judge 3', 'judge 4', 'judge monitor', 'room monitor']);
+                ['head judge', 'judge 2', 'judge 3', 'judge 4', 'judge monitor', 'monitor']);
             $table->timestamps();
             $table->unique(['version_id', 'room_id', 'user_id', 'judge_role'], 'uAll');
             $table->unique(['room_id', 'user_id']);

@@ -66,16 +66,34 @@
 
                 {{-- CSV BACKUP --}}
                 <td class="border border-gray-200 px-1">
-                    <div class="flex justify-center">
-                        <x-heroicons.tableCells/>
-                    </div>
+                    @if(isset($row->judgeCount))
+                        <div class="flex justify-center">
+                            <button
+                                type="button"
+                                wire:click="export({{ $row->id }})"
+                                class="text-blue-500"
+                                @disabled($row->judgeCount === 0)
+                            >
+                                <x-heroicons.tableCells/>
+                            </button>
+                        </div>
+                    @endif
                 </td>
 
                 {{--  MONITOR CHECKLIST --}}
                 <td class="border border-gray-200 px-1">
-                    <div class="flex justify-center">
-                        <x-heroicons.documentCheck/>
-                    </div>
+                    @if(isset($row->judgeCount))
+                        <div class="flex justify-center">
+                            <button
+                                type="button"
+                                wire:click="pdf('checklist',{{ $row->id }})"
+                                class="text-blue-500"
+                                @disabled($row->judgeCount === 0)
+                            >
+                                <x-heroicons.documentCheck/>
+                            </button>
+                        </div>
+                    @endif
                 </td>
 
             </tr>
