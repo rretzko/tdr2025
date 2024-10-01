@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Pdfs;
 
 use App\Data\Pdfs\PdfAdjudicationBackupPaperDataFactory;
 use App\Http\Controllers\Controller;
-use App\Models\Events\Versions\Scoring\Room;
+use App\Models\Events\Versions\Room;
 use App\Services\FindPdfPathService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;

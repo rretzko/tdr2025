@@ -33,7 +33,7 @@ class AdjudicationPaperBackupComponent extends BasePage
             ['label' => '###', 'sortBy' => null],
             ['label' => 'room', 'sortBy' => 'room'],
             ['label' => 'paper', 'sortBy' => null],
-            ['label' => 'csv', 'sortBy' => null],
+            ['label' => 'xlsx', 'sortBy' => null],
             ['label' => 'checklist', 'sortBy' => null],
         ];
     }
@@ -82,7 +82,7 @@ class AdjudicationPaperBackupComponent extends BasePage
     {
         $uri = ($pdfType === 'backup')
             ? '/pdf/adjudicationBackupPaper/'.$roomId
-            : 'pdf/adjudicationMonitorChecklist/'.$roomId;
+            : '/pdf/adjudicationMonitorChecklist/'.$roomId;
 
         return $this->redirect($uri);
     }

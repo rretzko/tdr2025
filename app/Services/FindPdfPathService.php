@@ -47,7 +47,7 @@ class FindPdfPathService
     {
         $versionId = UserConfig::getValue('versionId');
         $version = Version::find($versionId);
-        dd(__LINE__);
+
         //early exit
         if (!$version) {
             throw new \Exception("Version with ID {$versionId} not found.");

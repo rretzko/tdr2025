@@ -82,18 +82,18 @@
 
                 {{--  MONITOR CHECKLIST --}}
                 <td class="border border-gray-200 px-1">
-                    @if(isset($row->judgeCount))
+{{--                    @if(isset($row->judgeCount))--}}
                         <div class="flex justify-center">
                             <button
                                 type="button"
                                 wire:click="pdf('checklist',{{ $row->id }})"
                                 class="text-blue-500"
-                                @disabled($row->judgeCount === 0)
+                                {{--                                @disabled($row->judgeCount === 0)--}}
                             >
                                 <x-heroicons.documentCheck/>
                             </button>
                         </div>
-                    @endif
+                    {{--                    @endif--}}
                 </td>
 
             </tr>

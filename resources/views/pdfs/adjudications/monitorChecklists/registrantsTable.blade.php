@@ -26,7 +26,7 @@
     </style>
 
     {{-- TABLE HEADER --}}
-    @include('pdfs.adjudications.backupPapers.tableHeader')
+    @include('pdfs.adjudications.monitorChecklists.tableHeader')
 
     {{-- REGISTRANTS --}}
     <tbody>
@@ -34,26 +34,26 @@
     @php($pageCounter=1)
 
     @forelse($room['registrants'] AS $registrant)
-        @if($lineCounter > 3)
+        @if($lineCounter > 30)
             {{-- CLOSE THE TABLE --}}
     </tbody>
     </table>
     {{-- CLOSE THE PAGE --}}
-    @include('pdfs.adjudications.backupPapers.footer')
+    @include('pdfs.adjudications.monitorChecklists.footer')
     {{-- START A NEW PAGE --}}
-    @include('pdfs.adjudications.backupPapers.header')
-    @include('pdfs.adjudications.backupPapers.judgeHeader')
+    @include('pdfs.adjudications.monitorChecklists.header')
+    @include('pdfs.adjudications.monitorChecklists.judgeHeader')
     @php($pageCounter++);
     <h3 style="text-align: center; font-size: 0.8rem; margin-top: -2rem;">Page {{ $pageCounter }}
         /{{ $room['pageCount'] }}</h3>
     {{-- START A NEW TABLE --}}
-    @include('pdfs.adjudications.backupPapers.tableHeader')
+    @include('pdfs.adjudications.monitorChecklists.tableHeader')
     {{-- RESET $lineCounter --}}
     @php($lineCounter=1)
     @endif
     <tr>
         <td style="text-align: center;">
-            {{ $loop->iteration }}
+
         </td>
         <td>
             {{ $registrant['id'] }}
@@ -61,17 +61,13 @@
         <td style="text-align: center;">
             {{ $registrant['abbr'] }}
         </td>
-        @for($i=0; $i<$room['factorCount']; $i++)
-            <td></td>
-        @endfor
-        <td></td>
-        <td></td>
+        <td></td> {{-- comment --}}
         @php($lineCounter++)
     </tr>
 
     @empty
         <tr>
-            <td colspan="11" style="text-align: center;">
+            <td colspan="4" style="text-align: center;">
                 No registrants found.
             </td>
         </tr>

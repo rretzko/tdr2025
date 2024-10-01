@@ -49,7 +49,10 @@ class PdfAdjudicationBackupPaperDataFactory
 
         //score sheet page count per judge
         $maxRegistrantsPerPage = 35;
-        $this->dto['rooms'][$key]['pageCount'] = (ceil(count($this->dto['rooms'][$key]['registrants']) / $maxRegistrantsPerPage));
+        foreach ($this->dto['rooms'] as $key => $room) {
+            $this->dto['rooms'][$key]['pageCount'] = (int) (ceil(count($this->dto['rooms'][$key]['registrants']) / $maxRegistrantsPerPage));
+            $this->dto['rooms'][$key]['maxRegistrantsPerPage'] = $maxRegistrantsPerPage;
+        }
 
         $this->dto['versionName'] = $this->getVersionName();
     }

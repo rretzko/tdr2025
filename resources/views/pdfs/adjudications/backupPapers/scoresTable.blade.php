@@ -34,7 +34,7 @@
     @php($pageCounter=1)
 
     @forelse($room['registrants'] AS $registrant)
-        @if($lineCounter > 3)
+        @if($lineCounter > 30)
             {{-- CLOSE THE TABLE --}}
     </tbody>
     </table>
