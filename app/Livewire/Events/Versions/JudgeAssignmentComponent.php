@@ -6,7 +6,7 @@ use App\Exports\JudgeAssignmentsExport;
 use App\Livewire\BasePage;
 use App\Livewire\Forms\RoomForm;
 use App\Models\Events\Versions\Judge;
-use App\Models\Events\Versions\Scoring\Room;
+use App\Models\Events\Versions\Room;
 use App\Models\Events\Versions\Scoring\RoomScoreCategory;
 use App\Models\Events\Versions\Scoring\RoomVoicePart;
 use App\Models\Events\Versions\Scoring\ScoreCategory;
@@ -209,9 +209,9 @@ class JudgeAssignmentComponent extends BasePage
     {
         $this->monitorSaved = $this->form->updateJudge('monitor');
 
-        $vo = new PreviousJudgingHistoryVO($this->version, $this->form->judgeMonitor);
+        $vo = new PreviousJudgingHistoryVO($this->version, $this->form->monitor);
 
-        $this->previousHistoryJudgeMonitor = $vo->getHistory();
+        $this->previousHistoryMonitor = $vo->getHistory();
     }
 
     private function abbreviateJudgeType(string $judgeType): string
