@@ -10,6 +10,7 @@ use App\Services\FindPdfPathService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class EstimatePdfController extends Controller
 {
@@ -23,7 +24,7 @@ class EstimatePdfController extends Controller
     {
         $service = new FindPdfPathService;
         $path = $service->findEstimatePath($version);
-
+        Log::info('*** path: '.$path.' ***');
         $data = new PdfEstimateDataFactory($version);
         $dto = $data->getDto();
 

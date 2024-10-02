@@ -7,6 +7,7 @@
             <div class="mt-4">
 
                 {{-- HEADER --}}
+                {{-- Adding a bit for forcing a refresh --}}
                 <header
                     style="display: flex; flex-direction: row; justify-content: space-between; margin: 0 0.5rem 0.5rem;">
                     <div>
