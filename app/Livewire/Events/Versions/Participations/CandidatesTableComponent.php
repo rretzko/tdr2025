@@ -25,6 +25,7 @@ use App\Services\MakeCandidateRecordsService;
 use App\Services\PathToRegistrationService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -131,7 +132,7 @@ class CandidatesTableComponent extends BasePage
         return view('livewire..events.versions.participations.candidates-table-component',
             [
                 'columnHeaders' => $this->getColumnHeaders(),
-                'rows' => $this->getRows()->paginate($this->recordsPerPage),
+                'rows' => $this->getRows(), //->paginate($this->recordsPerPage),
                 'teachers' => $this->teachers,
             ]);
     }
@@ -287,8 +288,10 @@ class CandidatesTableComponent extends BasePage
         return $heights;
     }
 
-    private function getRows(): Builder
+    private function getRows(): \Illuminate\Support\Collection //Builder
     {
+//        $this->troubleShooting($this->versionId, $this->schoolId, $this->search);
+
         $coTeacherIds = CoTeachersService::getCoTeachersIds();
         $versionSeniorYear = $this->version->senior_class_of;
 
@@ -314,7 +317,8 @@ class CandidatesTableComponent extends BasePage
             )
             ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
             ->orderBy('users.last_name', 'asc') //secondary sort ALWAYS applied
-            ->orderBy('users.first_name', 'asc'); //tertiary sort ALWAYS applied
+            ->orderBy('users.first_name', 'asc') //tertiary sort ALWAYS applied
+            ->get();
     }
 
     private function getTeachers(): array

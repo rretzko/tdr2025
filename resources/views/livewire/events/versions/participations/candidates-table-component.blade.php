@@ -29,7 +29,7 @@
 
         {{-- HEADER and ADD-NEW and EXPORT BUTTONS --}}
         <div class="flex justify-between mb-1">
-            <div>{{ $version->short_name . ' ' . ucwords($dto['header']) }} ({{ $rows->total() }})</div>
+            <div>{{ $version->short_name . ' ' . ucwords($dto['header']) }} ({{ $rows->count() }})</div>
         </div>
 
         {{-- ENSEMBLE VOICE PARTS CHECK --}}

@@ -8,6 +8,7 @@ use App\Models\PageView;
 use App\Models\Schools\School;
 use App\Models\UserConfig;
 use App\Models\UserSort;
+use App\Services\CoTeachersService;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -218,7 +219,7 @@ class BasePage extends Component
      * Placeholder for troubleshooting
      * @return void
      */
-    protected function troubleShooting(): void
+    protected function troubleShooting($versionId, $schoolId)
     {
 
     }

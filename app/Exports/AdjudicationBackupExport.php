@@ -20,16 +20,27 @@ class AdjudicationBackupExport implements WithMultipleSheets
 
     public function sheets(): array
     {
+        if (empty($this->rooms)) {
+            return [];
+        }
+
         $sheets = [];
 
         foreach ($this->rooms as $room) {
 
-            foreach ($room['judges'] as $judge) {
+            //exclude the monitor role
+            $judges = array_filter($room['judges'], function ($judge) {
+                return $judge->judge_type !== 'monitor';
+            });
 
-                if ($judge->judge_type !== 'monitor') {
-                    $sheets[] = new RoomJudgeSheetExport($room, $judge);
-                }
-            }
+            $roomSheets = array_map(function ($judge) use ($room) {
+                return new RoomJudgeSheetExport($room, $judge);
+            }, $judges);
+
+            $sheets = array_merge($sheets, $roomSheets);
+//            foreach ($judges as $judge) {
+//                $sheets[] = new RoomJudgeSheetExport($room, $judge);
+//            }
         }
 
         return $sheets;
