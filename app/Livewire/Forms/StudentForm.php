@@ -70,7 +70,9 @@ class StudentForm extends Form
 
     public function setBirthday(): void
     {
-        $this->birthday = Carbon::now()->subYears(18)->format('Y-m-d');
+        if (!$this->sysId) {
+            $this->birthday = Carbon::now()->subYears(18)->format('Y-m-d');
+        }
     }
 
     public function setSchool(School $school): void
