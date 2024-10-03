@@ -10,8 +10,8 @@ return new class extends Migration {
         Schema::create('version_config_timeslots', function (Blueprint $table) {
             $table->id();
             $table->foreignId('version_id');
-            $table->timestamp('start_time')->nullable();
-            $table->timestamp('end_time')->nullable();
+            $table->dateTime('start_time')->nullable();
+            $table->dateTime('end_time')->nullable();
             $table->tinyInteger('duration')->nullable();
             $table->timestamps();
         });

@@ -291,6 +291,7 @@ class ViewDataFactory extends aViewData
             'participating schools' => 'events.versions.reports.participating-schools-component',
             'participating students' => 'events.versions.reports.participating-students-component',
             'participating teachers' => 'events.versions.reports.participating-teachers-component',
+            'registration cards' => 'events.versions.reports.registration-cards-component',
             'student counts' => 'events.versions.reports.student-counts-component',
 
             'teacher pitch files' => 'events.versions.participations.teacher-pitch-files-table-component',

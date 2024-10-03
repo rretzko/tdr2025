@@ -124,6 +124,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('pdf/adjudicationMonitorChecklist/{roomId}',
         \App\Http\Controllers\Pdfs\AdjudicationMonitorChecklistController::class)
         ->name('pdf.adjudicationMonitorChecklist');
+    Route::get('pdf/registrationCards/candidates/{candidate}',
+        [\App\Http\Controllers\Pdfs\RegistrationCardsController::class, 'candidate'])
+        ->name('pdf.registrationCards.candidates');
 
     //PARTICIPATION.PITCHFILES
     Route::get('pitchFiles', \App\Http\Controllers\Events\Versions\Participations\PitchFileController::class)
@@ -200,6 +203,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('version/reports/participatingStudents',
         \App\Http\Controllers\Tdr\LivewireController::class)
         ->name('version.reports.participatingStudents');
+    Route::get('version/reports/registrationCards',
+        \App\Http\Controllers\Tdr\LivewireController::class)
+        ->name('version.reports.registrationCards');
     Route::get('version/reports/studentCounts',
         \App\Http\Controllers\Tdr\LivewireController::class)
         ->name('version.reports.studentCounts');

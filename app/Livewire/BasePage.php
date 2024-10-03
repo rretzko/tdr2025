@@ -219,7 +219,7 @@ class BasePage extends Component
      * Placeholder for troubleshooting
      * @return void
      */
-    protected function troubleShooting($versionId, $schoolId)
+    protected function troubleShooting()
     {
 
     }

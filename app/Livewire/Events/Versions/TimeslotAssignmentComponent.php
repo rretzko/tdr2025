@@ -53,7 +53,11 @@ class TimeslotAssignmentComponent extends BasePage
 
         $this->timeslots = $this->getTimeslots();
 
-        $this->lastTimeslotId = array_key_last($this->timeslots);
+        $this->startTime = $this->timeslots[0]['timestamp'];
+
+        $this->endTime = $this->timeslots[array_key_last($this->timeslots)]['timestamp'];
+
+        $this->lastTimeslotId = count($this->timeslots) ? array_key_last($this->timeslots) : 0;
 
         $this->assignedTimeslotSelectors = $this->getAssignedTimeslotSelectors();
     }
@@ -133,6 +137,8 @@ class TimeslotAssignmentComponent extends BasePage
         );
 
         $this->successEndTime = 'Updated.';
+
+        $this->timeslots = $this->getTimeslots();
     }
 
     public function updatedStartTime(): void
@@ -148,7 +154,15 @@ class TimeslotAssignmentComponent extends BasePage
             ]
         );
 
+        //clear existing timeslots
+        VersionTimeslot::where('version_id', $this->versionId)->delete();
+
         $this->successStartTime = 'Updated.';
+
+        //all configuration setting changes result in resetting all assigned slots to default value
+        $this->resetTimeslots();
+
+        $this->timeslots = $this->getTimeslots();
     }
 
     public function updatedAssignedTimeslotSelectors(): void
@@ -337,6 +351,34 @@ class TimeslotAssignmentComponent extends BasePage
         return $summary;
     }
 
+    /** END OF PUBLIC FUNCTIONS  *************************************************/
+
+    private function getEndTime(VersionConfigTimeslot $vct): string
+    {
+        if ($vct->end_time) {
+            return Carbon::createFromTimestamp($vct->end_time, 'America/New_York')->format('Y-m-d H:i:s');
+        }
+
+        $startTime = Carbon::createFromTimestamp($vct->start_time, 'America/New_York');
+        $vct->end_time = Carbon::parse($startTime->addHour())->format('Y-m-d H:i:s');
+        $vct->save();
+
+        return $this->getEndTime($vct);
+    }
+
+    private function getStartTime(VersionConfigTimeslot $vct): string
+    {
+        if ($vct->start_time) {
+            return Carbon::createFromTimestamp($vct->start_time, 'America/New_York')->format('Y-m-d H:i:s');
+        }
+
+        $defaultTime = '2024-09-12 16:30:00';
+        $vct->start_time = $defaultTime;
+        $vct->save();
+
+        return $this->getStartTime($vct);
+    }
+
     private function getTimeslotSchoolsCount(string $timeslot): int
     {
         return VersionTimeslot::query()
@@ -349,14 +391,13 @@ class TimeslotAssignmentComponent extends BasePage
     {
         $defaultTime = Carbon::now('America/New_York')->addHours(5);
         $vct = VersionConfigTimeslot::where('version_id', $this->versionId)->first();
-        $startTime = Carbon::parse($vct->start_time ?? $defaultTime)->subHours(5);
-        $endTime = Carbon::parse($vct->end_time ?? $defaultTime)->subHours(5);
+        $startTime = $this->getStartTime($vct);
+        $endTime = $this->getEndTime($vct);
         $duration = $vct->duration ?? 15; // minutes
 
-        $start = new DateTime($startTime);
-        $end = new DateTime($endTime);
-        $interval = new DateInterval('PT'.$duration.'M');
-        $latestTimeslot = $end->add($interval);
+        $start = Carbon::parse($startTime);
+        $end = Carbon::parse($endTime);
+        $latestTimeslot = $end->addMinutes($duration);
         $timeslots = [];
 
         while ($start < $latestTimeslot) {
@@ -366,7 +407,7 @@ class TimeslotAssignmentComponent extends BasePage
             ];
 
             //increment start
-            $start->add($interval);
+            $start->addMinutes($duration);
         }
 
         return $timeslots;
@@ -516,6 +557,36 @@ class TimeslotAssignmentComponent extends BasePage
         }
 
         return $sortedArray;
+    }
+
+    /**
+     * Reset end time to one-hour after start time
+     * @return void
+     */
+    private function resetTimeslots(): void
+    {
+        //if($start > $end)
+        //reset end
+        //recalc school timeslots
+
+        //if($end < $start)
+        //reset start
+        //recalc school timeslots
+
+        //if change in duration
+        //recalc school timeslots
+        $start = Carbon::parse($this->startTime);
+        $end = $start->addHour();
+        VersionConfigTimeslot::updateOrCreate(
+            [
+                'version_id' => $this->versionId,
+            ],
+            [
+                'end_time' => $end->format('Y-m-d H:i:s'),
+            ]
+        );
+
+        $this->endTime = Carbon::parse($end)->format('Y-m-d H:i:s');
     }
 
     private function setTimeslotConfigurations(): void

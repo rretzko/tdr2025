@@ -4,6 +4,7 @@
     'error' => '',
     'hint' => '',
     'label',
+    'live' => false,
     'name',
     'placeholder' => '',
     'required' => false,
@@ -21,7 +22,9 @@
             'text-sm',
             'border border-red-600' => $errors->has($name),
             ])
-           @if($blur)wire:model.blur @else
+           @if($blur)wire:model.blur
+           @elseif($live)wire:model.live.debounce.1000ms
+           @else
                wire:model
            @endif ="{{ $name }}"
            placeholder="{{ $placeholder }}"

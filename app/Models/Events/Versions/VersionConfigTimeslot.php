@@ -20,6 +20,10 @@ class VersionConfigTimeslot extends Model
         'duration',
     ];
 
+    protected $casts = [
+        'start_time' => 'datetime',
+    ];
+
     /**
      * Return array of all timeslot timestamps based on $start_time, $end_time and $duration
      * @return array

@@ -189,4 +189,80 @@ class FindPdfPathService
         // Optionally handle the case where the version is not found
         throw new \Exception("Version with ID {$versionId} not found.");
     }
+
+    public function findRegistrationCardPath(int $versionId): string
+    {
+        $versionId = ($versionId) ?: $this->getVersionId();
+
+        //early exit
+        if (!$versionId) {
+            throw new \Exception("Version with ID {$versionId} not found.");
+        }
+
+        //version
+        $versionFileTail = implode(DIRECTORY_SEPARATOR, ['pdfs', 'registrationCards', 'versions', $versionId]);
+
+        $versionView = $this->getVersionView($versionFileTail);
+
+        //event
+        $eventId = Version::find($versionId)->event->id;
+
+        $eventFileTail = implode(DIRECTORY_SEPARATOR, ['pdfs', 'registrationCards', 'events', $eventId]);
+
+        $eventView = $this->getEventView($eventFileTail);
+
+        return match (true) {
+            is_string($versionView) => $versionView,
+            is_string($eventView) => $eventView,
+            default => '..pdfs\registrationCards\pdf.blade.php',
+        };
+
+    }
+
+    private function getEventView(string $path, string $fileName = 'pdf'): string|bool
+    {
+        $viewFileName = $fileName.'.blade.php';
+
+        $filePath = implode(DIRECTORY_SEPARATOR, [
+            '..',
+            'resources',
+            'views',
+            $path,
+            $viewFileName,
+        ]);
+
+        $viewFilePath = str_replace(DIRECTORY_SEPARATOR, '.', $path)
+            .'.'
+            .$fileName;
+
+        return (file_exists($filePath))
+            ? $viewFilePath
+            : false;
+    }
+
+    private function getVersionId(): int
+    {
+        return UserConfig::getValue('versionId') ?? 0;
+    }
+
+    private function getVersionView(string $path, string $fileName = 'pdf'): string|bool
+    {
+        $viewFileName = $fileName.'.blade.php';
+
+        $filePath = implode(DIRECTORY_SEPARATOR, [
+            '..',
+            'resources',
+            'views',
+            $path,
+            $viewFileName,
+        ]);
+
+        $viewFilePath = str_replace(DIRECTORY_SEPARATOR, '.', $path)
+            .'.'
+            .$fileName;
+
+        return (file_exists($filePath))
+            ? $viewFilePath
+            : false;
+    }
 }

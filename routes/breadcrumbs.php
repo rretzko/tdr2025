@@ -319,10 +319,17 @@ Breadcrumbs::for('adjudication csv backup', function (BreadcrumbTrail $trail, in
     $trail->parent('version reports', $id);
     $trail->push('Csv Backup', route('version.reports.backupCsv'));
 });
+
 //Version.Reports.Adjudication.monitorChecklist
 Breadcrumbs::for('adjudication monitor checklist', function (BreadcrumbTrail $trail, int $id) {
     $trail->parent('version reports', $id);
     $trail->push('Monitor Checklist', route('version.reports.monitorChecklist'));
+});
+
+//Version.Reports.Adjudication.monitorChecklist
+Breadcrumbs::for('registration cards', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('version reports', $id);
+    $trail->push('Registration Cards', route('version.reports.registrationCards'));
 });
 
 //Version.Scoring
