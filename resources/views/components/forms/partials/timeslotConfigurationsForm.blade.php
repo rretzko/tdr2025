@@ -9,10 +9,15 @@
 
     <fieldset class="space-x-2 w-full flex">
         <label for="endTime" class="w-1/6 flex items-center">Timeslots should end at</label>
-        <input type="datetime-local" class="" wire:model.blur="endTime"/>
-        @if($successEndTime)
-            <x-save-fade message="{{ $successEndTime }}"/>
-        @endif
+        <div class="flex flex-col">
+            <input type="datetime-local" class="" wire:model.blur="endTime"/>
+            @if($successEndTime)
+                <x-save-fade message="{{ $successEndTime }}"/>
+            @endif
+            @error('endTime')
+            <x-input-error messages="{{ $message }}" aria-live="polite"/>
+            @enderror
+        </div>
     </fieldset>
 
     <fieldset class="space-x-2 flex">
@@ -28,8 +33,9 @@
         @endif
     </fieldset>
     <div class="advisory w-2/3 text-xs border border-gray-600 rounded-lg p-2">
-        Please note: Setting the time interval should be done at the <b>beginning</b> of the timeslot assignment
-        process. Changing the time interval <u>after</u> timeslots have been assigned will reset the values and
+        Please note: Setting the start, end times, and interval should be done at the <b>beginning</b> of the timeslot
+        assignment
+        process. Changing the time settings <u>after</u> timeslots have been assigned will reset the values and
         require timeslot re-assignment for each school.
     </div>
 </div>
