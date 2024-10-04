@@ -104,8 +104,8 @@
 
             {{-- PayPal --}}
             <fieldset id="payPal" class="space-y-0 pb-4 border border-white border-b-gray-300">
-                <label>Fees, paid by the following, may be collected through PayPal:</label>
-                <div class="ml-4 space-y-0">
+                <label>Fees, paid by the following, may be collected through an ePayment vendor:</label>
+                <div class=" ml-4 space-y-0">
                     <x-forms.elements.livewire.inputCheckbox
                         blur="false"
                         label="Teacher"
@@ -118,6 +118,25 @@
                         name="form.student"
                         livewire="true"
                     />
+
+                    <fieldset class="py-2">
+                        <label for="epaymentVendor">Payment will be collected by:</label>
+                        <div class="flex flex-col ml-2">
+                            <div class="flex flex-row space-x-2 items-center">
+                                <input type="radio" wire:model="form.epaymentVendor" value="paypal">
+                                <label>PayPal</label>
+                            </div>
+                            <div class="flex flex-row space-x-2 items-center">
+                                <input type="radio" wire:model="form.epaymentVendor" value="square">
+                                <label>Square</label>
+                            </div>
+                            <div class="flex flex-row space-x-2 items-center">
+                                <input type="radio" wire:model="form.epaymentVendor" value="none">
+                                <label>None</label>
+                            </div>
+                        </div>
+                    </fieldset>
+
 
                     <x-forms.elements.livewire.inputTextNarrow
                         label="add surcharge for payPal payments"

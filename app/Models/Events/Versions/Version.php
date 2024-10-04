@@ -18,6 +18,7 @@ class Version extends Model
     protected $fillable = [
         'epayment_student',
         'epayment_teacher',
+        'epayment_vendor',
         'event_id',
         'fee_participation',
         'fee_on_site_registration',

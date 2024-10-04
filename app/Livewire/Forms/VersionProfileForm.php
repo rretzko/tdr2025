@@ -14,6 +14,7 @@ use Livewire\Form;
 class VersionProfileForm extends Form
 {
     public bool $cloneAdvisory = false;
+    public string $epaymentVendor = 'none';
     public float $feeEpaymentSurcharge = 0;
     public float $feeParticipation = 0;
     public float $feeOnSiteRegistration = 0;
@@ -38,6 +39,7 @@ class VersionProfileForm extends Form
             [
                 'epayment_student' => $this->student,
                 'epayment_teacher' => $this->teacher,
+                'epayment_vendor' => $this->epaymentVendor,
                 'event_id' => UserConfig::getValue('eventId'),
                 'name' => $this->name,
                 'short_name' => $this->shortName,
@@ -66,6 +68,7 @@ class VersionProfileForm extends Form
         $this->seniorClassId = $version->senior_class_of;
         $this->statusId = $version->status;
         $this->uploadType = $version->upload_type;
+        $this->epaymentVendor = $version->epayment_vendor;
         $this->feeEpaymentSurcharge = ConvertToUsdService::penniesToUsd($version->fee_epayment_surcharge);
         $this->feeParticipation = ConvertToUsdService::penniesToUsd($version->fee_participation);
         $this->feeOnSiteRegistration = ConvertToUsdService::penniesToUsd($version->fee_on_site_registration);
@@ -113,6 +116,7 @@ class VersionProfileForm extends Form
                 [
                     'epayment_student' => $this->student,
                     'epayment_teacher' => $this->teacher,
+                    'epayment_vendor' => $this->epaymentVendor,
                     'event_id' => UserConfig::getValue('eventId'),
                     'name' => $this->name,
                     'short_name' => $this->shortName,
