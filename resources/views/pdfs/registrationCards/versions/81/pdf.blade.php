@@ -55,6 +55,11 @@
             <div class="pageBreak"></div>
         @endif
 
+        {{-- ADD A PAGE BREAK AFTER EVERY FIVE REGISTRANTS, i.e. PRINT FIVE CARDS PER PAGE --}}
+        @if($key && (! ($key % 5)))
+            <div class="pageBreak"></div>
+        @endif
+
         <table class="card">
 
             <tbody>
@@ -62,7 +67,7 @@
             {{-- VERSION NAME --}}
             <tr>
                 <td class="cardContentTopRow">
-                    {{ $dto['versionName'] }}
+                    {{ $dto['versionName'] }} ({{ $key }})
                 </td>
                 <td class="cardSpacer">{{-- blank --}}</td>
                 <td class="cardContentTopRow">

@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Pdfs;
 
 use App\Data\Pdfs\PdfEstimateDataFactory;
 use App\Data\Pdfs\PdfRegistrationCardCandidateDataFactory;
+use App\Data\Pdfs\PdfRegistrationCardVoicePartDataFactory;
 use App\Http\Controllers\Controller;
 use App\Models\Events\Versions\Participations\Candidate;
+use App\Models\Events\Versions\Version;
 use App\Models\Schools\School;
 use App\Models\Students\VoicePart;
 use App\Models\UserConfig;
@@ -30,25 +32,38 @@ class RegistrationCardsController extends Controller
 
         $pdf = PDF::loadView($path, compact('dto'));
 
-        return $pdf->download('estimate.pdf');
+        return $pdf->download('candidate_'.$candidate->id.'.pdf');
     }
 
     /**
      * @throws \Exception
      */
+    public function school(Request $request, School $schoolId)
+    {
+        dd($schoolId);
+    }
+
+    public function voicePart(Request $request, VoicePart $voicePart)
+    {
+        $versionId = UserConfig::getValue('versionId');
+        $version = Version::find($versionId);
+        $path = $this->getPath($versionId);
+
+        $data = new PdfRegistrationCardVoicePartDataFactory($version, $voicePart);
+        $dto = $data->getDto();
+
+        $pdf = PDF::loadView($path, compact('dto'));
+
+        $fileName = 'registrationCards_'.$voicePart->abbr.'.pdf';
+
+        return $pdf->download($fileName); // $voicePart->abbr . '.pdf');
+    }
+
     private function getPath(int $versionId): string
     {
         $service = new FindPdfPathService;
         return $service->findRegistrationCardPath($versionId);
     }
 
-    public function school(Request $request, School $schoolId)
-    {
-        dd($schoolId);
-    }
 
-    public function voicePart(Request $request, VoicePart $voicePartId)
-    {
-        dd($voicePartId);
-    }
 }

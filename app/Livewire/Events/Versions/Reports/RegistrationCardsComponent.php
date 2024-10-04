@@ -5,6 +5,7 @@ namespace App\Livewire\Events\Versions\Reports;
 use App\Livewire\BasePage;
 use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Version;
+use App\Models\Students\VoicePart;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -12,7 +13,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class RegistrationCardsComponent extends BasePage
 {
-    public int $candidateId;
+    public string $candidateId = "";
     public array $eligibleVoiceParts = [];
     public int $schoolId = 0;
     public array $schools = [];
@@ -52,7 +53,8 @@ class RegistrationCardsComponent extends BasePage
     {
         return $this->query()
             ->distinct('candidates.voice_part_id')
-            ->select('candidates.voice_part_id AS id', 'voice_parts.descr')
+            ->select('candidates.voice_part_id AS id', 'voice_parts.descr', 'voice_parts.order_by')
+            ->orderBy('voice_parts.order_by')
             ->get()
             ->toArray();
     }
@@ -64,12 +66,25 @@ class RegistrationCardsComponent extends BasePage
 
     public function updatedCandidateId(): void
     {
-        //minimum length of $this->candidateId === 6
-        $minCandidateIdLength = 6;
-        if ((Str::length($this->candidateId) >= $minCandidateIdLength) &&
+        $this->resetErrorBag('candidateId');
+
+        //length of $this->candidateId === 6
+        $candidateIdLength = (strlen($this->versionId) + 4);
+
+        if ((Str::length($this->candidateId) == $candidateIdLength) &&
             $this->validateCandidateId()
         ) {
             $this->pdf($this->candidateId);
+        } else {
+
+            $this->addError('candidateId', 'ID must be '.$candidateIdLength.' characters.');
+        }
+    }
+
+    public function clickVoicePart(int $voicePartId): void
+    {
+        if (VoicePart::find($voicePartId)->exists()) {
+            $this->pdf($voicePartId);
         }
     }
 
@@ -102,7 +117,7 @@ class RegistrationCardsComponent extends BasePage
         $uri = match ($dto) {
             $this->candidateId => $root.'candidates/'.$this->candidateId,
             $this->schoolId => $root.'schools/'.$this->schoolId,
-            default => $root.'voiceParts/'.$this->voicePartId,
+            default => $root.'voiceParts/'.$dto,
         };
 
         return $this->redirect($uri);
