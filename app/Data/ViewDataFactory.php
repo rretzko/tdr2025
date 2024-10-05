@@ -7,9 +7,13 @@ use App\Models\Events\Versions\VersionParticipant;
 use App\Models\Events\Versions\VersionRole;
 use App\Models\PageInstruction;
 use App\Models\UserConfig;
+use App\Models\Events\Versions\VersionConfigDate;
+use App\Models\Events\Versions\Scoring\Judge;
 use App\Models\ViewCard;
 use App\Services\VersionsTableService;
+
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use JetBrains\PhpStorm\NoReturn;
 
@@ -79,6 +83,45 @@ class ViewDataFactory extends aViewData
     private function decodeInstructions($encoded): string
     {
         return html_entity_decode($encoded);
+    }
+
+    private function filterCards(array $viewCards): array
+    {
+        $cards = $this->filterCardsByRole($viewCards);
+
+        if ($this->versionId) {
+
+            $cards = $this->filterCardsByAdjudicationFactors($cards);
+        }
+
+        return $cards;
+    }
+
+    private function filterCardsByAdjudicationFactors(array $viewCards): array
+    {
+        $cards = $viewCards;
+
+        $adjudicationOpen = Carbon::parse(VersionConfigDate::where('version_id', $this->versionId)
+            ->where('date_type', 'adjudication_open')
+            ->first()
+            ->version_date);
+
+        $adjudicationClose = Carbon::parse(VersionConfigDate::where('version_id', $this->versionId)
+            ->where('date_type', 'adjudication_close')
+            ->first()
+            ->version_date);
+
+        $now = Carbon::now();
+
+        $isJudge = $this->isJudge();
+
+        if (!($adjudicationOpen && $adjudicationClose && ($adjudicationOpen < $now) && ($adjudicationClose > $now) && $isJudge)) {
+            $cards = array_filter($cards, function ($card) {
+                return ($card['label'] !== 'adjudication');
+            });
+        }
+
+        return $cards;
     }
 
     /**
@@ -215,7 +258,7 @@ class ViewDataFactory extends aViewData
             ->get();
 
         return ($viewCards->isNotEmpty())
-            ? $this->filterCardsByRole($viewCards->toArray())
+            ? $this->filterCards($viewCards->toArray())
             : [];
     }
 
@@ -294,7 +337,11 @@ class ViewDataFactory extends aViewData
             'registration cards' => 'events.versions.reports.registration-cards-component',
             'student counts' => 'events.versions.reports.student-counts-component',
 
+            //pitch files
             'teacher pitch files' => 'events.versions.participations.teacher-pitch-files-table-component',
+
+            //adjudication
+            'adjudication' => 'events.versions.adjudications.adjudication-component',
 
         ];
 
@@ -325,5 +372,14 @@ class ViewDataFactory extends aViewData
             ->where('version_id', $versionId)
             ->distinct('role')
             ->pluck('role');
+    }
+
+    private function isJudge(): bool
+    {
+        return Judge::query()
+            ->where('version_id', $this->versionId)
+            ->where('user_id', auth()->id())
+            ->where('judge_type', '!=', 'monitor') //includes head judge, judge 2, judge 3, judge 3, judge monitor
+            ->exists();
     }
 }

@@ -59,14 +59,6 @@
             </div>
         </div>
 
-        {{--        <x-tables.roomBackupsTable--}}
-        {{--            :columnHeaders="$columnHeaders"--}}
-        {{--            header="{{ $dto['header'] }}"--}}
-        {{--            :rows="$rows"--}}
-        {{--            :sortAsc="$sortAsc"--}}
-        {{--            sortColLabel="{{ $sortColLabel }}"--}}
-        {{--        />--}}
-
     </div>{{-- END OF ID=CONTAINER --}}
 
 </div>

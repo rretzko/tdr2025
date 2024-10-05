@@ -22,6 +22,7 @@ class RegistrationCardsController extends Controller
 {
     /**
      * @throws \Exception
+     * @todo Possible refactoring of methods and *DataFactorys into a single entity
      */
     public function candidate(Request $request, Candidate $candidate)
     {

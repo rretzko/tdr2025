@@ -64,8 +64,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('events.dashboard');
     Route::get('events/participation/table', \App\Http\Controllers\Events\EventsParticipationController::class)
         ->name('events.participation.table');
-    Route::get('events/adjudication', \App\Http\Controllers\Events\EventsAdjudicationController::class)
-        ->name('events.adjudication');
     Route::get('events/manage', \App\Http\Controllers\Events\EventsManageController::class)
         ->name('events.manage');
 
@@ -83,6 +81,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('version/judgeAssignment',
         \App\Http\Controllers\Tdr\LivewireController::class)
         ->name('judgeAssignment');
+
+    //ADJUDICATION
+    Route::get('adjudication', \App\Http\Controllers\Events\Versions\Adjudications\AdjudicationController::class)
+        ->name('adjudication');
 
     //LIBRARIES
     Route::get('libraries', [\App\Http\Controllers\Libraries\libraryController::class, 'index'])

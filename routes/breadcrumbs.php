@@ -135,6 +135,12 @@ Breadcrumbs::for('judge assignment', function (BreadcrumbTrail $trail, int $id) 
     $trail->push('Judge Assignment', route('judgeAssignment'));
 });
 
+//Adjudication
+Breadcrumbs::for('adjudication', function (BreadcrumbTrail $trail, $id) {
+    $trail->parent('participation active', $id);
+    $trail->push('Adjudication', route('adjudication', $id));
+});
+
 //Obligations
 Breadcrumbs::for('obligations', function (BreadcrumbTrail $trail, $id) {
     $trail->parent('participation active', $id);

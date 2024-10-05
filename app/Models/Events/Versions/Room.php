@@ -3,6 +3,7 @@
 namespace App\Models\Events\Versions;
 
 use App\Models\Events\Versions\Participations\Candidate;
+use App\Models\Events\Versions\Scoring\Judge;
 use App\Models\Events\Versions\Scoring\RoomScoreCategory;
 use App\Models\Events\Versions\Scoring\RoomVoicePart;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

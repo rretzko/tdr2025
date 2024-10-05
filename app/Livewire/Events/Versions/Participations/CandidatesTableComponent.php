@@ -82,10 +82,13 @@ class CandidatesTableComponent extends BasePage
         $this->eventGrades = $this->getEventGrades();
         $this->hasFilters = true;
         $this->heights = $this->getHeights();
-        $this->schoolId = (int) UserConfig::getValue('schoolId');
+        $this->schoolId = $this->school->id ?: (int) UserConfig::getValue('schoolId');
         $this->seniorYear = $service->getSeniorYear();
         $this->shirtSizes = self::SHIRTSIZES;
         $this->sortCol = 'users.last_name';
+
+        //ensure that any new/transferred student(s) have a candidate record
+        new MakeCandidateRecordsService($this->versionId);
 
         $this->filters->candidateGradesSelectedIds = $this->filters->previousFilterExists('candidateGradesSelectedIds',
             $this->dto['header'])
@@ -122,9 +125,6 @@ class CandidatesTableComponent extends BasePage
 
         $this->filters->setFilter('candidateGradesSelectedIds', $this->dto['header']);
         $this->filters->setFilter('candidateStatusesSelectedIds', $this->dto['header']);
-
-        //ensure that all eligible students have a record
-        $this->makeCandidateRecords();
 
         //ensure that missing application requirements are logged
         $this->form->missingApplicationRequirements();
@@ -290,7 +290,7 @@ class CandidatesTableComponent extends BasePage
 
     private function getRows(): \Illuminate\Support\Collection //Builder
     {
-//        $this->troubleShooting($this->versionId, $this->schoolId, $this->search);
+        // $this->troubleShooting($this->versionId, $this->schoolId, $this->search);
 
         $coTeacherIds = CoTeachersService::getCoTeachersIds();
         $versionSeniorYear = $this->version->senior_class_of;
@@ -334,11 +334,6 @@ class CandidatesTableComponent extends BasePage
         return $teachers;
     }
 
-    private function makeCandidateRecords()
-    {
-        $service = new MakeCandidateRecordsService($this->versionId);
-    }
-
     private function makeFileName(string $uploadType): string
     {
         //ex: 661234_scales.mp3
@@ -349,6 +344,11 @@ class CandidatesTableComponent extends BasePage
         $fileName .= pathInfo($this->auditionFiles[$uploadType]->getClientOriginalName(), PATHINFO_EXTENSION);
 
         return $fileName;
+    }
+
+    private function makeNewCandidates(): void
+    {
+        $service = new \App\Services\MakeCandidateRecordsService($this->versionId);
     }
 
     /**

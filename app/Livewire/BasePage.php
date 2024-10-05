@@ -67,17 +67,31 @@ class BasePage extends Component
         $this->pageInstructions = $this->dto['pageInstructions'];
         $this->setFirstTimer($this->dto['header']);
 
-        $this->schools = auth()->user()->teacher->schools
-            ->sortBy('name')
-            ->pluck('name', 'id')
+        /** @since 2024-10-05 13:08 */
+        $this->schools = auth()->user()->teacher->schools()
+            ->with('schoolTeacher')
+            ->wherePivot('active', 1)
+            ->orderBy('schools.name')
+            ->pluck('schools.name', 'schools.id')
             ->toArray();
+        /** @deprecated
+         * $this->schools = auth()->user()->teacher->schools
+         * ->sortBy('name')
+         * ->pluck('name', 'id')
+         * ->toArray();
+         */
 
         //$this->schoolCount is used to determine if the schools filter should be displayed
         $this->schoolCount = count($this->schools);
 
         $this->school = ($this->schoolCount === 1)
-            ? auth()->user()->teacher->schools->first()
+            ? School::find(array_key_first($this->schools))
             : new School();
+
+        //caution check
+        if ($this->school->id != UserConfig::getValue('schoolId')) {
+            UserConfig::setProperty('schoolId', $this->school->id);
+        }
 
         $this->schoolName = ($this->school->id)
             ? $this->school->name
