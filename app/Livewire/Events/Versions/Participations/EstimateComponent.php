@@ -26,12 +26,13 @@ class EstimateComponent extends BasePage
     public string $customProperties = '';
     public string $email = 'realEpayment@email.com';
     public string $ePaymentId = 'ePaymentId';
+    public string $ePaymentVendor = 'none';
     public array $paymentTypes = ['cash' => 'cash', 'check' => 'check'];
     public float $registrationFee = 0.00;
     public bool $sandbox = true;
     public string $sandboxId = 'sandboxId';
     public string $sandboxPersonalEmail = '';
-    public string $selectedTab = 'estimate';
+    public string $selectedTab = 'ePayments'; //'estimate';
     public int $showEditForm = 0;
     public array $studentPaymentColumnHeaders = [];
     public array $tabs = [];
@@ -68,6 +69,7 @@ class EstimateComponent extends BasePage
         $this->teacherName = $teacher->user->name;
         $this->userId = auth()->id();
         $this->versionShortName = $version->short_name;
+        $this->ePaymentVendor = $version->epayment_vendor;
     }
 
     public function render()
@@ -246,7 +248,7 @@ class EstimateComponent extends BasePage
 
         if ($version && $version->epayment_teacher) {
 
-            $tabs[] = 'payPal';
+            $tabs[] = 'ePayments';
         }
 
         return $tabs;

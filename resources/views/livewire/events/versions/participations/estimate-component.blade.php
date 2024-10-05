@@ -71,13 +71,14 @@
                 </div>
                 @endif
 
-                @if($selectedTab === 'payPal')
+                @if($selectedTab === 'ePayments')
                     <div>
                         <x-forms.partials.teacherEpaymentForm
                             amountDue="{{ $amountDue }}"
                             customProperties="{{ $customProperties }}"
                             email="{{ $email }}"
                             ePaymentId="{{ $ePaymentId }}"
+                            ePaymentVendor="{{  $ePaymentVendor }}"
                             :sandbox="$sandbox"
                             sandboxId="{{ $sandboxId }}"
                             sandboxPersonalEmail="{{ $sandboxPersonalEmail }}"
@@ -88,6 +89,7 @@
                             versionShortName="{{ $versionShortName }}"
                         />
                     </div>
+
                 @endif
 
         </div>
