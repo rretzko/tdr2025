@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Pdfs;
 
 use App\Data\Pdfs\PdfEstimateDataFactory;
 use App\Data\Pdfs\PdfRegistrationCardCandidateDataFactory;
+use App\Data\Pdfs\PdfRegistrationCardSchoolDataFactory;
 use App\Data\Pdfs\PdfRegistrationCardVoicePartDataFactory;
 use App\Http\Controllers\Controller;
 use App\Models\Events\Versions\Participations\Candidate;
@@ -38,9 +39,20 @@ class RegistrationCardsController extends Controller
     /**
      * @throws \Exception
      */
-    public function school(Request $request, School $schoolId)
+    public function school(Request $request, School $school)
     {
-        dd($schoolId);
+        $versionId = UserConfig::getValue('versionId');
+        $version = Version::find($versionId);
+        $path = $this->getPath($versionId);
+
+        $data = new PdfRegistrationCardSchoolDataFactory($version, $school);
+        $dto = $data->getDto();
+
+        $pdf = PDF::loadView($path, compact('dto'));
+
+        $fileName = 'registrationCards_'.Str::camel($school->name).'.pdf';
+
+        return $pdf->download($fileName);
     }
 
     public function voicePart(Request $request, VoicePart $voicePart)
@@ -56,7 +68,7 @@ class RegistrationCardsController extends Controller
 
         $fileName = 'registrationCards_'.$voicePart->abbr.'.pdf';
 
-        return $pdf->download($fileName); // $voicePart->abbr . '.pdf');
+        return $pdf->download($fileName);
     }
 
     private function getPath(int $versionId): string

@@ -5,6 +5,7 @@ namespace App\Livewire\Events\Versions\Reports;
 use App\Livewire\BasePage;
 use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Version;
+use App\Models\Schools\School;
 use App\Models\Students\VoicePart;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
@@ -64,6 +65,13 @@ class RegistrationCardsComponent extends BasePage
         return view('livewire..events.versions.reports.registration-cards-component');
     }
 
+    public function clickVoicePart(int $voicePartId): void
+    {
+        if (VoicePart::find($voicePartId)->exists()) {
+            $this->pdf($voicePartId);
+        }
+    }
+
     public function updatedCandidateId(): void
     {
         $this->resetErrorBag('candidateId');
@@ -81,10 +89,16 @@ class RegistrationCardsComponent extends BasePage
         }
     }
 
-    public function clickVoicePart(int $voicePartId): void
+    public function updatedSchoolId(): void
     {
-        if (VoicePart::find($voicePartId)->exists()) {
-            $this->pdf($voicePartId);
+        $this->resetErrorBag('schoolId');
+
+        if ($this->schoolId) {
+            if (School::find($this->schoolId)) {
+                $this->pdf($this->schoolId);
+            } else {
+                $this->addError('schoolId', 'School not found.');
+            }
         }
     }
 

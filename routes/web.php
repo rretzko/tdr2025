@@ -127,6 +127,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('pdf/registrationCards/candidates/{candidate}',
         [\App\Http\Controllers\Pdfs\RegistrationCardsController::class, 'candidate'])
         ->name('pdf.registrationCards.candidates');
+    Route::get('pdf/registrationCards/schools/{school}',
+        [\App\Http\Controllers\Pdfs\RegistrationCardsController::class, 'school'])
+        ->name('pdf.registrationCards.schools');
     Route::get('pdf/registrationCards/voiceParts/{voicePart}',
         [\App\Http\Controllers\Pdfs\RegistrationCardsController::class, 'voicePart'])
         ->name('pdf.registrationCards.voiceParts');
