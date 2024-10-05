@@ -59,7 +59,7 @@ class EstimateComponent extends BasePage
         $teacher = Teacher::where('user_id', auth()->id())->first();
         $version = Version::find($this->versionId);
 
-        $this->amountDue = $this->getAmountDue();
+        $this->amountDue = 43.25;//$this->getAmountDue();
         $this->customProperties = $this->getCustomProperties();
         $this->email = auth()->user()->email;
         $this->ePaymentId = $this->getEpaymentId();
