@@ -5,7 +5,7 @@ namespace App\Livewire\Events\Versions;
 use App\Exports\JudgeAssignmentsExport;
 use App\Livewire\BasePage;
 use App\Livewire\Forms\RoomForm;
-use App\Models\Events\Versions\Judge;
+use App\Models\Events\Versions\Scoring\Judge;
 use App\Models\Events\Versions\Room;
 use App\Models\Events\Versions\Scoring\RoomScoreCategory;
 use App\Models\Events\Versions\Scoring\RoomVoicePart;

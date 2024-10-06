@@ -2,7 +2,7 @@
 
 namespace App\ValueObjects;
 
-use App\Models\Events\Versions\Judge;
+use App\Models\Events\Versions\Scoring\Judge;
 use App\Models\Events\Versions\Version;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
