@@ -4,16 +4,34 @@
     <x-pageInstructions.instructions instructions="{!! $pageInstructions !!}" firstTimer="{{ $firstTimer }}"/>
 
     <div id="container">
-        <style>
-            .narrow {
-                width: 20rem;
-            }
-        </style>
 
-        {{-- ADJUDICATION HEADER --}}
-        <div class="flex flex-col bg-gray-100 border border-gray-500 p-2 rounded-lg shadow-lg">
-            <label>Room Staff</label>
+        {{-- STAFF SECTION --}}
+        <div class="flex flex-col p-2 rounded-lg shadow-lg ml-2 mb-2">
+            @include('components.forms.partials.adjudications.staff')
         </div>
+
+        {{-- PROGRESS BAR --}}
+        <div class="flex flex-col p-2 rounded-lg shadow-lg ml-2 mb-2">
+            @include('components.forms.partials.adjudications.progressBar')
+        </div>
+
+        {{-- ADJUDICATION BUTTONS --}}
+        <div class="flex flex-col p-2 rounded-lg shadow-lg ml-2 mb-2">
+            @include('components.forms.partials.adjudications.adjudicationButtons')
+        </div>
+
+        {{-- RECORDING/AUDITION SCORING --}}
+        @if(($form->sysId))
+            <div class="flex flex-col p-2 rounded-lg shadow-lg ml-2 mb-2">
+                @include('components.forms.partials.adjudications.adjudicationForm')
+            </div>
+        @endif
+
+        {{-- JUDGE SUMMARY TABLE --}}
+        <div class="flex flex-col bg-gray-100 p-2 rounded-lg shadow-lg ml-2 mb-2">
+            <label>Judge Summary Table partial</label>
+        </div>
+
         {{--        <div class="flex flex-col mt-4 p-2 border border-gray-300 rounded-lg shadow-lg w-full">--}}
 
         {{--            <div class="flex flex-col sm:flex-row">--}}

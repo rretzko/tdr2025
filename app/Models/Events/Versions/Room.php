@@ -6,11 +6,13 @@ use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Scoring\Judge;
 use App\Models\Events\Versions\Scoring\RoomScoreCategory;
 use App\Models\Events\Versions\Scoring\RoomVoicePart;
+use App\Models\Events\Versions\Scoring\ScoreFactor;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class Room extends Model
 {
@@ -32,6 +34,33 @@ class Room extends Model
     public function roomScoreCategories(): HasMany
     {
         return $this->hasMany(RoomScoreCategory::class);
+    }
+
+    public function getAdjudicationButtonsAllArrayAttribute(): array
+    {
+        $voicePartIds = RoomVoicePart::where('room_id', $this->id)
+            ->pluck('voice_part_id')
+            ->toArray();
+
+        $candidates = DB::table('candidates')
+            ->join('room_voice_parts', 'room_voice_parts.voice_part_id', '=', 'candidates.voice_part_id')
+            ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
+            ->where('candidates.version_id', $this->version_id)
+            ->whereIn('candidates.voice_part_id', $voicePartIds)
+            ->where('candidates.status', 'registered')
+            ->distinct('candidates.id')
+            ->select('candidates.id', 'candidates.ref', 'voice_parts.descr', 'voice_parts.abbr', 'voice_parts.order_by')
+            ->orderBy('voice_parts.order_by')
+            ->orderBy('candidates.id')
+            ->get()
+            ->toArray();
+
+        return $candidates;
+    }
+
+    public function getAdjudicationButtonsIncompleteArrayAttribute(): array
+    {
+        return [];
     }
 
     public function getRegistrantsByIdAttribute(): Collection
@@ -56,10 +85,21 @@ class Room extends Model
             ->where('version_id', $this->version_id)
             ->whereIn('voice_part_id', $this->voicePartIds)
             ->where('status', 'registered')
-            ->select('candidates.id', 'voice_parts.abbr')
-            ->orderBy('id')
+            ->select('candidates.id', 'voice_parts.abbr', 'voice_parts.order_by')
+            ->orderBy('voice_parts.order_by')
+            ->orderBy('candidates.id')
             ->get()
             ->toArray();
+    }
+
+    public function getScoringFactorsAttribute()
+    {
+        $roomScoreCategoriesIds = $this->roomScoreCategories->pluck('score_category_id')->toArray();
+
+        return ScoreFactor::query()
+            ->whereIn('score_category_id', $roomScoreCategoriesIds)
+            ->orderBy('score_factors.order_by')
+            ->get();
     }
 
     public function getVoicePartIdsAttribute(): array
