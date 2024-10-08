@@ -36,6 +36,9 @@ class InviteVersionUserController extends Controller
                 'status' => 'invited',
             ]);
 
+        $name = User::find($request['user'])->name;
+        $versionName = Version::find($request['version'])->name;
+
         if ($versionParticipant->status === 'invited') {
 
             $user = User::find($request['user']);
@@ -43,6 +46,9 @@ class InviteVersionUserController extends Controller
 
             new SendInvitationConfirmationToEventManagerMail($user, $version);
             new SendInvitationConfirmationToRequesterMail($user, $version);
+
+            return view('invitationConfirmation', ['name' => $name, 'versionName' => $versionName]);
+
         } else {
 
             dd('status: '.$versionParticipant->status);
