@@ -41,14 +41,16 @@ class CandidateStatusService
             return $candidate->status;
         }
 
-        Log::info(__METHOD__.': '.__LINE__);
-        Log::info('*** candidate status @ start: '.$candidate->status.' ***');
+//Log::info(__METHOD__.': '.__LINE__);
+//Log::info('*** candidate status @ start: '.$candidate->status.' ***');
 
         //evaluate registration status conditions
         self::$applicationDownloaded = self::hasDownloadedApplication($candidate);
+//Log::info('%%%%% Application download: ' . self::$applicationDownloaded . ' %%%%%');
         self::$signaturesVerified = self::hasSignatures($candidate);
+//Log::info('%%%%% Has signatures: ' . self::$signaturesVerified . ' %%%%%');
         self::$recordingsApproved = self::hasApprovedRecording($candidate);
-
+//Log::info('%%%%% Recordings approved: ' . self::$recordingsApproved . ' %%%%%');
         //determine registration status
         $status = self::getRegistrationStatus($candidate);
 
@@ -56,8 +58,8 @@ class CandidateStatusService
         if ($candidate->status !== $status) {
             $candidate->update(['status' => $status]);
         }
-        Log::info('*** status @ end: '.$status.' ***');
-        Log::info('*** candidate status @ end: '.$candidate->status.' ***');
+//Log::info('*** status @ end: '.$status.' ***');
+//Log::info('*** candidate status @ end: '.$candidate->status.' ***');
         return $status;
     }
 
@@ -129,6 +131,10 @@ class CandidateStatusService
             return true;
         }
 
+        return true;
+        /**
+         * @todo implement application download logging for SFdi.
+         */
         return Application::where('candidate_id', $candidate->id)
             ->where('downloads', '>', 0)
             ->exists();
@@ -136,12 +142,13 @@ class CandidateStatusService
 
     private static function hasApprovedRecording(Candidate $candidate): bool
     {
+        $uploadType = Version::find($candidate->version_id)->first()->upload_type;
         $vca = VersionConfigAdjudication::where('version_id', $candidate->version_id)->first();
 
         $expectedUploads = $vca->upload_count;
 
         //early exit : if no uploads are required, default to true
-        if ($expectedUploads == 0) {
+        if (($uploadType === 'none') || $expectedUploads == 0) {
             return true;
         }
 
@@ -159,12 +166,11 @@ class CandidateStatusService
         $eApplication = VersionConfigRegistrant::where('version_id', $candidate->version_id)
             ->first()
             ->eapplication;
-        Log::info(__METHOD__.': '.__LINE__);
-        Log::info('*** eApplication: '.$eApplication);
+
         $roles = ($eApplication)
             ? ['guardian', 'student']
             : ['teacher'];
-        Log::info('*** roles: '.serialize($roles));
+
         return self::checkSignatures($candidate, $roles);
     }
 
@@ -177,20 +183,8 @@ class CandidateStatusService
      */
     private static function checkSignatures(Candidate $candidate, array $roles): bool
     {
-
-        Log::info(__METHOD__.': '.__LINE__);
         foreach ($roles as $role) {
 
-            Log::info('*** sql: '.Signature::query()
-                    ->where('candidate_id', $candidate->id)
-                    ->where('role', $role)
-                    ->where('signed', 1)
-                    ->toRawSql().' ***');
-            Log::info('*** result: '.Signature::query()
-                ->where('candidate_id', $candidate->id)
-                ->where('role', $role)
-                ->where('signed', 1)
-                ->first() ?? 'not found'.' ***');
             if (!Signature::query()
                 ->where('candidate_id', $candidate->id)
                 ->where('role', $role)
