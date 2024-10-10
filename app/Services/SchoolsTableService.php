@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\Schools\School;
+use App\Models\Schools\SchoolTeacher;
+use App\Models\Schools\Teacher;
 use Illuminate\Support\Facades\DB;
 
 class SchoolsTableService
@@ -42,6 +45,19 @@ class SchoolsTableService
             )
             ->get()
             ->toArray();
+
+        foreach ($this->rows as $row) {
+            $school = School::find($row->schoolId);
+            $teacher = Teacher::where('user_id', auth()->id())->first();
+            $row->studentCount = $school->students->count();
+
+            $st = SchoolTeacher::query()
+                ->where('school_id', $row->schoolId)
+                ->where('teacher_id', $teacher->id)
+                ->first();
+
+            $row->active = $st->active;
+        }
 
     }
 

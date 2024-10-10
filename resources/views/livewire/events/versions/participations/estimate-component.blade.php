@@ -29,6 +29,10 @@
                         sortColLabel="{{  $sortColLabel }}"
                         versionId="{{  $versionId }}"
                     />
+
+                    @if($ePaymentVendor === 'square')
+                        @include('square.squareInApp')
+                    @endif
                 </div>
             @endif
 
@@ -69,10 +73,11 @@
                         sortColLabel="{{ $sortColLabel }}"
                     />
                 </div>
-                @endif
+            @endif
 
-                @if($selectedTab === 'ePayments')
-                    <div>
+            @if($selectedTab === 'ePayments')
+                <div>
+                    @if($ePaymentVendor === 'paypal')
                         <x-forms.partials.teacherEpaymentForm
                             amountDue="{{ $amountDue }}"
                             customProperties="{{ $customProperties }}"
@@ -88,9 +93,16 @@
                             versionId="{{ $versionId }}"
                             versionShortName="{{ $versionShortName }}"
                         />
-                    </div>
+                    @endif
+                    @if($ePaymentVendor === 'square')
+                        <div class="">
+                            @include('square.squareInApp')
+                        </div>
+                    @endif
 
-                @endif
+                </div>
+
+            @endif
 
         </div>
     </div>

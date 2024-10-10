@@ -68,12 +68,7 @@ class BasePage extends Component
         $this->setFirstTimer($this->dto['header']);
 
         /** @since 2024-10-05 13:08 */
-        $this->schools = auth()->user()->teacher->schools()
-            ->with('schoolTeacher')
-            ->wherePivot('active', 1)
-            ->orderBy('schools.name')
-            ->pluck('schools.name', 'schools.id')
-            ->toArray();
+        $this->schools = $this->getSchools();
         /** @deprecated
          * $this->schools = auth()->user()->teacher->schools
          * ->sortBy('name')
@@ -89,7 +84,7 @@ class BasePage extends Component
             : new School();
 
         //caution check
-        if ($this->school->id != UserConfig::getValue('schoolId')) {
+        if ($this->school->id && ($this->school->id != UserConfig::getValue('schoolId'))) {
             UserConfig::setProperty('schoolId', $this->school->id);
         }
 
@@ -125,6 +120,21 @@ class BasePage extends Component
             ->where('user_id', auth()->id())
             ->where('header', $this->dto['header'])
             ->value('asc') ?? true;
+    }
+
+    public function getSchools(): array
+    {
+        return auth()->user()->teacher->schools()
+            ->with('schoolTeacher')
+            ->wherePivot('active', 1)
+            ->orderBy('schools.name')
+            ->pluck('schools.name', 'schools.id')
+            ->toArray();
+    }
+
+    public function refreshSchools(): void
+    {
+        $this->schools = $this->getSchools();
     }
 
     public function updatedRecordsPerPage(): void

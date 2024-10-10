@@ -28,11 +28,26 @@ class SchoolsTableComponent extends BasePage
 
     public function render()
     {
+        $this->refreshSchools();
+        $this->schoolCount = count($this->schools);
+
         return view('livewire.schools.schools-table-component',
             [
                 'columnHeaders' => ['name', 'address', 'grades', 'active?', 'email', 'verified', 'i teach', 'subjects'],
                 'rows' => $this->rows(),
             ]);
+    }
+
+    public function deactivate(int $schoolId): void
+    {
+        $st = SchoolTeacher::query()
+            ->where('school_id', $schoolId)
+            ->where('teacher_id', $this->teacher->id)
+            ->first();
+
+        $active = $st->active;
+
+        $st->update(['active' => $active ? 0 : 1]);
     }
 
     public function edit(int $schoolId)
@@ -63,8 +78,6 @@ class SchoolsTableComponent extends BasePage
 
         $this->showSuccessIndicator = true;
         $this->successMessage = '"'.$schoolName.'" has been removed from your roster.';
-
-
     }
 
     public function toggleActive(int $schoolId)

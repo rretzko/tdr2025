@@ -15,10 +15,14 @@
         <div class="flex flex-row">
 
             <div class="flex flex-col w-full">
-                <div>{{ $content }}</div>
+
+                {{-- OBLIGATIONS VERBIAGE --}}
                 @if($obligationFile)
                     @include($obligationFile)
+                @else
+                    <div>{{ $content }}</div>
                 @endif
+
                 {{-- Accept/Reject buttons --}}
                 <div class="m-4">
                     @if($obligationAccepted)

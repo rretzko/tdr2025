@@ -113,9 +113,31 @@
 
                     <td class="text-center border border-gray-200">
                         @if($schoolCount > 1)
-                            <x-buttons.remove id="{{ $row->schoolId }}" livewire="1"
-                                              message="Are you sure you want to remove {{ $row->schoolName }} from your roster?"/>
+                            {{-- active school count --}}
+                            @if($row->studentCount)
+                                <x-buttons.deactivate
+                                    active="{{  $row->active }}"
+                                    id="{{ $row->schoolId }}"
+                                    livewire="1"
+                                    message="Are you sure you want to deactivate from {{ $row->schoolName }}?"/>
+                            @else
+                                <x-buttons.remove id="{{ $row->schoolId }}" livewire="1"
+                                                  message="Are you sure you want to remove {{ $row->schoolName }} from your roster?"/>
+                            @endif
                         @endif
+                        @if($schoolCount < 2)
+                            @if($row->studentCount && $row->active)
+                                -
+                            @endif
+                            @if($row->studentCount && ($row->active === 0))
+                                <x-buttons.deactivate
+                                    active="{{  $row->active }}"
+                                    id="{{ $row->schoolId }}"
+                                    livewire="1"
+                                    message="Are you sure you want to reactivate at {{ $row->schoolName }}?"/>
+                            @endif
+                        @endif
+
                     </td>
                 </tr>
 
