@@ -59,8 +59,9 @@ class AdjudicationComponent extends BasePage
         $this->form->setCandidate(Candidate::find($candidateId), $this->room, $judge);
     }
 
-    public function updatedFormScores()
+    public function updatedFormScores($value, $key)
     {
+        dd($value.': '.$key);
         $this->form->updateScores();
     }
 

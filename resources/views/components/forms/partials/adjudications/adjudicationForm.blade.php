@@ -17,9 +17,12 @@
                     $end = $factor->worst;
                     $interval = $start > $end ? -$factor->interval_by : $factor->interval_by;
                 @endphp
-                <fieldset class="flex flex-row w-full">
-                    <label for="{{ $form->scores[$factor->id] }}" class="w-1/6">{{$factor->factor}}</label>
-                    <select wire:model.live="form.scores.{{ $factor->id }}" wire:key="factor_{{ $factor->id }}">
+                <fieldset class="flex flex-col w-full">
+                    <label for="{{ $form->scores[$factor->id] }}" class="">
+                        {{ strtoupper($factor['scoreCategory']->descr) }}:{{$factor->factor}}
+                    </label>
+                    <select wire:model.live="form.scores.{{ $factor->id }}" class="w-1/6"
+                            wire:key="factor_{{ $factor->id }}">
                         @for($i=$start; (($start > $end) ? $i>=$end : $i<=$end ); $i=($i + $interval))
                             <option value="{{ $i }}">{{ $i }}</option>
                         @endfor

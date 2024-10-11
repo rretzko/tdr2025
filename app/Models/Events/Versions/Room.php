@@ -97,6 +97,7 @@ class Room extends Model
         $roomScoreCategoriesIds = $this->roomScoreCategories->pluck('score_category_id')->toArray();
 
         return ScoreFactor::query()
+            ->with('scoreCategory')
             ->whereIn('score_category_id', $roomScoreCategoriesIds)
             ->orderBy('score_factors.order_by')
             ->get();

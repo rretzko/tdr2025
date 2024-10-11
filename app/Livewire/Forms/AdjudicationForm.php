@@ -42,13 +42,14 @@ class AdjudicationForm extends Form
             ->toArray() ?? [];
 
         foreach ($this->factors as $factor) {
-            $this->scores[$factor->id] = $scores[$factor->id] ?? ($factor->best - 1);
+            $this->scores[$factor->id] = $scores[$factor->id] ?? $factor->best;
         }
 
     }
 
-    public function updateScores(): void
+    public function updateScores($value, $key): void
     {
+        dd(__LINE__);
         foreach ($this->scores as $key => $score) {
 
             $scoreFactor = ScoreFactor::find($key);

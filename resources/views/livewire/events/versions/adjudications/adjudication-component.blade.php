@@ -22,15 +22,18 @@
 
         {{-- RECORDING/AUDITION SCORING --}}
         @if(($form->sysId))
-            <div class="flex flex-col p-2 rounded-lg shadow-lg ml-2 mb-2">
-                @include('components.forms.partials.adjudications.adjudicationForm')
+            <div class="flex flex-col sm:flex-row">
+                <div class="flex flex-col p-2 rounded-lg shadow-lg ml-2 mb-2 w-full sm:w-1/2">
+                    @include('components.forms.partials.adjudications.adjudicationForm')
+                </div>
+
+
+                {{-- JUDGE SUMMARY TABLE --}}
+                <div class="flex flex-col bg-gray-100 p-2 rounded-lg shadow-lg ml-2 mb-2 w-full sm:w-1/2">
+                    <label>Judge Summary Table</label>
+                </div>
             </div>
         @endif
-
-        {{-- JUDGE SUMMARY TABLE --}}
-        <div class="flex flex-col bg-gray-100 p-2 rounded-lg shadow-lg ml-2 mb-2">
-            <label>Judge Summary Table partial</label>
-        </div>
 
         {{--        <div class="flex flex-col mt-4 p-2 border border-gray-300 rounded-lg shadow-lg w-full">--}}
 

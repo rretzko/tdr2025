@@ -11,6 +11,8 @@ use App\Services\PayPal\PaypalIPN;
 use App\Models\Events\Versions\Version;
 use App\Services\ConvertToPenniesService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 #[AllowDynamicProperties] class EpaymentReceiptController extends Controller
 {
@@ -18,7 +20,12 @@ use Illuminate\Http\Request;
 
     public function __construct()
     {
-        logger('Got to controller! @ '.__METHOD__);
+        Log::info('Got to controller! @ '.__METHOD__);
+        Mail::raw(__METHOD__.':'.__LINE__, function ($msg) {
+            $msg->to('rick@mfrholdings.com')
+                ->subject('PayPal contact');
+        });
+
         //MACD PayPal credentials
         $this->ppipn = new PaypalIPN();
 
@@ -52,7 +59,12 @@ use Illuminate\Http\Request;
         logger(__METHOD__);
 
         if (isset($_POST) && count($_POST)) {
-
+            $serialized = serialize($_POST);
+            Log::info('Post: '.$serialized);
+            Mail::raw('Post: '.$serialized, function ($msg) {
+                $msg->to('rick@mfrholdings.com')
+                    ->subject('PayPal Post');
+            });
             logger('***** MAKE DTO *****');
             $dto = $this->makeDto();
             logger('***** LOG POST INFO *****');
