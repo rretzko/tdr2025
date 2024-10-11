@@ -1,7 +1,13 @@
 <form class="flex flex-col space-y-2" method="post" action="{{ route('founder.paypalManualEntry') }}">
     @csrf
     <label>PayPal Manual Entry</label>
-    <input class="px-2" type="text" name="paypalData" value=""/>
+    <input
+        class="px-2"
+        type="text"
+        name="paypalData"
+        placeholder="user | version | school | amount | candidateId | type | studentName | transaction#"
+        value=""
+    />
     <input class="bg-gray-800 text-white w-fit px-2 rounded-full" type="submit" name="submit"
            value="Submit"/>
 

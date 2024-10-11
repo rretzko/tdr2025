@@ -125,4 +125,11 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+     * Square
+     */
+    'squareSandboxAccessToken' => env('SQUARE_SANDBOX_ACCESS_TOKEN', '12AB'),
+    'squareSandboxApplicationId' => env('SQUARE_SANDBOX_APPLICATION_ID', '123ABC'),
+    'squareSandboxLocation' => env('SQUARE_SANDBOX_LOCATION', '1234ABCD'),
+
 ];

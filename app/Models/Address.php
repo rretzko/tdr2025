@@ -26,4 +26,11 @@ class Address extends Model
         return $this->belongsTo(Geostate::class);
     }
 
+    public function getGeostateAbbrAttribute(): string
+    {
+        return ($this->geostate)
+            ? $this->geostate->abbr
+            : 'NJ';
+    }
+
 }

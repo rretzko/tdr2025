@@ -216,7 +216,7 @@
         src="https://sandbox.web.squarecdn.com/v1/square.js"
     ></script>
     <script>
-        const appId = '{{ config('app.squareSandboxAccessToken') }}';
+        const appId = '{{ config('app.squareSandboxApplicationId') }}';
         const locationId = '{{ config('app.squareSandboxLocation') }}';
 
         async function initializeCard(payments) {

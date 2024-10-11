@@ -5,6 +5,7 @@ namespace App\Livewire\Events\Versions\Participations;
 use App\Exports\StudentPaymentsExport;
 use App\Livewire\BasePage;
 use App\Livewire\Forms\StudentPaymentForm;
+use App\Models\Address;
 use App\Models\Epayment;
 use App\Models\EpaymentCredentials;
 use App\Models\Events\Versions\Participations\Registrant;
@@ -32,7 +33,7 @@ class EstimateComponent extends BasePage
     public bool $sandbox = true;
     public string $sandboxId = 'sandboxId';
     public string $sandboxPersonalEmail = '';
-    public string $selectedTab = 'ePayments'; //'estimate';
+    public string $selectedTab = 'estimate';
     public int $showEditForm = 0;
     public array $studentPaymentColumnHeaders = [];
     public array $tabs = [];
@@ -43,6 +44,13 @@ class EstimateComponent extends BasePage
 
     public bool $showSuccessIndicatorPaymentTypeAmount = false;
     public string $successMessagePaymentTypeAmount = '';
+
+    //square variables
+    public string $firstName = '';
+    public string $lastName = '';
+    public string $phone = '';
+    public string $city = '';
+    public string $geostateAbbr = 'NJ';
 
     public function mount(): void
     {
@@ -59,6 +67,7 @@ class EstimateComponent extends BasePage
         $teacher = Teacher::where('user_id', auth()->id())->first();
         $version = Version::find($this->versionId);
 
+        //paypal
         $this->amountDue = $this->getAmountDue();
         $this->customProperties = $this->getCustomProperties();
         $this->email = auth()->user()->email;
@@ -70,6 +79,16 @@ class EstimateComponent extends BasePage
         $this->userId = auth()->id();
         $this->versionShortName = $version->short_name;
         $this->ePaymentVendor = $version->epayment_vendor;
+
+        //square
+        $user = auth()->user();
+        $address = Address::where('user_id', auth()->id())->first();
+        $this->firstName = $user->first_name;
+        $this->lastName = $user->last_name;
+        $this->phone = $user->phoneNumbers()->where('phone_type', 'mobile')->first() ?? '';
+        $this->city = $address->city ?? '';
+        $this->geostateAbbr = $address->geostateAbbr ?? 'NJ';
+
     }
 
     public function render()
