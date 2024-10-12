@@ -35,7 +35,7 @@
                 <div class="flex flex-col justify-center">
 
                     <div class="text-right font-semibold">
-                        {{ $dto['versionShortName'] }}
+                        {{ $dto['versionName'] }}
                     </div>
 
                 </div>
@@ -44,19 +44,14 @@
         </tbody>
     </table>
 
-    <div class="flex flex-col text-center">
+    <div class="flex flex-col text-center" style="margin-bottom: 1rem;">
         <div style="text-align: center; font-size: 0.8rem; font-weight: bold; text-transform: uppercase;">
             All endorsements must be signed in ink for this application to be accepted.
         </div>
         <div style="text-align: center; font-size: 0.8rem; font-weight: bold; text-transform: uppercase;">
             Give this Signed Application to your teacher.
-            <br/>
-            Page 1/2
         </div>
 
-        <div style="text-align: center; font-size: 0.8rem;height: 1rem;">
-            {{-- Page 1 of 2 --}}
-        </div>
     </div>
 
     {{-- SUMMARY --}}
@@ -230,8 +225,7 @@
                     performing
                     organization throughout the CJMEA Region II Chorus experience. We understand
                     that {{ $dto['teacherFullName'] }},
-                    sponsoring this student, is a paid member of NAfME and will be present on the day of auditions and
-                    will
+                    sponsoring this student, is a paid member of NAfME and will
                     serve and complete the assignment given to them by the audition chairperson. We also understand that
                     we will review this application to be sure that all parts are completed correctly. In the event that
                     {{ $dto['fullName'] }} is accepted into the group, we will use our influence to see
@@ -364,14 +358,12 @@
                 his/her high school choir. No one may miss the concert weekend rehearsals for any reason.
             </p>
             <p class="mb-2 onePageFontSize" style="text-align: justify;">
-                Audition fees must be paid with School or Director's check only. No parent/guardian checks
-                will be accepted.
+                Audition fees must be paid using SQUARE online.
                 <br/>
-                All accepted students will be charged a ${{ $dto['participationFee'] }} CASH ONLY acceptance fee which
+                All accepted students will be charged a ${{ $dto['participationFee'] }} acceptance fee which
                 must
-                be paid in full at the first rehearsal. This fee will cover the cost of the purchase of
-                music. Audition fees must be paid with School or Director's check only. No parent/guardian checks
-                will be accepted.
+                be paid using SQUARE online. This fee will cover the cost of the purchase of
+                music.
             </p>
         </div>
     </section>
