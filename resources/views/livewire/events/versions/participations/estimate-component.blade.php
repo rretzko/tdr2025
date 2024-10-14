@@ -30,9 +30,9 @@
                         versionId="{{  $versionId }}"
                     />
 
-                    @if($ePaymentVendor === 'square')
-                        @include('square.squareInApp')
-                    @endif
+                    {{--                    @if($ePaymentVendor === 'square')--}}
+                    {{--                        @include('square.squareInApp')--}}
+                    {{--                    @endif--}}
                 </div>
             @endif
 
@@ -95,9 +95,25 @@
                         />
                     @endif
                     @if($ePaymentVendor === 'square')
-                        <div class="">
-                            @include('square.squareInApp')
+                        <div class="flex flex-row justify-center w-full my-4">
+                            <div class="flex flex-col w-1/2">
+                                <div>
+                                    Please note: You will be asked to add your <b>School Name</b> when paying through
+                                    Square.
+                                </div>
+                                <div class="text-center">
+                                    Amount Due: <b>${{number_format($amountDue, 2) }}</b>
+                                </div>
+                                @include('square.payButton')
+                                <div id="advisory" class="text-xs text-red-600 mt-2 ">
+                                    Please note: Payment record updates may take as long as 24-hours during the work
+                                    week and by Monday at noon over the weekend.
+                                </div>
+                            </div>
                         </div>
+                        {{--                        <div class="">--}}
+                        {{--                            @include('square.squareInApp')--}}
+                        {{--                        </div>--}}
                     @endif
 
                 </div>

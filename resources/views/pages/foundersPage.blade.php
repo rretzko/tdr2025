@@ -22,6 +22,11 @@
                     @include('components.forms.partials.paypalManualEntryForm')
                 </div>
 
+                {{-- EPAYMENT UPLOAD --}}
+                <div class="border border-gray-400 p-2">
+                    @include('components.forms.partials.epayments.ePaymentUploadForm')
+                </div>
+
             </div>
         </div>
     </div>

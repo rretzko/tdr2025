@@ -29,7 +29,7 @@
         <tr>
             <td>
                 <img src="{{ Storage::disk('s3')->url($dto['logoPdf']) }}"
-                     alt="{{ $dto['organizationName'] }} logo {{ $dto['logo'] }}" height="60" width="60"/>
+                     alt="{{ $dto['organizationName'] }} logo" height="60" width="60"/>
             </td>
             <td style="text-align: right; font-weight: bold;">
                 <div class="flex flex-col justify-center">

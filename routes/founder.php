@@ -14,4 +14,6 @@ Route::middleware(['auth', \App\Http\Middleware\FounderMiddleware::class])
             ->name('founder.logInAs');
         Route::post('founder/paypalManualEntry', PaypalManualEntryController::class)
             ->name('founder.paypalManualEntry');
+        Route::post('founderEpaymentUpload', \App\Http\Controllers\EpaymentUploadController::class)
+            ->name('founder.epaymentUpload');
     });
