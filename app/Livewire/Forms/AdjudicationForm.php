@@ -49,7 +49,6 @@ class AdjudicationForm extends Form
 
     public function updateScores($value, $key): void
     {
-        dd(__LINE__);
         foreach ($this->scores as $key => $score) {
 
             $scoreFactor = ScoreFactor::find($key);
@@ -76,5 +75,6 @@ class AdjudicationForm extends Form
                 ]
             );
         }
+
     }
 }

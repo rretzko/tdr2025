@@ -8,6 +8,7 @@ use App\Models\Events\Versions\Scoring\RoomScoreCategory;
 use App\Models\Events\Versions\Scoring\RoomVoicePart;
 use App\Models\Events\Versions\Scoring\ScoreFactor;
 use App\Services\CandidateAdjudicationStatusService;
+use App\Services\JudgeHasCompletedScoringCandidateService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -60,7 +61,10 @@ class Room extends Model
     {
         $candidates = $this->candidatesSql();
 
-        return $this->addStatusCoding($candidates);
+        $statusCoded = $this->addStatusCoding($candidates);
+
+        return $this->addScoringCompleted($statusCoded);
+
     }
 
     public function getAdjudicationButtonsIncompleteArrayAttribute(): array
@@ -123,10 +127,20 @@ class Room extends Model
         return $this->belongsTo(Version::class);
     }
 
+    private function addScoringCompleted(array $candidates): array
+    {
+        foreach ($candidates as $candidate) {
+            $candidate->scoringCompleted = JudgeHasCompletedScoringCandidateService::scoringCompleted($candidate->id,
+                $this);
+        }
+
+        return $candidates;
+    }
+
     private function addStatusCoding(array $candidates): array
     {
         foreach ($candidates as $candidate) {
-            $candidate->status = CandidateAdjudicationStatusService::getStatus($candidate->id);
+            $candidate->status = CandidateAdjudicationStatusService::getRoomStatus($candidate->id, $this);
         }
 
         return $candidates;

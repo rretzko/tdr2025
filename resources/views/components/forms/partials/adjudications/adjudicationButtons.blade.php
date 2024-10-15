@@ -38,16 +38,23 @@
                                 "bg-green-500 text-white" => $button->status === 'completed',
                                 "bg-red-600 text-yellow-400" => $button->status === 'errors',
                                 "bg-black text-white" => $button->status === 'pending',
-//                                'bg-yellow-400 text-black' => $button->status === 'wip',
-                                'bg-green-300 text-black' => $button->status === 'wip',
+                                'bg-yellow-400 text-black' => $button->status === 'wip',
                             ])
                             title="{{ $button->status }}"
                     >
                         {{ $button->ref }}
                     </button>
-                    <div class="text-green-800 -ml-3 -mt-1">
-                        <x-heroicons.check/>
-                    </div>
+                    @if($button->scoringCompleted)
+                        <div
+                            @class([
+                                "-ml-4 mt-3",
+                                'text-black' => ($button->status === 'wip'),
+                                'text-white' => (in_array($button->status, ['completed','errors','pending']))
+                            ])
+                        >
+                            <x-heroicons.check/>
+                        </div>
+                    @endif
                 </div>
                 @empty
                     <div class="text-black">

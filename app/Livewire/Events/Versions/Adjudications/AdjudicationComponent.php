@@ -7,7 +7,11 @@ use App\Livewire\Forms\AdjudicationForm;
 use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Room;
 use App\Models\Events\Versions\Scoring\Judge;
+use App\Models\Events\Versions\Scoring\Score;
+use App\Models\Events\Versions\Scoring\ScoreCategory;
+use App\Models\Events\Versions\Scoring\ScoreFactor;
 use App\Models\PhoneNumber;
+use App\Models\Students\VoicePart;
 
 
 class AdjudicationComponent extends BasePage
@@ -59,10 +63,48 @@ class AdjudicationComponent extends BasePage
         $this->form->setCandidate(Candidate::find($candidateId), $this->room, $judge);
     }
 
+    public function save(): void
+    {
+        $judgeOrderBys = [
+            'head judge' => 1,
+            'judge 2' => 2,
+            'judge 3' => 3,
+            'judge 4' => 4,
+            'judge monitor' => 5,
+        ];
+
+        foreach ($this->form->scores as $factorId => $score) {
+
+            $scoreFactor = ScoreFactor::find($factorId);
+            $scoreCategory = ScoreCategory::find($scoreFactor->score_category_id);
+            $judge = $this->room->judges()->where('user_id', auth()->id())->first();
+            $voicePart = VoicePart::find($this->form->candidate->voice_part_id);
+
+            Score::updateOrCreate(
+                [
+                    'version_id' => $this->versionId,
+                    'candidate_id' => $this->form->sysId,
+                    'student_id' => $this->form->candidate->student_id,
+                    'school_id' => $this->form->candidate->school_id,
+                    'score_category_id' => $scoreCategory->id,
+                    'score_category_order_by' => $scoreCategory->order_by,
+                    'score_factor_id' => $factorId,
+                    'score_factor_order_by' => $scoreFactor->order_by,
+                    'judge_id' => $judge->id,
+                    'judge_order_by' => $judgeOrderBys[$judge->judge_type],
+                    'voice_part_id' => $voicePart->id,
+                    'voice_part_order_by' => $voicePart->order_by,
+                ],
+                [
+                    'score' => $score,
+                ]
+            );
+        }
+    }
+
     public function updatedFormScores($value, $key)
     {
-//        dd($value.': '.$key);
-        $this->form->updateScores();
+        $this->form->updateScores($value, $key);
     }
 
     private function getRoom(): Room
