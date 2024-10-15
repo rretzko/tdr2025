@@ -61,7 +61,7 @@ class AdjudicationComponent extends BasePage
 
     public function updatedFormScores($value, $key)
     {
-        dd($value.': '.$key);
+//        dd($value.': '.$key);
         $this->form->updateScores();
     }
 

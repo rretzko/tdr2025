@@ -7,6 +7,7 @@ use App\Models\Events\Versions\Scoring\Judge;
 use App\Models\Events\Versions\Scoring\RoomScoreCategory;
 use App\Models\Events\Versions\Scoring\RoomVoicePart;
 use App\Models\Events\Versions\Scoring\ScoreFactor;
+use App\Services\CandidateAdjudicationStatusService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -36,26 +37,30 @@ class Room extends Model
         return $this->hasMany(RoomScoreCategory::class);
     }
 
+    /**
+     * ex. array:48 [▼ // app\Models\Events\Versions\Room.php:62
+     *  0 => {#2327 ▼
+     *  +"id": 822897
+     *  +"ref": "82-2897"
+     *  +"descr": "Tenor I"
+     *  +"abbr": "TI"
+     *  +"order_by": 9
+     *  }
+     *  1 => {#2326 ▼
+     *  +"id": 823890
+     *  +"ref": "82-3890"
+     *  +"descr": "Tenor I"
+     *  +"abbr": "TI"
+     *  +"order_by": 9
+     * ...
+     * ]
+     * @return array
+     */
     public function getAdjudicationButtonsAllArrayAttribute(): array
     {
-        $voicePartIds = RoomVoicePart::where('room_id', $this->id)
-            ->pluck('voice_part_id')
-            ->toArray();
+        $candidates = $this->candidatesSql();
 
-        $candidates = DB::table('candidates')
-            ->join('room_voice_parts', 'room_voice_parts.voice_part_id', '=', 'candidates.voice_part_id')
-            ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
-            ->where('candidates.version_id', $this->version_id)
-            ->whereIn('candidates.voice_part_id', $voicePartIds)
-            ->where('candidates.status', 'registered')
-            ->distinct('candidates.id')
-            ->select('candidates.id', 'candidates.ref', 'voice_parts.descr', 'voice_parts.abbr', 'voice_parts.order_by')
-            ->orderBy('voice_parts.order_by')
-            ->orderBy('candidates.id')
-            ->get()
-            ->toArray();
-
-        return $candidates;
+        return $this->addStatusCoding($candidates);
     }
 
     public function getAdjudicationButtonsIncompleteArrayAttribute(): array
@@ -116,5 +121,34 @@ class Room extends Model
     public function version(): BelongsTo
     {
         return $this->belongsTo(Version::class);
+    }
+
+    private function addStatusCoding(array $candidates): array
+    {
+        foreach ($candidates as $candidate) {
+            $candidate->status = CandidateAdjudicationStatusService::getStatus($candidate->id);
+        }
+
+        return $candidates;
+    }
+
+    private function candidatesSql(): array
+    {
+        $voicePartIds = RoomVoicePart::where('room_id', $this->id)
+            ->pluck('voice_part_id')
+            ->toArray();
+
+        return DB::table('candidates')
+            ->join('room_voice_parts', 'room_voice_parts.voice_part_id', '=', 'candidates.voice_part_id')
+            ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
+            ->where('candidates.version_id', $this->version_id)
+            ->whereIn('candidates.voice_part_id', $voicePartIds)
+            ->where('candidates.status', 'registered')
+            ->distinct('candidates.id')
+            ->select('candidates.id', 'candidates.ref', 'voice_parts.descr', 'voice_parts.abbr', 'voice_parts.order_by')
+            ->orderBy('voice_parts.order_by')
+            ->orderBy('candidates.id')
+            ->get()
+            ->toArray();
     }
 }

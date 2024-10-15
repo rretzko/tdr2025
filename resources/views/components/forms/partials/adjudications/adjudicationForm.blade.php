@@ -1,8 +1,9 @@
 <div>
     <label>Adjudication Form</label>
-    <form wire:submit="save">
+    {{-- HEADER --}}
+    <div class="bg-gray-200 border border-gray-600 p-2 mb-2">
         <div>
-            Sys.Id <span class="ml-2 font-semibold">{{ $form->ref }}</span>
+            Id <span class="ml-2 font-semibold">{{ $form->ref }}</span>
         </div>
         <div>
             Room Tolerance: <span class="ml-2 font-semibold">{{ $form->roomTolerance }}</span>
@@ -10,6 +11,9 @@
         <div>
             Best scores are always at the top of the drop-down menu.
         </div>
+    </div>
+    <form wire:submit="save">
+
         <div class="w-full space-y-2 border border-gray-400 p-2 rounded-lg shadow-lg">
             @foreach($form->factors AS $factor)
                 @php

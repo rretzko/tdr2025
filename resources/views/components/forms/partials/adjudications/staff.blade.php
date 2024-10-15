@@ -14,7 +14,7 @@
 
     {{-- STAFF TABLE --}}
     @if($showStaff)
-        <table class="border-collapse text-sm">
+        <table class="border-collapse text-sm mx-auto">
             <tbody>
             @forelse($staff AS $judge)
                 <tr>
