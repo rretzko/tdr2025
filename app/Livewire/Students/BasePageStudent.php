@@ -138,7 +138,7 @@ class BasePageStudent extends BasePage
             ->toArray();
     }
 
-    protected function getSchools(): array
+    public function getSchools(): array
     {
         return auth()->user()->teacher->schools
             ->pluck('name', 'id')
