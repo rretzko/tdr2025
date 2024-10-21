@@ -10,6 +10,7 @@ use App\Models\Events\Versions\Scoring\Judge;
 use App\Models\Events\Versions\Scoring\Score;
 use App\Models\Events\Versions\Scoring\ScoreCategory;
 use App\Models\Events\Versions\Scoring\ScoreFactor;
+use App\Models\Events\Versions\Version;
 use App\Models\PhoneNumber;
 use App\Models\Students\VoicePart;
 
@@ -21,6 +22,7 @@ class AdjudicationComponent extends BasePage
     public int $countError = 20;
     public int $countPending = 10;
     public int $countWip = 20;
+    public bool $hasRecording = false;
     public int $pctCompleted = 50;
     public int $pctError = 20;
     public int $pctPending = 10;
@@ -42,6 +44,8 @@ class AdjudicationComponent extends BasePage
 
         $this->showStaff = ($this->firstTimer !== 'false');
 
+        $recordings = ['audio', 'video'];
+        $this->hasRecording = in_array(Version::find($this->versionId)->upload_type, $recordings);
     }
 
     public function render()

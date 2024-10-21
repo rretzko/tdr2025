@@ -12,6 +12,7 @@
             Best scores are always at the top of the drop-down menu.
         </div>
     </div>
+
     <form wire:submit="save">
 
         <fieldset id="one" class="w-full space-y-2 border border-gray-400 p-2 rounded-lg shadow-lg">

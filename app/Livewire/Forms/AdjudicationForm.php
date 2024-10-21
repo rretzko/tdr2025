@@ -3,6 +3,7 @@
 namespace App\Livewire\Forms;
 
 use App\Models\Events\Versions\Participations\Candidate;
+use App\Models\Events\Versions\Participations\Recording;
 use App\Models\Events\Versions\Scoring\Judge;
 use App\Models\Events\Versions\Room;
 use App\Models\Events\Versions\Scoring\Score;
@@ -19,6 +20,7 @@ class AdjudicationForm extends Form
     public Collection $factors;
     public string $ref = '';
     public int $roomTolerance = 0;
+    public array $recordings = [];
     public array $scores = [];
     public string $sysId = "";
     public int $totalScore = 0;
@@ -44,6 +46,11 @@ class AdjudicationForm extends Form
         foreach ($this->factors as $factor) {
             $this->scores[$factor->id] = $scores[$factor->id] ?? $factor->best;
         }
+
+        $this->recordings = Recording::query()
+            ->where('candidate_id', $candidate->id)
+            ->pluck('url', 'file_type')
+            ->toArray();
 
     }
 
