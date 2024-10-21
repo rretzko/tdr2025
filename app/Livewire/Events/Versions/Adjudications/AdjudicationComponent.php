@@ -64,6 +64,7 @@ class AdjudicationComponent extends BasePage
     public function clickRef(int $candidateId): void
     {
         $judge = $this->room->judges()->where('user_id', auth()->id())->first();
+
         $this->form->setCandidate(Candidate::find($candidateId), $this->room, $judge);
     }
 

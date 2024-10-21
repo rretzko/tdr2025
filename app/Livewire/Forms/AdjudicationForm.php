@@ -17,8 +17,11 @@ use Livewire\Form;
 class AdjudicationForm extends Form
 {
     public Candidate $candidate;
+    public array $categories = [];
     public Collection $factors;
     public string $ref = '';
+    public Room $room;
+    public array $roomScores = [];
     public int $roomTolerance = 0;
     public array $recordings = [];
     public array $scores = [];
@@ -28,6 +31,7 @@ class AdjudicationForm extends Form
     public function setCandidate(Candidate $candidate, Room $room, Judge $judge): void
     {
         $this->candidate = $candidate;
+        $this->room = $room;
 
         $this->sysId = $candidate->id;
 
@@ -36,6 +40,8 @@ class AdjudicationForm extends Form
         $this->roomTolerance = $room->tolerance;
 
         $this->factors = $room->scoringFactors;
+
+        $this->categories = $room->scoringCategories;
 
         $scores = Score::query()
             ->where('candidate_id', $this->sysId)
@@ -51,6 +57,8 @@ class AdjudicationForm extends Form
             ->where('candidate_id', $candidate->id)
             ->pluck('url', 'file_type')
             ->toArray();
+
+        $this->roomScores = $this->getRoomScores();
 
     }
 
@@ -83,5 +91,11 @@ class AdjudicationForm extends Form
             );
         }
 
+        $this->roomScores = $this->getRoomScores();
+    }
+
+    private function getRoomScores(): array
+    {
+        return $this->room->getScores($this->candidate);
     }
 }

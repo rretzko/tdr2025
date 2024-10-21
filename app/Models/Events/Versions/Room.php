@@ -101,6 +101,39 @@ class Room extends Model
             ->toArray();
     }
 
+    public function getScores(Candidate $candidate): array
+    {
+        $a = [];
+        $judges = $this->judges()->with('user')->get()->sortBy(function ($judge) {
+            return $judge->user->last_name;
+        });
+
+        foreach ($judges as $judge) {
+            $a[] = [
+                'judgeName' => $judge['user']->last_name,
+            ];
+        }
+
+        return $a;
+    }
+
+    /**
+     * @return array [scoreCategory, colSpan]
+     */
+    public function getScoringCategoriesAttribute(): array
+    {
+        $categoryIds = $this->roomScoreCategories->pluck('score_category_id')->toArray();
+
+        return DB::table('score_categories')
+            ->join('score_factors', 'score_factors.score_category_id', '=', 'score_categories.id')
+            ->whereIn('score_categories.id', $categoryIds)
+            ->selectRaw('score_categories.descr, COUNT(score_factors.id) AS colSpan')
+            ->orderBy('score_categories.order_by')
+            ->groupBy('score_categories.id', 'score_categories.descr')
+            ->get()
+            ->toArray();
+    }
+
     public function getScoringFactorsAttribute()
     {
         $roomScoreCategoriesIds = $this->roomScoreCategories->pluck('score_category_id')->toArray();
@@ -165,4 +198,6 @@ class Room extends Model
             ->get()
             ->toArray();
     }
+
+
 }
