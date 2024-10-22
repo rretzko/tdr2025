@@ -31,8 +31,8 @@ class Room extends Model
     public function checkScoreTolerance(Candidate $candidate): bool
     {
         $scores = $this->getTotalScoresArray($candidate); //['judge_id' => 'totalScore']
-        $maxScore = max($scores);
-        $minScore = min($scores);
+        $maxScore = count($scores) ? max($scores) : 0;
+        $minScore = count($scores) ? min($scores) : 0;
 
         return (($maxScore - $minScore) <= $this->tolerance);
     }
@@ -71,9 +71,11 @@ class Room extends Model
     {
         $candidates = $this->candidatesSql();
 
-        $statusCoded = $this->addStatusCoding($candidates);
+        $status = $this->addStatusCoding($candidates);
 
-        return $this->addScoringCompleted($statusCoded);
+        $scoring = $this->addScoringCompleted($status);
+
+        return $this->addToleranceCoding($scoring);
 
     }
 
@@ -186,6 +188,7 @@ class Room extends Model
     private function addScoringCompleted(array $candidates): array
     {
         foreach ($candidates as $candidate) {
+
             $candidate->scoringCompleted = JudgeHasCompletedScoringCandidateService::scoringCompleted($candidate->id,
                 $this);
         }
@@ -200,6 +203,21 @@ class Room extends Model
         }
 
         return $candidates;
+    }
+
+    private function addToleranceCoding(array $candidates): array
+    {
+        foreach ($candidates as $candidate) {
+            $tolerance = $this->checkScoreTolerance(Candidate::find($candidate->id));
+
+            $candidate->tolerance = ($tolerance)
+                ? ''
+                : '*';
+        }
+
+        return $candidates;
+
+        return [];
     }
 
     private function candidatesSql(): array

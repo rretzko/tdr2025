@@ -34,7 +34,7 @@
                 <div class="flex flex-row">
                     <button wire:click=clickRef({{ $button->id }})
                             @class([
-                                "w-fit border border-gray-600 rounded-lg px-2 text-xs sm:text-sm",
+                                "w-fit border border-gray-600 rounded-lg px-2 text-xs sm:text-sm flex flex-row space-x-1",
                                 "bg-green-500 text-white" => $button->status === 'completed',
                                 "bg-red-600 text-yellow-400" => $button->status === 'errors',
                                 "bg-black text-white" => $button->status === 'pending',
@@ -42,19 +42,34 @@
                             ])
                             title="{{ $button->status }}"
                     >
+                        {{-- PREFIX: TOLERANCE --}}
+                        <span @class([
+                                "",
+                                "text-red-600 items-center" => strlen($button->tolerance),
+                            ])
+                              title="@if(strlen($button->tolerance)) out of tolerance @endif"
+                        >
+                            {{ $button->tolerance }}
+                        </span>
+
+                        {{-- CANDIDATE REF ID --}}
                         {{ $button->ref }}
-                    </button>
-                    @if($button->scoringCompleted)
-                        <div
+
+                        {{-- SUFFIX: SCORING COMPLETED FOR THIS JUDGE --}}
+                        <span
                             @class([
-                                "-ml-4 mt-3",
+                                "",
                                 'text-black' => ($button->status === 'wip'),
                                 'text-white' => (in_array($button->status, ['completed','errors','pending']))
                             ])
                         >
-                            <x-heroicons.check/>
-                        </div>
-                    @endif
+                            @if($button->scoringCompleted)
+                                <span title="your work completed">
+                                    <x-heroicons.check/>
+                                </span>
+                            @endif
+                        </span>
+                    </button>
                 </div>
                 @empty
                     <div class="text-black">
