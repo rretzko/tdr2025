@@ -167,7 +167,7 @@ class StudentsTableComponent extends BasePage
 
     private function getRows(): Builder
     {
-        //$this->logSql();
+        //$this->troubleShooting();
 
         return Student::query()
             ->join('school_student', 'students.id', '=', 'school_student.student_id')

@@ -81,7 +81,13 @@ class Room extends Model
 
     public function getAdjudicationButtonsIncompleteArrayAttribute(): array
     {
-        return [];
+        $candidates = $this->candidatesSql(true);
+
+        $status = $this->addStatusCoding($candidates);
+
+        $scoring = $this->addScoringCompleted($status);
+
+        return $this->addToleranceCoding($scoring);
     }
 
     public function getRegistrantsByIdAttribute(): Collection
@@ -116,7 +122,8 @@ class Room extends Model
     public function getScores(Candidate $candidate): array
     {
         $a = [];
-        $judges = $this->judges()->with('user')->get()->sortBy(function ($judge) {
+        $judges = $this->judges()->with('user')->where('judge_type', 'LIKE', '%judge%')->get()->sortBy(function ($judge
+        ) {
             return $judge->user->last_name;
         });
 
@@ -220,24 +227,15 @@ class Room extends Model
         return [];
     }
 
-    private function candidatesSql(): array
+    private function candidatesSql($incomplete = false): array
     {
         $voicePartIds = RoomVoicePart::where('room_id', $this->id)
             ->pluck('voice_part_id')
             ->toArray();
 
-        return DB::table('candidates')
-            ->join('room_voice_parts', 'room_voice_parts.voice_part_id', '=', 'candidates.voice_part_id')
-            ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
-            ->where('candidates.version_id', $this->version_id)
-            ->whereIn('candidates.voice_part_id', $voicePartIds)
-            ->where('candidates.status', 'registered')
-            ->distinct('candidates.id')
-            ->select('candidates.id', 'candidates.ref', 'voice_parts.descr', 'voice_parts.abbr', 'voice_parts.order_by')
-            ->orderBy('voice_parts.order_by')
-            ->orderBy('candidates.id')
-            ->get()
-            ->toArray();
+        return ($incomplete)
+            ? $this->getIncompleteCandidatesSql($voicePartIds)
+            : $this->getAllCandidatesSql($voicePartIds);
     }
 
     private function getTotalScoresArray(Candidate $candidate): array
@@ -252,6 +250,42 @@ class Room extends Model
             ->orderBy('totalScore', 'desc')
             ->groupBy('scores.judge_id')
             ->pluck('totalScore', 'judge_id')
+            ->toArray();
+    }
+
+    private function getAllCandidatesSql(array $voicePartIds): array
+    {
+        return DB::table('candidates')
+            ->join('room_voice_parts', 'room_voice_parts.voice_part_id', '=', 'candidates.voice_part_id')
+            ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
+            ->where('candidates.version_id', $this->version_id)
+            ->whereIn('candidates.voice_part_id', $voicePartIds)
+            ->where('candidates.status', 'registered')
+            ->distinct('candidates.id')
+            ->select('candidates.id', 'candidates.ref', 'voice_parts.descr', 'voice_parts.abbr', 'voice_parts.order_by')
+            ->orderBy('voice_parts.order_by')
+            ->orderBy('candidates.id')
+            ->get()
+            ->toArray();
+    }
+
+    private function getIncompleteCandidatesSql(array $voicePartIds): array
+    {
+        $judgeCount = $this->judges->count();
+        $scoreFactorCount = $this->scoringFactors->count();
+        $maxScoreCount = ($judgeCount * $scoreFactorCount);
+        dd($maxScoreCount);
+        return DB::table('candidates')
+            ->join('room_voice_parts', 'room_voice_parts.voice_part_id', '=', 'candidates.voice_part_id')
+            ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
+            ->where('candidates.version_id', $this->version_id)
+            ->whereIn('candidates.voice_part_id', $voicePartIds)
+            ->where('candidates.status', 'registered')
+            ->distinct('candidates.id')
+            ->select('candidates.id', 'candidates.ref', 'voice_parts.descr', 'voice_parts.abbr', 'voice_parts.order_by')
+            ->orderBy('voice_parts.order_by')
+            ->orderBy('candidates.id')
+            ->get()
             ->toArray();
     }
 
