@@ -25,8 +25,14 @@ class AdjudicationForm extends Form
     public int $roomTolerance = 0;
     public array $recordings = [];
     public array $scores = [];
+    public bool $scoreTolerance = false;
     public string $sysId = "";
     public int $totalScore = 0;
+
+    public function getRoomScores(): array
+    {
+        return $this->room->getScores($this->candidate);
+    }
 
     public function setCandidate(Candidate $candidate, Room $room, Judge $judge): void
     {
@@ -60,6 +66,12 @@ class AdjudicationForm extends Form
 
         $this->roomScores = $this->getRoomScores();
 
+        $this->setScoreTolerance();
+    }
+
+    public function setScoreTolerance(): void
+    {
+        $this->scoreTolerance = $this->room->checkScoreTolerance($this->candidate);
     }
 
     public function updateScores($value, $key): int
@@ -96,8 +108,5 @@ class AdjudicationForm extends Form
         return count($this->roomScores);
     }
 
-    public function getRoomScores(): array
-    {
-        return $this->room->getScores($this->candidate);
-    }
+
 }

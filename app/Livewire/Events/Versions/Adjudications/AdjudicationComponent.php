@@ -108,6 +108,8 @@ class AdjudicationComponent extends BasePage
         }
 
         $this->form->roomScores = $this->form->getRoomScores();
+
+        $this->form->setScoreTolerance();
     }
 
     public function updatedFormScores($value, $key)

@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rules\Can;
 
 class Room extends Model
 {
@@ -26,6 +27,15 @@ class Room extends Model
         'tolerance',
         'order_by',
     ];
+
+    public function checkScoreTolerance(Candidate $candidate): bool
+    {
+        $scores = $this->getTotalScoresArray($candidate); //['judge_id' => 'totalScore']
+        $maxScore = max($scores);
+        $minScore = min($scores);
+
+        return (($maxScore - $minScore) <= $this->tolerance);
+    }
 
     public function judges(): HasMany
     {
@@ -111,6 +121,7 @@ class Room extends Model
         foreach ($judges as $judge) {
             $a[] = [
                 'judgeName' => $judge['user']->last_name,
+                'judgeUserId' => $judge['user']->id,
                 'scores' => $this->getCandidateScoresByJudge($candidate, $judge),
             ];
         }
@@ -211,5 +222,19 @@ class Room extends Model
             ->toArray();
     }
 
+    private function getTotalScoresArray(Candidate $candidate): array
+    {
+        $judgeIds = $this->judges->pluck('id')->toArray();
+
+        return DB::table('scores')
+            ->where('candidate_id', $candidate->id)
+            ->whereIn('judge_id', $judgeIds)
+            ->select('scores.judge_id')
+            ->selectRaw('SUM(scores.score) AS totalScore')
+            ->orderBy('totalScore', 'desc')
+            ->groupBy('scores.judge_id')
+            ->pluck('totalScore', 'judge_id')
+            ->toArray();
+    }
 
 }

@@ -12,16 +12,20 @@
                 border: 1px solid black;
             }
         </style>
-        <table id="summaryTable" class="">
+        <table id="summaryTable" @class([
+            "bg-red-100",
+            'bg-white' => $form->scoreTolerance,
+            ])
+        >
             <thead>
 
             {{-- CATEGORIES --}}
             <tr>
-                <th class="border border-t-transparent border-l-transparent"></th>
+                <th class="border border-t-transparent border-l-transparent bg-gray-100"></th>
                 @foreach($form->categories AS $category)
                     <th colspan="{{ $category->colSpan }}">{{ $category->descr }}</th>
                 @endforeach
-                <th class="border border-t-transparent border-r-transparent"></th>
+                <th class="border border-t-transparent border-r-transparent bg-gray-100"></th>
             </tr>
 
             {{-- FACTOR ABBRS --}}
@@ -36,8 +40,12 @@
 
             <tbody>
             @foreach($form->roomScores AS $scores)
-                <tr class="font-semibold">
-                    <td>
+                <tr @class([
+                    "",
+                    'font-semibold' => $scores['judgeUserId'] == auth()->id(),
+                    ])
+                >
+                    <td class="px-1">
                         {{ $scores['judgeName'] }}
                     </td>
                     @forelse($scores['scores'] AS $score)
@@ -56,6 +64,14 @@
             @endforeach
             </tbody>
         </table>
+
+        <div id="toleranceAdvisory">
+            @if(! $form->scoreTolerance)
+                <div class="text-red-600 font-semibold mt-2 ml-4">
+                    SCORES ARE OUT OF {{ $form->roomTolerance }} POINT TOLERANCE!
+                </div>
+            @endif
+        </div>
 
     </div>
 </div>

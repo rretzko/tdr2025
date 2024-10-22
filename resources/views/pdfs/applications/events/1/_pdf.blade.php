@@ -14,10 +14,6 @@
             font-size: 0.8rem;
         }
 
-        .onePageFontSize {
-            font-size: 0.66rem;
-        }
-
         .pageBreak {
             page-break-after: always;
         }
@@ -29,29 +25,48 @@
         <tr>
             <td>
                 <img src="{{ Storage::disk('s3')->url($dto['logoPdf']) }}"
-                     alt="{{ $dto['organizationName'] }} logo" height="60" width="60"/>
+                     alt="{{ $dto['organizationName'] }} logo {{ $dto['logo'] }}" height="60" width="60"/>
             </td>
             <td style="text-align: right; font-weight: bold;">
                 <div class="flex flex-col justify-center">
 
                     <div class="text-right font-semibold">
-                        {{ $dto['versionName'] }}
+                        {{ $dto['versionShortName'] }}
                     </div>
-
+                    <div class="text-right"
+                         style="@if($dto['onSiteRegistrationFee']) color: red; font-size: 1rem; text-transform: uppercase; @endif">
+                        @if($dto['onSiteRegistrationFee'])
+                            On-Site
+                        @endif Student Application Form
+                    </div>
                 </div>
             </td>
         </tr>
         </tbody>
     </table>
 
-    <div class="flex flex-col text-center" style="margin-bottom: 1rem;">
+    <div class="flex flex-col text-center">
         <div style="text-align: center; font-size: 0.8rem; font-weight: bold; text-transform: uppercase;">
             All endorsements must be signed in ink for this application to be accepted.
         </div>
         <div style="text-align: center; font-size: 0.8rem; font-weight: bold; text-transform: uppercase;">
             Give this Signed Application to your teacher.
+            <br/>
+            Page 1/2
         </div>
+        @if($dto['onSiteRegistrationFee'])
+            <div
+                style="text-align: center; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; color: red;">
+                On-Site Registration Fee: ${{ number_format($dto['onSiteRegistrationFee'], 2) }}
+            </div>
+            <div style="text-align: center; font-size: 0.66rem; font-weight: bold;">
+                ({{ $dto['candidateRef'] }})
+            </div>
+        @endif
 
+        <div style="text-align: center; font-size: 0.8rem;height: 1rem;">
+            {{-- Page 1 of 2 --}}
+        </div>
     </div>
 
     {{-- SUMMARY --}}
@@ -103,7 +118,7 @@
         </header>
 
         <div class="conditions">
-            <div class="flex flex-col justify-self-stretch mx-4 mb-4 onePageFontSize" style="text-align: justify;">
+            <div class="flex flex-col justify-self-stretch mx-4 mb-4" style="text-align: justify;">
                 I agree to accept the decision of the judges as binding and if selected I will accept membership in this
                 organization. I understand that membership in this organization may be terminated by anyone that has
                 endorsed this application if I fail to comply with the rules set forth, or if I fail to attend
@@ -118,7 +133,7 @@
             </div>
 
             {{-- SIGNATURES --}}
-            <div class="signatures onePageFontSize" style="margin-top: 0.5rem;">
+            <div class="signatures" style="margin-top: 0.5rem;">
 
                 <table style="width: 100%;">
                     <tr>
@@ -147,7 +162,7 @@
 
         <div class="conditions">
             <div class="flex flex-col justify-self-stretch mx-4 mb-4">
-                <p class="mb-2 onePageFontSize" style="text-align: justify;">
+                <p class="mb-2" style="text-align: justify;">
                     As a parent or legal guardian of {{ $dto['fullName'] }}, I give permission for {{ $dto['first'] }}
                     to be an applicant
                     for this organization. I understand that neither {{ $dto['schoolName'] }} nor CJMEA assumes
@@ -160,7 +175,7 @@
                     use {{ $dto['first'] }}'s photograph
                     for publicity publication in print and online.
                 </p>
-                <p class="mb-2 onePageFontSize" style="text-align: justify;">
+                <p class="mb-2" style="text-align: justify;">
                     I have read and acknowledged the rehearsal and concert schedule and I will make arrangements to pick
                     up
                     {{ $dto['first'] }} on or within twenty-minutes after posted rehearsal dismissal time.
@@ -168,7 +183,7 @@
             </div>
 
             {{-- SIGNATURES --}}
-            <div class="signatures onePageFontSize" style="margin-top: 0.5rem;">
+            <div class="signatures" style="margin-top: 0.5rem;">
 
                 <table style="width: 100%;">
                     <tr>
@@ -196,7 +211,7 @@
         </header>
 
         <div class="conditions">
-            <div class="flex flex-col justify-self-stretch mx-4 mb-4 onePageFontSize" style="text-align: justify;">
+            <div class="flex flex-col justify-self-stretch mx-4 mb-4" style="text-align: justify;">
 
                 We, the undersigned, recommend {{ $dto['fullName'] }} for participation in this CJMEA sponsored
                 activity.
@@ -220,12 +235,13 @@
                 </ol>
                 </p>
 
-                <p class="my-2 onePageFontSize" style="text-align: justify;">
+                <p class="my-2" style="text-align: justify;">
                     A CJMEA Region II Chorus member must remain an active member, in good standing, of the school
                     performing
                     organization throughout the CJMEA Region II Chorus experience. We understand
                     that {{ $dto['teacherFullName'] }},
-                    sponsoring this student, is a paid member of NAfME and will
+                    sponsoring this student, is a paid member of NAfME and will be present on the day of auditions and
+                    will
                     serve and complete the assignment given to them by the audition chairperson. We also understand that
                     we will review this application to be sure that all parts are completed correctly. In the event that
                     {{ $dto['fullName'] }} is accepted into the group, we will use our influence to see
@@ -238,7 +254,7 @@
             </div>
 
             {{-- SIGNATURES --}}
-            <div class="signatures onePageFontSize" style="margin-top: 0.5rem;">
+            <div class="signatures" style="margin-top: 0.5rem;">
 
                 <table style="width: 100%;">
                     <tr>
@@ -261,85 +277,85 @@
     </section>
     {{-- END OF TEACHER/PRINCIPAL ENDORSEMENT --}}
 
-    {{--    <div class="pageBreak"></div>--}}
+    <div class="pageBreak"></div>
 
     {{-- HEADER --}}
-    {{--    <table style="border-collapse: collapse; width: 99%; margin: auto; margin-bottom: 0.5rem;">--}}
-    {{--        <tbody>--}}
-    {{--        <tr>--}}
-    {{--            <td>--}}
-    {{--                <img src="{{ Storage::disk('s3')->url($dto['logoPdf']) }}"--}}
-    {{--                     alt="{{ $dto['organizationName'] }} logo {{ $dto['logo'] }}" height="60" width="60"/>--}}
-    {{--            </td>--}}
-    {{--            <td style="text-align: right; font-weight: bold;">--}}
-    {{--                <div class="flex flex-col justify-center">--}}
+    <table style="border-collapse: collapse; width: 99%; margin: auto; margin-bottom: 0.5rem;">
+        <tbody>
+        <tr>
+            <td>
+                <img src="{{ Storage::disk('s3')->url($dto['logoPdf']) }}"
+                     alt="{{ $dto['organizationName'] }} logo {{ $dto['logo'] }}" height="60" width="60"/>
+            </td>
+            <td style="text-align: right; font-weight: bold;">
+                <div class="flex flex-col justify-center">
 
-    {{--                    <div class="text-right font-semibold">--}}
-    {{--                        {{ $dto['versionShortName'] }}--}}
-    {{--                    </div>--}}
-    {{--                    <div class="text-right">--}}
-    {{--                        Student Application Form--}}
-    {{--                    </div>--}}
-    {{--                </div>--}}
-    {{--            </td>--}}
-    {{--        </tr>--}}
-    {{--        </tbody>--}}
-    {{--    </table>--}}
+                    <div class="text-right font-semibold">
+                        {{ $dto['versionShortName'] }}
+                    </div>
+                    <div class="text-right">
+                        Student Application Form
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 
-    {{--    <div class="flex flex-col text-center">--}}
-    {{--        <div style="text-align: center; font-size: 0.8rem; font-weight: bold; text-transform: uppercase;">--}}
-    {{--            All endorsements must be signed in ink for this application to be accepted.--}}
-    {{--        </div>--}}
-    {{--        <div style="text-align: center; font-size: 0.8rem; font-weight: bold; text-transform: uppercase;">--}}
-    {{--            Give this Signed Application to your teacher.--}}
-    {{--            <br/>--}}
-    {{--            Page 2/2--}}
-    {{--        </div>--}}
+    <div class="flex flex-col text-center">
+        <div style="text-align: center; font-size: 0.8rem; font-weight: bold; text-transform: uppercase;">
+            All endorsements must be signed in ink for this application to be accepted.
+        </div>
+        <div style="text-align: center; font-size: 0.8rem; font-weight: bold; text-transform: uppercase;">
+            Give this Signed Application to your teacher.
+            <br/>
+            Page 2/2
+        </div>
 
-    {{--        <div style="text-align: center; font-size: 0.8rem;height: 1rem;">--}}
-    {{--            --}}{{-- Page 1 of 2 --}}
-    {{--        </div>--}}
-    {{--    </div>--}}
+        <div style="text-align: center; font-size: 0.8rem;height: 1rem;">
+            {{-- Page 1 of 2 --}}
+        </div>
+    </div>
 
     {{-- SUMMARY --}}
-    {{--    <style>--}}
-    {{--        .summaryTbl table {--}}
-    {{--            width: 99%;--}}
-    {{--            margin: auto;--}}
-    {{--        }--}}
+    <style>
+        .summaryTbl table {
+            width: 99%;
+            margin: auto;
+        }
 
-    {{--        .summaryTbl td, th {--}}
-    {{--            border: 1px solid black;--}}
-    {{--            text-align: center;--}}
-    {{--        }--}}
-    {{--    </style>--}}
-    {{--    <table class="summaryTbl" style="border-collapse: collapse; width: 99%; margin: auto; margin-bottom: 0.5rem;">--}}
-    {{--        <tbody>--}}
-    {{--        <tr>--}}
-    {{--            <td>{{ $dto['fullNameAlpha'] }}</td>--}}
-    {{--            <td style="color: red;">{{ $dto['candidateVoicepartDescr'] }}</td>--}}
-    {{--            <td>Grade: {{ $dto['grade'] }}</td>--}}
-    {{--            <td>{{ $dto['schoolShortName'] }}</td>--}}
-    {{--        </tr>--}}
-    {{--        </tbody>--}}
-    {{--    </table>--}}
+        .summaryTbl td, th {
+            border: 1px solid black;
+            text-align: center;
+        }
+    </style>
+    <table class="summaryTbl" style="border-collapse: collapse; width: 99%; margin: auto; margin-bottom: 0.5rem;">
+        <tbody>
+        <tr>
+            <td>{{ $dto['fullNameAlpha'] }}</td>
+            <td style="color: red;">{{ $dto['candidateVoicepartDescr'] }}</td>
+            <td>Grade: {{ $dto['grade'] }}</td>
+            <td>{{ $dto['schoolShortName'] }}</td>
+        </tr>
+        </tbody>
+    </table>
 
-    {{--    <table class="summaryTbl" style="border-collapse: collapse; width: 99%; margin: auto; margin-bottom: 0.5rem;">--}}
-    {{--        <tbody>--}}
-    {{--        <tr style="background-color: lightgray;">--}}
-    {{--            <th>Home Phone</th>--}}
-    {{--            <th>Student Cell Phone</th>--}}
-    {{--            <th>Parent Cell Phone</th>--}}
-    {{--        </tr>--}}
-    {{--        <tr>--}}
-    {{--            <td>{{ $dto['studentPhoneHome'] }}</td>--}}
-    {{--            <td>{{ $dto['phoneMobile'] }}</td>--}}
-    {{--            <td style="@if(strstr($dto['emergencyContactMobile'], 'found')) color:red; @endif">--}}
-    {{--                {!! $dto['emergencyContactMobile'] !!}--}}
-    {{--            </td>--}}
-    {{--        </tr>--}}
-    {{--        </tbody>--}}
-    {{--    </table>--}}
+    <table class="summaryTbl" style="border-collapse: collapse; width: 99%; margin: auto; margin-bottom: 0.5rem;">
+        <tbody>
+        <tr style="background-color: lightgray;">
+            <th>Home Phone</th>
+            <th>Student Cell Phone</th>
+            <th>Parent Cell Phone</th>
+        </tr>
+        <tr>
+            <td>{{ $dto['studentPhoneHome'] }}</td>
+            <td>{{ $dto['phoneMobile'] }}</td>
+            <td style="@if(strstr($dto['emergencyContactMobile'], 'found')) color:red; @endif">
+                {!! $dto['emergencyContactMobile'] !!}
+            </td>
+        </tr>
+        </tbody>
+    </table>
 
     {{-- PLEASE NOTE --}}
     <section id="pleaseNote">
@@ -349,7 +365,7 @@
         </header>
 
         <div class="conditions" style="font-size: 0.8rem;">
-            <p class="mb-2 onePageFontSize" style="text-align: justify; ">
+            <p class="mb-2" style="text-align: justify; ">
                 A student will not be excused for any types of performance other than one school performance with the
                 corresponding type of CJMEA organization. For example: If the student is in the CJMEA Region II Chorus,
                 the
@@ -357,13 +373,15 @@
                 perform with
                 his/her high school choir. No one may miss the concert weekend rehearsals for any reason.
             </p>
-            <p class="mb-2 onePageFontSize" style="text-align: justify;">
-                Audition fees must be paid using SQUARE online.
+            <p class="mb-2" style="text-align: justify;">
+                Audition fees must be paid with School or Director's check only. No parent/guardian checks
+                will be accepted.
                 <br/>
-                All accepted students will be charged a ${{ $dto['participationFee'] }} acceptance fee which
+                All accepted students will be charged a ${{ $dto['participationFee'] }} CASH ONLY acceptance fee which
                 must
-                be paid using SQUARE online. This fee will cover the cost of the purchase of
-                music.
+                be paid in full at the first rehearsal. This fee will cover the cost of the purchase of
+                music. Audition fees must be paid with School or Director's check only. No parent/guardian checks
+                will be accepted.
             </p>
         </div>
     </section>
@@ -376,7 +394,7 @@
         </header>
 
         <div class="conditions" style="font-size: 0.8rem;">
-            <p class="mb-2 onePageFontSize" style="text-align: justify;">
+            <p class="mb-2" style="text-align: justify;">
                 Please read the special Home School Instructions included in the information section of the Director's
                 Packet BEFORE you complete this form.
             </p>
