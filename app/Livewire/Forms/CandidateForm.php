@@ -427,10 +427,10 @@ class CandidateForm extends Form
                 'signed' => $value,
             ]
         );
-        Log::info(__METHOD__.': '.__LINE__);
-        Log::info('*** '.$role.' signature: '.$signature.' ***');
+        //Log::info(__METHOD__.': '.__LINE__);
+        //Log::info('*** '.$role.' signature: '.$signature.' ***');
         $this->status = CandidateStatusService::getStatus($this->candidate);
-        Log::info('*** status: '.$this->status.' ***');
+        //Log::info('*** status: '.$this->status.' ***');
         return $signature;
     }
 

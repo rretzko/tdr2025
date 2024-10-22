@@ -24,7 +24,7 @@ class MemberEditComponent extends BasePageMember
     {
         //ensure that any asset changes are refreshed
         $this->form->setAssignedAssets();
-        Log::info(print_r($this->form->memberAssets, true));
+        //Log::info(print_r($this->form->memberAssets, true));
         return view('livewire..ensembles.members.member-edit-component',
             [
                 'assets' => $this->getAssets(),

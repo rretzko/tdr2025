@@ -22,10 +22,10 @@ class SendWorkEmailVerificationListener
      */
     public function handle(WorkEmailChangedEvent $event): void
     {
-        $to = 'rretzko@hotmail.com'; //$event->schoolTeacher->email;
+        $to = $event->schoolTeacher->email;
         Mail::to($to)->send(new WorkEmailVerificationMail($event));
 
-        Log::info($event->workEmail);
-        Log::info($event->schoolTeacher->teacher_id);
+        //Log::info($event->workEmail);
+        //Log::info($event->schoolTeacher->teacher_id);
     }
 }

@@ -13,6 +13,7 @@ use App\Models\Events\Versions\Scoring\ScoreFactor;
 use App\Models\Events\Versions\Version;
 use App\Models\PhoneNumber;
 use App\Models\Students\VoicePart;
+use Illuminate\Support\Facades\Log;
 
 
 class AdjudicationComponent extends BasePage
@@ -105,11 +106,13 @@ class AdjudicationComponent extends BasePage
                 ]
             );
         }
+
+        $this->form->roomScores = $this->form->getRoomScores();
     }
 
     public function updatedFormScores($value, $key)
     {
-        $this->form->updateScores($value, $key);
+        $scoreCount = $this->form->updateScores($value, $key);
     }
 
     private function getRoom(): Room

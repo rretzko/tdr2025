@@ -46,7 +46,7 @@ class AdjudicationForm extends Form
         $scores = Score::query()
             ->where('candidate_id', $this->sysId)
             ->where('judge_id', $judge->id)
-            ->pluck('score', 'id')
+            ->pluck('score', 'score_factor_id')
             ->toArray() ?? [];
 
         foreach ($this->factors as $factor) {
@@ -62,7 +62,7 @@ class AdjudicationForm extends Form
 
     }
 
-    public function updateScores($value, $key): void
+    public function updateScores($value, $key): int
     {
         foreach ($this->scores as $key => $score) {
 
@@ -92,9 +92,11 @@ class AdjudicationForm extends Form
         }
 
         $this->roomScores = $this->getRoomScores();
+
+        return count($this->roomScores);
     }
 
-    private function getRoomScores(): array
+    public function getRoomScores(): array
     {
         return $this->room->getScores($this->candidate);
     }

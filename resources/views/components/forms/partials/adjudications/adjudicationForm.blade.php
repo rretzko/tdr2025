@@ -58,7 +58,8 @@
                 <div class="mt-4 justify-center">
                     Total: <span class="ml-2 font-semibold">{{ array_sum($form->scores) }}</span>
                 </div>
-                <input type="submit" wire:model="save" class="bg-black text-white rounded-lg px-2 shadow-lg"
+                <input type="submit" wire:model="save"
+                       class="bg-black text-white rounded-lg px-2 shadow-lg cursor-pointer"
                        value="Save"/>
             </div>
 

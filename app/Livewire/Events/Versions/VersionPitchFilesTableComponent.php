@@ -116,8 +116,8 @@ class VersionPitchFilesTableComponent extends BasePage
         //$this->updatePitchFile
         if (!$this->form->url) {
             sleep(5);
-            Log::info(__METHOD__.': '.__LINE__);
-            Log::info('race condition potentially avoided with pitch file upload.');
+            //Log::info(__METHOD__.': '.__LINE__);
+            //Log::info('race condition potentially avoided with pitch file upload.');
         }
 
         $this->form->add();

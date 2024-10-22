@@ -40,8 +40,8 @@ class TeacherSubject extends Model
         if (!count($subjects)) {
 
             //early exit
-            Log::info('*** '.__METHOD__.': '.__LINE__.' ***');
-            Log::info('*** $subjects array is empty for teacher_id='.$this->teacher_id.' and school_id='.$this->school_id.'. ***');
+            //Log::info('*** '.__METHOD__.': '.__LINE__.' ***');
+            //Log::info('*** $subjects array is empty for teacher_id='.$this->teacher_id.' and school_id='.$this->school_id.'. ***');
 
         } else {
 

@@ -149,7 +149,7 @@ class MembersTableComponent extends BasePageMember
                 'ensemble_members.id')
             ->toRawSql();
 
-        Log::info($sql);
+       // Log::info($sql);
     }
 
     private function setFilterMethods(): void

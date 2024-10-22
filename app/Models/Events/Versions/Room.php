@@ -111,10 +111,22 @@ class Room extends Model
         foreach ($judges as $judge) {
             $a[] = [
                 'judgeName' => $judge['user']->last_name,
+                'scores' => $this->getCandidateScoresByJudge($candidate, $judge),
             ];
         }
 
         return $a;
+    }
+
+    private function getCandidateScoresByJudge(Candidate $candidate, Judge $judge): array
+    {
+        return DB::table('scores')
+            ->where('candidate_id', $candidate->id)
+            ->where('judge_id', $judge->id)
+            ->select('score')
+            ->orderBy('score_factor_order_by')
+            ->pluck('score')
+            ->toArray() ?? [];
     }
 
     /**

@@ -24,7 +24,7 @@ class EstimatePdfController extends Controller
     {
         $service = new FindPdfPathService;
         $path = $service->findEstimatePath($version);
-        Log::info('*** path: '.$path.' ***');
+        //Log::info('*** path: '.$path.' ***');
         $data = new PdfEstimateDataFactory($version);
         $dto = $data->getDto();
 

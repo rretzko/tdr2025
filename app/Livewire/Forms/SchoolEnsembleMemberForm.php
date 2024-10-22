@@ -73,12 +73,12 @@ class SchoolEnsembleMemberForm extends Form
             ->select('inventories.*', 'assets.name AS assetName')
             ->get();
 
-        Log::info(Inventory::query()
-            ->join('assets', 'assets.id', '=', 'inventories.asset_id')
-            ->where('assigned_to', $this->userId)
-            ->where('status', 'assigned')
-            ->select('inventories.*', 'assets.name AS assetName')
-            ->toRawSql());
+//        Log::info(Inventory::query()
+//            ->join('assets', 'assets.id', '=', 'inventories.asset_id')
+//            ->where('assigned_to', $this->userId)
+//            ->where('status', 'assigned')
+//            ->select('inventories.*', 'assets.name AS assetName')
+//            ->toRawSql());
 
         foreach ($inventories as $inventory) {
 

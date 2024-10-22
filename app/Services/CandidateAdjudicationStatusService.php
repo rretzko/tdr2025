@@ -46,7 +46,7 @@ class CandidateAdjudicationStatusService
         self::$versionId = self::$version->id;
         $scoreCount = self::getScoreCount();
         $maxScoreCount = self::getMaxScoreCount();
-        Log::info('scoreCount: '.$scoreCount.' | maxScoreCount: '.$maxScoreCount);
+        //Log::info('scoreCount: '.$scoreCount.' | maxScoreCount: '.$maxScoreCount);
         if (!$scoreCount) {
             self::$status = 'pending';
         } elseif ($scoreCount === $maxScoreCount) {

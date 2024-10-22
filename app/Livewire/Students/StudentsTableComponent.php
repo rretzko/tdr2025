@@ -239,6 +239,6 @@ class StudentsTableComponent extends BasePage
             ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
             ->toRawSql();
 
-        Log::info($sql);
+        //Log::info($sql);
     }
 }
