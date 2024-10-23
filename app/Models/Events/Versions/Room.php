@@ -274,14 +274,16 @@ class Room extends Model
         $judgeCount = $this->judges->count();
         $scoreFactorCount = $this->scoringFactors->count();
         $maxScoreCount = ($judgeCount * $scoreFactorCount);
-        dd($maxScoreCount);
+
         return DB::table('candidates')
             ->join('room_voice_parts', 'room_voice_parts.voice_part_id', '=', 'candidates.voice_part_id')
             ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
+            ->join('audition_results', 'audition_results.candidate_id', '=', 'candidates.id')
             ->where('candidates.version_id', $this->version_id)
             ->whereIn('candidates.voice_part_id', $voicePartIds)
             ->where('candidates.status', 'registered')
-            ->distinct('candidates.id')
+            ->where('audition_results.score_count', '!=', $maxScoreCount)
+            ->distinct()
             ->select('candidates.id', 'candidates.ref', 'voice_parts.descr', 'voice_parts.abbr', 'voice_parts.order_by')
             ->orderBy('voice_parts.order_by')
             ->orderBy('candidates.id')

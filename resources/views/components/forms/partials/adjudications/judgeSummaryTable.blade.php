@@ -57,9 +57,21 @@
                             no scores found
                         </td>
                     @endforelse
+
+                    {{-- FILL IN ANY MISSING SCORE VALUES WITH BLANKS --}}
+                    @php
+                        $missingScores = ($this->form->factors->count() - count($scores['scores']));
+                    @endphp
+
+                    @for($i=0; $i < $missingScores; $i++)
+                        <td></td>
+                    @endfor
+
+                    {{-- TOTAL SCORES --}}
                     <td class="text-center">
                         {{ array_sum($scores['scores']) }}
                     </td>
+
                 </tr>
             @endforeach
             </tbody>

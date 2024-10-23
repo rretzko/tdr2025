@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Events\Versions\Adjudications;
 
+use App\Events\UpdateAuditionResultsEvent;
 use App\Livewire\BasePage;
 use App\Livewire\Forms\AdjudicationForm;
 use App\Models\Events\Versions\Participations\Candidate;
@@ -13,6 +14,8 @@ use App\Models\Events\Versions\Scoring\ScoreFactor;
 use App\Models\Events\Versions\Version;
 use App\Models\PhoneNumber;
 use App\Models\Students\VoicePart;
+use App\Services\UpdateAuditionResultsService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
 
@@ -29,6 +32,7 @@ class AdjudicationComponent extends BasePage
     public int $pctPending = 10;
     public int $pctWip = 20;
     public Room $room;
+    public string $scoreUpdatedMssg = '';
     public bool $showAllButtons = true;
     public bool $showProgressBar = true;
     public bool $showStaff = false;
@@ -71,6 +75,8 @@ class AdjudicationComponent extends BasePage
 
     public function save(): void
     {
+        $this->reset('scoreUpdatedMssg');
+
         $judgeOrderBys = [
             'head judge' => 1,
             'judge 2' => 2,
@@ -110,6 +116,10 @@ class AdjudicationComponent extends BasePage
         $this->form->roomScores = $this->form->getRoomScores();
 
         $this->form->setScoreTolerance();
+
+        event(new UpdateAuditionResultsEvent($this->form->candidate));
+
+        $this->scoreUpdatedMssg = 'Last update: '.Carbon::now('America/New_York')->format('D, M d @ g:i:s a');
     }
 
     public function updatedFormScores($value, $key)

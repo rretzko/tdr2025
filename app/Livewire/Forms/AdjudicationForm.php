@@ -61,6 +61,8 @@ class AdjudicationForm extends Form
 
         $this->recordings = Recording::query()
             ->where('candidate_id', $candidate->id)
+            ->whereNotNull('approved')
+            ->whereNotNull('approved_by')
             ->pluck('url', 'file_type')
             ->toArray();
 

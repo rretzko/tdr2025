@@ -2,7 +2,11 @@
 
     {{-- HEADER --}}
     <div class="flex flex-row justify-between">
-        <label>Candidates ({{ count($rows) }})</label>
+        <label>@if($showAllButtons)
+                All
+            @else
+                Incomplete Score
+            @endif Candidates ({{ count($rows) }})</label>
         <div wire:click="$toggle('showAllButtons')" class="font-semibold text-green-600 cursor-pointer">
             @if($showAllButtons)
                 Incomplete...
@@ -35,10 +39,10 @@
                     <button wire:click=clickRef({{ $button->id }})
                             @class([
                                 "w-fit border border-gray-600 rounded-lg px-2 text-xs sm:text-sm flex flex-row space-x-1",
-                                "bg-green-500 text-white" => $button->status === 'completed',
-                                "bg-red-600 text-yellow-400" => $button->status === 'errors',
-                                "bg-black text-white" => $button->status === 'pending',
-                                'bg-yellow-400 text-black' => $button->status === 'wip',
+                                "bg-green-500 text-white hover:bg-green-700" => $button->status === 'completed',
+                                "bg-red-600 text-yellow-400 hover:bg-red-700" => $button->status === 'errors',
+                                "bg-black text-white hover:bg-gray-600" => $button->status === 'pending',
+                                'bg-yellow-400 text-black hover:bg-yellow-500' => $button->status === 'wip',
                             ])
                             title="{{ $button->status }}"
                     >
@@ -73,7 +77,12 @@
                 </div>
                 @empty
                     <div class="text-black">
-                        No candidates for adjudication found.
+                        @if($showAllButtons)
+                            No candidates for adjudication found.
+                        @else
+                            No candidates with incomplete scores found. Click the "All..." link to the right for ALL
+                            candidates.
+                        @endif
                     </div>
                 @endforelse
 

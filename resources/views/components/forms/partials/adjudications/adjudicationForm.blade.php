@@ -59,8 +59,11 @@
                     Total: <span class="ml-2 font-semibold">{{ array_sum($form->scores) }}</span>
                 </div>
                 <input type="submit" wire:model="save"
-                       class="bg-black text-white rounded-lg px-2 shadow-lg cursor-pointer"
+                       class="bg-black text-white rounded-lg px-2 shadow-lg cursor-pointer hover:bg-gray-300 hover:text-black focus:bg-gray-300 focus:text-black"
                        value="Save"/>
+                <div class="bg-green-100 text-green-600 text-xs italic px-2 rounded-lg">
+                    {{ $scoreUpdatedMssg }}
+                </div>
             </div>
 
         </fieldset>

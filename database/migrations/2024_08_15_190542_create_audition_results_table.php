@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('audition_results', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('candidate_id');
+            $table->foreignId('candidate_id')->unique();
             $table->foreignId('version_id');
             $table->foreignId('voice_part_id');
             $table->foreignId('school_id');

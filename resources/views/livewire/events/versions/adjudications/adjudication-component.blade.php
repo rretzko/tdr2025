@@ -41,41 +41,6 @@
             </div>
         @endif
 
-        {{--        <div class="flex flex-col mt-4 p-2 border border-gray-300 rounded-lg shadow-lg w-full">--}}
-
-        {{--            <div class="flex flex-col sm:flex-row">--}}
-
-        {{--                --}}{{-- STAFF --}}
-        {{--                <div class="my-4 p-2 border border-gray-300 rounded-lg shadow-lg ">--}}
-        {{--                    <fieldset class="flex flex-col ">--}}
-        {{--
-        {{--                        @forelse($staff AS $judge)--}}
-        {{--                            <div class="flex flex-row space-x-2">--}}
-        {{--                                <div>--}}
-        {{--                                    {{ $judge['name'] }}--}}
-        {{--                                </div>--}}
-        {{--                                <div>--}}
-        {{--                                    {{ $judge['role'] }}--}}
-        {{--                                </div>--}}
-        {{--                                <div>--}}
-        {{--                                    {{ $judge['email'] }}--}}
-        {{--                                </div>--}}
-        {{--                                <div>--}}
-        {{--                                    {{ $judge['mobile'] }}--}}
-        {{--                                </div>--}}
-        {{--                            </div>--}}
-        {{--                        @empty--}}
-        {{--                            <div class="text-center">--}}
-        {{--                                No staff found--}}
-        {{--                            </div>--}}
-        {{--                        @endforelse--}}
-        {{--                    </fieldset>--}}
-        {{--                </div>--}}
-
-        {{--            </div>--}}
-
-        {{--        </div>--}}
-
     </div>{{-- END OF ID=CONTAINER --}}
 
 </div>
