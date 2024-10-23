@@ -222,6 +222,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('version/roles', \App\Http\Controllers\Events\Versions\VersionRoleController::class)
         ->name('version.roles');
 
+    //VERSIONS.TABROOM
+    //VERSIONS.TABROOM.SCORING
+    Route::get('version/tabroom/scoring',
+        \App\Http\Controllers\Events\Versions\Tabrooms\TabroomScoringController::class)
+        ->name('version.tabroom.scoring');
+
     //VERSIONS.STUDENT TRANSFER
     Route::get('version/studentTransfer', \App\Http\Controllers\Events\Versions\StudentTransferController::class)
         ->name('studentTransfer');

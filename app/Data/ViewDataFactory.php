@@ -343,6 +343,9 @@ class ViewDataFactory extends aViewData
             //adjudication
             'adjudication' => 'events.versions.adjudications.adjudication-component',
 
+            //tab room
+            'tabroom scoring' => 'events.versions.tabrooms.tabroom-scoring-component',
+
         ];
 
         return $components[$this->viewPage->header];

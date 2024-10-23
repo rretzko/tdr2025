@@ -3,8 +3,10 @@
 namespace App\Models\Events\Versions\Participations;
 
 use App\Models\Events\Versions\Version;
+use App\Models\Schools\School;
 use App\Models\Schools\Teacher;
 use App\Models\Students\Student;
+use App\Models\Students\VoicePart;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -53,6 +55,11 @@ class Candidate extends Model
             ->exists();
     }
 
+    public function school(): BelongsTo
+    {
+        return $this->belongsTo(School::class);
+    }
+
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class);
@@ -71,6 +78,11 @@ class Candidate extends Model
     public function version(): BelongsTo
     {
         return $this->belongsTo(Version::class);
+    }
+
+    public function voicePart(): BelongsTo
+    {
+        return $this->belongsTo(VoicePart::class);
     }
 
 

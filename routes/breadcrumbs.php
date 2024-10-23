@@ -225,6 +225,12 @@ Breadcrumbs::for('student reset password', function (BreadcrumbTrail $trail, int
     $trail->push('Reset Password', route('student.reset', ['student' => $id]));
 });
 
+//Tabroom:scoring
+Breadcrumbs::for('tabroom scoring', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('version dashboard', $id);
+    $trail->push('Tabroom Scoring', route('version.tabroom.scoring'));
+});
+
 //Versions.Dashboard (note: MULTIPLE versions)
 Breadcrumbs::for('versions dashboard', function (BreadcrumbTrail $trail, int $id) {
     $trail->parent('my events');
