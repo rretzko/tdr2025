@@ -2,10 +2,12 @@
 
 namespace App\Models\Events\Versions;
 
+use App\Models\Events\Versions\Participations\AuditionResult;
 use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Scoring\Judge;
 use App\Models\Events\Versions\Scoring\RoomScoreCategory;
 use App\Models\Events\Versions\Scoring\RoomVoicePart;
+use App\Models\Events\Versions\Scoring\Score;
 use App\Models\Events\Versions\Scoring\ScoreFactor;
 use App\Services\CandidateAdjudicationStatusService;
 use App\Services\JudgeHasCompletedScoringCandidateService;
@@ -88,6 +90,63 @@ class Room extends Model
         $scoring = $this->addScoringCompleted($status);
 
         return $this->addToleranceCoding($scoring);
+    }
+
+    public function getCountRegistrants(): int
+    {
+        return Candidate::query()
+            ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
+            ->where('version_id', $this->version_id)
+            ->whereIn('voice_part_id', $this->voicePartIds)
+            ->where('status', 'registered')
+            ->select('candidates.id', 'voice_parts.abbr')
+            ->orderBy('id')
+            ->count('candidates.id');
+    }
+
+    public function getCountCompleted(): int
+    {
+        $candidateIds = $this->getRegistrantIds();
+        $judgeIds = $this->getJudgeIds();
+        $maxScoreCount = $this->getMaxScoreCount();
+
+        return Score::query()
+            ->whereIn('candidate_id', $candidateIds)
+            ->whereIn('judge_id', $judgeIds)
+            ->selectRaw('COUNT(score) AS scoreCount')
+            ->groupBy('candidate_id')
+            ->having('scoreCount', $maxScoreCount)
+            ->count();
+    }
+
+    public function getCountWip(): int
+    {
+        $candidateIds = $this->getRegistrantIds();
+        $judgeIds = $this->getJudgeIds();
+        $maxScoreCount = $this->getMaxScoreCount();
+
+        return Score::query()
+            ->whereIn('candidate_id', $candidateIds)
+            ->whereIn('judge_id', $judgeIds)
+            ->selectRaw('COUNT(score) AS scoreCount')
+            ->groupBy('candidate_id')
+            ->having('scoreCount', '<', $maxScoreCount)
+            ->count();
+    }
+
+    public function getCountError(): int
+    {
+        $candidateIds = $this->getRegistrantIds();
+        $judgeIds = $this->getJudgeIds();
+        $maxScoreCount = $this->getMaxScoreCount();
+
+        return Score::query()
+            ->whereIn('candidate_id', $candidateIds)
+            ->whereIn('judge_id', $judgeIds)
+            ->selectRaw('COUNT(score) AS scoreCount')
+            ->groupBy('candidate_id')
+            ->having('scoreCount', '>', $maxScoreCount)
+            ->count();
     }
 
     public function getRegistrantsByIdAttribute(): Collection
@@ -223,8 +282,6 @@ class Room extends Model
         }
 
         return $candidates;
-
-        return [];
     }
 
     private function candidatesSql($incomplete = false): array
@@ -237,6 +294,25 @@ class Room extends Model
             ? $this->getIncompleteCandidatesSql($voicePartIds)
             : $this->getAllCandidatesSql($voicePartIds);
     }
+
+    private function getJudgeIds(): array
+    {
+        return $this->judges->pluck('id')->toArray();
+    }
+
+    private function getMaxScoreCount(): int
+    {
+        $judgeIdsCount = count($this->getJudgeIds());
+        $scoringFactorsCount = $this->scoringFactors->count();
+
+        return ($judgeIdsCount * $scoringFactorsCount);
+    }
+
+    private function getRegistrantIds(): array
+    {
+        return $this->getRegistrantsByIdAttribute()->pluck('id')->toArray();
+    }
+
 
     private function getTotalScoresArray(Candidate $candidate): array
     {

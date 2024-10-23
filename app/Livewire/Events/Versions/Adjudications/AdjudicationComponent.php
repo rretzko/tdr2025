@@ -22,10 +22,10 @@ use Illuminate\Support\Facades\Log;
 class AdjudicationComponent extends BasePage
 {
     public AdjudicationForm $form;
-    public int $countCompleted = 50;
-    public int $countError = 20;
-    public int $countPending = 10;
-    public int $countWip = 20;
+    public int $countCompleted = 0;
+    public int $countError = 0;
+    public int $countPending = 0;
+    public int $countWip = 0;
     public bool $hasRecording = false;
     public int $pctCompleted = 50;
     public int $pctError = 20;
@@ -55,6 +55,8 @@ class AdjudicationComponent extends BasePage
 
     public function render()
     {
+        $this->setProgressBarCounts();
+
         return view('livewire..events.versions.adjudications.adjudication-component',
             [
                 'rows' => $this->getRows(),
@@ -167,5 +169,19 @@ class AdjudicationComponent extends BasePage
             ->value('phone_number') ?? 'cell not found';
     }
 
+    private function setProgressBarCounts(): void
+    {
+        $registeredCount = $this->room->getCountRegistrants();
+        $this->countError = $this->room->getCountError();
+        $this->countCompleted = $this->room->getCountCompleted();
+        $this->countWip = $this->room->getCountWip();
+        $this->countPending = ($registeredCount - ($this->countCompleted + $this->countWip + $this->countError));
+
+        $this->pctError = floor(($this->countError / $registeredCount) * 100);
+        $this->pctCompleted = floor(($this->countCompleted / $registeredCount) * 100);
+        $this->pctPending = floor(($this->countPending / $registeredCount) * 100);
+        $this->pctWip = floor(($this->countWip / $registeredCount) * 100);
+
+    }
 
 }
