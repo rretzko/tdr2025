@@ -46,7 +46,7 @@ class Registrant
                 'users.first_name', 'users.middle_name', 'users.last_name', 'users.suffix_name',
                 'students.class_of',
                 'voice_parts.descr AS voicePartDescr',
-                DB::raw("(12 - ('students.class_of' - $this->seniorYear)) AS grade"))
+                DB::raw("( 12 - (students.class_of - $this->seniorYear)) AS grade"))
             ->get()
             ->toArray();
 
