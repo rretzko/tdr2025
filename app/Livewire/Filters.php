@@ -294,7 +294,9 @@ class Filters extends Form
 
     public function filterCandidatesByParticipatingSchools($query)
     {
-        return $query->whereIn('candidates.school_id', $this->participatingSchoolsSelectedIds);
+        $participatingSchoolIds = array_keys($this->participatingSchools());
+
+        return $query->whereIn('candidates.school_id', $participatingSchoolIds);
     }
 
     public function filterCandidatesByParticipatingVoiceParts($query)

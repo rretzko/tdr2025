@@ -247,7 +247,15 @@ class BasePage extends Component
      */
     protected function troubleShooting()
     {
-
+        $res = DB::table('candidates')
+            ->join('schools', 'schools.id', '=', 'candidates.school_id')
+            ->where('version_id', UserConfig::getValue('versionId'))
+            ->where('status', 'registered')
+            ->distinct('school_id')
+            ->select(DB::raw('LEFT(schools.name,10) AS shortName'), 'schools.id')
+            ->pluck('shortName', 'schools.id')
+            ->toArray();
+        dd($res);
     }
 
 

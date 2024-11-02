@@ -99,9 +99,9 @@ class ParticipatingStudentsComponent extends BasePageReports
 
     private function getRows(): Builder
     {
-        //$this->test();
-
         $search = $this->search;
+
+//        $this->troubleShooting($search, $this->versionId, $this->sortCol, $this->sortAsc);
 
         return DB::table('candidates')
             ->join('schools', 'schools.id', '=', 'candidates.school_id')
