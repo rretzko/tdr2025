@@ -8,6 +8,7 @@ use App\Models\Schools\Teacher;
 use App\Models\SchoolStudent;
 use App\Models\Students\Student;
 use App\Models\User;
+use App\Models\UserConfig;
 use App\Services\FindMatchingStudentService;
 use App\Services\FormatPhoneService;
 use Carbon\Carbon;
@@ -106,6 +107,10 @@ class StudentForm extends Form
             $this->phoneHome = $student->phoneHome ?? '';
 
             $this->studentId = $student->id;
+
+            if (!$this->schoolId) {
+                $this->schoolId = UserConfig::getValue('schoolId');
+            }
 
             //SchoolStudent
             $schoolStudent = SchoolStudent::query()

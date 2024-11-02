@@ -6,7 +6,7 @@
     <div id="container" class="space-y-2">
 
         <div class="ml-2 p-2 rounded-lg shadow-lg flex flex-col">
-            <h2 class="font-semibold">Filter by candidate id or last name</h2>
+            <h2 class="font-semibold">Filter by candidate id or name</h2>
 
             {{-- INPUT BOXES --}}
             <div class="w-full flex flex-col md:flex-row space-x-2">
