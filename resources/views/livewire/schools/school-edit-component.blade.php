@@ -177,6 +177,22 @@
         <x-forms.indicators.successIndicator :showSuccessIndicator="$showSuccessIndicator"
                                              message="{{  $successMessage }}"/>
 
+        {{-- CO-TEACHERS --}}
+        @if($hasCoteachers)
+            <div class="mt-4 p-2 border border-gray-400 w-fit rounded-lg shadow-lg">
+                <h3 class="font-semibold">The following teacher(s) should have access to my students:</h3>
+                @foreach($schoolTeachers AS $teacher)
+                    <div class="flex flex-row space-x-2 items-center ml-2">
+                        <input type="checkbox" wire:model.live="coteacherIds" value="{{ $teacher['id'] }}">
+                        <label>{{ $teacher['name'] }}</label>
+
+                    </div>
+                @endforeach
+            </div>
+        @endif
+
     </form>
+
+
 </div>
 

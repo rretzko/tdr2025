@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class School extends Model
@@ -33,6 +34,20 @@ class School extends Model
     public function ensembles(): HasMany
     {
         return $this->hasMany(Ensemble::class);
+    }
+
+    public function getActiveTeachersAttribute(): Collection
+    {
+        $schoolTeacherIds = SchoolTeacher::query()
+            ->where('school_id', $this->id)
+            ->where('active', 1)
+            ->pluck('teacher_id')
+            ->toArray();
+
+        return Teacher::query()
+            ->whereIn('id', $schoolTeacherIds)
+            ->get();
+
     }
 
     public function getAddressAttribute(): string

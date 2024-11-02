@@ -9,6 +9,7 @@ use App\Models\SchoolStudent;
 use App\Models\Students\Student;
 use App\Models\User;
 use App\Models\UserConfig;
+use App\Services\CoTeachersService;
 use App\Services\FindMatchingStudentService;
 use App\Services\FormatPhoneService;
 use Carbon\Carbon;
@@ -113,10 +114,7 @@ class StudentForm extends Form
             }
 
             //SchoolStudent
-            $schoolStudent = SchoolStudent::query()
-                ->where('student_id', $student->id)
-                ->where('school_id', $this->schoolId)
-                ->first();
+            $schoolStudent = $this->getSchoolStudent();
 
             $this->active = $schoolStudent->active;
 
@@ -290,6 +288,39 @@ class StudentForm extends Form
         $student->schools()->attach($this->school, ['active' => 1]);
 
         $student->teachers()->attach(auth()->id());
+    }
+
+    /**
+     * If the use is a co-teacher, the student's school may not match the user's current school id
+     * Test for the happy path first, and then test for coTeaching assignments.
+     * @return SchoolStudent
+     */
+    private function getSchoolStudent(): SchoolStudent
+    {
+        //student is at auth()->user()'s current school
+        $schoolStudent = SchoolStudent::query()
+            ->where('student_id', $this->studentId)
+            ->where('school_id', $this->schoolId)
+            ->first();
+
+        if ($schoolStudent) {
+            return $schoolStudent;
+        }
+
+        //test for co-teacher status at student's school
+        $userIsCoteacher = CoTeachersService::userIsCoteacherAtStudentsSchool($this->studentId);
+
+        //if co-teacher, return SchoolStudent of the student's active school
+        if ($userIsCoteacher) {
+            return SchoolStudent::query()
+                ->where('student_id', $this->studentId)
+                ->where('active', 1)
+                ->first();
+        } else { //return empty model
+            return new SchoolStudent();
+        }
+
+
     }
 
     private function properlyUpdated(): bool

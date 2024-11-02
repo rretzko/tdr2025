@@ -13,6 +13,7 @@ use App\Models\Events\Versions\Participations\Obligation;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionTeacherConfig;
 use App\Models\Schools\Teacher;
+use App\Models\Schools\Teachers\Coteacher;
 use App\Models\Students\Student;
 use App\Models\UserConfig;
 use App\Services\CalcGradeFromClassOfService;
@@ -294,6 +295,7 @@ class CandidatesTableComponent extends BasePage
 
         $coTeacherIds = CoTeachersService::getCoTeachersIds();
         $versionSeniorYear = $this->version->senior_class_of;
+        $schoolIds = $this->getSchoolIds();
 
         return DB::table('candidates')
             ->join('students', 'students.id', '=', 'candidates.student_id')
@@ -303,7 +305,7 @@ class CandidatesTableComponent extends BasePage
             ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
             ->where('candidates.version_id', $this->versionId)
             ->whereIn('candidates.teacher_id', $coTeacherIds)
-            ->where('candidates.school_id', $this->schoolId)
+            ->whereIn('candidates.school_id', $schoolIds)
             ->where('students.class_of', '>=', $versionSeniorYear)
             ->tap(function ($query) {
                 $this->filters->filterCandidatesByClassOfs($query);
@@ -319,6 +321,20 @@ class CandidatesTableComponent extends BasePage
             ->orderBy('users.last_name', 'asc') //secondary sort ALWAYS applied
             ->orderBy('users.first_name', 'asc') //tertiary sort ALWAYS applied
             ->get();
+    }
+
+    private function getSchoolIds(): array
+    {
+        $schoolIds = [$this->schoolId];
+
+        $myTeacherId = Teacher::where('user_id', auth()->id())->first()->id;
+        $coTeacherSchoolIds = Coteacher::query()
+            ->where('coteacher_id', $myTeacherId)
+            ->distinct()
+            ->pluck('school_id')
+            ->toArray();
+
+        return array_merge($schoolIds, $coTeacherSchoolIds);
     }
 
     private function getTeachers(): array
