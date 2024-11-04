@@ -128,8 +128,13 @@ class EstimateComponent extends BasePage
     private function getAmountDue(): float
     {
         //how many registrants are there
-        $registrant = new Registrant($this->school->id, $this->versionId);
-        $registrantCount = $registrant->getRegistrantCount();
+        $registrant = ($this->school->id)
+            ? new Registrant($this->school->id, $this->versionId)
+            : null;
+
+        $registrantCount = (!is_null($registrant))
+            ? $registrant->getRegistrantCount()
+            : $this->getMultipleSchoolRegistrantCount();
 
         //what is the registration fee
         $version = Version::find($this->versionId);
@@ -140,7 +145,9 @@ class EstimateComponent extends BasePage
 
         //how much has already been collected through ePayments
         $ePayment = new Epayment();
-        $totalCollected = $ePayment->getTotalCollected($version, $this->school->id); //in pennies
+        $totalCollected = ($this->school->id)
+            ? $ePayment->getTotalCollected($version, $this->school->id) //in pennies
+            : $this->getMultipleSchoolTotalCollected($ePayment, $version);
 
         //return how much remains to be collected
         return ConvertToUsdService::penniesToUsd($totalExpected - $totalCollected);
@@ -148,12 +155,16 @@ class EstimateComponent extends BasePage
 
     private function getCandidates(): array
     {
+        $schoolIds = (!is_null($this->school->id))
+            ? [$this->school->id]
+            : $this->getMultipleSchoolIds();
+
         $statuses = ['eligible', 'engaged', 'no-app', 'pre-registered', 'registered'];
 
         return DB::table('candidates')
             ->join('students', 'students.id', '=', 'candidates.student_id')
             ->join('users', 'users.id', '=', 'students.user_id')
-            ->where('school_id', $this->school->id)
+            ->whereIn('school_id', $schoolIds)
             ->where('version_id', $this->versionId)
             ->whereIn('status', $statuses)
             ->orderBy('users.last_name')
@@ -215,6 +226,70 @@ class EstimateComponent extends BasePage
             : '';
     }
 
+    private function getMultipleSchoolIds(): array
+    {
+        $teacher = Teacher::where('user_id', auth()->id())->first();
+        return $teacher->schools()->pluck('schools.id')->toArray();
+    }
+
+    private function getMultipleSchoolRegistrantArrayForEstimateForm(): array
+    {
+        $teacher = Teacher::where('user_id', auth()->id())->first();
+        $schools = $teacher->schools;
+
+        $registrants = [];
+
+        foreach ($schools as $school) {
+
+            $registrant = new Registrant($school->id, $this->versionId);
+            $registrants = array_merge($registrants, $registrant->getRegistrantArrayForEstimateForm());
+
+        }
+
+        usort($registrants, function ($a, $b) {
+            return strcmp($a->last_name, $b->last_name);
+        });
+
+        return $registrants;
+    }
+
+    /**
+     * used for calculating total registrants when auth()->id() co-teaches with others
+     * @return int
+     */
+    private function getMultipleSchoolRegistrantCount(): int
+    {
+        $teacher = Teacher::where('user_id', auth()->id())->first();
+        $schools = $teacher->schools;
+        $count = 0;
+
+        foreach ($schools as $school) {
+
+            $registrant = new Registrant($school->id, $this->versionId);
+            $count += $registrant->getRegistrantCount();
+        }
+
+        return $count;
+    }
+
+    /**
+     * used for calculating total fees collected when auth()->id() co-teaches with others
+     * @return int
+     */
+    private function getMultipleSchoolTotalCollected(Epayment $ePayment, Version $version): int
+    {
+        $teacher = Teacher::where('user_id', auth()->id())->first();
+        $schools = $teacher->schools;
+        $total = 0;
+
+        foreach ($schools as $school) {
+
+            $total += $ePayment->getTotalCollected($version, $school->id); //in pennies
+        }
+
+        return $total;
+    }
+
     private function getRegistrationFee(): float
     {
         $fee = Version::find(UserConfig::getValue('versionId'))->fee_registration;
@@ -224,12 +299,15 @@ class EstimateComponent extends BasePage
 
     private function getRegistrantArrayForEstimateForm(): array
     {
+
         $registrant = new Registrant(
             UserConfig::getValue('schoolId'),
             UserConfig::getValue('versionId')
         );
 
-        return $registrant->getRegistrantArrayForEstimateForm();
+        return ($this->school->id)
+            ? $registrant->getRegistrantArrayForEstimateForm()
+            : $this->getMultipleSchoolRegistrantArrayForEstimateForm();
     }
 
     private function getStudentPaymentColumnHeaders(): array
@@ -246,11 +324,15 @@ class EstimateComponent extends BasePage
 
     private function getStudentPayments(): array
     {
+        $schoolIds = (!is_null($this->school->id))
+            ? [$this->school->id]
+            : $this->getMultipleSchoolIds();
+
         return StudentPayment::query()
             ->join('students', 'students.id', '=', 'student_payments.student_id')
             ->join('users', 'users.id', '=', 'students.user_id')
             ->where('version_id', $this->versionId)
-            ->where('school_id', $this->school->id)
+            ->whereIn('school_id', $schoolIds)
             ->select('student_payments.id', 'student_payments.candidate_id',
                 'student_payments.amount', 'student_payments.payment_type', 'student_payments.transaction_id',
                 'student_payments.comments',

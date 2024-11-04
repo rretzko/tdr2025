@@ -22,7 +22,18 @@
     @else
         @if($ePaymentVendor !== 'none')
             @if($ePaymentVendor === 'paypal')
-                @include('components.forms.partials.epayments.paypal')
+                @if($amountDue > 0)
+                    @include('components.forms.partials.epayments.paypal')
+                @else
+                    <div>
+                        No Payment due.
+                    </div>
+                    @if($amountDue < 0)
+                        <div>
+                            Our records indicate ${{ number_format(-($amountDue), 2) }} overpayment.
+                        </div>
+                    @endif
+                @endif
             @endif
             @if($ePaymentVendor === 'square')
                 {{-- SQUARE BUTTON CODE --}}
