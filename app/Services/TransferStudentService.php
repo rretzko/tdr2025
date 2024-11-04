@@ -69,16 +69,15 @@ class TransferStudentService
                         ->where('candidates.student_id', $studentId)
                         ->where('candidates.school_id', $this->schoolIdFrom)
                         ->where('versions.status', 'active')
+                        ->select('candidates.*')
                         ->get();
 
                     $res4 = 0;
                     foreach ($candidates as $candidate) {
 
-                        $res4 += $candidate->update(
-                            [
-                                'school_id' => $this->schoolIdTo,
-                                'teacher_id' => $this->teacherIdTo,
-                            ]
+                        $res4 = DB::update(
+                            "UPDATE candidates SET school_id = ?, teacher_id = ? WHERE id = ?",
+                            [$this->schoolIdTo, $this->teacherIdTo, $candidate->id]
                         );
                     }
                 }

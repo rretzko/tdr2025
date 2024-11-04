@@ -63,7 +63,7 @@ class VersionStudentTransferComponent extends BasePage
 
     }
 
-    private function getSchools(): array
+    public function getSchools(): array
     {
         return School::query()
             ->join('geostates', 'geostates.id', '=', 'schools.geostate_id')

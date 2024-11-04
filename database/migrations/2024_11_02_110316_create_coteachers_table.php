@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->foreignIdFor(\App\Models\Schools\School::class);
             $table->unsignedBigInteger('coteacher_id');
             $table->timestamps();
-            $table->unique('teacher_id', 'school_id', 'coteacher_id', 'uAll');
+            $table->unique(['teacher_id', 'school_id', 'coteacher_id'], 'uAll');
         });
     }
 
