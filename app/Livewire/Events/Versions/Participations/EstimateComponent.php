@@ -14,6 +14,7 @@ use App\Models\Events\Versions\Version;
 use App\Models\Schools\Teacher;
 use App\Models\UserConfig;
 use App\Services\ConvertToUsdService;
+use App\Services\CoTeachersService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
@@ -155,6 +156,7 @@ class EstimateComponent extends BasePage
 
     private function getCandidates(): array
     {
+        $coTeacherIds = CoTeachersService::getCoTeachersIds();
         $schoolIds = (!is_null($this->school->id))
             ? [$this->school->id]
             : $this->getMultipleSchoolIds();
@@ -164,9 +166,14 @@ class EstimateComponent extends BasePage
         return DB::table('candidates')
             ->join('students', 'students.id', '=', 'candidates.student_id')
             ->join('users', 'users.id', '=', 'students.user_id')
-            ->whereIn('school_id', $schoolIds)
-            ->where('version_id', $this->versionId)
-            ->whereIn('status', $statuses)
+            ->join('school_student', 'school_student.student_id', '=', 'candidates.student_id')
+            ->join('student_teacher', 'student_teacher.student_id', '=', 'candidates.student_id')
+            ->whereIn('candidates.school_id', $schoolIds)
+            ->where('candidates.version_id', $this->versionId)
+            ->whereIn('candidates.status', $statuses)
+            ->whereIn('school_student.school_id', $schoolIds)
+            ->whereIn('student_teacher.teacher_id', $coTeacherIds)
+            ->where('school_student.active', 1)
             ->orderBy('users.last_name')
             ->orderBy('users.first_name')
             ->pluck('users.name', 'candidates.id')

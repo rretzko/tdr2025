@@ -303,10 +303,15 @@ class CandidatesTableComponent extends BasePage
             ->join('teachers', 'teachers.id', '=', 'candidates.teacher_id')
             ->join('users AS tusers', 'tusers.id', '=', 'teachers.user_id')
             ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
+            ->join('student_teacher', 'student_teacher.student_id', '=', 'students.id')
+            ->join('school_student', 'school_student.student_id', '=', 'students.id')
             ->where('candidates.version_id', $this->versionId)
             ->whereIn('candidates.teacher_id', $coTeacherIds)
             ->whereIn('candidates.school_id', $schoolIds)
             ->where('students.class_of', '>=', $versionSeniorYear)
+            ->whereIn('student_teacher.teacher_id', $coTeacherIds)
+            ->whereIn('school_student.school_id', $schoolIds)
+            ->where('school_student.active', 1)
             ->tap(function ($query) {
                 $this->filters->filterCandidatesByClassOfs($query);
                 $this->filters->filterCandidatesByStatuses($query, $this->search);
