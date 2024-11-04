@@ -5,6 +5,7 @@ namespace App\Imports;
 use App\Models\Epayment;
 use App\Services\ConvertToPenniesService;
 use App\Services\ConvertToUsdService;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\ToCollection;
@@ -16,11 +17,12 @@ use Maatwebsite\Excel\Concerns\WithStartRow;
 class EpaymentPayPalImport implements WithHeadings, WithStartRow, ToModel
 {
     /**
-     * @param  Collection  $collection
+     * @param  array  $row
      */
     public function model(array $row)
     {
         $ids = $this->parseRow($row);
+
         if (count($ids)) {
 
             Epayment::updateOrCreate(

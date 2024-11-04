@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Founders;
 
+use App\Http\Controllers\Controller;
 use App\Imports\EpaymentPayPalImport;
 use App\Imports\EpaymentSquareImport;
 use Illuminate\Http\Request;
