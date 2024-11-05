@@ -11,11 +11,11 @@
             <div>{{ ucwords($header) }} ({{ $rows->total() }})</div>
 
             {{-- RECORDS PER PAGE --}}
-            @if($rows->total() > 15)
-                <x-forms.indicators.recordsPerPage/>
-            @else
-                <div></div>
-            @endif
+            {{--            @if($rows->total() > 15)--}}
+            {{--                <x-forms.indicators.recordsPerPage/>--}}
+            {{--            @else--}}
+            {{--                <div></div>--}}
+            {{--            @endif--}}
 
         </div>
 

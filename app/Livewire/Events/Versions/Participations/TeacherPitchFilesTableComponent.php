@@ -17,7 +17,9 @@ class TeacherPitchFilesTableComponent extends BasePage
         $this->versionId = $this->dto['id'];
 
         //default values
-        $this->hasFilters = true;
+        $this->hasFilters = false;
+
+        $this->recordsPerPage = 100;
 
         //filters
         $this->filters->pitchFileVoicePartsSelectedIds = $this->filters->previousFilterExists('pitchFileVoicePartsSelectedIds',

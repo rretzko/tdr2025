@@ -15,6 +15,7 @@
         <table id="summaryTable" @class([
             "bg-red-100",
             'bg-white' => $form->scoreTolerance,
+            'w-full' => $form->displayOnly,
             ])
         >
             <thead>

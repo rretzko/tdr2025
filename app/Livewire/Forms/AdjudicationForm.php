@@ -18,6 +18,7 @@ class AdjudicationForm extends Form
 {
     public Candidate $candidate;
     public array $categories = [];
+    public bool $displayOnly = false; //used by event managers in tab room
     public Collection $factors;
     public string $ref = '';
     public Room $room;
