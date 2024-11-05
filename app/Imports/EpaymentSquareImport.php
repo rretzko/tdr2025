@@ -21,6 +21,14 @@ class EpaymentSquareImport implements WithHeadings, ToModel
         $ePaymentDetails = $this->parseRow($row);
 
         if (count($ePaymentDetails)) {
+            $exists = Epayment::query()
+                ->where('version_id', $ePaymentDetails['versionId'])
+                ->where('school_id', $ePaymentDetails['schoolId'])
+                ->where('user_id', $ePaymentDetails['userId'])
+                ->where('fee_type', $ePaymentDetails['feeType'])
+                ->where('candidate_id', $ePaymentDetails['candidateId'])
+                ->where('transaction_id', $ePaymentDetails['transactionId'])
+                ->get();
 
             Epayment::updateOrCreate(
                 [
@@ -36,6 +44,7 @@ class EpaymentSquareImport implements WithHeadings, ToModel
                     'comments' => $ePaymentDetails['comments'],
                 ]
             );
+
         }
     }
 
@@ -44,53 +53,58 @@ class EpaymentSquareImport implements WithHeadings, ToModel
         return [
             'Date',
             'Time',
-            'TimeZone',
-            'Name',
-            'Type',
-            'Status',
-            'Currency',
-            'Gross',
-            'Fee',
-            'Net',
-            'From Email Address',
-            'To Email Address',
-            'Transaction ID', //this is important index=12
-            'Shipping Address',
-            'Address Status',
-            'Item Title',
-            'Item ID',
-            'Shipping and Handling Amount',
-            'Insurance Amount',
-            'Sales Tax',
-            'Option 1 Name',
-            'Option 1 Value',
-            'Option 2 Name',
-            'Option 2 Value',
-            'Reference Txn ID',
-            'Invoice Number',
-            'Custom Number',  //this is important index=26
-            'Quantity',
-            'Receipt ID',
-            'Balance',
-            'Address Line 1',
-            'Address Line 2/District/Neighborhood',
-            'Town/City',
-            'State/Province/Region/County/Territory/Prefecture/Republic',
-            'Zip/Postal Code',
-            'Country',
-            'Contact Phone Number',
-            'Subject',
-            'Note',
-            'Payment Tracking ID',
-            'Country Code',
-            'Balance Impact',
-            'Invoice Number',
-            'Payflow Transaction ID (PNREF)',
-
+            'Time Zone',
+            'Gross Sales',
+            'Discounts',
+            'Service Charges',
+            'Net Sales',
+            'Gift Card Sales',
+            'Tax',
+            'Tip',
+            'Partial Refunds',
+            'Total Collected',
+            'Source',
+            'Card',
+            'Card Entry Methods',
+            'Cash',
+            'Square Gift Card',
+            'Other Tender',
+            'Other Tender Type',
+            'Tender Note',
+            'Fees',
+            'Net Total',
+            'Transaction ID',
+            'Payment ID',
+            'Card Brand',
+            'PAN Suffix',
+            'Device Name',
+            'Staff Name',
+            'Staff ID',
+            'Details',
+            'Description',
+            'Event Type',
+            'Location',
+            'Dining Option', 'Customer ID',
+            'Customer Name',
+            'Customer Reference ID',
+            'Device Nickname',
+            'Third Party Fees',
+            'Deposit ID',
+            'Deposit Date',
+            'Deposit Details',
+            'Fee Percentage Rate',
+            'Fee Fixed Rate',
+            'Refund Reason',
+            'Discount Name',
+            'Transaction Status',
+            'Cash App',
+            'Order Reference ID',
+            'Fulfillment Note',
+            'Free Processing Applied'
         ];
     }
 
-    private function getCandidateDetails(int $candidateSuffix, string $transactionId, float $amount): array
+    private function getCandidateDetails(int $candidateSuffix, string $transactionId, int $amount): array
     {
         //hardcoded for CJMEA 2024-25 event
         $eventId = 83;
@@ -114,7 +128,7 @@ class EpaymentSquareImport implements WithHeadings, ToModel
 
     private function parseRow(array $row): array
     {
-        //dd($row[49]);
+        //skip the header row
         if ($row[0] === 'Date') {
             return [];
         }
