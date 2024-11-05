@@ -15,6 +15,7 @@ use App\Models\Schools\Teacher;
 use App\Models\UserConfig;
 use App\Services\ConvertToUsdService;
 use App\Services\CoTeachersService;
+use App\Services\StudentPaymentsService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
@@ -60,6 +61,7 @@ class EstimateComponent extends BasePage
         $this->versionId = UserConfig::getValue('versionId');
         $this->columnHeaders = $this->getColumnHeaders();
         $this->registrationFee = $this->getRegistrationFee();
+        $this->sortCol = 'users.last_name';
         $this->sortColLabel = 'users.name';
         $this->studentPaymentColumnHeaders = $this->getStudentPaymentColumnHeaders();
         $this->tabs = $this->getTabs();
@@ -94,6 +96,8 @@ class EstimateComponent extends BasePage
 
     public function render()
     {
+        $this->saveSortParameters();
+
         return view('livewire..events.versions.participations.estimate-component',
             [
                 'candidates' => $this->getCandidates(),
@@ -110,6 +114,28 @@ class EstimateComponent extends BasePage
     public function remove(int $studentPaymentId): void
     {
         dd('studentPaymentId: '.$studentPaymentId);
+    }
+
+    public function sortBy(string $key): void
+    {
+        $this->sortColLabel = $key;
+
+        $properties = [
+            'name' => 'users.last_name',
+            'grade' => 'students.class_of',
+            'voicePartDescr' => 'voice_parts.order_by',
+        ];
+
+        $requestedSort = $properties[$key];
+
+        //toggle $this->sortAsc if user clicks on the same column header twice
+        if ($requestedSort === $this->sortCol) {
+
+            $this->sortAsc = (!$this->sortAsc);
+        }
+
+        $this->sortCol = $properties[$key];
+
     }
 
     public function updatedForm($value, $key): void
@@ -312,9 +338,11 @@ class EstimateComponent extends BasePage
             UserConfig::getValue('versionId')
         );
 
-        return ($this->school->id)
+        $registrants = ($this->school->id)
             ? $registrant->getRegistrantArrayForEstimateForm()
             : $this->getMultipleSchoolRegistrantArrayForEstimateForm();
+
+        return $this->sortRegistrants($registrants);
     }
 
     private function getStudentPaymentColumnHeaders(): array
@@ -335,18 +363,17 @@ class EstimateComponent extends BasePage
             ? [$this->school->id]
             : $this->getMultipleSchoolIds();
 
-        return StudentPayment::query()
-            ->join('students', 'students.id', '=', 'student_payments.student_id')
-            ->join('users', 'users.id', '=', 'students.user_id')
-            ->where('version_id', $this->versionId)
-            ->whereIn('school_id', $schoolIds)
-            ->select('student_payments.id', 'student_payments.candidate_id',
-                'student_payments.amount', 'student_payments.payment_type', 'student_payments.transaction_id',
-                'student_payments.comments',
-                'users.id AS userId', 'users.first_name', 'users.middle_name', 'users.last_name',
-                'users.suffix_name')
-            ->get()
-            ->toArray();
+        $coteacherIds = CoTeachersService::getCoTeachersIds();
+
+        $service = new StudentPaymentsService(
+            $schoolIds,
+            $coteacherIds,
+            $this->versionId,
+            $this->sortCol,
+            $this->sortAsc
+        );
+
+        return $service->getPayments();
     }
 
     private function getTabs(): array
@@ -360,5 +387,39 @@ class EstimateComponent extends BasePage
         }
 
         return $tabs;
+    }
+
+    /**
+     * @param  array  $registrants
+     * 0 => {#2802 ▼
+     * +"id": 826237
+     * +"first_name": "Michael"
+     * +"middle_name": ""
+     * +"last_name": "Vespignani"
+     * +"suffix_name": null
+     * +"class_of": 2026
+     * +"voicePartDescr": "Bass II"
+     * +"grade": 11
+     * +"payment": 20.0
+     * }
+     * @return array
+     */
+    private function sortRegistrants(array $registrants): array
+    {
+        if (!$this->sortCol) {
+            $this->sortCol = 'users.last_name';
+        }
+
+        $sortCol = match ($this->sortCol) {
+            'students.class_of' => 'grade',
+            'users.last_name' => 'last_name',
+            'voice_parts.order_by' => 'voicePartDescr',
+        };
+
+        usort($registrants, function ($a, $b) use ($sortCol) {
+            return strcmp($a->$sortCol, $b->$sortCol);
+        });
+
+        return $registrants;
     }
 }

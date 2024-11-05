@@ -78,10 +78,16 @@
                     {{ $row['comments'] }} {{-- ex. some comments --}}
                 </td>
                 <td class="text-center border border-gray-200">
-                    <x-buttons.showEditForm id="{{ $row['id'] }}"/>
+                    @if($row['payment_type'] !== 'ePayment')
+                        {{-- ePayments are not editable --}}
+                        <x-buttons.showEditForm id="{{ $row['id'] }}"/>
+                    @endif
                 </td>
                 <td class="text-center border border-gray-200">
-                    <x-buttons.remove id="{{ $row['id'] }}"/>
+                    @if($row['payment_type'] !== 'ePayment')
+                        {{-- ePayments are not removable --}}
+                        <x-buttons.remove id="{{ $row['id'] }}"/>
+                    @endif
                 </td>
 
             </tr>
