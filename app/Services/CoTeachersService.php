@@ -15,14 +15,15 @@ class CoTeachersService
     public static function getCoTeachersIds(): array
     {
         $teacherIds = [];
-        $myTeacherId = Teacher::where('user_id', auth()->id())->first()->id;
-        $schoolId = UserConfig::getValue('schoolId');
+        $teacher = Teacher::where('user_id', auth()->id())->first();
+        $myTeacherId = $teacher->id;
+        $schoolIds = $teacher->schools()->pluck('schools.id')->toArray();
         $teacherIds[] = $myTeacherId;
 
         $coteacherIds = Coteacher::query()
-            ->where('teacher_id', $myTeacherId)
-            ->where('school_id', $schoolId)
-            ->pluck('coteacher_id')
+            ->where('coteacher_id', $myTeacherId)
+            ->whereIn('school_id', $schoolIds)
+            ->pluck('teacher_id')
             ->toArray();
 
         return array_merge($teacherIds, $coteacherIds);
