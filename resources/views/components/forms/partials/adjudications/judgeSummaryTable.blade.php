@@ -54,9 +54,9 @@
                             {{ $score }}
                         </td>
                     @empty
-                        <td colspan="{{ count($form->factors) }}" class="text-center">
-                            no scores found
-                        </td>
+                        {{--                        <td colspan="{{ count($form->factors) }}" class="text-center">--}}
+                        {{--                            no scores found--}}
+                        {{--                        </td>--}}
                     @endforelse
 
                     {{-- FILL IN ANY MISSING SCORE VALUES WITH BLANKS --}}
