@@ -151,13 +151,12 @@ class TabroomScoringComponent extends BasePage
             ->where('room_voice_parts.voice_part_id', $voicePartId)
             ->get();
 
-        //set default
-        $this->roomId = $this->rooms->first()->id;
-
-        //set Room defaults
+        //set defaults
+        $room = $this->rooms->first();
+        $this->roomId = $room->id;
+        $judges = $room->judges;
         $candidate = Candidate::find($this->candidateId);
-        $room = Room::find($this->roomId);
-        $judges = $room->judges();
+        dd($judges);
 //        $this->form->displayOnly = true;
         $this->form->setCandidate($candidate, $room, $judges->first());
     }

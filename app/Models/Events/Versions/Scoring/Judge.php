@@ -16,7 +16,8 @@ class Judge extends Model
         'version_id',
         'room_id',
         'user_id',
-        'judge_role',
+        'judge_type',
+        'status_type',
     ];
 
     public function version(): BelongsTo

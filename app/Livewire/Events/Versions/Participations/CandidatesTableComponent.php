@@ -42,6 +42,7 @@ class CandidatesTableComponent extends BasePage
     public Version $version;
 
     public array $auditionFiles = [];
+    public string $ePaymentVendor = '';
     public array $ensembleVoiceParts = [];
     public array $eventGrades = [];
     public bool $height = false;
@@ -72,6 +73,7 @@ class CandidatesTableComponent extends BasePage
         $this->versionId = $this->dto['id'];
         $this->version = Version::find($this->versionId);
         $this->versionEpaymentStudent = $this->version->epayment_student;
+        $this->ePaymentVendor = ucwords($this->version->epayment_vendor);
         $this->event = $this->version->event;
         $this->height = $this->version->height;
         $this->shirtSize = $this->version->shirt_size;
