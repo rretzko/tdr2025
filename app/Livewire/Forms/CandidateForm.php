@@ -366,7 +366,7 @@ class CandidateForm extends Form
             $this->recordings[$recording->file_type]['url'] = $recording->url;
             $this->recordings[$recording->file_type]['approved'] =
                 ($recording->approved)
-                    ? Carbon::parse($recording->approved)->format('D, M j, y g:i a')
+                    ? Carbon::parse($recording->approved)->format('D, M d, y g:i a')
                     : '';
         }
     }
