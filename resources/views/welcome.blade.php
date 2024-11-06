@@ -914,7 +914,7 @@
 
         <div class="startUp">
             Click here for the <a
-                href="{{ \Illuminate\Support\Facades\Storage::disk('s3')->url('public-pdfs/quickStart_20250905.pdf') }}"
+                href="{{ \Illuminate\Support\Facades\Storage::disk('s3')->url('public-pdfs/quickStart_20241106.pdf') }}"
                 target="_NEW">
                 QuickStart
             </a> guide!
