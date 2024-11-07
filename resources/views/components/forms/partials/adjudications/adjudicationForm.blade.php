@@ -17,7 +17,9 @@
 
         <fieldset id="one" class="w-full space-y-2 border border-gray-400 p-2 rounded-lg shadow-lg">
             @php $categoryDescr = ''; @endphp
-            @foreach($form->factors AS $factor)
+
+            @foreach($form->factors AS $key => $factor)
+
                 @php
                     $start = $factor->best;
                     $end = $factor->worst;
@@ -25,6 +27,7 @@
                 @endphp
 
                 @if($categoryDescr !== $factor['scoreCategory']->descr)
+
                     {{-- close the open fieldsets if exists --}}
                     @if(strlen($categoryDescr)) </fieldset>
         </fieldset> @endif

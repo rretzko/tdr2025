@@ -3,7 +3,7 @@
     <div class="">
         <div class="flex flex-col">
             <label>Candidate Id</label>
-            <input type="text" wire:model.live.debounce.500ms="candidateId" class=""/>
+            <input type="text" wire:model.live.debounce.1000ms="candidateId" class="" autofocus/>
             @error('candidateId')
             <div class="text-red-600 ml-2 mt-1 text-xs italic">{{ $candidateError }}</div>
             @enderror
@@ -12,7 +12,7 @@
     <div class="w-full">
         <div class="flex flex-col">
             <label>Candidate Last Name</label>
-            <input type="text" wire:model.live.debounce.500ms="lastName" class="w-1/2"/>
+            <input type="text" wire:model.live.debounce.1000ms="lastName" class="w-1/2"/>
         </div>
     </div>
 </div>

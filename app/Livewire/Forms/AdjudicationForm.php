@@ -13,6 +13,7 @@ use App\Models\Students\VoicePart;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
+use Illuminate\Support\Facades\Log;
 
 class AdjudicationForm extends Form
 {
@@ -66,6 +67,40 @@ class AdjudicationForm extends Form
             ->whereNotNull('approved_by')
             ->pluck('url', 'file_type')
             ->toArray();
+
+        $this->roomScores = $this->getRoomScores();
+
+        $this->setScoreTolerance();
+    }
+
+    /**
+     * used by TabroomScoringComponent
+     * @param  Room  $room
+     * @param  Judge  $judge
+     * @return void
+     */
+    public function setRoom(Room $room, Judge $judge): void
+    {
+        $this->room = $room;
+
+        $this->roomTolerance = $room->tolerance;
+
+        $this->factors = $room->scoringFactors;
+
+        $this->categories = $room->scoringCategories;
+
+        $scores = Score::query()
+            ->where('candidate_id', $this->sysId)
+            ->where('judge_id', $judge->id)
+            ->pluck('score', 'score_factor_id')
+            ->toArray() ?? [];
+
+        //clear any artifacts in $this->scores,
+        //then reload $this->scores with database values or best-score
+        $this->scores = [];
+        foreach ($this->factors as $factor) {
+            $this->scores[$factor->id] = $scores[$factor->id] ?? $factor->best;
+        }
 
         $this->roomScores = $this->getRoomScores();
 

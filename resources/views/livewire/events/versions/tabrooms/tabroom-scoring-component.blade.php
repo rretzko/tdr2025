@@ -25,7 +25,7 @@
 
         {{-- SEARCH FOR CANDIDATE BY ID OR LAST NAME --}}
         <div class="ml-2 mt-2 p-2 bg-white border-gray-600 rounded-lg shadow-lg">
-            <h2 class="font-semibold">Form for updating selected candidate's score.</h2>
+            <h2 class="font-semibold">Form for updating {{ $candidateName }}'s scores.</h2>
 
             {{-- RECORDINGS --}}
             <div>
@@ -33,23 +33,27 @@
                     @include('components.forms.partials.adjudications.recordings')
                 @endif
             </div>
+
             @if($candidateId)
 
-                {{-- ADJUDICATORS --}}
+                {{-- ADJUDICATOR SELECTORS --}}
                 <div
                     class="flex flex-row ml-4 mt-4 mb-2 space-x-8 border border-white border-t-gray-600 border-b-gray-600">
                     <h3>Select adjudicator</h3>
-                    @foreach($judges AS $judge)
-                        <div class="space-x-2">
-                            <input type="radio" wire:model.live="judgeId" value="{{$judge->id }} "/>
-                            <label>{{ $judge->user->name }}</label>
-                        </div>
-                    @endforeach
+                    @if($judges)
+                        @foreach($judges AS $radioJudge)
+                            <div class="space-x-2">
+                                <input type="radio" wire:model.live="judgeId" value="{{$radioJudge->id }}"
+                                       wire:key="judge_{{ $radioJudge->id }}"/>
+                                <label>{{ $radioJudge->user->name }}</label>
+                            </div>
+                        @endforeach
+                    @endif
                 </div>
 
                 {{-- ADJUDICATION FORM --}}
                 <div>
-                    @include('components.forms.partials.adjudications.adjudicationForm')
+                    @include('components.forms.partials.tabrooms.adjudicationForm')
                 </div>
             @endif
         </div>

@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules\Can;
 
 class Room extends Model
@@ -229,11 +230,13 @@ class Room extends Model
     {
         $roomScoreCategoriesIds = $this->roomScoreCategories->pluck('score_category_id')->toArray();
 
-        return ScoreFactor::query()
+        $factors = ScoreFactor::query()
             ->with('scoreCategory')
             ->whereIn('score_category_id', $roomScoreCategoriesIds)
             ->orderBy('score_factors.order_by')
             ->get();
+
+        return $factors;
     }
 
     public function getVoicePartIdsAttribute(): array

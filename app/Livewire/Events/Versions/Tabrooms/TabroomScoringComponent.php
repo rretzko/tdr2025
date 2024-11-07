@@ -16,6 +16,7 @@ use App\Models\Students\VoicePart;
 use App\Models\UserConfig;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class TabroomScoringComponent extends BasePage
 {
@@ -29,6 +30,7 @@ class TabroomScoringComponent extends BasePage
     public string $candidateTeacher = '';
     public string $candidateVoicePartDescr = '';
     public bool $hasRecordings = false;
+    public Judge $judge;
     public int $judgeId = 0;
     public Collection $judges;
     public string $lastName = '';
@@ -186,18 +188,31 @@ class TabroomScoringComponent extends BasePage
                 ->with('school', 'student', 'student.user', 'voicePart', 'teacher', 'teacher.user')
                 ->first();
 
-            $this->updateCandidateVars($candidate);
+            if ($candidate) {
 
-            $this->updateRooms($candidate);
+                $this->updateCandidateVars($candidate);
+
+                $this->updateRooms($candidate);
+
+            } else {
+
+                $this->candidateError = "$this->candidateId is not a valid id.";
+
+                $this->reset('candidateId');
+            }
 
         } else {
-            $this->candidateError = "Candidate id must have ".$minLength." numeric characters.";
+            $this->candidateError = "Candidate id ($this->candidateId) must have ".$minLength." numeric characters.";
+
+            $this->reset('candidateId');
         }
     }
 
     public function updatedJudgeId()
     {
         $this->reset('scoreUpdatedMssg');
+
+        $this->judge = Judge::find($this->judgeId);
 
         $scores = Score::query()
             ->where('candidate_id', $this->candidateId)
@@ -208,6 +223,13 @@ class TabroomScoringComponent extends BasePage
         foreach ($this->form->factors as $factor) {
             $this->form->scores[$factor->id] = $scores[$factor->id] ?? $factor->best;
         }
+    }
+
+    public function updatedRoomId(): void
+    {
+        $this->reset('scoreUpdatedMssg', 'judgeId');
+
+        $this->updateRooms(Candidate::find($this->candidateId));
     }
 
     private function updateCandidateVars(Candidate $candidate): void
@@ -231,15 +253,19 @@ class TabroomScoringComponent extends BasePage
             ->get();
 
         //set defaults
-        $this->room = $this->rooms->first();
-        $this->roomId = $this->room->id;
-        $this->judges = $this->room->judges;
         $candidate = Candidate::find($this->candidateId);
+        $this->roomId = ($this->roomId) ?: $this->rooms->first()->id;
+        $this->room = $this->rooms->where('id', $this->roomId)->first();
+        $this->judges = $this->room->judges;
+
         if (!$this->judges->count()) {
-            dd($this->room);
+            Log::error('*** No Judges Found for room: '.$this->room->room_name.' (id: '.$this->room->id.'). ***');
         }
-//        $this->form->displayOnly = true;
+
+        $this->judgeId = $this->judgeId ?: $this->judges->first()->id;
+        $this->judge = Judge::find($this->judgeId);
+
         $this->form->setCandidate($candidate, $this->room, $this->judges->first());
-        $this->judgeId = $this->judges->first()->id;
+        $this->form->setRoom($this->room, $this->judge);
     }
 }
