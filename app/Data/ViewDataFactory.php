@@ -345,6 +345,7 @@ class ViewDataFactory extends aViewData
 
             //tab room
             'tabroom scoring' => 'events.versions.tabrooms.tabroom-scoring-component',
+            'tabroom tracking' => 'events.versions.tabrooms.tabroom-tracking-component',
 
         ];
 

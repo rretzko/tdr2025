@@ -9,6 +9,7 @@ use App\Models\Events\Versions\Scoring\RoomScoreCategory;
 use App\Models\Events\Versions\Scoring\RoomVoicePart;
 use App\Models\Events\Versions\Scoring\Score;
 use App\Models\Events\Versions\Scoring\ScoreFactor;
+use App\Models\Students\VoicePart;
 use App\Services\CandidateAdjudicationStatusService;
 use App\Services\JudgeHasCompletedScoringCandidateService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -162,6 +163,47 @@ class Room extends Model
             ->get();
     }
 
+    public function getRegistrantsByIdForTabroomAttribute(): array
+    {
+        $candidates = [];
+
+        foreach ($this->voicePartIds as $key => $voicePartId) {
+
+            $voicePart = VoicePart::find($voicePartId);
+            $candidates[$key]['voicePartDescr'] = $voicePart->descr;
+            $candidatesByVoicePartId = Candidate::query()
+                ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
+                ->where('version_id', $this->version_id)
+                ->where('voice_part_id', $voicePartId)
+                ->where('status', 'registered')
+                ->select('candidates.id AS candidateId', 'voice_parts.abbr', 'voice_parts.descr AS voicePartDescr')
+                ->orderBy('candidates.id')
+                ->get();
+
+            foreach ($candidatesByVoicePartId as $candidate) {
+                $status = CandidateAdjudicationStatusService::getRoomStatus($candidate->candidateId, $this);
+
+                $statuses = [
+                    'completed' => 'bg-green-500 text-white',
+                    'pending' => 'bg-black text-white',
+                    'wip' => 'bg-yellow-400 text-black',
+                    'errors' => 'bg-red-600 text-yellow-400',
+                ];
+
+                $statusColors = $statuses[$status];
+
+                $candidates[$key]['candidates'][] = [
+                    'candidateId' => $candidate->candidateId,
+                    'statusColors' => $statusColors,
+                    'title' => $this->getAdjudicatorsProgress($candidate->candidateId),
+                ];
+            }
+
+        }
+
+        return $candidates;
+    }
+
     /**
      * @return array of [id, voicePartAbbr]
      */
@@ -196,6 +238,17 @@ class Room extends Model
         }
 
         return $a;
+    }
+
+    private function getAdjudicatorsProgress(int $candidateId): string
+    {
+        $str = '';
+
+        foreach ($this->judges as $judge) {
+            $str .= $judge->user->name."\n";
+        }
+
+        return $str;
     }
 
     private function getCandidateScoresByJudge(Candidate $candidate, Judge $judge): array

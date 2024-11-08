@@ -231,6 +231,12 @@ Breadcrumbs::for('tabroom scoring', function (BreadcrumbTrail $trail, int $id) {
     $trail->push('Tabroom Scoring', route('version.tabroom.scoring'));
 });
 
+//Tabroom:tracking
+Breadcrumbs::for('tabroom tracking', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('version dashboard', $id);
+    $trail->push('Tabroom Tracking', route('version.tabroom.tracking'));
+});
+
 //Versions.Dashboard (note: MULTIPLE versions)
 Breadcrumbs::for('versions dashboard', function (BreadcrumbTrail $trail, int $id) {
     $trail->parent('my events');

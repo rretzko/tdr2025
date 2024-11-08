@@ -227,6 +227,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('version/tabroom/scoring',
         \App\Http\Controllers\Events\Versions\Tabrooms\TabroomScoringController::class)
         ->name('version.tabroom.scoring');
+    //VERSIONS.TABROOM.TRACKING
+    Route::get('version/tabroom/tracking',
+        \App\Http\Controllers\Events\Versions\Tabrooms\TabroomTrackingController::class)
+        ->name('version.tabroom.tracking');
 
     //VERSIONS.STUDENT TRANSFER
     Route::get('version/studentTransfer', \App\Http\Controllers\Events\Versions\StudentTransferController::class)
