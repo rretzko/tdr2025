@@ -6,8 +6,10 @@ use App\Livewire\BasePage;
 use App\Models\Events\Versions\Version;
 use App\Models\Schools\School;
 use App\Models\Schools\SchoolTeacher;
+use App\Models\Schools\Teacher;
 use App\Models\Students\Student;
 use App\Models\UserConfig;
+use App\Models\UserFilter;
 use App\Services\TransferStudentService;
 
 
@@ -61,6 +63,13 @@ class VersionStudentTransferComponent extends BasePage
             }
         }
 
+        //remove filters from $this->teacher* to reset these values
+        $userIdFrom = Teacher::where('id', $this->teacherIdFrom)->first()->user_id;
+        $userIdTo = Teacher::where('id', $this->teacherIdTo)->first()->user_id;
+
+        UserFilter::whereIn('user_id', [$userIdFrom, $userIdTo])
+            ->whereIn('header', ['candidates', 'students'])
+            ->delete();
     }
 
     public function getSchools(): array

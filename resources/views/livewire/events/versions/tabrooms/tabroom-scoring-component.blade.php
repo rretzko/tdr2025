@@ -10,31 +10,32 @@
             @include('components.forms.partials.tabrooms.filterByCandidateIdOrName')
         </div>
 
-        <div class="ml-2 p-2 border-gray-600 rounded-lg shadow-lg">
-            <h2 class="font-semibold">Current scores for room with (tolerance)</h2>
-            @if((! is_null($rooms)) && $rooms->count())
-                @include('components.forms.partials.tabrooms.displayCandidateScoringByRoom')
-            @else
-                @if($candidateId)
-                    <div class="text-red-600 ml-2 mt-1 text-xs italic">
-                        No rooms found for {{ $candidateId }} as {{ $candidateVoicePartDescr }}.
-                    </div>
-                @endif
-            @endif
-        </div>
-
-        {{-- SEARCH FOR CANDIDATE BY ID OR LAST NAME --}}
-        <div class="ml-2 mt-2 p-2 bg-white border-gray-600 rounded-lg shadow-lg">
-            <h2 class="font-semibold">Form for updating {{ $candidateName }}'s scores.</h2>
-
-            {{-- RECORDINGS --}}
-            <div>
-                @if($hasRecordings && $candidateId)
-                    @include('components.forms.partials.adjudications.recordings')
+        @if(! strlen($candidateError))
+            <div class="ml-2 p-2 border-gray-600 rounded-lg shadow-lg">
+                <h2 class="font-semibold">Current scores for room with (tolerance)</h2>
+                @if((! is_null($rooms)) && $rooms->count())
+                    @include('components.forms.partials.tabrooms.displayCandidateScoringByRoom')
+                @else
+                    @if($candidateId)
+                        <div class="text-red-600 ml-2 mt-1 text-xs italic">
+                            No rooms found for {{ $candidateId }} as {{ $candidateVoicePartDescr }}.
+                        </div>
+                    @endif
                 @endif
             </div>
 
-            @if($candidateId)
+            {{-- SEARCH FOR CANDIDATE BY ID OR LAST NAME --}}
+            <div class="ml-2 mt-2 p-2 bg-white border-gray-600 rounded-lg shadow-lg">
+                <h2 class="font-semibold">Form for updating {{ $candidateName }}'s scores.</h2>
+
+                {{-- RECORDINGS --}}
+                <div>
+                    @if($hasRecordings && $candidateId)
+                        @include('components.forms.partials.adjudications.recordings')
+                    @endif
+                </div>
+
+                @if($candidateId)
 
                 {{-- ADJUDICATOR SELECTORS --}}
                 <div
@@ -57,6 +58,7 @@
                 </div>
             @endif
         </div>
+        @endif
     </div>{{-- END OF ID=CONTAINER --}}
 
 </div>

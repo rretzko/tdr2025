@@ -164,8 +164,6 @@ class TabroomScoringComponent extends BasePage
             'lastName', 'rooms',
         );
 
-        $minLength = (strlen($this->versionId) + 4);
-
         //edit input value in case user uses the ref#
         $candidateId = str_replace('-', '', $this->candidateId);
 
@@ -181,31 +179,50 @@ class TabroomScoringComponent extends BasePage
             return;
         }
 
-        if (strlen($candidateId) === $minLength) {
-
-            $candidate = Candidate::query()
-                ->where('id', $candidateId)
-                ->with('school', 'student', 'student.user', 'voicePart', 'teacher', 'teacher.user')
-                ->first();
-
-            if ($candidate) {
-
-                $this->updateCandidateVars($candidate);
-
-                $this->updateRooms($candidate);
-
-            } else {
-
-                $this->candidateError = "$this->candidateId is not a valid id.";
-
-                $this->reset('candidateId');
-            }
-
-        } else {
+        $minLength = (strlen($this->versionId) + 4);
+        if (strlen($candidateId) !== $minLength) {
             $this->candidateError = "Candidate id ($this->candidateId) must have ".$minLength." numeric characters.";
-
             $this->reset('candidateId');
+            return;
         }
+
+        $candidate = Candidate::query()
+            ->where('id', $candidateId)
+            ->with('school', 'student', 'student.user', 'voicePart', 'teacher', 'teacher.user')
+            ->first();
+
+        if (!$candidate) {
+            $this->candidateError = 'Invalid candidate id.';
+            return;
+        }
+
+        $voicePartId = $candidate->voice_part_id;
+
+        $this->rooms = Room::query()
+            ->join('room_voice_parts', 'room_voice_parts.room_id', '=', 'rooms.id')
+            ->where('rooms.version_id', $this->versionId)
+            ->where('room_voice_parts.voice_part_id', $voicePartId)
+            ->select('rooms.*')
+            ->get();
+
+        if (!$this->rooms->count()) {
+            $this->candidateError = "No rooms found.";
+            return;
+        }
+
+        if (!$this->rooms->first()->judges->count()) {
+            $this->candidateError = "No judges found for ".$this->rooms->first()->room_name.".";
+            return;
+        }
+
+        if (!$candidate) {
+            $this->candidateError = "$this->candidateId is not a valid id.";
+            $this->reset('candidateId');
+            return;
+        }
+
+        $this->updateRooms($candidate);
+        $this->updateCandidateVars($candidate);
     }
 
     public function updatedJudgeId()
@@ -229,6 +246,18 @@ class TabroomScoringComponent extends BasePage
     {
         $this->reset('scoreUpdatedMssg', 'judgeId');
 
+        $this->room = $this->rooms->where('id', $this->roomId)->first();
+
+        if (!$this->room) {
+            $this->candidateError = "No room found.";
+            return;
+        }
+
+        if (!$this->room->judges->count()) {
+            $this->candidateError = "No judges found for ".$this->rooms->first()->room_name.".";
+            return;
+        }
+
         $this->updateRooms(Candidate::find($this->candidateId));
     }
 
@@ -243,24 +272,11 @@ class TabroomScoringComponent extends BasePage
 
     private function updateRooms(Candidate $candidate): void
     {
-        $voicePartId = $candidate->voice_part_id;
-
-        $this->rooms = Room::query()
-            ->join('room_voice_parts', 'room_voice_parts.room_id', '=', 'rooms.id')
-            ->where('rooms.version_id', $this->versionId)
-            ->where('room_voice_parts.voice_part_id', $voicePartId)
-            ->select('rooms.*')
-            ->get();
-
         //set defaults
         $candidate = Candidate::find($this->candidateId);
         $this->roomId = ($this->roomId) ?: $this->rooms->first()->id;
         $this->room = $this->rooms->where('id', $this->roomId)->first();
         $this->judges = $this->room->judges;
-
-        if (!$this->judges->count()) {
-            Log::error('*** No Judges Found for room: '.$this->room->room_name.' (id: '.$this->room->id.'). ***');
-        }
 
         $this->judgeId = $this->judgeId ?: $this->judges->first()->id;
         $this->judge = Judge::find($this->judgeId);
