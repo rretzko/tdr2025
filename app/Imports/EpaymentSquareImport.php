@@ -2,11 +2,13 @@
 
 namespace App\Imports;
 
+use App\Models\EmergencyContact;
 use App\Models\Epayment;
 use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Students\Student;
 use App\Models\User;
 use App\Services\ConvertToPenniesService;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
@@ -17,8 +19,9 @@ class EpaymentSquareImport implements WithHeadings, ToModel
      */
     public function model(array $row)
     {
+        static $rowCounter = 1;
 
-        $ePaymentDetails = $this->parseRow($row);
+        $ePaymentDetails = $this->parseRow($row, $rowCounter);
 
         if (count($ePaymentDetails)) {
             $exists = Epayment::query()
@@ -46,6 +49,8 @@ class EpaymentSquareImport implements WithHeadings, ToModel
             );
 
         }
+
+        $rowCounter++;
     }
 
     public function headings(): array
@@ -104,13 +109,28 @@ class EpaymentSquareImport implements WithHeadings, ToModel
         ];
     }
 
-    private function getCandidateDetails(int $candidateSuffix, string $transactionId, int $amount): array
+    private function getCandidate(int $candidateSuffix, string $payer, int $rowCounter): Candidate|null
     {
         //hardcoded for CJMEA 2024-25 event
         $eventId = 83;
         $candidateId = (int) $eventId.$candidateSuffix;
 
         $candidate = Candidate::find($candidateId);
+
+        if (!$candidate) {
+            $candidate = $this->getCandidateThroughPayer($payer);
+        }
+
+        if (!$candidate) {
+            Log::error("*** Candidate id: $candidateId with payer: $payer not found at row: $rowCounter. ***");
+            return null;
+        }
+
+        return $candidate;
+    }
+
+    private function getCandidateDetails(Candidate $candidate, string $transactionId, int $amount, string $payer): array
+    {
         $student = Student::find($candidate->student_id);
         $userId = $student->user->id;
 
@@ -119,14 +139,37 @@ class EpaymentSquareImport implements WithHeadings, ToModel
             'schoolId' => $candidate->school_id,
             'userId' => $userId,
             'feeType' => 'registration',
-            'candidateId' => $candidateId,
+            'candidateId' => $candidate->id,
             'transactionId' => $transactionId,
             'amount' => $amount,
             'comments' => $candidate->program_name.' square payment updated',
         ];
     }
 
-    private function parseRow(array $row): array
+    private function getCandidateThroughPayer(string $payer): Candidate|null
+    {
+        $versionId = 83; //hard-coded to CJMEA 2024-35 event
+        $studentIds = EmergencyContact::where('name', 'LIKE', '%'.$payer.'%')
+            ->pluck('student_id')
+            ->toArray();
+
+        foreach ($studentIds as $studentId) {
+
+            $candidate = Candidate::query()
+                ->where('student_id', $studentId)
+                ->where('version_id', $versionId)
+                ->first();
+
+            if ($candidate) {
+                return $candidate;
+            }
+        }
+
+        return null;
+
+    }
+
+    private function parseRow(array $row, int $rowCounter): array
     {
         //skip the header row
         if ($row[0] === 'Date') {
@@ -142,16 +185,18 @@ class EpaymentSquareImport implements WithHeadings, ToModel
             $candidateSuffix = substr($row[49], -4);
             $transactionId = $row[22];
             $amount = ConvertToPenniesService::usdToPennies(substr($row[3], 1));
+            $payer = $row[35];
 
-            return $this->getCandidateDetails($candidateSuffix, $transactionId, $amount);
+            $candidate = $this->getCandidate($candidateSuffix, $payer, $rowCounter);
+
+            if (is_null($candidate)) {
+                return [];
+            }
+
+            return $this->getCandidateDetails($candidate, $transactionId, $amount, $payer);
         }
 
         return [];
-
-//        $parts = explode(" | ", $row[26]);
-//        $parts[] = $row[12];
-//
-//        return $parts;
     }
 
 
