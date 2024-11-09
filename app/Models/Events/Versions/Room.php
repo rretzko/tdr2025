@@ -9,6 +9,7 @@ use App\Models\Events\Versions\Scoring\RoomScoreCategory;
 use App\Models\Events\Versions\Scoring\RoomVoicePart;
 use App\Models\Events\Versions\Scoring\Score;
 use App\Models\Events\Versions\Scoring\ScoreFactor;
+use App\Models\Schools\Teacher;
 use App\Models\Students\VoicePart;
 use App\Services\CandidateAdjudicationStatusService;
 use App\Services\JudgeHasCompletedScoringCandidateService;
@@ -242,10 +243,27 @@ class Room extends Model
 
     private function getAdjudicatorsProgress(int $candidateId): string
     {
+        $crlf = "\n";
         $str = '';
+        $roomFactorCount = $this->getScoringFactorsAttribute()->count();
+
+        $candidate = Candidate::find($candidateId);
+        $teacher = Teacher::find($candidate->teacher_id);
+        $str .= $candidate->program_name.$crlf;
+        $str .= $teacher->user->name.' @ '.$candidate->school->shortName.$crlf;
 
         foreach ($this->judges as $judge) {
-            $str .= $judge->user->name."\n";
+
+            $judgeScoreCount = $judge->getCandidateScoreCount($candidateId);
+            $judgeTotalScore = $judge->getCandidateTotalScore($candidateId);
+
+            $str .= $judge->user->name
+                .': '.$judgeScoreCount
+                .'/'
+                .$roomFactorCount
+                .' ('
+                .$judgeTotalScore.')'
+                .$crlf;
         }
 
         return $str;

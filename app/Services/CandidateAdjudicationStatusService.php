@@ -46,6 +46,7 @@ class CandidateAdjudicationStatusService
         self::$versionId = self::$version->id;
         $scoreCount = self::getScoreCount();
         $maxScoreCount = self::getMaxScoreCount();
+
         //Log::info('scoreCount: '.$scoreCount.' | maxScoreCount: '.$maxScoreCount);
         if (!$scoreCount) {
             self::$status = 'pending';
@@ -83,6 +84,7 @@ class CandidateAdjudicationStatusService
     private static function getRoomScoreCount(): int
     {
         $judgeIds = self::$room->judges->pluck('id')->toArray();
+
         return Score::query()
             ->where('candidate_id', self::$candidateId)
             ->whereIn('judge_id', $judgeIds)

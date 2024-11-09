@@ -344,6 +344,7 @@ class ViewDataFactory extends aViewData
             'adjudication' => 'events.versions.adjudications.adjudication-component',
 
             //tab room
+            'tabroom cutoff' => 'events.versions.tabrooms.tabroom-cutoff-component',
             'tabroom scoring' => 'events.versions.tabrooms.tabroom-scoring-component',
             'tabroom tracking' => 'events.versions.tabrooms.tabroom-tracking-component',
 

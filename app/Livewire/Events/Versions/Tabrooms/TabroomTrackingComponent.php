@@ -43,6 +43,5 @@ class TabroomTrackingComponent extends BasePage
         }
 
         return $candidates;
-
     }
 }

@@ -223,6 +223,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('version.roles');
 
     //VERSIONS.TABROOM
+    //VERSIONS.TABROOM.TRACKING
+    Route::get('version/tabroom/cutoff',
+        \App\Http\Controllers\Events\Versions\Tabrooms\TabroomCutoffController::class)
+        ->name('version.tabroom.cutoff');
     //VERSIONS.TABROOM.SCORING
     Route::get('version/tabroom/scoring',
         \App\Http\Controllers\Events\Versions\Tabrooms\TabroomScoringController::class)

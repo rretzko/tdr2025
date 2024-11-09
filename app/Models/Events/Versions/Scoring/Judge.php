@@ -2,6 +2,7 @@
 
 namespace App\Models\Events\Versions\Scoring;
 
+use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Version;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,9 +21,20 @@ class Judge extends Model
         'status_type',
     ];
 
-    public function version(): BelongsTo
+    public function getCandidateScoreCount(int $candidateId): int
     {
-        return $this->belongsTo(Version::class);
+        return Score::query()
+            ->where('candidate_id', $candidateId)
+            ->where('judge_id', $this->id)
+            ->count('id');
+    }
+
+    public function getCandidateTotalScore(int $candidateId): int
+    {
+        return Score::query()
+            ->where('candidate_id', $candidateId)
+            ->where('judge_id', $this->id)
+            ->sum('score');
     }
 
     public function room(): BelongsTo
@@ -34,4 +46,11 @@ class Judge extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function version(): BelongsTo
+    {
+        return $this->belongsTo(Version::class);
+    }
+
+
 }
