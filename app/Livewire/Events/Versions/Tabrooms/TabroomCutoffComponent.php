@@ -3,16 +3,21 @@
 namespace App\Livewire\Events\Versions\Tabrooms;
 
 use App\Livewire\BasePage;
+use App\Models\AuditionResults\Factory;
 use App\Models\Events\Event;
 use App\Models\Events\Versions\Participations\AuditionResult;
 use App\Models\Events\Versions\Scoring\ScoreFactor;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionConfigAdjudication;
 use App\Models\UserConfig;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 
 class TabroomCutoffComponent extends BasePage
 {
-    public array $ensembles;
+    public Factory $factory;
+    public Collection $eventEnsembles;
+    public array $ensemblesArray;
     public Event $event;
     public array $scoresByVoicePart = [];
     public Version $version;
@@ -29,8 +34,11 @@ class TabroomCutoffComponent extends BasePage
         $this->versionConfigAdjudication = VersionConfigAdjudication::where('version_id', $this->versionId)
             ->first();
         $this->event = $this->version->event;
-        $this->ensembles = $this->event->eventEnsembles->select('id', 'ensemble_name')->toArray();
+        $this->eventEnsembles = $this->event->eventEnsembles;
+        $this->ensemblesArray = $this->eventEnsembles->select('id', 'ensemble_name')->toArray();
         $this->voicePartAbbrs = $this->event->voiceParts->pluck('abbr')->toArray();
+
+        $this->factory = new Factory();
     }
 
     public function render()
@@ -39,6 +47,15 @@ class TabroomCutoffComponent extends BasePage
             [
                 'scores' => $this->getScores(),
             ]);
+    }
+
+    public function clickScore($score, $voicePartId): void
+    {
+        $this->factory->setScore(
+            $this->eventEnsembles,
+            $this->versionConfigAdjudication,
+            $score,
+            $voicePartId);
     }
 
     private function getScores(): array
@@ -64,7 +81,8 @@ class TabroomCutoffComponent extends BasePage
 
         $query = AuditionResult::query()
             ->where('voice_part_id', $voicePartId)
-            ->where('score_count', $maxScoreCount);
+            ->where('score_count', $maxScoreCount)
+            ->where('version_id', '!=', $this->versionId);
 
         if ($sortAscending) {
             $query->orderBy('total');
@@ -97,16 +115,5 @@ class TabroomCutoffComponent extends BasePage
 
         return $judgeCount * $scoreFactorCount;
     }
-
-    public function clickScore($score, $voicePartId)
-    {
-        //evaluate ensemble assignment
-        //register cut-off score
-        //assign accepted bool and acceptance_abbr to audition_results
-        //highlight score values with background color coding (blue for first ensemble, yellow for second ensemble)
-        //calculate ensemble count summaries
-        //re-render
-    }
-
 
 }

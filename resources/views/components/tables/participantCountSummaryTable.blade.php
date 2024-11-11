@@ -24,7 +24,7 @@
     </tr>
     </thead>
     <tbody>
-    @forelse($ensembles AS $ensemble)
+    @forelse($ensemblesArray AS $ensemble)
         <tr>
             <td>{{ $ensemble['ensemble_name'] }}</td>
         </tr>
