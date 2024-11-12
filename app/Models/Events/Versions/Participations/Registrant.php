@@ -30,9 +30,16 @@ class Registrant
         return $this->registrants->where('voice_part_id', $voicePartId)->count();
     }
 
-    public function getRegistrantArrayForEstimateForm(): array
+    /**
+     * @return array
+     * @since 2024-Nov-12 Return candidates with auth()->id() as the sponsoring teacher (teacher_id)
+     */
+    public function getRegistrantArrayForEstimateForm($school = null): array
     {
         //$this->test();
+        $schoolId = ($school)
+            ? $school->id
+            : $this->schoolId;
 
         $core = DB::table('candidates')
             ->join('students', 'students.id', '=', 'candidates.student_id')
@@ -40,13 +47,16 @@ class Registrant
             ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
             ->where('version_id', $this->versionId)
             ->whereIn('teacher_id', $this->coTeacherIds)
-            ->where('school_id', $this->schoolId)
+            ->where('school_id', $schoolId)
             ->where('status', 'registered')
+            ->where('candidates.teacher_id', auth()->id())
             ->select('candidates.id',
                 'users.first_name', 'users.middle_name', 'users.last_name', 'users.suffix_name',
                 'students.class_of',
                 'voice_parts.descr AS voicePartDescr',
-                DB::raw("( 12 - (students.class_of - $this->seniorYear)) AS grade"))
+                DB::raw("( 12 - (students.class_of - $this->seniorYear)) AS grade"),
+                'candidates.teacher_id',
+            )
             ->get()
             ->toArray();
 

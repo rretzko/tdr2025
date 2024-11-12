@@ -200,6 +200,7 @@ class EstimateComponent extends BasePage
             ->whereIn('school_student.school_id', $schoolIds)
             ->whereIn('student_teacher.teacher_id', $coTeacherIds)
             ->where('school_student.active', 1)
+            ->where('candidates.teacher_id', auth()->id())
             ->orderBy('users.last_name')
             ->orderBy('users.first_name')
             ->pluck('users.name', 'candidates.id')

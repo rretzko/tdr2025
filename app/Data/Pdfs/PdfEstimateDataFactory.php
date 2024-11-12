@@ -180,9 +180,24 @@ class PdfEstimateDataFactory
 //        return Pronoun::find($this->user->pronoun_id)->$column;
 //    }
 //
+    /**
+     * @return array
+     * @since 12-Nov-24 added multiple schools to accommodate co-teacher situations
+     */
     private function getRegistrants(): array
     {
-        return $this->registrant->getRegistrantArrayForEstimateForm();
+        $registrants = [];
+        $teacher = Teacher::where('user_id', auth()->id())->first();
+
+        foreach ($teacher->schools as $school) {
+            $registrants = array_merge($registrants, $this->registrant->getRegistrantArrayForEstimateForm($school));
+        }
+
+        usort($registrants, function ($a, $b) {
+            return strcmp($a->last_name, $b->last_name);
+        });
+
+        return $registrants;
     }
 
     private function getRegistrationFee(): float

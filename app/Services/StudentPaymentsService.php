@@ -35,13 +35,19 @@ class StudentPaymentsService
 
     }
 
+    /**
+     * * @return array
+     * @since 2024-Nov-12 Return candidates with auth()->id() as the sponsoring teacher (teacher_id)
+     */
     private function getPhysicalPayments(): array
     {
         return StudentPayment::query()
             ->join('students', 'students.id', '=', 'student_payments.student_id')
             ->join('users', 'users.id', '=', 'students.user_id')
-            ->where('version_id', $this->versionId)
-            ->whereIn('school_id', $this->schoolIds)
+            ->join('candidates', 'candidates.student_id', '=', 'student_payments.student_id')
+            ->where('student_payments.version_id', $this->versionId)
+            ->whereIn('student_payments.school_id', $this->schoolIds)
+            ->where('candidates.teacher_id', auth()->id())
             ->select('student_payments.id', 'student_payments.candidate_id',
                 'student_payments.amount', 'student_payments.payment_type', 'student_payments.transaction_id',
                 'student_payments.comments',
@@ -51,13 +57,20 @@ class StudentPaymentsService
             ->toArray();
     }
 
+    /**
+     * @return array
+     * @since 2024-Nov-12 Return candidates with auth()->id() as the sponsoring teacher (teacher_id)
+     */
     private function getEPayments(): array
     {
         return Epayment::query()
             ->join('students', 'students.id', '=', 'epayments.user_id')
             ->join('users', 'users.id', '=', 'students.user_id')
-            ->where('version_id', $this->versionId)
-            ->whereIn('school_id', $this->schoolIds)
+            ->join('candidates', 'candidates.student_id', '=', 'students.id')
+            ->where('epayments.version_id', $this->versionId)
+            ->whereIn('epayments.school_id', $this->schoolIds)
+            ->where('candidates.version_id', $this->versionId)
+            ->where('candidates.teacher_id', auth()->id())
             ->select('epayments.id', 'epayments.candidate_id',
                 'epayments.amount', 'epayments.transaction_id',
                 'epayments.comments',
