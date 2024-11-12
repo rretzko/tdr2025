@@ -27,6 +27,11 @@
     @forelse($ensemblesArray AS $ensemble)
         <tr>
             <td>{{ $ensemble['ensemble_name'] }}</td>
+            @forelse($ensembleSummaryCounts[$ensemble['abbr']] AS $count)
+                <td class="text-center">{{ $count }}</td>
+            @empty
+                <td>No counts found.</td>
+            @endforelse
         </tr>
     @empty
         <tr>

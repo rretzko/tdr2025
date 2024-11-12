@@ -44,24 +44,12 @@ class Factory extends Model
     ): void {
         //evaluate ensemble assignment (ex: StackedScoresDescendingSingleEnsembleAlgorithm )
         $this->setModel($eventEnsembles, $versionconfigAdjudication);
+
         //register cut-off score
         $this->model->registerCutoff($eventEnsembles, $versionconfigAdjudication, $score, $voicePartId);
-//        VersionCutoff::updateOrCreate(
-//            [
-//                'version_id' => $versionconfigAdjudication->version_id,
-//                'voice_part_id' =>  $voicePartId,
-//                'event_ensemble_id' => $this->eventEnsembles->count() === 1 ? $this->eventEnsembles->first()->id : 0,
-//            ],
-//            [
-//                'score' => $score,
-//            ]
-//        );
+
         //assign accepted bool and acceptance_abbr to audition_results
-        //highlight score values with background color coding (blue for first ensemble, yellow for second ensemble)
-        //calculate ensemble count summaries
-        //re-render
-        Log::info('Model algorithm: '.$this->model);
-//        dd($this->algorithm);
+        $this->model->acceptParticipants($eventEnsembles, $versionconfigAdjudication, $score, $voicePartId);
     }
 
     public function setModel($eventEnsembles, $versionConfigAdjudication): void

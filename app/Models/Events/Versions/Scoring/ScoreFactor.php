@@ -31,6 +31,18 @@ class ScoreFactor extends Model
         return $this->belongsTo(Event::class);
     }
 
+    public function getCountByVersionId(int $versionId): int
+    {
+        $scoreCount = $this->where('version_id', $versionId)->count('id');
+
+        if (!$scoreCount) {
+            $eventId = Version::find($versionId)->event_id;
+            $scoreCount = $this->where('event_id', $eventId)->count('id');
+        }
+
+        return $scoreCount;
+    }
+
     public function version(): BelongsTo
     {
         return $this->belongsTo(Version::class);

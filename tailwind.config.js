@@ -21,6 +21,10 @@ export default {
         'bg-green-600',
         'bg-red-200',
         'bg-yellow-200',
+        'bg-blue-200',
+        'bg-blue-400',
+        'bg-blue-600',
+        'bg-blue-800',
         'border-indigo-500',
         'border-b-black',
         'border-b-blue-500',
@@ -31,6 +35,10 @@ export default {
         'text-red-800',
         'text-yellow-600',
         'text-yellow-800',
+        'text-blue-800',
+        'text-blue-600',
+        'text-blue-400',
+        'text-blue-200',
     ],
     theme: {
         extend: {

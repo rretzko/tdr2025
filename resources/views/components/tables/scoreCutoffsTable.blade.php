@@ -18,15 +18,22 @@
             @endforelse
         </tr>
         <tr>
+            @php $spacing=1; $lastScore=0; @endphp
             @forelse($scores AS $score)
                 <td class="tdScoreContainer align-top">
-                    <div class="scoreContainer px-1 flex flex-col">
-                        @forelse($score['scores'] AS $scoreValue)
+                    <div class="scoreContainer px-1 py-1 flex flex-col space-y-0.5">
+
+                        @forelse($score['scores'] AS $scoreArray)
+                            @if($lastScore)
+                                @php $spacing = abs($lastScore - $scoreArray['score']) @endphp
+                            @endif
+                            @php $lastScore = $scoreArray['score'] @endphp
+                            @php $mt = 'mt-' . $spacing; @endphp
                             <button type="button"
-                                    wire:click="clickScore({{ $scoreValue}}, {{ $score['voicePartId'] }})"
-                                    class="px-1 rounded-lg hover:bg-gray-300 "
+                                    wire:click="clickScore({{ $scoreArray['score']}}, {{ $score['voicePartId'] }})"
+                                    class="px-1 rounded-lg {{ $scoreArray['colors'] }} {{ $mt }}"
                             >
-                                {{ $scoreValue }}
+                                {{ $scoreArray['score'] }}
                             </button>
                         @empty
                             No scores found.

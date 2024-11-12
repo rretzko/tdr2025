@@ -10,6 +10,8 @@ use App\Models\Events\Versions\Scoring\ScoreFactor;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionConfigAdjudication;
 use App\Models\UserConfig;
+use App\Services\AuditionResultsScoreColorsService;
+use App\Services\EventEnsembleSummaryCountService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 
@@ -31,11 +33,12 @@ class TabroomCutoffComponent extends BasePage
 
         $this->versionId = UserConfig::getValue('versionId');
         $this->version = Version::find($this->versionId);
+
         $this->versionConfigAdjudication = VersionConfigAdjudication::where('version_id', $this->versionId)
             ->first();
         $this->event = $this->version->event;
         $this->eventEnsembles = $this->event->eventEnsembles;
-        $this->ensemblesArray = $this->eventEnsembles->select('id', 'ensemble_name')->toArray();
+        $this->ensemblesArray = $this->eventEnsembles->select('id', 'ensemble_name', 'abbr')->toArray();
         $this->voicePartAbbrs = $this->event->voiceParts->pluck('abbr')->toArray();
 
         $this->factory = new Factory();
@@ -46,16 +49,27 @@ class TabroomCutoffComponent extends BasePage
         return view('livewire..events.versions.tabrooms.tabroom-cutoff-component',
             [
                 'scores' => $this->getScores(),
+                'ensembleSummaryCounts' => $this->getEnsembleSummaryCounts(),
             ]);
     }
 
     public function clickScore($score, $voicePartId): void
     {
+        //register score and update auditionResults
         $this->factory->setScore(
             $this->eventEnsembles,
             $this->versionConfigAdjudication,
             $score,
             $voicePartId);
+    }
+
+    /** END OF PUBLIC FUNCTIONS **************************************************/
+
+    private function getEnsembleSummaryCounts(): array
+    {
+        $service = new EventEnsembleSummaryCountService($this->eventEnsembles, $this->versionId);
+
+        return $service->getCounts();
     }
 
     private function getScores(): array
@@ -82,7 +96,7 @@ class TabroomCutoffComponent extends BasePage
         $query = AuditionResult::query()
             ->where('voice_part_id', $voicePartId)
             ->where('score_count', $maxScoreCount)
-            ->where('version_id', '!=', $this->versionId);
+            ->where('version_id', '=', $this->versionId);
 
         if ($sortAscending) {
             $query->orderBy('total');
@@ -90,30 +104,26 @@ class TabroomCutoffComponent extends BasePage
             $query->orderByDesc('total');
         }
 
-        return $query
+        $scores = $query
             ->pluck('total')
             ->toArray();
+
+        $service = new AuditionResultsScoreColorsService($scores, $this->versionConfigAdjudication, $voicePartId,
+            $this->eventEnsembles);
+
+        return $service->getColors($scores);
     }
 
     /** END OF PUBLIC FUNCTIONS  *************************************************/
 
     private function getMaxScoreCount(): int
     {
+        $scoreFactor = new ScoreFactor();
+        $scoreFactorCount = $scoreFactor->getCountByVersionId($this->versionId);
         $judgeCount = $this->versionConfigAdjudication->judge_per_room_count;
 
-        //test for count based on versionId
-        $scoreFactorCount = ScoreFactor::query()
-            ->where('version_id', $this->versionId)
-            ->count('id');
+        return ($scoreFactorCount * $judgeCount);
 
-        //if not successful, use event->id
-        if (!$scoreFactorCount) {
-            $scoreFactorCount = ScoreFactor::query()
-                ->where('event_id', $this->event->id)
-                ->count('id');
-        }
-
-        return $judgeCount * $scoreFactorCount;
     }
 
 }
