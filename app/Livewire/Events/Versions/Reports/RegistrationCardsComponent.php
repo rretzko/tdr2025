@@ -127,11 +127,11 @@ class RegistrationCardsComponent extends BasePage
 
     private function pdf(mixed $dto)
     {
-        $root = "/pdf/registrationCards/";
+        $root = DIRECTORY_SEPARATOR."pdf".DIRECTORY_SEPARATOR."registrationCards".DIRECTORY_SEPARATOR;
         $uri = match ($dto) {
-            $this->candidateId => $root.'candidates/'.$this->candidateId,
-            $this->schoolId => $root.'schools/'.$this->schoolId,
-            default => $root.'voiceParts/'.$dto,
+            $this->candidateId => $root.'candidates'.DIRECTORY_SEPARATOR.$this->candidateId,
+            $this->schoolId => $root.'schools'.DIRECTORY_SEPARATOR.$this->schoolId,
+            default => $root.'voiceParts'.DIRECTORY_SEPARATOR.$dto,
         };
 
         return $this->redirect($uri);
