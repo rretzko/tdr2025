@@ -32,7 +32,7 @@ class RegistrationCardsComponent extends BasePage
         $this->voiceParts = $this->getVoiceParts($eligibleVoiceParts);
     }
 
-    private function getSchools(): array
+    public function getSchools(): array
     {
         return $this->query()
             ->distinct('candidates.school_id')

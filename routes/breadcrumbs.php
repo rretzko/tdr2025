@@ -231,6 +231,12 @@ Breadcrumbs::for('tabroom cutoff', function (BreadcrumbTrail $trail, int $id) {
     $trail->push('Tabroom Cutoff', route('version.tabroom.cutoff'));
 });
 
+//Tabroom:reports
+Breadcrumbs::for('tabroom reports', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('version dashboard', $id);
+    $trail->push('Tabroom reports', route('version.tabroom.reports'));
+});
+
 //Tabroom:scoring
 Breadcrumbs::for('tabroom scoring', function (BreadcrumbTrail $trail, int $id) {
     $trail->parent('version dashboard', $id);

@@ -126,7 +126,7 @@ class EnsemblesTableComponent extends BasePageEnsemble
         return $a;
     }
 
-    private function getSchools(): array
+    public function getSchools(): array
     {
         return auth()->user()->teacher->schools
             ->pluck('name', 'id')
