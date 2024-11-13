@@ -52,6 +52,7 @@ class AuditionResultsScoreColorsService
                 'score' => $total,
                 'colors' => $colorScheme,
             ];
+
         }
 
         return $colors;

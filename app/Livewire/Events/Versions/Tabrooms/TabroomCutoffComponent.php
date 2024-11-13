@@ -12,6 +12,7 @@ use App\Models\Events\Versions\VersionConfigAdjudication;
 use App\Models\UserConfig;
 use App\Services\AuditionResultsScoreColorsService;
 use App\Services\EventEnsembleSummaryCountService;
+use App\Services\MaxScoreCountService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 
@@ -91,7 +92,7 @@ class TabroomCutoffComponent extends BasePage
     private function getScoresByVoicePart(int $voicePartId): array
     {
         $sortAscending = (bool) $this->versionConfigAdjudication->scores_ascending;
-        $maxScoreCount = $this->getMaxScoreCount();
+        $maxScoreCount = MaxScoreCountService::getMaxScoreCount($this->versionConfigAdjudication);
 
         $query = AuditionResult::query()
             ->where('voice_part_id', $voicePartId)

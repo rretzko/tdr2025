@@ -11,6 +11,12 @@ export default {
     ],
     safelist: [
         'accent-red-500',
+        'bg-yellow-50',
+        'bg-yellow-100',
+        'bg-yellow-200',
+        'bg-yellow-300',
+        'bg-yellow-400',
+        'bg-yellow-500',
         'bg-yellow-600',
         'bg-yellow-700',
         'bg-gray-200',

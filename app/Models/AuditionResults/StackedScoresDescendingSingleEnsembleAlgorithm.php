@@ -7,6 +7,7 @@ use App\Models\Events\Versions\Scoring\ScoreFactor;
 use App\Models\Events\Versions\Scoring\VersionCutoff;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionConfigAdjudication;
+use App\Services\MaxScoreCountService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -17,14 +18,14 @@ class StackedScoresDescendingSingleEnsembleAlgorithm extends Model implements Al
 
     public function acceptParticipants(
         Collection $eventEnsembles,
-        VersionConfigAdjudication $versionconfigAdjudication,
+        VersionConfigAdjudication $versionConfigAdjudication,
         int $score,
         int $voicePartId
     ) {
 
-        $this->maxScoreCount = $this->setMaxScoreCount($versionconfigAdjudication);
+        $this->maxScoreCount = MaxScoreCountService::getMaxScoreCount($versionConfigAdjudication);
 
-        $auditionResults = $this->getAuditionResults($eventEnsembles, $versionconfigAdjudication, $voicePartId);
+        $auditionResults = $this->getAuditionResults($eventEnsembles, $versionConfigAdjudication, $voicePartId);
 
         //set accepted to 0 and acceptance abbr to "ns"
         $this->setParticipantsToDefault($auditionResults);
@@ -32,11 +33,15 @@ class StackedScoresDescendingSingleEnsembleAlgorithm extends Model implements Al
         $this->setAcceptedAndAcceptanceAbbr($auditionResults, $score, $eventEnsembles);
     }
 
-    public function registerCutoff($eventEnsembles, $versionconfigAdjudication, int $score, int $voicePartId)
-    {
+    public function registerCutoff(
+        Collection $eventEnsembles,
+        VersionConfigAdjudication $versionConfigAdjudication,
+        int $score,
+        int $voicePartId
+    ): void {
         VersionCutoff::updateOrCreate(
             [
-                'version_id' => $versionconfigAdjudication->version_id,
+                'version_id' => $versionConfigAdjudication->version_id,
                 'voice_part_id' => $voicePartId,
                 'event_ensemble_id' => $eventEnsembles->first()->id,
             ],
@@ -113,15 +118,6 @@ class StackedScoresDescendingSingleEnsembleAlgorithm extends Model implements Al
                 ]
             );
         }
-    }
-
-    private function setMaxScoreCount(VersionConfigAdjudication $versionConfigAdjudication): int
-    {
-        $judgeCount = $versionConfigAdjudication->judge_per_room_count;
-        $scoreFactor = new ScoreFactor();
-        $factorCount = $scoreFactor->getCountByVersionId($versionConfigAdjudication->version_id);
-
-        return ($judgeCount * $factorCount);
     }
 
     private function setParticipantsToDefault(Builder $auditionResults): void

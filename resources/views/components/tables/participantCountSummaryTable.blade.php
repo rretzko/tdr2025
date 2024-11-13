@@ -28,7 +28,14 @@
         <tr>
             <td>{{ $ensemble['ensemble_name'] }}</td>
             @forelse($ensembleSummaryCounts[$ensemble['abbr']] AS $count)
-                <td class="text-center">{{ $count }}</td>
+                <td @class([
+                    'text-center',
+                    'text-gray-200' => (! $count),
+                    'bg-gray-200 text-gray-200'=> ($count === '-'),
+                    ])
+                >
+                    {{ $count }}
+                </td>
             @empty
                 <td>No counts found.</td>
             @endforelse

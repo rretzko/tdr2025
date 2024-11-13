@@ -65,7 +65,7 @@ class Event extends Model
     public function getVoicePartsAttribute(): Collection
     {
         return $this->eventEnsembles
-            ->flatMap(fn($eventEnsemble) => $eventEnsemble->voiceParts)
+            ->flatMap(fn($eventEnsemble) => $eventEnsemble->voiceParts->sortBy('order_by'))
             ->unique();
     }
 

@@ -3,6 +3,7 @@
 namespace App\Models\AuditionResults;
 
 use App\Models\Events\Versions\VersionConfigAdjudication;
+use App\Models\Events\Versions\VersionEventEnsembleDistinction;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
@@ -29,6 +30,7 @@ class Factory extends Model
     public Collection $eventEnsembles;
     public VersionConfigAdjudication $versionConfigAdjudication;
     private bool $alternatingScores;
+    private array $distinctions = [];
     private string $scoreDirection;
 
     public function setAlternatingScores(): void
@@ -38,18 +40,18 @@ class Factory extends Model
 
     #[NoReturn] public function setScore(
         $eventEnsembles,
-        $versionconfigAdjudication,
+        $versionConfigAdjudication,
         int $score,
         int $voicePartId
     ): void {
         //evaluate ensemble assignment (ex: StackedScoresDescendingSingleEnsembleAlgorithm )
-        $this->setModel($eventEnsembles, $versionconfigAdjudication);
+        $this->setModel($eventEnsembles, $versionConfigAdjudication);
 
         //register cut-off score
-        $this->model->registerCutoff($eventEnsembles, $versionconfigAdjudication, $score, $voicePartId);
+        $this->model->registerCutoff($eventEnsembles, $versionConfigAdjudication, $score, $voicePartId);
 
         //assign accepted bool and acceptance_abbr to audition_results
-        $this->model->acceptParticipants($eventEnsembles, $versionconfigAdjudication, $score, $voicePartId);
+        $this->model->acceptParticipants($eventEnsembles, $versionConfigAdjudication, $score, $voicePartId);
     }
 
     public function setModel($eventEnsembles, $versionConfigAdjudication): void
@@ -57,12 +59,12 @@ class Factory extends Model
         $scoreType = $versionConfigAdjudication->alternating_scores ? 'AlternatingScores' : 'StackedScores';
         $direction = $versionConfigAdjudication->scores_ascending ? 'Ascending' : 'Descending';
         $ensembleCount = $eventEnsembles->count() === 1 ? 'SingleEnsemble' : 'MultipleEnsembles';
+        $distinctions = $this->setDistinctions($eventEnsembles, $versionConfigAdjudication->version_id);
 
         //use App\Models\AuditionResults\StackedScoresDescendingSingleEnsembleAlgorithm;
-        $modelName = $scoreType.$direction.$ensembleCount.'Algorithm';
+        $modelName = $scoreType.$direction.$ensembleCount.$distinctions.'Algorithm';
         $model = 'App\Models\AuditionResults\\'.$modelName;
         $this->model = new $model();
-
     }
 
     public function setScoreDirection($versionConfigAdjudication): void
@@ -72,8 +74,31 @@ class Factory extends Model
 
     /** END OF PUBLIC FUNCTIONS **************************************************/
 
-    private function init(): void
+    private function setDistinctions(Collection $eventEnsembles, int $versionId): string
     {
+        $distinctions = '';
 
+        //early exist if only one $eventEnsemble
+        if ($eventEnsembles->count() < 2) {
+            return $distinctions;
+        }
+
+        $versionEventEnsembleDistinctions = VersionEventEnsembleDistinction::query()
+            ->where('version_id', $versionId)
+            ->first();
+
+        if ($versionEventEnsembleDistinctions->by_grade) {
+            $distinctions .= 'ByGrade';
+        }
+
+        if ($versionEventEnsembleDistinctions->by_score) {
+            $distinctions .= 'ByScore';
+        }
+
+        if ($versionEventEnsembleDistinctions->by_voice_part_id) {
+            $distinctions .= 'ByVoicePartId';
+        }
+
+        return $distinctions;
     }
 }

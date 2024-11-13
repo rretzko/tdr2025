@@ -10,14 +10,14 @@ interface AlgorithmInterface
 {
     public function acceptParticipants(
         Collection $eventEnsembles,
-        VersionConfigAdjudication $versionconfigAdjudication,
+        VersionConfigAdjudication $versionConfigAdjudication,
         int $score,
         int $voicePartId
     );
 
     public function registerCutoff(
         Collection $eventEnsembles,
-        VersionConfigAdjudication $versionconfigAdjudication,
+        VersionConfigAdjudication $versionConfigAdjudication,
         int $score,
         int $voicePartId
     );
