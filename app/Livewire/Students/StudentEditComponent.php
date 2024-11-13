@@ -95,7 +95,7 @@ class StudentEditComponent extends BasePageStudent
 
     #[NoReturn] public function updatedFormLast(): void
     {
-        $this->student->user->update(['last' => $this->form->last]);
+        $this->student->user->update(['last_name' => $this->form->last]);
 
         $this->setUserName();
 
