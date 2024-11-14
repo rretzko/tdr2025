@@ -4,12 +4,14 @@ namespace App\Models\Events\Versions;
 
 use App\Models\Events\Event;
 use App\Models\Events\Versions\Room;
+use App\Models\Events\Versions\Scoring\ScoreFactor;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 
 class Version extends Model
 {
@@ -56,6 +58,23 @@ class Version extends Model
     public function rooms(): HasMany
     {
         return $this->hasMany(Room::class);
+    }
+
+    public function getScoreFactorsAttribute(): Collection
+    {
+        $scoreFactors = ScoreFactor::query()
+            ->where('version_id', $this->id)
+            ->orderBy('order_by')
+            ->get();
+
+        if ($scoreFactors->isEmpty()) {
+            $scoreFactors = ScoreFactor::query()
+                ->where('event_id', $this->event_id)
+                ->orderBy('order_by')
+                ->get();
+        }
+
+        return $scoreFactors;
     }
 
     public function showPitchFiles(string $type = ''): bool

@@ -21,7 +21,7 @@
             'hidden' => $displayReport
         ])
         >
-            <ol class="ml-12 list-decimal space-y-2">
+            <ol class="ml-12 list-decimal space-y-2 mb-4">
                 <li>
                     <button
                         type="button"

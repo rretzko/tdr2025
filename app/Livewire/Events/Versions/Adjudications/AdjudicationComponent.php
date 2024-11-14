@@ -79,13 +79,7 @@ class AdjudicationComponent extends BasePage
     {
         $this->reset('scoreUpdatedMssg');
 
-        $judgeOrderBys = [
-            'head judge' => 1,
-            'judge 2' => 2,
-            'judge 3' => 3,
-            'judge 4' => 4,
-            'judge monitor' => 5,
-        ];
+        $judgeOrderBys = $this->calcJudgeOrderBys();
 
         foreach ($this->form->scores as $factorId => $score) {
 
@@ -127,6 +121,20 @@ class AdjudicationComponent extends BasePage
     public function updatedFormScores($value, $key)
     {
         $scoreCount = $this->form->updateScores($value, $key);
+    }
+
+    private function calcJudgeOrderBys(): array
+    {
+        $judges = [];
+        $judgeTypes = ['head judge', 'judge 2', 'judge 3', 'judge 4', 'judge monitor'];
+
+        foreach ($judgeTypes as $judgeType) {
+            if (!is_null($this->room->judges->where('judge_type', $judgeType)->first())) {
+                $judges[$judgeType] = (count($judges) + 1);
+            }
+        }
+
+        return $judges;
     }
 
     private function getRoom(): Room

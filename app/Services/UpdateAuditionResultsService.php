@@ -16,7 +16,7 @@ class UpdateAuditionResultsService
 
     public function __construct(
         private readonly Candidate $candidate,
-        private readonly bool $accepted = true,
+        private readonly bool $accepted = false,
         private readonly string $acceptance_abbr = 'tbd',
     ) {
         $this->candidateId = $this->candidate->id;
