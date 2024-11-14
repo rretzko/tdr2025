@@ -202,19 +202,21 @@ class FindPdfPathService
         //version
         $versionFileTail = implode(DIRECTORY_SEPARATOR, ['pdfs', 'registrationCards', 'versions', $versionId]);
 
-        $versionView = $this->getVersionView($versionFileTail);
+        $versionView = false; //$this->getVersionView($versionFileTail);
 
         //event
         $eventId = Version::find($versionId)->event->id;
 
         $eventFileTail = implode(DIRECTORY_SEPARATOR, ['pdfs', 'registrationCards', 'events', $eventId]);
 
-        $eventView = $this->getEventView($eventFileTail);
-
+        $eventView = false; //$this->getEventView($eventFileTail);
+        /**
+         * @todo this isn't working: results in default value when $versionView should be found
+         */
         return match (true) {
             is_string($versionView) => $versionView,
             is_string($eventView) => $eventView,
-            default => '..pdfs\registrationCards\pdf.blade.php',
+            default => 'pdfs.registrationCards.pdf',
         };
 
     }

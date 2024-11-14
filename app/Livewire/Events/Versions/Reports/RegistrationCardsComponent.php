@@ -9,6 +9,7 @@ use App\Models\Schools\School;
 use App\Models\Students\VoicePart;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -133,6 +134,8 @@ class RegistrationCardsComponent extends BasePage
             $this->schoolId => $root.'schools'.DIRECTORY_SEPARATOR.$this->schoolId,
             default => $root.'voiceParts'.DIRECTORY_SEPARATOR.$dto,
         };
+
+//        Log::info($uri);
 
         return $this->redirect($uri);
 

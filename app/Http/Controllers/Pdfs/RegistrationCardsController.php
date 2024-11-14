@@ -45,7 +45,7 @@ class RegistrationCardsController extends Controller
         $versionId = UserConfig::getValue('versionId');
         $version = Version::find($versionId);
         $path = $this->getPath($versionId);
-
+        Log::info('path: '.$path);
         $data = new PdfRegistrationCardSchoolDataFactory($version, $school);
         $dto = $data->getDto();
 
@@ -61,7 +61,7 @@ class RegistrationCardsController extends Controller
         $versionId = UserConfig::getValue('versionId');
         $version = Version::find($versionId);
         $path = $this->getPath($versionId);
-
+        Log::info('path: '.$path);
         $data = new PdfRegistrationCardVoicePartDataFactory($version, $voicePart);
         $dto = $data->getDto();
 

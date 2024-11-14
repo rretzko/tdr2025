@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Models\Events\Versions\Judge;
+use App\Models\Events\Versions\Scoring\Judge;
 use App\Models\Events\Versions\Room;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;

@@ -29,18 +29,18 @@ class AdjudicationBackupExport implements WithMultipleSheets
         foreach ($this->rooms as $room) {
 
             //exclude the monitor role
-            $judges = array_filter($room['judges'], function ($judge) {
-                return $judge->judge_type !== 'monitor';
+            $judgesArray = $room['judges']->toArray();
+            $judges = array_filter($judgesArray, function ($judge) {
+                return $judge['judge_type'] !== 'monitor';
             });
 
             $roomSheets = array_map(function ($judge) use ($room) {
-                return new RoomJudgeSheetExport($room, $judge);
+                $judgeObj = \App\Models\Events\Versions\Scoring\Judge::find($judge['id']);
+                return new RoomJudgeSheetExport($room, $judgeObj);
             }, $judges);
 
             $sheets = array_merge($sheets, $roomSheets);
-//            foreach ($judges as $judge) {
-//                $sheets[] = new RoomJudgeSheetExport($room, $judge);
-//            }
+
         }
 
         return $sheets;
