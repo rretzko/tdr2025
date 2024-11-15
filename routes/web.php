@@ -231,6 +231,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('version/tabroom/reports',
         \App\Http\Controllers\Events\Versions\Tabrooms\TabroomReportController::class)
         ->name('version.tabroom.reports');
+    //VERSIONS.TABROOM.REPORTS.SCORES-BY-VOICE-PART
+    Route::get('versions/tabroom/reports/byVoicePart/{voicePart?}',
+        \App\Http\Controllers\Pdfs\ScoringRosterController::class)
+        ->name('versions.tabroom.reports.byVoicePart');
     //VERSIONS.TABROOM.SCORING
     Route::get('version/tabroom/scoring',
         \App\Http\Controllers\Events\Versions\Tabrooms\TabroomScoringController::class)

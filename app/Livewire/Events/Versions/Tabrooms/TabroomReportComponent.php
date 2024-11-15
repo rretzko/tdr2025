@@ -14,8 +14,9 @@ use JetBrains\PhpStorm\NoReturn;
 
 class TabroomReportComponent extends BasePage
 {
-    public string $displayReportData = '';
-    public bool $displayReport = false;
+    public array $categories = [];
+    public string $displayReportData = 'byVoicePart'; //'';
+    public bool $displayReport = true; //false;
     public Collection $factors;
     public int $judgeCount;
     public bool $scoresAscending = true;
@@ -31,6 +32,7 @@ class TabroomReportComponent extends BasePage
         $versionConfigAdjudication = VersionConfigAdjudication::where('version_id', $this->versionId)->first();
         $this->judgeCount = $versionConfigAdjudication->judge_per_room_count;
         $this->scoresAscending = $versionConfigAdjudication->scores_ascending;
+        $this->categories = $this->getCategories();
         $this->factors = $this->getFactorAbbrs();
         $this->voiceParts = $this->getVoiceParts();
         $this->voicePartId = $this->voiceParts->first()->id;
@@ -58,12 +60,27 @@ class TabroomReportComponent extends BasePage
         $this->displayReportData = $type;
     }
 
-    public function clickPrinter(): void
+    #[NoReturn] public function clickPrinter()
     {
-        dd(__METHOD__);
+        $uri = '/versions/tabroom/reports/byVoicePart';
+
+        if ($this->voicePartId) {
+            $uri .= '/'.$this->voicePartId;
+        }
+
+//        Log::info($uri);
+
+        return $this->redirect($uri);
     }
 
     /** END OF PUBLIC FUNCTIONS **************************************************/
+
+    private function getCategories(): array
+    {
+        $version = Version::find($this->versionId);
+
+        return $version->scoreCategoriesWithColSpanArray;
+    }
 
     private function getFactorAbbrs(): Collection
     {

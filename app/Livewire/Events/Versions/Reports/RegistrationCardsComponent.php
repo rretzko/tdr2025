@@ -135,8 +135,6 @@ class RegistrationCardsComponent extends BasePage
             default => $root.'voiceParts'.DIRECTORY_SEPARATOR.$dto,
         };
 
-//        Log::info($uri);
-
         return $this->redirect($uri);
 
     }

@@ -4,6 +4,7 @@ namespace App\Models\Events\Versions;
 
 use App\Models\Events\Event;
 use App\Models\Events\Versions\Room;
+use App\Models\Events\Versions\Scoring\ScoreCategory;
 use App\Models\Events\Versions\Scoring\ScoreFactor;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -58,6 +59,42 @@ class Version extends Model
     public function rooms(): HasMany
     {
         return $this->hasMany(Room::class);
+    }
+
+    public function getScoreCategoriesWithColSpanArrayAttribute(): array
+    {
+        $categories = ScoreCategory::query()
+            ->where('version_id', $this->id)
+            ->orderBy('order_by')
+            ->get();
+
+        if ($categories->isEmpty()) {
+            $categories = ScoreCategory::query()
+                ->where('event_id', $this->event_id)
+                ->orderBy('order_by')
+                ->get();
+        }
+
+        $categorySpans = [];
+        foreach ($categories as $category) {
+            $colSpan = ScoreFactor::query()
+                ->where('version_id', $this->id)
+                ->where('score_category_id', $category->id)
+                ->count('id');
+            if (!$colSpan) {
+                $colSpan = ScoreFactor::query()
+                    ->where('event_id', $this->event_id)
+                    ->where('score_category_id', $category->id)
+                    ->count('id');
+            }
+
+            $categorySpans[] = [
+                'descr' => $category->descr,
+                'colspan' => $colSpan,
+            ];
+        }
+
+        return $categorySpans;
     }
 
     public function getScoreFactorsAttribute(): Collection
