@@ -1,4 +1,4 @@
-<div class="space-y-4 mx-4 p-2 border border-gray-s00 ">
+<div class="space-y-4 mx-4 p-2 border border-gray-200 ">
     <div class="mx-4 flex flex-col md:flex-row md:space-x-4">
         @foreach($voiceParts AS $voicePart)
             <div class="items-center w-fit md:w-full">

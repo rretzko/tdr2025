@@ -24,7 +24,7 @@
                 $factors = $dto['factors'];
                 $judgeCount = $dto['judgeCount'];
             @endphp
-            @include('components.tables.scoringRosterTable')
+            @include('components.tables.scoringRosterPrivateTable')
         </div>
         @php $cntr++; @endphp
     @endforeach

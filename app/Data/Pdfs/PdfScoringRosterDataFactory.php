@@ -21,14 +21,18 @@ class PdfScoringRosterDataFactory
     private Version $version;
     private VersionConfigAdjudication $versionConfigAdjudication;
     private int $voicePartId = 0;
+    private array $voicePartIds = [];
     private Collection $voiceParts;
 
-    public function __construct(private int $versionId, private readonly VoicePart|null $voicePart = null)
+    public function __construct(private int $versionId, private readonly VoicePart|null|array $voicePart = null)
     {
         $this->version = Version::find($this->versionId);
+        $this->dto['versionName'] = $this->version->name;
         $this->dto['categoryColspans'] = $this->version->scoreCategoriesWithColSpanArray;
         $this->dto['factors'] = $this->version->scoreFactors;
-        $this->voiceParts = $this->version->event->voiceParts;;
+        $this->voiceParts = $this->version->event->voiceParts;
+        $this->voicePartIds = $this->getVoicePartIds();
+        $this->dto['voicePartDescr'] = is_null($voicePart) ? 'All Voices' : $voicePart->descr;
 
         $this->versionConfigAdjudication = VersionConfigAdjudication::where('version_id', $this->versionId)->first();
         $this->scoresAscending = $this->versionConfigAdjudication->scores_ascending;
@@ -41,37 +45,38 @@ class PdfScoringRosterDataFactory
         $this->init();
     }
 
-    /** END OF PUBLIC FUNCTIONS **************************************************/
-
-    private function init(): void
-    {
-        (is_null($this->voicePart))
-            ? $this->buildAllVoicesPdf()
-            : $this->buildSingleVoicePdf();
-    }
-
-    private function buildAllVoicesPdf()
-    {
-        foreach ($this->voiceParts as $voicePart) {
-
-            $this->voicePartId = $voicePart->id;
-            $this->getRows();
-        }
-    }
-
-    private function getRows(): void
-    {
-        $service = new ScoringRosterDataRowsService($this->versionId, $this->voicePartId);
-        $this->dto['rows'][$this->voicePartId] = $service->getRows();
-    }
-
-    private function buildSingleVoicePdf()
-    {
-        $this->getRows();
-    }
-
     public function getDto(): array
     {
         return $this->dto;
     }
+
+    /** END OF PUBLIC FUNCTIONS **************************************************/
+
+    private function init(): void
+    {
+        $this->getRows();
+    }
+
+    private function getRows(): void
+    {
+        $voicePartIds = $this->voicePartId ? [$this->voicePartId] : $this->voicePartIds;
+
+        $service = new ScoringRosterDataRowsService($this->versionId, $this->voicePartIds);
+        $this->dto['rows'][$this->voicePartId] = $service->getRows();
+    }
+
+    private function getVoicePartIds(): array
+    {
+        if (is_a($this->voicePart, 'App\Models\Students\VoicePart')) {
+            return [$this->voicePart->id];
+        }
+
+        return $this->voiceParts->pluck('id')->toArray();
+    }
+
+
+
+
+
+
 }

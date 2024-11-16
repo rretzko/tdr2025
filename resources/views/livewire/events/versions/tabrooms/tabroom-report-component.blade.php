@@ -37,7 +37,14 @@
                         </li>
                     </ul>
                 </li>
-                <li>Download Combined Audition Scores by voice part (private)
+                <li>
+                    <button
+                        type="button"
+                        wire:click="clickButton('allPrivate')"
+                        class="text-blue-500"
+                    >
+                        Download Combined Audition Scores by voice part (private)
+                    </button>
                     <ul>
                         <li class="italic text-sm ">
                             Download full audition scoring <b><i>including</i></b> personal identification.<br/>
@@ -77,6 +84,10 @@
 
     @if($displayReportData === 'byVoicePart')
         @include('components.forms.partials.tabrooms.reports.displayByVoicePart')
+    @endif
+
+    @if($displayReportData === 'allPrivate')
+        @include('components.forms.partials.tabrooms.reports.allPrivate')
     @endif
 
 </div>

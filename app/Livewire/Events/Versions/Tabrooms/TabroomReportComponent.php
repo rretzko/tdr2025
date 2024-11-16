@@ -8,20 +8,23 @@ use App\Models\Events\Versions\Scoring\ScoreFactor;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionConfigAdjudication;
 use App\Models\UserConfig;
+use App\Services\ScoringRosterDataRowsService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use JetBrains\PhpStorm\NoReturn;
 
 class TabroomReportComponent extends BasePage
 {
     public array $categories = [];
-    public string $displayReportData = 'byVoicePart'; //'';
-    public bool $displayReport = true; //false;
+    public string $displayReportData = '';
+    public bool $displayReport = false;
     public Collection $factors;
     public int $judgeCount;
     public bool $scoresAscending = true;
     public int $versionId = 0;
     public int $voicePartId = 0;
+    public array $voicePartIds = [];
     public Collection $voiceParts;
 
     public function mount(): void
@@ -35,15 +38,7 @@ class TabroomReportComponent extends BasePage
         $this->categories = $this->getCategories();
         $this->factors = $this->getFactorAbbrs();
         $this->voiceParts = $this->getVoiceParts();
-        $this->voicePartId = $this->voiceParts->first()->id;
-    }
-
-    /** END OF PUBLIC FUNCTIONS **************************************************/
-
-    private function getVoiceParts(): Collection
-    {
-        $versionId = UserConfig::getValue('versionId');
-        return Version::find($versionId)->event->voiceParts;
+        $this->voicePartIds = $this->voiceParts->pluck('id')->toArray();
     }
 
     public function render()
@@ -56,19 +51,27 @@ class TabroomReportComponent extends BasePage
 
     #[NoReturn] public function clickButton(string $type): void
     {
+        $this->reset('voicePartId');
+
+        if ($type === 'byVoicePart') {
+            $this->voicePartId = $this->voiceParts->first()->id;
+        }
+
         $this->displayReport = !$this->displayReport;
         $this->displayReportData = $type;
     }
 
     #[NoReturn] public function clickPrinter()
     {
-        $uri = '/versions/tabroom/reports/byVoicePart';
+        $uri = '/versions/tabroom/reports/'.$this->displayReportData;
 
         if ($this->voicePartId) {
             $uri .= '/'.$this->voicePartId;
         }
 
-//        Log::info($uri);
+        if ($this->displayReportData === 'allPrivate') {
+            $uri .= '/74/1';
+        }
 
         return $this->redirect($uri);
     }
@@ -91,26 +94,11 @@ class TabroomReportComponent extends BasePage
 
     private function getRows(): array
     {
-        $candidates = DB::table('candidates')
-            ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
-            ->leftJoin('audition_results', 'audition_results.candidate_id', '=', 'candidates.id')
-            ->where('candidates.version_id', $this->versionId)
-            ->where('candidates.status', 'registered')
-            ->where('candidates.voice_part_id', $this->voicePartId)
-            ->distinct()
-            ->select('candidates.id',
-                'voice_parts.abbr AS voicePartAbbr', 'voice_parts.order_by AS voicePartOrderBy',
-                'audition_results.total', 'audition_results.accepted', 'audition_results.acceptance_abbr',
-            )
-            ->orderBy('voicePartOrderBy')
-            ->orderBy('audition_results.total', ($this->scoresAscending ? 'asc' : 'desc'))
-            ->orderBy('candidates.id')
-            ->get()
-            ->toArray();
+        $voicePartIds = $this->voicePartId ? [$this->voicePartId] : $this->voicePartIds;
 
-        $this->getScores($candidates);
-//dd($candidates);
-        return $candidates;
+        $service = new ScoringRosterDataRowsService($this->versionId, $voicePartIds);
+
+        return $service->getRows();
     }
 
     private function getScores(array &$candidates): void
@@ -129,8 +117,12 @@ class TabroomReportComponent extends BasePage
                         ->value('score') ?? 0;
                 }
             }
-
-
         }
+    }
+
+    private function getVoiceParts(): Collection
+    {
+        $versionId = UserConfig::getValue('versionId');
+        return Version::find($versionId)->event->voiceParts;
     }
 }

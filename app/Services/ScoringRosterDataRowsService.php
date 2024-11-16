@@ -11,7 +11,7 @@ class ScoringRosterDataRowsService
 {
     private array $rows = [];
 
-    public function __construct(private int $versionId, private int $voicePartId)
+    public function __construct(private int $versionId, private array $voicePartIds)
     {
         $this->init();
     }
@@ -29,12 +29,14 @@ class ScoringRosterDataRowsService
 
         $candidates = DB::table('candidates')
             ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
+            ->join('schools', 'schools.id', '=', 'candidates.school_id')
             ->leftJoin('audition_results', 'audition_results.candidate_id', '=', 'candidates.id')
             ->where('candidates.version_id', $this->versionId)
             ->where('candidates.status', 'registered')
-            ->where('candidates.voice_part_id', $this->voicePartId)
+            ->whereIn('candidates.voice_part_id', $this->voicePartIds)
             ->distinct()
-            ->select('candidates.id',
+            ->select('candidates.id', 'candidates.program_name AS programName',
+                'schools.name AS schoolName',
                 'voice_parts.abbr AS voicePartAbbr', 'voice_parts.order_by AS voicePartOrderBy',
                 'audition_results.total', 'audition_results.accepted', 'audition_results.acceptance_abbr',
             )
