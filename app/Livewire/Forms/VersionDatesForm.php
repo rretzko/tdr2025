@@ -20,6 +20,8 @@ class VersionDatesForm extends Form
     public string $membershipClose = '';
     public string $membershipOpen = '';
     public string $postmarkDeadline = '';
+    public string $rehearsalClose = '';
+    public string $rehearsalOpen = '';
     public string $studentClose = '';
     public string $studentOpen = '';
     public string $sysId = 'new';
@@ -57,6 +59,7 @@ class VersionDatesForm extends Form
             'final_teacher_changes',
             'membership_close', 'membership_open',
             'postmark_deadline',
+            'rehearsal_open', 'rehearsal_close',
             'student_close', 'student_open',
             'tab_room_close', 'tab_room_open',
         ];

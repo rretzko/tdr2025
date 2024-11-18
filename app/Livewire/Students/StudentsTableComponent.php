@@ -169,7 +169,7 @@ class StudentsTableComponent extends BasePage
     private function getRows(): Builder
     {
         $coteacherIds = CoTeachersService::getCoTeachersIds();
-        //$this->troubleShooting($coteacherIds);
+//        $this->troubleShooting($coteacherIds);
 
         return Student::query()
             ->join('school_student', 'students.id', '=', 'school_student.student_id')

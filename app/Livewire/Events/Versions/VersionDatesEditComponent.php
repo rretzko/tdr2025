@@ -25,8 +25,8 @@ class VersionDatesEditComponent extends BasePage
         'studentClose' => false,
         'studentCommitmentOpen' => false,
         'studentCommitmentClose' => false,
-        'rehearsalPeriodOpen' => false,
-        'rehearsalPeriodClose' => false,
+        'rehearsalOpen' => false,
+        'rehearsalClose' => false,
         'tabRoomOpen' => false,
         'tabRoomClose' => false,
     ];

@@ -233,6 +233,41 @@
                         </div>
                     </div> {{-- END OF TAB ROOM DATES --}}
 
+                    {{-- REHEARSAL --}}
+                    <div class="border border-white border-b-gray-200 py-2">
+                        <h3>Dates for <b>rehearsal manager</b> access:</h3>
+                        <div class="flex flex-col space-y-2">
+                            <div class="flex flex-row items-center space-x-2">
+                                <label>Open</label>
+                                <x-forms.elements.livewire.inputDate
+                                    label=""
+                                    name="form.rehearsalOpen"
+                                    type="datetime-local"
+                                />
+                                {{-- SUCCESS INDICATOR --}}
+                                @if($successIndicators['rehearsalOpen'])
+                                    <div class="text-green-600 italic text-xs">
+                                        {{ $successMessage }}
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="flex flex-row items-center space-x-2">
+                                <label>Close</label>
+                                <x-forms.elements.livewire.inputDate
+                                    label=""
+                                    name="form.rehearsalClose"
+                                    type="datetime-local"
+                                />
+                                {{-- SUCCESS INDICATOR --}}
+                                @if($successIndicators['rehearsalClose'])
+                                    <div class="text-green-600 italic text-xs">
+                                        {{ $successMessage }}
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div> {{-- END OF REHEARSAL DATES --}}
+
                 </fieldset> {{-- END OF ADJUDICATION FIELDSET --}}
 
 

@@ -348,7 +348,7 @@ class ViewDataFactory extends aViewData
             'tabroom reports' => 'events.versions.tabrooms.tabroom-report-component',
             'tabroom scoring' => 'events.versions.tabrooms.tabroom-scoring-component',
             'tabroom tracking' => 'events.versions.tabrooms.tabroom-tracking-component',
-            'tabroom close version' => 'events.versions.tabrooms.tabroom-close-version-component',
+            'tabroom close auditions' => 'events.versions.tabrooms.tabroom-close-auditions-component',
 
         ];
 

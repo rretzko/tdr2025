@@ -7,10 +7,10 @@ use App\Models\Events\Versions\Version;
 use App\Models\UserConfig;
 use Carbon\Carbon;
 
-class TabroomCloseVersionComponent extends BasePage
+class TabroomCloseAuditionsComponent extends BasePage
 {
     public string $auditionCloseDateTime = '';
-    public string $buttonLabel = 'Close Event';
+    public string $buttonLabel = 'Close Auditions';
     public Version $version;
 
     public function mount(): void

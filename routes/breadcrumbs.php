@@ -226,9 +226,9 @@ Breadcrumbs::for('student reset password', function (BreadcrumbTrail $trail, int
 });
 
 //Tabroom:close version
-Breadcrumbs::for('tabroom close version', function (BreadcrumbTrail $trail, int $id) {
+Breadcrumbs::for('tabroom close auditions', function (BreadcrumbTrail $trail, int $id) {
     $trail->parent('version dashboard', $id);
-    $trail->push('Tabroom Close Version', route('version.tabroom.close'));
+    $trail->push('Tabroom Close Auditions', route('version.tabroom.close'));
 });
 
 //Tabroom:cutoffs
