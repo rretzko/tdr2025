@@ -63,14 +63,22 @@ class TabroomReportComponent extends BasePage
 
     #[NoReturn] public function clickPrinter()
     {
-        $uri = '/versions/tabroom/reports/'.$this->displayReportData;
+        $report = ($this->displayReportData == 'allPublic')
+            ? 'byVoicePart'
+            : $this->displayReportData;
+
+        $uri = '/versions/tabroom/reports/'.$report;
 
         if ($this->voicePartId) {
             $uri .= '/'.$this->voicePartId;
         }
 
         if ($this->displayReportData === 'allPrivate') {
-            $uri .= '/74/1';
+            $uri .= '/74/1'; //74=ALL voices, 1=private
+        }
+
+        if ($this->displayReportData === 'allPublic') {
+            $uri .= '/74'; //74=ALL voices
         }
 
         return $this->redirect($uri);

@@ -20,7 +20,7 @@ class VersionParticipantsExport implements FromQuery, WithHeadings
             ->join('school_teacher', 'school_teacher.teacher_id', '=', 'teachers.id')
             ->join('schools', 'schools.id', '=', 'school_teacher.school_id')
             ->where('version_id', $versionId)
-            ->select('users.last_name', 'users.first_name', 'users.middle_name',
+            ->select('users.last_name', 'users.first_name', 'users.middle_name', 'users.email',
                 'schools.name as schoolName', 'version_participants.status')
             ->orderBy('users.last_name')
             ->orderBy('users.first_name');
@@ -28,6 +28,6 @@ class VersionParticipantsExport implements FromQuery, WithHeadings
 
     public function headings(): array
     {
-        return ['last name', 'first name', 'middle name', 'school', 'status'];
+        return ['last name', 'first name', 'middle name', 'email', 'school', 'status'];
     }
 }

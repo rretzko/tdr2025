@@ -33,7 +33,7 @@ class ParticipatingTeachersExport implements FromQuery, WithHeadings
             ->where('candidates.status', 'registered')
             ->select('users.prefix_name', 'users.first_name', 'users.middle_name', 'users.last_name',
                 'users.suffix_name',
-                'users.name',
+                'users.name', 'users.email',
                 'schools.name AS schoolName',
                 DB::raw('COUNT(candidates.id) AS candidateCount'))
             ->groupBy(
@@ -44,6 +44,7 @@ class ParticipatingTeachersExport implements FromQuery, WithHeadings
                 'users.middle_name',
                 'users.last_name',
                 'users.suffix_name',
+                'users.email',
                 'schools.name',
                 'users.name'
             )
@@ -62,6 +63,7 @@ class ParticipatingTeachersExport implements FromQuery, WithHeadings
             'last_name',
             'suffix_name',
             'full_name',
+            'email',
             'school_name',
             'registrant#',
         ];

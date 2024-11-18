@@ -223,10 +223,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('version.roles');
 
     //VERSIONS.TABROOM
+    //VERSIONS.TABROOM.CLOSEVERSION
+    Route::get('version/tabroom/close', \App\Http\Controllers\Events\Versions\Tabrooms\CloseVersionController::class)
+        ->name('version.tabroom.close');
+
     //VERSIONS.TABROOM.CUTOFF
     Route::get('version/tabroom/cutoff',
         \App\Http\Controllers\Events\Versions\Tabrooms\TabroomCutoffController::class)
         ->name('version.tabroom.cutoff');
+
     //VERSIONS.TABROOM.REPORTS
     Route::get('version/tabroom/reports',
         \App\Http\Controllers\Events\Versions\Tabrooms\TabroomReportController::class)
@@ -239,10 +244,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('versions/tabroom/reports/allPrivate/{voicePart}/{private}',
         \App\Http\Controllers\Pdfs\ScoringRosterController::class)
         ->name('versions.tabroom.reports.allPrivate');
+
     //VERSIONS.TABROOM.SCORING
     Route::get('version/tabroom/scoring',
         \App\Http\Controllers\Events\Versions\Tabrooms\TabroomScoringController::class)
         ->name('version.tabroom.scoring');
+
     //VERSIONS.TABROOM.TRACKING
     Route::get('version/tabroom/tracking',
         \App\Http\Controllers\Events\Versions\Tabrooms\TabroomTrackingController::class)

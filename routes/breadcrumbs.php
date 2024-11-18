@@ -225,6 +225,12 @@ Breadcrumbs::for('student reset password', function (BreadcrumbTrail $trail, int
     $trail->push('Reset Password', route('student.reset', ['student' => $id]));
 });
 
+//Tabroom:close version
+Breadcrumbs::for('tabroom close version', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('version dashboard', $id);
+    $trail->push('Tabroom Close Version', route('version.tabroom.close'));
+});
+
 //Tabroom:cutoffs
 Breadcrumbs::for('tabroom cutoff', function (BreadcrumbTrail $trail, int $id) {
     $trail->parent('version dashboard', $id);

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Address;
+use App\Models\EmergencyContact;
 use App\Models\Events\Event;
 use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Version;
@@ -91,6 +92,16 @@ class CalcApplicationRequirements
      */
     private function evaluateEmergencyContactPhoneMobile(): void
     {
+        //emergency contact identified
+        if ($this->candidate->emergency_contact_id) {
+            $ec = EmergencyContact::find($this->candidate->emergency_contact_id);
+            if ((!$ec->phone_mobile) || (strlen($ec->phone_mobile) < 14)) {
+                $this->missings[] = "No or invalid emergency contact cell phone found.";
+            }
+            return;
+        }
+
+        //emergency contact not identified
         if ($this->candidate->student->emergencyContacts()->count()) {
 
             if ($this->candidate->student->emergencyContacts()
