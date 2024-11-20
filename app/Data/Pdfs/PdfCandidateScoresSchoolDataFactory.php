@@ -158,11 +158,25 @@ class PdfCandidateScoresSchoolDataFactory
 
     private function getAuditionResult(): array
     {
-        return AuditionResult::query()
+        $auditionResult = AuditionResult::query()
             ->where('candidate_id', $this->candidateId)
             ->select('id', 'acceptance_abbr', 'total')
-            ->first()
-            ->toArray();
+            ->first();
+
+        if (is_null($auditionResult)) {
+            return [
+                'candidate_id' => $this->candidateId,
+                'acceptance_abbr' => 'ns',
+                'total' => 0
+            ];
+        }
+
+        return $auditionResult->toArray();
+//        return AuditionResult::query()
+//            ->where('candidate_id', $this->candidateId)
+//            ->select('id', 'acceptance_abbr', 'total')
+//            ->first()
+//            ->toArray();
     }
 
     private function getScores(): array

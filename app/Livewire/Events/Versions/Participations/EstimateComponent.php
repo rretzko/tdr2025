@@ -32,7 +32,7 @@ class EstimateComponent extends BasePage
     public string $ePaymentVendor = 'none';
     public array $paymentTypes = ['cash' => 'cash', 'check' => 'check'];
     public float $registrationFee = 0.00;
-    public bool $sandbox = true;
+    public bool $sandbox = false;
     public string $sandboxId = 'sandboxId';
     public string $sandboxPersonalEmail = '';
     public string $selectedTab = 'estimate';
@@ -75,7 +75,7 @@ class EstimateComponent extends BasePage
         $this->customProperties = $this->getCustomProperties();
         $this->email = auth()->user()->email;
         $this->ePaymentId = $this->getEpaymentId();
-        $this->sandbox = true;
+        $this->sandbox = false;
         $this->sandboxId = 'sb-qw0iu20847075@business.example.com';
         $this->sandboxPersonalEmail = 'sb-ndsz820837854@personal.example.com'; //dRkJ4(f)
         $this->teacherName = $teacher->user->name;

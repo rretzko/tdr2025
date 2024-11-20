@@ -2,25 +2,33 @@
 
 namespace App\Livewire\Events\Versions\Tabrooms;
 
+use App\Exports\EventEnsembleParticipantsExport;
 use App\Livewire\BasePage;
+use App\Models\Events\EventEnsemble;
 use App\Models\Events\Versions\Scoring\Score;
 use App\Models\Events\Versions\Scoring\ScoreFactor;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionConfigAdjudication;
 use App\Models\UserConfig;
 use App\Services\ScoringRosterDataRowsService;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use JetBrains\PhpStorm\NoReturn;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TabroomReportComponent extends BasePage
 {
     public array $categories = [];
-    public string $displayReportData = '';
-    public bool $displayReport = false;
+    public string $displayReportData = 'ensembleParticipation';
+    public bool $displayReport = true; //false;
+    public int $eventEnsembleCount = 0;
+    public int $eventEnsembleId = 0;
+    public Collection $eventEnsembles;
     public Collection $factors;
     public int $judgeCount;
+    public array $participants = [];
     public bool $scoresAscending = true;
     public int $versionId = 0;
     public int $voicePartId = 0;
@@ -39,6 +47,12 @@ class TabroomReportComponent extends BasePage
         $this->factors = $this->getFactorAbbrs();
         $this->voiceParts = $this->getVoiceParts();
         $this->voicePartIds = $this->voiceParts->pluck('id')->toArray();
+
+        $this->eventEnsembles = Version::find($this->versionId)->event->eventEnsembles;
+        $this->eventEnsembleCount = $this->eventEnsembles->count();
+        $this->eventEnsembleId = $this->eventEnsembles->first()->id;
+        $this->participants = $this->getParticipants();
+
     }
 
     public function render()
@@ -84,6 +98,19 @@ class TabroomReportComponent extends BasePage
         return $this->redirect($uri);
     }
 
+    /**
+     * Export participants csv file
+     */
+    public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    {
+        //clear any artifacts
+        $this->reset('search');
+
+        $fileName = 'ensembleParticipants_'.Carbon::now()->format('Ymd_His').'.csv';
+
+        return Excel::download(new EventEnsembleParticipantsExport($this->getParticipants()), $fileName);
+    }
+
     /** END OF PUBLIC FUNCTIONS **************************************************/
 
     private function getCategories(): array
@@ -98,6 +125,69 @@ class TabroomReportComponent extends BasePage
         $version = Version::find($this->versionId);
 
         return $version->scoreFactors;
+    }
+
+    private function getParticipants(): array
+    {
+        $ensemble = EventEnsemble::find($this->eventEnsembleId);
+        $abbr = $ensemble->abbr ?? '';
+        $versionId = $this->versionId;
+        $scoresAscending = Version::find($this->versionId)->scores_ascending;
+
+        $participants = DB::table('audition_results')
+            ->join('candidates', 'audition_results.candidate_id', '=', 'candidates.id')
+            ->join('voice_parts', 'audition_results.voice_part_id', '=', 'voice_parts.id')
+            ->join('schools', 'audition_results.school_id', '=', 'schools.id')
+            ->join('students', 'candidates.student_id', '=', 'students.id')
+            ->join('users', 'students.user_id', '=', 'users.id')
+            ->join('users AS usersT', 'candidates.teacher_id', '=', 'usersT.id')
+            ->leftJoin('emergency_contacts', 'candidates.emergency_contact_id', '=', 'emergency_contacts.id')
+            //STUDENT
+            ->leftJoin('phone_numbers AS homePhone', function ($join) {
+                $join->on('users.id', '=', 'homePhone.user_id')
+                    ->where('homePhone.phone_type', 'home');
+            })
+            ->leftJoin('phone_numbers AS mobilePhone', function ($join) {
+                $join->on('users.id', '=', 'mobilePhone.user_id')
+                    ->where('mobilePhone.phone_type', 'mobile');
+            })
+            //TEACHER
+            ->leftJoin('phone_numbers AS mobilePhoneT', function ($join) {
+                $join->on('usersT.id', '=', 'mobilePhoneT.user_id')
+                    ->where('mobilePhoneT.phone_type', 'mobile');
+            })
+            ->leftJoin('phone_numbers AS workPhoneT', function ($join) {
+                $join->on('usersT.id', '=', 'workPhoneT.user_id')
+                    ->where('workPhoneT.phone_type', 'work');
+            })
+            ->where('audition_results.version_id', $versionId)
+            ->where('acceptance_abbr', $abbr)
+            ->where('accepted', 1)
+            ->distinct()
+            ->select('candidates.program_name AS programName',
+                'users.last_name',
+                'schools.name AS schoolName',
+                'usersT.name AS teacherName',
+                'voice_parts.abbr AS voicePartAbbr',
+                'voice_parts.order_by',
+                'audition_results.total',
+                'users.email',
+                'mobilePhone.phone_number AS phoneMobile',
+                'homePhone.phone_number AS phoneHome',
+                'usersT.email as teacherEmail',
+                'mobilePhoneT.phone_number AS phoneMobileT',
+                'workPhoneT.phone_number AS phoneWorkT',
+                'emergency_contacts.name AS EcName',
+                'emergency_contacts.phone_mobile AS phoneMobileEC',
+                'emergency_contacts.phone_home AS phoneHomeEC',
+                'emergency_contacts.phone_work AS phoneWorkEC'
+            )
+            ->orderBy('voice_parts.order_by')
+            ->orderBy('audition_results.total', ($scoresAscending ? 'asc' : 'desc'))
+            ->get()
+            ->toArray();
+
+        return $participants;
     }
 
     private function getRows(): array

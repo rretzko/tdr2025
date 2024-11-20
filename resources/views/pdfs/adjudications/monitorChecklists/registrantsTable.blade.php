@@ -42,7 +42,9 @@
     @include('pdfs.adjudications.monitorChecklists.footer')
     {{-- START A NEW PAGE --}}
     @include('pdfs.adjudications.monitorChecklists.header')
-    @include('pdfs.adjudications.monitorChecklists.judgeHeader')
+    @if(isset($judge))
+        @include('pdfs.adjudications.monitorChecklists.judgeHeader')
+    @endif
     @php($pageCounter++);
     <h3 style="text-align: center; font-size: 0.8rem; margin-top: -2rem;">Page {{ $pageCounter }}
         /{{ $room['pageCount'] }}</h3>

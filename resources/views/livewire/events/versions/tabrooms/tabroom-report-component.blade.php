@@ -75,7 +75,14 @@
                         </li>
                     </ul>
                 </li>
-                <li>Ensemble participation report
+                <li>
+                    <button
+                        type="button"
+                        wire:click="clickButton('ensembleParticipation')"
+                        class="text-blue-500"
+                    >
+                        Ensemble participation report
+                    </button>
                     <ul>
                         <li class="italic text-sm ">
                             View and download ensemble participation report.<br/>
@@ -99,6 +106,10 @@
 
     @if($displayReportData === 'allPublic')
         @include('components.forms.partials.tabrooms.reports.displayByVoicePart')
+    @endif
+
+    @if($displayReportData === 'ensembleParticipation')
+        @include('components.forms.partials.tabrooms.reports.ensembleParticipation')
     @endif
 
 </div>

@@ -20,13 +20,13 @@ class TabroomCloseAuditionsComponent extends BasePage
         $versionId = UserConfig::getValue('versionId');
         $this->version = Version::find($versionId);
         if ($this->version->status === 'closed') {
-            $this->auditionCloseDateTime = $this->setAuditionCloseDateTime();
+            $this->auditionCloseDateTime = $this->getAuditionCloseDateTime();
         }
     }
 
-    private function setAuditionCloseDateTime(): void
+    private function getAuditionCloseDateTime(): string
     {
-        $this->auditionCloseDateTime = Carbon::parse($this->version->updated_at)->format('D, d M, Y @ g:i:s a');
+        return Carbon::parse($this->version->updated_at)->format('D, d M, Y @ g:i:s a');
     }
 
     public function render()
