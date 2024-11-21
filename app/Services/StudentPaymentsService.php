@@ -44,10 +44,13 @@ class StudentPaymentsService
         return StudentPayment::query()
             ->join('students', 'students.id', '=', 'student_payments.student_id')
             ->join('users', 'users.id', '=', 'students.user_id')
-            ->join('candidates', 'candidates.student_id', '=', 'student_payments.student_id')
+            ->join('candidates', function ($join) {
+                $join->on('candidates.student_id', '=', 'student_payments.student_id')
+                    ->where('candidates.teacher_id', auth()->id())
+                    ->where('candidates.version_id', $this->versionId);
+            })
             ->where('student_payments.version_id', $this->versionId)
             ->whereIn('student_payments.school_id', $this->schoolIds)
-            ->where('candidates.teacher_id', auth()->id())
             ->select('student_payments.id', 'student_payments.candidate_id',
                 'student_payments.amount', 'student_payments.payment_type', 'student_payments.transaction_id',
                 'student_payments.comments',
