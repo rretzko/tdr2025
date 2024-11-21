@@ -10,6 +10,7 @@ use App\Models\Events\Versions\Scoring\ScoreFactor;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionConfigAdjudication;
 use App\Models\UserConfig;
+use App\Services\CalcSeniorYearService;
 use App\Services\ScoringRosterDataRowsService;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -240,6 +241,10 @@ class TabroomReportComponent extends BasePage
         $versionId = $this->versionId;
         $scoresAscending = Version::find($this->versionId)->scores_ascending;
 
+        $service = new CalcSeniorYearService();
+        $seniorYear = $service->getSeniorYear();
+        $juniorYear = ($seniorYear + 1);
+
         $participants = DB::table('audition_results')
             ->join('candidates', 'audition_results.candidate_id', '=', 'candidates.id')
             ->join('voice_parts', 'audition_results.voice_part_id', '=', 'voice_parts.id')
@@ -247,12 +252,14 @@ class TabroomReportComponent extends BasePage
             ->join('students', 'candidates.student_id', '=', 'students.id')
             ->join('users', 'students.user_id', '=', 'users.id')
             ->join('users AS usersT', 'candidates.teacher_id', '=', 'usersT.id')
+            ->where('students.class_of', '<=', $juniorYear)
             ->where('audition_results.version_id', $versionId)
             ->where('acceptance_abbr', $abbr)
             ->where('accepted', 1)
             ->distinct()
             ->select('candidates.program_name AS programName',
                 'users.last_name',
+                'students.class_of',
                 'users.id AS userId',
                 'schools.name AS schoolName',
                 'usersT.name AS teacherName',

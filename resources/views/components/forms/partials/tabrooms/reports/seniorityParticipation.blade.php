@@ -61,7 +61,12 @@
             @forelse($seniorityParticipation AS $row)
                 <tr class="hover:bg-green-100">
                     <td>
-                        {{ $row->programName }}
+                        <div class="font-semibold">
+                            {{ $row->programName }}
+                        </div>
+                        <div class="text-xs ml-2">
+                            ({{ $row->class_of }})
+                        </div>
                     </td>
                     <td>
                         @php
