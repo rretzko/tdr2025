@@ -21,8 +21,8 @@ use Maatwebsite\Excel\Facades\Excel;
 class TabroomReportComponent extends BasePage
 {
     public array $categories = [];
-    public string $displayReportData = 'ensembleParticipation';
-    public bool $displayReport = true; //false;
+    public string $displayReportData = '';
+    public bool $displayReport = false;
     public int $eventEnsembleCount = 0;
     public int $eventEnsembleId = 0;
     public Collection $eventEnsembles;

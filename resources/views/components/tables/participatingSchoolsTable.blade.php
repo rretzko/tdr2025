@@ -64,7 +64,8 @@
 
                 {{-- PAYMENT DUE --}}
                 <td class="border border-gray-200 px-1 text-center">
-                    {{ number_format($paymentsDue[$row->schoolId], 2) }}
+                    @php($paymentDue = (float)$paymentsDue[$row->schoolId])
+                    {{ number_format($paymentDue, 2) }}
                 </td>
 
                 {{-- PAYMENTS MADE --}}
@@ -78,7 +79,8 @@
                 ])
                     title="payment {{ $paymentsStatus[$row->schoolId] }}"
                 >
-                    {{ number_format($payments[$row->schoolId], 2) }}
+                    @php($payment = (float)$payments[$row->schoolId])
+                    {{ number_format($payment, 2) }}
                 </td>
 
                 {{-- PAYMENT FORM BUTTON --}}

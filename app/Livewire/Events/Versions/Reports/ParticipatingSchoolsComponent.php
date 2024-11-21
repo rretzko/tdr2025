@@ -13,6 +13,7 @@ use App\Models\Events\Versions\Version;
 use App\Services\ConvertToUsdService;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ParticipatingSchoolsComponent extends BasePageReports
@@ -102,7 +103,8 @@ class ParticipatingSchoolsComponent extends BasePageReports
         }
 
         return array_map(function ($value) {
-            return ConvertToUsdService::penniesToUsd($value);
+
+            return ConvertToUsdService::penniesToUsd((int) $value);
         }, $totalPayments);
     }
 
@@ -133,7 +135,15 @@ class ParticipatingSchoolsComponent extends BasePageReports
 
         foreach ($this->schoolIds as $schoolId) {
 
-            $balance = ($paymentsDue[$schoolId] - $payments[$schoolId]);
+            $paymentDue = is_numeric($paymentsDue[$schoolId])
+                ? (float) $paymentsDue[$schoolId]
+                : (float) str_replace(',', '', $paymentsDue[$schoolId]);
+
+            $payment = is_numeric($payments[$schoolId])
+                ? (float) $payments[$schoolId]
+                : (float) str_replace(',', '', $payments[$schoolId]);
+
+            $balance = ($paymentDue - $payment);
 
             $paymentStatuses[$schoolId] = match (true) {
                 (!$balance) => 'paid',
