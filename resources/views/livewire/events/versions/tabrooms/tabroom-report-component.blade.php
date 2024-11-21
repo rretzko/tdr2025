@@ -9,7 +9,7 @@
         <div class="mb-4 @if($displayReport) block @else hidden @endif"
         >
             <button type="button" wire:click="$toggle('displayReport')"
-                    class="bg-gray-200 ml-8 my-2 px-2 rounded-lg shadow-lg">
+                    class="bg-green-100 ml-8 my-2 px-2 rounded-lg shadow-lg">
                 Click to display reports menu...
             </button>
         </div>
@@ -91,6 +91,20 @@
                         </li>
                     </ul>
                 </li>
+                <li>
+                    <button
+                        type="button"
+                        wire:click="clickButton('seniorityParticipation')"
+                        class="text-blue-500"
+                    >
+                        Student seniority report
+                    </button>
+                    <ul>
+                        <li class="italic text-sm ">
+                            View and download student participation across multiple events report.<br/>
+                        </li>
+                    </ul>
+                </li>
             </ol>
 
         </div>
@@ -110,6 +124,10 @@
 
     @if($displayReportData === 'ensembleParticipation')
         @include('components.forms.partials.tabrooms.reports.ensembleParticipation')
+    @endif
+
+    @if($displayReportData === 'seniorityParticipation')
+        @include('components.forms.partials.tabrooms.reports.seniorityParticipation')
     @endif
 
 </div>

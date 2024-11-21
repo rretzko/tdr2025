@@ -58,6 +58,11 @@ class Event extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function getGradesArrayAttribute(): array
+    {
+        return explode(',', $this->grades);
+    }
+
     /**
      * Return a collection of unique VoicePart models used by $this->eventEnsembles
      * @return Collection

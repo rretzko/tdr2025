@@ -21,8 +21,8 @@ use Maatwebsite\Excel\Facades\Excel;
 class TabroomReportComponent extends BasePage
 {
     public array $categories = [];
-    public string $displayReportData = '';
-    public bool $displayReport = false;
+    public string $displayReportData = 'seniorityParticipation'; //'';
+    public bool $displayReport = true; //false;
     public int $eventEnsembleCount = 0;
     public int $eventEnsembleId = 0;
     public Collection $eventEnsembles;
@@ -30,7 +30,9 @@ class TabroomReportComponent extends BasePage
     public int $judgeCount;
     public array $participants = [];
     public bool $scoresAscending = true;
+    public array $seniorityParticipation = [];
     public int $versionId = 0;
+    public array $versionSeniorYears = [];
     public int $voicePartId = 0;
     public array $voicePartIds = [];
     public Collection $voiceParts;
@@ -52,6 +54,9 @@ class TabroomReportComponent extends BasePage
         $this->eventEnsembleCount = $this->eventEnsembles->count();
         $this->eventEnsembleId = $this->eventEnsembles->first()->id;
         $this->participants = $this->getParticipants();
+
+        $this->versionSeniorYears = $this->getVersionSeniorYears();
+        $this->seniorityParticipation = $this->getSeniorityParticipation();
 
     }
 
@@ -112,6 +117,44 @@ class TabroomReportComponent extends BasePage
     }
 
     /** END OF PUBLIC FUNCTIONS **************************************************/
+
+    private function addParticipationYears(array &$participants)
+    {
+        $version = Version::find($this->versionId);
+        $event = $version->event;
+        $versions = $event->versions->sortByDesc('senior_class_of');
+
+        $eventEnsembleAbbrs = $event->eventEnsembles->pluck('abbr')->toArray();
+
+        foreach ($participants as $participant) {
+
+            $userId = $participant->userId;
+            $participant->countYears = 0;
+
+            foreach ($versions as $key => $version) {
+
+                $successful = DB::table('candidates')
+                    ->leftJoin('audition_results', function ($join) use ($eventEnsembleAbbrs) {
+                        $join->on('candidates.id', '=', 'audition_results.candidate_id')
+                            ->where('audition_results.accepted', 1)
+                            ->whereIn('audition_results.acceptance_abbr', $eventEnsembleAbbrs);
+                    })
+                    ->where('candidates.version_id', $version->id)
+                    ->where('candidates.student_id', $userId)
+                    ->where('candidates.status', 'registered')
+                    ->get();
+
+                if ($successful->isNotEmpty()) {
+                    $participant->countYears++;
+                    $participant->years[] = '*';
+                } else {
+                    $participant->years[] = '';
+                }
+            }
+
+
+        }
+    }
 
     private function getCategories(): array
     {
@@ -190,6 +233,44 @@ class TabroomReportComponent extends BasePage
         return $participants;
     }
 
+    private function getParticipantsForSeniority(): array
+    {
+        $ensemble = EventEnsemble::find($this->eventEnsembleId);
+        $abbr = $ensemble->abbr ?? '';
+        $versionId = $this->versionId;
+        $scoresAscending = Version::find($this->versionId)->scores_ascending;
+
+        $participants = DB::table('audition_results')
+            ->join('candidates', 'audition_results.candidate_id', '=', 'candidates.id')
+            ->join('voice_parts', 'audition_results.voice_part_id', '=', 'voice_parts.id')
+            ->join('schools', 'audition_results.school_id', '=', 'schools.id')
+            ->join('students', 'candidates.student_id', '=', 'students.id')
+            ->join('users', 'students.user_id', '=', 'users.id')
+            ->join('users AS usersT', 'candidates.teacher_id', '=', 'usersT.id')
+            ->where('audition_results.version_id', $versionId)
+            ->where('acceptance_abbr', $abbr)
+            ->where('accepted', 1)
+            ->distinct()
+            ->select('candidates.program_name AS programName',
+                'users.last_name',
+                'users.id AS userId',
+                'schools.name AS schoolName',
+                'usersT.name AS teacherName',
+                'voice_parts.abbr AS voicePartAbbr',
+            )
+            ->orderBy('users.last_name')
+            ->get()
+            ->toArray();
+
+        $this->addParticipationYears($participants);
+
+        usort($participants, function ($a, $b) {
+            return $b->countYears <=> $a->countYears;
+        });
+
+        return $participants;
+    }
+
     private function getRows(): array
     {
         $voicePartIds = $this->voicePartId ? [$this->voicePartId] : $this->voicePartIds;
@@ -216,6 +297,28 @@ class TabroomReportComponent extends BasePage
                 }
             }
         }
+    }
+
+    private function getSeniorityParticipation(): array
+    {
+        return $this->getParticipantsForSeniority();
+    }
+
+    private function getVersionSeniorYears(): array
+    {
+        $version = Version::find($this->versionId);
+        $event = $version->event;
+        $seniorYear = $version->senior_class_of;
+
+        //gradeCount tells you how many years a single participant can be active
+        $gradeCount = count($event->gradesArray);
+
+        $versionSeniorYears = [];
+        for ($i = 0; $i < $gradeCount; $i++) {
+            $versionSeniorYears[] = ($seniorYear - $i);
+        }
+
+        return $versionSeniorYears;
     }
 
     private function getVoiceParts(): Collection
