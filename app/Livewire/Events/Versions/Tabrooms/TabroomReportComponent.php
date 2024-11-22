@@ -3,6 +3,7 @@
 namespace App\Livewire\Events\Versions\Tabrooms;
 
 use App\Exports\EventEnsembleParticipantsExport;
+use App\Exports\EventEnsembleSeniorityParticipationExport;
 use App\Livewire\BasePage;
 use App\Models\Events\EventEnsemble;
 use App\Models\Events\Versions\Scoring\Score;
@@ -22,8 +23,8 @@ use Maatwebsite\Excel\Facades\Excel;
 class TabroomReportComponent extends BasePage
 {
     public array $categories = [];
-    public string $displayReportData = 'seniorityParticipation'; //'';
-    public bool $displayReport = true; //false;
+    public string $displayReportData = '';
+    public bool $displayReport = false;
     public int $eventEnsembleCount = 0;
     public int $eventEnsembleId = 0;
     public Collection $eventEnsembles;
@@ -115,6 +116,18 @@ class TabroomReportComponent extends BasePage
         $fileName = 'ensembleParticipants_'.Carbon::now()->format('Ymd_His').'.csv';
 
         return Excel::download(new EventEnsembleParticipantsExport($this->getParticipants()), $fileName);
+    }
+
+    /**
+     * Export senior and junior grade participants csv file
+     * demonstrating participation in past events
+     */
+    public function exportSeniority(): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    {
+        $fileName = 'seniority_'.Carbon::now()->format('Ymd_His').'.csv';
+
+        return Excel::download(new EventEnsembleSeniorityParticipationExport($this->getSeniorityParticipation()),
+            $fileName);
     }
 
     /** END OF PUBLIC FUNCTIONS **************************************************/

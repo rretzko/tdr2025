@@ -27,7 +27,7 @@
 
         {{-- PRINTER --}}
         <div class="flex justify-end mr-8 border border-white border-t-gray-200 p-2 text-blue-500">
-            <button type="button" wire:click="export">
+            <button type="button" wire:click="exportSeniority">
                 @include('components.heroicons.tableCells')
             </button>
         </div>
