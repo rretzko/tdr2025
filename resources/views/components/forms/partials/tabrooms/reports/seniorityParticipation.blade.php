@@ -49,7 +49,7 @@
                 <th>
                     year count
                 </th>
-                @foreach($versionSeniorYears AS $seniorYear)
+                @foreach($eventEnsembleSeniorYears AS $seniorYear)
                     <th>
                         {{ $seniorYear }}
                     </th>
@@ -73,8 +73,9 @@
                             $chs = str_replace('Central High School', 'CHS', $row->schoolName);
                             $rhs = str_replace('Regional High School', 'RHS', $chs);
                             $hs = str_replace('High School', 'HS', $rhs);
+                            $schoolName = str_replace('Middle School', 'MS', $hs);
                         @endphp
-                        <div>{{ $hs }}</div>
+                        <div>{{ $schoolName }}</div>
                         <div class="ml-2">{{ $row->teacherName }}</div>
                     </td>
                     <td style="text-align: center;">
@@ -83,11 +84,11 @@
                     <td style="text-align: center;">
                         {{ $row->countYears }}
                     </td>
-                    @foreach($versionSeniorYears AS $key => $year)
+                    @foreach($eventEnsembleYears AS $key => $year)
                         <td style="text-align: center;"
-                            class="{{ (strlen($row->years[$key]) ? 'bg-green-100' : 'bg-red-100') }}"
+                            class="{{ ((array_key_exists($key, $row->years) && strlen($row->years[$key])) ? 'bg-green-100' : 'bg-red-100') }}"
                         >
-                            {{ $row->years[$key]  }}
+                            {{ array_key_exists($key, $row->years) ? $row->years[$key] : 'na'  }}
 
                         </td>
                     @endforeach

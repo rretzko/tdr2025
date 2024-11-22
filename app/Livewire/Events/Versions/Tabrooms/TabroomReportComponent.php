@@ -23,14 +23,14 @@ use Maatwebsite\Excel\Facades\Excel;
 class TabroomReportComponent extends BasePage
 {
     public array $categories = [];
-    public string $displayReportData = '';
-    public bool $displayReport = false;
+    public string $displayReportData = '';//'seniorityParticipation';
+    public bool $displayReport = false; //true;
     public int $eventEnsembleCount = 0;
     public int $eventEnsembleId = 0;
     public Collection $eventEnsembles;
+    public array $eventEnsembleSeniorYears = [];
     public Collection $factors;
     public int $judgeCount;
-//    public array $participants = [];
     public bool $scoresAscending = true;
     public array $seniorityParticipation = [];
     public int $versionId = 0;
@@ -55,19 +55,23 @@ class TabroomReportComponent extends BasePage
         $this->eventEnsembles = Version::find($this->versionId)->event->eventEnsembles;
         $this->eventEnsembleCount = $this->eventEnsembles->count();
         $this->eventEnsembleId = $this->eventEnsembles->first()->id;
-//        $this->participants = $this->getParticipants();
 
         $this->versionSeniorYears = $this->getVersionSeniorYears();
-        $this->seniorityParticipation = $this->getSeniorityParticipation();
+        $this->eventEnsembleSeniorYears = $this->getEventEnsembleYears();
+        $this->seniorityParticipation = $this->getParticipantsForSeniority(); //$this->getSeniorityParticipation();
 
     }
 
     public function render()
     {
+//        echo $this->eventEnsembleId;
+//        echo serialize($this->getEventEnsembleYears());
+//        dd($this->getParticipants());
         return view('livewire..events.versions.tabrooms.tabroom-report-component',
             [
                 'rows' => $this->getRows(),
                 'participants' => $this->getParticipants(),
+                'eventEnsembleYears' => $this->getEventEnsembleYears(),
             ]);
     }
 
@@ -127,8 +131,14 @@ class TabroomReportComponent extends BasePage
     {
         $fileName = 'seniority_'.Carbon::now()->format('Ymd_His').'.csv';
 
-        return Excel::download(new EventEnsembleSeniorityParticipationExport($this->getSeniorityParticipation()),
+        return Excel::download(new EventEnsembleSeniorityParticipationExport($this->getParticipantsForSeniority()),
             $fileName);
+    }
+
+    public function updatedEventEnsembleId(): void
+    {
+        $this->seniorityParticipation = $this->getParticipantsForSeniority();
+        $this->eventEnsembleSeniorYears = $this->getEventEnsembleYears();
     }
 
     /** END OF PUBLIC FUNCTIONS **************************************************/
@@ -169,6 +179,20 @@ class TabroomReportComponent extends BasePage
 
 
         }
+    }
+
+    private function calcTopTwoClassOfs(EventEnsemble $eventEnsemble): array
+    {
+        $eventEnsembleGrades = explode(',', $eventEnsemble->grades);
+        $topGrade = max($eventEnsembleGrades);
+
+        $service = new CalcSeniorYearService();
+        $seniorYear = $service->getSeniorYear();
+
+        $topYear = $seniorYear + (12 - $topGrade);
+        $nextYear = ($topYear + 1);
+
+        return [$topYear, $nextYear];
     }
 
     private function getCategories(): array
@@ -249,16 +273,32 @@ class TabroomReportComponent extends BasePage
         return $participants;
     }
 
+    private function getEventEnsembleYears(): array
+    {
+        $eventEnsemble = EventEnsemble::find($this->eventEnsembleId);
+        $grades = explode(',', $eventEnsemble->grades);
+        $maxGrade = max($grades);
+        arsort($grades);
+
+        $service = new CalcSeniorYearService();
+        $currentYear = $service->getSeniorYear();
+
+        $ensembleYears = [];
+        foreach ($grades as $grade) {
+            $ensembleYears[] = ($currentYear - ($maxGrade - $grade));
+        }
+
+        return $ensembleYears;
+    }
+
     private function getParticipantsForSeniority(): array
     {
         $ensemble = EventEnsemble::find($this->eventEnsembleId);
         $abbr = $ensemble->abbr ?? '';
         $versionId = $this->versionId;
-        $scoresAscending = Version::find($this->versionId)->scores_ascending;
 
-        $service = new CalcSeniorYearService();
-        $seniorYear = $service->getSeniorYear();
-        $juniorYear = ($seniorYear + 1);
+        //return participants from the most-senior top two class-ofs
+        $topTwoClassOfs = $this->calcTopTwoClassOfs($ensemble);
 
         $participants = DB::table('audition_results')
             ->join('candidates', 'audition_results.candidate_id', '=', 'candidates.id')
@@ -267,7 +307,7 @@ class TabroomReportComponent extends BasePage
             ->join('students', 'candidates.student_id', '=', 'students.id')
             ->join('users', 'students.user_id', '=', 'users.id')
             ->join('users AS usersT', 'candidates.teacher_id', '=', 'usersT.id')
-            ->where('students.class_of', '<=', $juniorYear)
+            ->whereIn('students.class_of', $topTwoClassOfs)
             ->where('audition_results.version_id', $versionId)
             ->where('acceptance_abbr', $abbr)
             ->where('accepted', 1)
@@ -321,10 +361,10 @@ class TabroomReportComponent extends BasePage
         }
     }
 
-    private function getSeniorityParticipation(): array
-    {
-        return $this->getParticipantsForSeniority();
-    }
+//    private function getSeniorityParticipation(): array
+//    {
+//        return $this->getParticipantsForSeniority();
+//    }
 
     private function getVersionSeniorYears(): array
     {
@@ -342,6 +382,7 @@ class TabroomReportComponent extends BasePage
 
         return $versionSeniorYears;
     }
+
 
     private function getVoiceParts(): Collection
     {
