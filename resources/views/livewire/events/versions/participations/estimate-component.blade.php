@@ -30,9 +30,6 @@
                         versionId="{{  $versionId }}"
                     />
 
-                    {{--                    @if($ePaymentVendor === 'square')--}}
-                    {{--                        @include('square.squareInApp')--}}
-                    {{--                    @endif--}}
                 </div>
             @endif
 
@@ -73,52 +70,66 @@
                         sortColLabel="{{ $sortColLabel }}"
                     />
                 </div>
-            @endif
+                @endif
 
-            @if($selectedTab === 'ePayments')
-                <div>
-                    @if($ePaymentVendor === 'paypal')
-                        <x-forms.partials.teacherEpaymentForm
-                            amountDue="{{ $amountDue }}"
-                            customProperties="{{ $customProperties }}"
-                            email="{{ $email }}"
-                            ePaymentId="{{ $ePaymentId }}"
-                            ePaymentVendor="{{  $ePaymentVendor }}"
-                            :sandbox="$sandbox"
-                            sandboxId="{{ $sandboxId }}"
-                            sandboxPersonalEmail="{{ $sandboxPersonalEmail }}"
-                            showSuccessIndicator="{{ $showSuccessIndicator }}"
-                            successMessage="{{ $successMessage }}"
-                            teacherName="{{ $teacherName }}"
-                            versionId="{{ $versionId }}"
-                            versionShortName="{{ $versionShortName }}"
-                        />
+                @if($selectedTab === 'ePayments')
+
+                    @if(! $amountDue)
+                        <div class="text-start my-2">
+                            Balance: $0.00. No payments due.
+                        </div>
                     @endif
-                    @if($ePaymentVendor === 'square')
-                        <div class="flex flex-row justify-center w-full my-4">
-                            <div class="flex flex-col w-1/2">
-                                <div>
-                                    Please note: You will be asked to add your <b>School Name</b> when paying through
-                                    Square.
-                                </div>
-                                <div class="text-center">
-                                    Amount Due: <b>${{number_format($amountDue, 2) }}</b>
-                                </div>
-                                @include('square.payButton')
-                                <div id="advisory" class="text-xs text-red-600 mt-2 ">
-                                    Please note: Payment record updates may take as long as 24-hours during the work
-                                    week and by Monday at noon over the weekend.
+
+                    @if($amountDue < 0)
+                        <div class="text-start my-2">
+                            Overpayment: ${{ number_format($amountDue,2) }}.
+                        </div>
+                    @endif
+
+                    <div>
+                        @if(($ePaymentVendor === 'paypal') && ($amountDue > 0))
+                            <x-forms.partials.teacherEpaymentForm
+                                amountDue="{{ $amountDue }}"
+                                customProperties="{{ $customProperties }}"
+                                email="{{ $email }}"
+                                ePaymentId="{{ $ePaymentId }}"
+                                ePaymentVendor="{{  $ePaymentVendor }}"
+                                :sandbox="$sandbox"
+                                sandboxId="{{ $sandboxId }}"
+                                sandboxPersonalEmail="{{ $sandboxPersonalEmail }}"
+                                showSuccessIndicator="{{ $showSuccessIndicator }}"
+                                successMessage="{{ $successMessage }}"
+                                teacherName="{{ $teacherName }}"
+                                versionId="{{ $versionId }}"
+                                versionShortName="{{ $versionShortName }}"
+                            />
+                        @endif
+                        @if(($ePaymentVendor === 'square') && ($amountDue > 0))
+                            <div class="flex flex-row justify-center w-full my-4">
+                                <div class="flex flex-col w-1/2">
+                                    <div>
+                                        Please note: You will be asked to add your <b>School Name</b> when paying
+                                        through
+                                        Square.
+                                    </div>
+                                    <div class="text-left">
+                                        Amount Due: <b>${{number_format($amountDue, 2) }}</b>
+                                    </div>
+                                    @include('square.payButton')
+                                    <div id="advisory" class="text-xs text-red-600 mt-2 ">
+                                        Please note: Payment record updates may take as long as 24-hours during the work
+                                        week and by Monday at noon over the weekend.
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        {{--                        <div class="">--}}
-                        {{--                            @include('square.squareInApp')--}}
-                        {{--                        </div>--}}
-                    @endif
+                            {{--                        <div class="">--}}
+                            {{--                            @include('square.squareInApp')--}}
+                            {{--                        </div>--}}
+                        @endif
 
-                </div>
+                    </div>
 
-            @endif
+                @endif
 
         </div>
     </div>

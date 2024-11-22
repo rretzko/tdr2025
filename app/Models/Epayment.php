@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Events\Versions\TeacherPayment;
 use App\Models\Events\Versions\Version;
 use App\Models\Schools\School;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,10 +26,18 @@ class Epayment extends Model
 
     public function getTotalCollected(Version $version, int $schoolId): int
     {
-        return Epayment::query()
+        $ePaymentAmount = Epayment::query()
             ->where('version_id', $version->id)
             ->where('school_id', $schoolId)
             ->sum('amount');
+
+        $teacherPaymentAmount = TeacherPayment::query()
+            ->where('version_id', $version->id)
+            ->where('school_id', $schoolId)
+            ->where('fee_type', 'registration')
+            ->sum('amount');
+
+        return ($ePaymentAmount + $teacherPaymentAmount);
     }
 
     public function version(): BelongsTo
