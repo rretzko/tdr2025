@@ -79,6 +79,9 @@
                     <td>
                         @if(strlen($row->EcName))
                             <div>{{ $row->EcName }}</div>
+                            <div>
+                                {{ strlen($row->EcEmail) ? $row->EcEmail : 'No email found' }}
+                            </div>
                             @if(strlen($row->phoneMobileEC))
                                 <div>{{ $row->phoneMobileEC }} (c)</div>
                             @endif

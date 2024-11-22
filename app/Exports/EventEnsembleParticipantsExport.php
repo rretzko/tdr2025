@@ -36,6 +36,7 @@ class EventEnsembleParticipantsExport implements FromArray, WithHeadings
             'teacher cell',
             'teacher work',
             'emergency contact',
+            'ec email',
             'ec cell',
             'ec home',
             'ec work',

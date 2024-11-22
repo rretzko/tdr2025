@@ -30,7 +30,7 @@ class TabroomReportComponent extends BasePage
     public Collection $eventEnsembles;
     public Collection $factors;
     public int $judgeCount;
-    public array $participants = [];
+//    public array $participants = [];
     public bool $scoresAscending = true;
     public array $seniorityParticipation = [];
     public int $versionId = 0;
@@ -55,7 +55,7 @@ class TabroomReportComponent extends BasePage
         $this->eventEnsembles = Version::find($this->versionId)->event->eventEnsembles;
         $this->eventEnsembleCount = $this->eventEnsembles->count();
         $this->eventEnsembleId = $this->eventEnsembles->first()->id;
-        $this->participants = $this->getParticipants();
+//        $this->participants = $this->getParticipants();
 
         $this->versionSeniorYears = $this->getVersionSeniorYears();
         $this->seniorityParticipation = $this->getSeniorityParticipation();
@@ -67,6 +67,7 @@ class TabroomReportComponent extends BasePage
         return view('livewire..events.versions.tabrooms.tabroom-report-component',
             [
                 'rows' => $this->getRows(),
+                'participants' => $this->getParticipants(),
             ]);
     }
 
@@ -235,6 +236,7 @@ class TabroomReportComponent extends BasePage
                 'mobilePhoneT.phone_number AS phoneMobileT',
                 'workPhoneT.phone_number AS phoneWorkT',
                 'emergency_contacts.name AS EcName',
+                'emergency_contacts.email AS EcEmail',
                 'emergency_contacts.phone_mobile AS phoneMobileEC',
                 'emergency_contacts.phone_home AS phoneHomeEC',
                 'emergency_contacts.phone_work AS phoneWorkEC'
