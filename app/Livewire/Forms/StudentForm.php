@@ -4,6 +4,7 @@ namespace App\Livewire\Forms;
 
 use App\Models\PhoneNumber;
 use App\Models\Schools\School;
+use App\Models\Schools\SchoolTeacher;
 use App\Models\Schools\Teacher;
 use App\Models\SchoolStudent;
 use App\Models\Students\Student;
@@ -297,10 +298,17 @@ class StudentForm extends Form
      */
     private function getSchoolStudent(): SchoolStudent
     {
+        $teacher = Teacher::where('user_id', auth()->id())->first();
+
+        $schoolIds = SchoolTeacher::query()
+            ->where('teacher_id', $teacher->id)
+            ->pluck('school_id')
+            ->toArray();
+
         //student is at auth()->user()'s current school
         $schoolStudent = SchoolStudent::query()
             ->where('student_id', $this->studentId)
-            ->where('school_id', $this->schoolId)
+            ->whereIn('school_id', $schoolIds)
             ->first();
 
         if ($schoolStudent) {

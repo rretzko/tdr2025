@@ -11,7 +11,8 @@
         <div id="button" class="mt-4 w-1/2 mx-auto">
 
             <div id="advisory">
-                Rest the student's password at <b>StudentFolder.info</b> to the lower-case email address ({{ $lcEmail }}
+                Reset the student's password at <b>StudentFolder.info</b> to the lower-case email address
+                ({{ $lcEmail }}
                 ).
             </div>
 
