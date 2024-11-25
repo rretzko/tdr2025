@@ -1,5 +1,9 @@
 <div class="space-y-4 mx-4 p-2 border border-gray-200 ">
 
+    @if($eventEnsembleCount > 1)
+        @include('components.selectrors.eventEnsembleSelectors')
+    @endif
+
     @if($displayReportData === 'byVoicePart')
         <div class="mx-4 flex flex-col md:flex-row md:space-x-4">
             @foreach($voiceParts AS $voicePart)

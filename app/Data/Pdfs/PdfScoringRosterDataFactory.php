@@ -2,6 +2,7 @@
 
 namespace App\Data\Pdfs;
 
+use App\Models\Events\EventEnsemble;
 use App\Models\Events\Versions\Scoring\Score;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionConfigAdjudication;
@@ -24,8 +25,11 @@ class PdfScoringRosterDataFactory
     private array $voicePartIds = [];
     private Collection $voiceParts;
 
-    public function __construct(private int $versionId, private readonly VoicePart|null|array $voicePart = null)
-    {
+    public function __construct(
+        private int $versionId,
+        private readonly VoicePart|null|array $voicePart = null,
+        private int $eventEnsembleId = 0
+    ) {
         $this->version = Version::find($this->versionId);
         $this->dto['versionName'] = $this->version->name;
         $this->dto['categoryColspans'] = $this->version->scoreCategoriesWithColSpanArray;
@@ -71,12 +75,14 @@ class PdfScoringRosterDataFactory
             return [$this->voicePart->id];
         }
 
+        if ($this->eventEnsembleId) {
+            $eventEnsemble = EventEnsemble::find($this->eventEnsembleId);
+
+            return explode(',', $eventEnsemble->voice_part_ids);
+        }
+
         return $this->voiceParts->pluck('id')->toArray();
     }
-
-
-
-
 
 
 }

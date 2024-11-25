@@ -70,7 +70,7 @@ class EventsTableComponent extends BasePage
 
     private function getRows(): Builder
     {
-//        $this->test();
+//        $this->troubleShooting();
 
         return Event::query()
             ->join('event_management', 'event_management.event_id', '=', 'events.id')

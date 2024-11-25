@@ -32,4 +32,5 @@ class EventEnsemble extends Model
 
         return VoicePart::find($voicePartIds);
     }
+
 }

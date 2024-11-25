@@ -1,4 +1,5 @@
 @props([
+    'feeParticipation',
     'hasContract',
     'columnHeaders',
     'header',
@@ -32,12 +33,12 @@
                     </button>
                 </th>
             @endforeach
-            <th class="border border-transparent px-1 sr-only">
-                edit
-            </th>
-            <th class="border border-gray-200 px-1 sr-only">
-                remove
-            </th>
+            {{--            <th class="border border-transparent px-1 sr-only">--}}
+            {{--                edit--}}
+            {{--            </th>--}}
+            {{--            <th class="border border-gray-200 px-1 sr-only">--}}
+            {{--                remove--}}
+            {{--            </th>--}}
         </tr>
         </thead>
         <tbody>
@@ -76,6 +77,7 @@
                 <td class="border border-gray-200 px-1 text-center">
                     {{ $row->acceptance_abbr }}
                 </td>
+
                 @if($row->accepted && $hasContract)
                     <td class="border border-gray-200 px-1 text-center">
 
@@ -84,6 +86,20 @@
                         >
                             <x-heroicons.printer/>
                         </div>
+                    </td>
+                @endif
+
+                @if($feeParticipation)
+                    <td
+                        @class([
+                "border border-gray-200 px-1 text-center",
+                'text-red-500' => (! $row->participationFee),
+                'text-green-800' => ( $row->participationFee),
+            ])
+                    >
+                        @if(!in_array($row->acceptance_abbr, ['inc','na','ns']))
+                            {{ $row->participationFee ? 'PAID' : 'due' }}
+                        @endif
                     </td>
                 @endif
             </tr>

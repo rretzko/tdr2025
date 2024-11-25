@@ -29,6 +29,21 @@ class CoTeachersService
         return array_merge($teacherIds, $coteacherIds);
     }
 
+    public static function getCoTeachersSchoolIds(): array
+    {
+        $mySchools = Coteacher::query()
+            ->where('teacher_id', auth()->id())
+            ->pluck('school_id')
+            ->toArray();
+
+        $myCoTeachingSchools = Coteacher::query()
+            ->where('coteacher_id', auth()->id())
+            ->pluck('school_id')
+            ->toArray();
+
+        return array_unique(array_merge($mySchools, $myCoTeachingSchools));
+    }
+
     public static function userIsCoTeacherAtStudentsSchool(int $studentId): bool
     {
         $schoolId = SchoolStudent::query()

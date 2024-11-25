@@ -237,11 +237,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         \App\Http\Controllers\Events\Versions\Tabrooms\TabroomReportController::class)
         ->name('version.tabroom.reports');
     //VERSIONS.TABROOM.REPORTS.SCORES-BY-VOICE-PART
-    Route::get('versions/tabroom/reports/byVoicePart/{voicePart}',
+    Route::get('versions/tabroom/reports/byVoicePart/{voicePart}/{private}/{eventEnsembleId}',
         \App\Http\Controllers\Pdfs\ScoringRosterController::class)
         ->name('versions.tabroom.reports.byVoicePart');
     //VERSIONS.TABROOM.REPORTS.ALLPRIVATE
-    Route::get('versions/tabroom/reports/allPrivate/{voicePart}/{private}',
+    Route::get('versions/tabroom/reports/allPrivate/{voicePart}/{private}/{eventEnsembleId}',
         \App\Http\Controllers\Pdfs\ScoringRosterController::class)
         ->name('versions.tabroom.reports.allPrivate');
 

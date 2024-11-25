@@ -45,6 +45,7 @@
                     {{-- DOWNLOAD PDF WITH SCHOOL RESULTS --}}
                     <div wire:click="printResultsAll()"
                          class="flex flex-row items-center justify-end my-2 text-blue-600 text-sm cursor-pointer"
+                         wire:key="results_school"
                     >
                         Print {{ $schoolName }} Results
                         <span class="ml-2"><x-heroicons.printer/></span>
@@ -52,12 +53,27 @@
 
                     {{-- DOWNLOAD CONFIDENTIAL PDF WITH ALL SCORES --}}
                     @if($showAllScores)
-                        <div wire:click="printResultsConfidential()"
-                             class="flex flex-row items-center justify-end my-2 text-blue-600 text-sm cursor-pointer"
-                        >
-                            Print All Results
-                            <span class="ml-2"><x-heroicons.printer/></span>
-                        </div>
+                        @if($separatedResults)
+                            <div class="flex flex-col">
+                                @foreach($eventEnsembles AS $ensemble)
+                                    <div wire:click="printResultsConfidential({{ $ensemble->id }})"
+                                         class="flex flex-row items-center justify-end my-2 text-blue-600 text-sm cursor-pointer"
+                                         wire:key="results_{{ $ensemble->id }}"
+                                    >
+                                        {{ $ensemble->ensemble_name }} Results
+                                        <span class="ml-2"><x-heroicons.printer/></span>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                        @else
+                            <div wire:click="printResultsConfidential()"
+                                 class="flex flex-row items-center justify-end my-2 text-blue-600 text-sm cursor-pointer"
+                            >
+                                Print All Results
+                                <span class="ml-2"><x-heroicons.printer/></span>
+                            </div>
+                        @endif
                     @endif
                 </div>
             </div>
@@ -80,6 +96,7 @@
                     {{-- TABLE --}}
                     <x-tables.auditionResultsTable
                         :columnHeaders="$columnHeaders"
+                        fee-participation="{{ $version->fee_participation }}"
                         :hasContract="$hasContract"
                         :header="$dto['header']"
                         :recordsPerPage="$recordsPerPage"

@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Events\Event;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionParticipant;
 use App\Models\PageView;

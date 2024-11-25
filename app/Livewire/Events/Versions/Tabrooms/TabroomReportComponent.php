@@ -23,8 +23,8 @@ use Maatwebsite\Excel\Facades\Excel;
 class TabroomReportComponent extends BasePage
 {
     public array $categories = [];
-    public string $displayReportData = '';//'seniorityParticipation';
-    public bool $displayReport = false; //true;
+    public string $displayReportData = '';
+    public bool $displayReport = false;
     public int $eventEnsembleCount = 0;
     public int $eventEnsembleId = 0;
     public Collection $eventEnsembles;
@@ -33,6 +33,7 @@ class TabroomReportComponent extends BasePage
     public int $judgeCount;
     public bool $scoresAscending = true;
     public array $seniorityParticipation = [];
+    public int $showEventEnsembleId = 0;
     public int $versionId = 0;
     public array $versionSeniorYears = [];
     public int $voicePartId = 0;
@@ -64,9 +65,6 @@ class TabroomReportComponent extends BasePage
 
     public function render()
     {
-//        echo $this->eventEnsembleId;
-//        echo serialize($this->getEventEnsembleYears());
-//        dd($this->getParticipants());
         return view('livewire..events.versions.tabrooms.tabroom-report-component',
             [
                 'rows' => $this->getRows(),
@@ -104,8 +102,11 @@ class TabroomReportComponent extends BasePage
         }
 
         if ($this->displayReportData === 'allPublic') {
-            $uri .= '/74'; //74=ALL voices
+            $uri .= '/74/0'; //74=ALL voices, 0=NOT private
         }
+
+        //add eventEnsembleId
+        $uri .= '/'.$this->showEventEnsembleId;
 
         return $this->redirect($uri);
     }
@@ -140,6 +141,11 @@ class TabroomReportComponent extends BasePage
         $this->seniorityParticipation = $this->getParticipantsForSeniority();
         $this->eventEnsembleSeniorYears = $this->getEventEnsembleYears();
     }
+
+//    public function updatedShowEventEnsembleId(): void
+//    {
+//        //rerender
+//    }
 
     /** END OF PUBLIC FUNCTIONS **************************************************/
 
@@ -215,6 +221,7 @@ class TabroomReportComponent extends BasePage
         $abbr = $ensemble->abbr ?? '';
         $versionId = $this->versionId;
         $scoresAscending = Version::find($this->versionId)->scores_ascending;
+        $voicePartsIn = $this->getShowEnsembleVoicePartIds();
 
         $participants = DB::table('audition_results')
             ->join('candidates', 'audition_results.candidate_id', '=', 'candidates.id')
@@ -242,6 +249,7 @@ class TabroomReportComponent extends BasePage
                 $join->on('usersT.id', '=', 'workPhoneT.user_id')
                     ->where('workPhoneT.phone_type', 'work');
             })
+            ->whereIn('candidates.voice_part_id', $voicePartsIn)
             ->where('audition_results.version_id', $versionId)
             ->where('acceptance_abbr', $abbr)
             ->where('accepted', 1)
@@ -335,7 +343,7 @@ class TabroomReportComponent extends BasePage
 
     private function getRows(): array
     {
-        $voicePartIds = $this->voicePartId ? [$this->voicePartId] : $this->voicePartIds;
+        $voicePartIds = $this->voicePartId ? [$this->voicePartId] : $this->getShowEnsembleVoicePartIds(); //voicePartIds;
 
         $service = new ScoringRosterDataRowsService($this->versionId, $voicePartIds);
 
@@ -361,10 +369,22 @@ class TabroomReportComponent extends BasePage
         }
     }
 
-//    private function getSeniorityParticipation(): array
-//    {
-//        return $this->getParticipantsForSeniority();
-//    }
+    private function getShowEnsembleVoicePartIds(): array
+    {
+        $ensembles = $this->eventEnsembles;
+        if ($this->showEventEnsembleId) {
+            $ensembles = $this->eventEnsembles->where('id', $this->showEventEnsembleId);
+        }
+
+        $voicePartIds = [];
+        foreach ($ensembles as $ensemble) {
+            $idsArray = explode(',', $ensemble->voice_part_ids);
+            $voicePartIds = array_merge($voicePartIds, $idsArray);
+        }
+
+
+        return $voicePartIds;
+    }
 
     private function getVersionSeniorYears(): array
     {

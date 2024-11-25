@@ -29,7 +29,9 @@
             <th colspan="2" class="clearBorder"></th>
         </tr>
         <tr>
-            <th colspan="2" class="clearBorder"></th>
+            <th colspan="2" class="">
+                {{ count($rows) }} candidates
+            </th>
             @for($i=0; $i<$judgeCount; $i++)
                 @forelse($categories AS $category)
                     <th colspan="{{ $category['colspan'] }}">

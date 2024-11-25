@@ -28,6 +28,7 @@ class Version extends Model
         'fee_registration',
         'height',
         'name',
+        'participation_contract',
         'pitch_files_student',
         'pitch_files_teacher',
         'short_name',

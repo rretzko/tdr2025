@@ -41,8 +41,13 @@ class TabroomCloseAuditionsComponent extends BasePage
             $this->reset('auditionCloseDateTime', 'buttonLabel');
         } else {
             $this->version->update(['status' => 'closed']);
-            $this->setAuditionCloseDateTime();
+            $this->auditionCloseDateTime = $this->getAuditionCloseDateTime();
             $this->buttonLabel = 'Re-open Event';
         }
+    }
+
+    private function setAuditionCloseDateTime(): void
+    {
+
     }
 }

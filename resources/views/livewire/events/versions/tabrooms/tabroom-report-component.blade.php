@@ -52,6 +52,7 @@
                         </li>
                     </ul>
                 </li>
+
                 <li>
                     <button
                         type="button"
@@ -67,6 +68,7 @@
                         </li>
                     </ul>
                 </li>
+
                 <li>Upload public scores
                     <ul>
                         <li>

@@ -5,6 +5,7 @@ namespace App\Livewire\Ensembles\Members;
 use App\Models\Ensembles\Ensemble;
 use App\Models\Pronoun;
 use App\Models\Students\Student;
+use App\Models\UserConfig;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -39,6 +40,7 @@ class MemberCreateComponent extends BasePageMember
                 'offices' => self::OFFICES,
                 'pronouns' => Pronoun::orderBy('order_by')->pluck('descr', 'id'),
                 'statuses' => self::STATUSES,
+                'nonmembers' => $this->getNonmembers(),
             ]);
     }
 
@@ -104,5 +106,22 @@ class MemberCreateComponent extends BasePageMember
         }
 
         $this->resultsName = $str;
+    }
+
+    private function getNonmembers(): array
+    {
+        $schoolId = UserConfig::getValue('schoolId');
+
+        return DB::table('school_student')
+            ->join('students', 'students.id', '=', 'school_student.student_id')
+            ->join('users', 'users.id', '=', 'students.user_id')
+            ->where('school_id', $schoolId)
+            ->select('school_student.student_id AS studentId',
+                'users.name AS name',
+                DB::raw('CONCAT(users.last_name, ",",users.first_name," ",users.middle_name) AS alphaName')
+            )
+            ->orderBy('alphaName')
+            ->get()
+            ->toArray();
     }
 }
