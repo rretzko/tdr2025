@@ -6,6 +6,7 @@ use App\Livewire\BasePage;
 use App\Mail\RequestInvitationToEventMail;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionParticipant;
+use App\Models\Schools\Teacher;
 use App\Models\UserConfig;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -81,12 +82,15 @@ class EventParticipationTableComponent extends BasePage
 
     private function getRowsPast(): array
     {
+        $teacherId = Teacher::where('user_id', auth()->id())->first()->id;
+
         return DB::table('version_participants')
             ->join('versions', 'versions.id', '=', 'version_participants.version_id')
             ->join('events', 'events.id', '=', 'versions.event_id')
             ->join('candidates', 'candidates.version_id', '=', 'version_participants.version_id')
             ->where('version_participants.user_id', auth()->id())
             ->where('versions.status', 'closed')
+            ->where('candidates.teacher_id', $teacherId)
             ->distinct('versions.id')
             ->select('version_participants.version_id AS id',
                 'events.short_name AS eventName',
