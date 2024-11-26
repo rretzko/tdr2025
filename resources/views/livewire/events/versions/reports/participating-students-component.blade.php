@@ -41,8 +41,12 @@
                 </div>
             @endif
 
-            {{-- PAYMENT FORM AND TABLE WITH LINKS--}}
+            {{-- EDIT FORM AND TABLE WITH LINKS--}}
             <div class="flex flex-col space-y-2 mb-2 w-full">
+                {{-- EDIT STUDENT DATA FORM --}}
+                @if($form->studentId)
+                    @include('components.forms.partials.registrationManagers.studentForm')
+                @endif
 
                 <x-links.linkTop :recordsPerPage="$recordsPerPage" :rows="$rows"/>
 

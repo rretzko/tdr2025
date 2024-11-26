@@ -154,6 +154,38 @@ class StudentForm extends Form
         }
     }
 
+    public function setStudentForRegistrationManager(Student $student): void
+    {
+        $this->first = $student->user->first_name;
+        $this->middle = $student->user->middle_name ?? '';
+        $this->last = $student->user->last_name;
+        $this->suffix = $student->user->suffix_name ?? '';
+        $this->email = $student->user->email ?? '';
+        $this->pronounId = $student->user->pronoun_id;
+        $this->classOf = $student->class_of;
+        $this->voicePartId = $student->voice_part_id ?? 63; //soprano i
+        $this->heightInInches = $student->height;
+        $this->birthday = $student->birthday ?? '';
+        $this->shirtSize = $student->shirt_size ?? 1;
+        $this->phoneMobile = $student->phoneMobile ?? '';
+        $this->phoneHome = $student->phoneHome ?? '';
+
+        $this->studentId = $student->id;
+
+        //Address
+        if ($student->address) {
+
+            $address = $student->address;
+
+            $this->address1 = $address->address1 ?? '';
+            $this->address2 = $address->address2 ?? '';
+            $this->city = $address->city ?? '';
+            $this->geostate_id = $address->geostate_id ?? 37;
+            $this->postalCode = $address->postal_code ?? '';
+
+        }
+    }
+
     public function update(): bool
     {
         $this->validate([

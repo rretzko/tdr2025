@@ -133,7 +133,12 @@ class PdfEstimateDataFactory
             ->where('version_id', $this->version->id)
             ->sum('amount');
 
-        return ConvertToUsdService::penniesToUsd($pennies);
+        $usd = ConvertToUsdService::penniesToUsd($pennies);
+
+        /**
+         * @todo Trace this to source to format as currency
+         */
+        return str_replace(',', '', $usd);
     }
 //
 //    private function getEnsembleNames(): array

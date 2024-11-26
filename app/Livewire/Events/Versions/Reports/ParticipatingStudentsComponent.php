@@ -5,15 +5,25 @@ namespace App\Livewire\Events\Versions\Reports;
 
 use App\Exports\ParticipatingStudentsExport;
 use App\Livewire\Forms\RoomForm;
+use App\Livewire\Forms\StudentForm;
 use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Version;
+use App\Models\PhoneNumber;
+use App\Models\Students\Student;
+use App\Services\FormatPhoneService;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rules\Can;
+use JetBrains\PhpStorm\NoReturn;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ParticipatingStudentsComponent extends BasePageReports
 {
+    public StudentForm $form;
     public array $columnHeaders = [];
+    public Collection $eventVoiceParts;
     public array $summaryColumnHeaders = [];
 
     public function mount(): void
@@ -55,6 +65,70 @@ class ParticipatingStudentsComponent extends BasePageReports
         if (count($this->filters->participatingVoicePartsSelectedIds) > 1) {
             $this->filterMethods[] = 'participatingVoiceParts';
         }
+
+        //eventVoiceParts
+        $this->eventVoiceParts = $this->version->event->voiceParts;
+    }
+
+    public function clickEdit(int $candidateId): void
+    {
+        $candidate = Candidate::find($candidateId);
+        $student = $candidate->student;
+
+        $this->form->setStudentForRegistrationManager($student);
+    }
+
+    #[NoReturn] public function saveEdits(): void
+    {
+        $validated = $this->validate([
+            'form.first' => ['required'],
+            'form.last' => ['required'],
+        ]);
+
+        $student = Student::find($this->form->studentId);
+        $user = $student->user;
+        $candidate = Candidate::where('student_id', $student->id)
+            ->where('version_id', $this->versionId)
+            ->first();
+
+        $user->first_name = $this->form->first;
+        $user->middle_name = $this->form->middle;
+        $user->last_name = $this->form->last;
+        $fullName = $this->makeFullName();
+        $user->name = $fullName;
+
+        $user->save();
+
+        $candidate->program_name = $fullName;
+        $candidate->voice_part_id = $this->form->voicePartId;
+        $candidate->save();
+
+        $phoneService = new FormatPhoneService();
+        $homePhone = PhoneNumber::query()
+            ->where('user_id', $user->id)
+            ->where('phone_type', 'home')
+            ->first();
+        $homeNumber = $phoneService->getPhoneNumber($this->form->phoneHome);
+        $homePhone->phone_number = $homeNumber;
+        $homePhone->save();
+
+        $mobilePhone = PhoneNumber::query()
+            ->where('user_id', $user->id)
+            ->where('phone_type', 'mobile')
+            ->first();
+
+        $mobileNumber = $phoneService->getPhoneNumber($this->form->phoneMobile);
+        $mobilePhone->phone_number = $mobileNumber;
+        $mobilePhone->save();
+
+        //clear vars
+        $this->form->first = '';
+        $this->form->middle = '';
+        $this->form->last = '';
+        $this->form->voicePartId = 63;
+        $this->form->phoneHome = '';
+        $this->form->phoneMobile = '';
+        $this->form->studentId = 0;
     }
 
     private function getColumnHeaders(): array
@@ -145,5 +219,16 @@ class ParticipatingStudentsComponent extends BasePageReports
         return Excel::download(new ParticipatingStudentsExport(
             $this->versionId,
         ), 'participatingStudents.csv');
+    }
+
+    private function makeFullName(): string
+    {
+        $str = trim($this->form->first).' ';
+        if (strlen($this->form->middle)) {
+            $str .= trim($this->form->middle).' ';
+        }
+        $str .= trim($this->form->last);
+
+        return $str;
     }
 }
