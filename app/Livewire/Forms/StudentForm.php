@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Forms;
 
+use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\PhoneNumber;
 use App\Models\Schools\School;
 use App\Models\Schools\SchoolTeacher;
@@ -154,8 +155,11 @@ class StudentForm extends Form
         }
     }
 
-    public function setStudentForRegistrationManager(Student $student): void
+    public function setStudentForRegistrationManager(int $candidateId): void
     {
+        $candidate = Candidate::find($candidateId);
+        $student = $candidate->student;
+
         $this->first = $student->user->first_name;
         $this->middle = $student->user->middle_name ?? '';
         $this->last = $student->user->last_name;
@@ -163,7 +167,7 @@ class StudentForm extends Form
         $this->email = $student->user->email ?? '';
         $this->pronounId = $student->user->pronoun_id;
         $this->classOf = $student->class_of;
-        $this->voicePartId = $student->voice_part_id ?? 63; //soprano i
+        $this->voicePartId = $candidate->voice_part_id ?? 63; //soprano i
         $this->heightInInches = $student->height;
         $this->birthday = $student->birthday ?? '';
         $this->shirtSize = $student->shirt_size ?? 1;

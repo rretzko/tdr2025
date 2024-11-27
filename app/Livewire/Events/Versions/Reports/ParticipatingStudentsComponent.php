@@ -72,10 +72,7 @@ class ParticipatingStudentsComponent extends BasePageReports
 
     public function clickEdit(int $candidateId): void
     {
-        $candidate = Candidate::find($candidateId);
-        $student = $candidate->student;
-
-        $this->form->setStudentForRegistrationManager($student);
+        $this->form->setStudentForRegistrationManager($candidateId);
     }
 
     #[NoReturn] public function saveEdits(): void
@@ -103,33 +100,41 @@ class ParticipatingStudentsComponent extends BasePageReports
         $candidate->voice_part_id = $this->form->voicePartId;
         $candidate->save();
 
-        $phoneService = new FormatPhoneService();
-        $homePhone = PhoneNumber::query()
-            ->where('user_id', $user->id)
-            ->where('phone_type', 'home')
-            ->first();
-        $homeNumber = $phoneService->getPhoneNumber($this->form->phoneHome);
-        $homePhone->phone_number = $homeNumber;
-        $homePhone->save();
-
-        $mobilePhone = PhoneNumber::query()
-            ->where('user_id', $user->id)
-            ->where('phone_type', 'mobile')
-            ->first();
-
-        $mobileNumber = $phoneService->getPhoneNumber($this->form->phoneMobile);
-        $mobilePhone->phone_number = $mobileNumber;
-        $mobilePhone->save();
+        $this->addEditPhoneNumber($this->form->phoneHome, 'home', $user->id);
+        $this->addEditPhoneNumber($this->form->phoneMobile, 'mobile', $user->id);
 
         //clear vars
         $this->form->first = '';
         $this->form->middle = '';
         $this->form->last = '';
-        $this->form->voicePartId = 63;
+        $this->form->voicePartId = 1;
         $this->form->phoneHome = '';
         $this->form->phoneMobile = '';
         $this->form->studentId = 0;
     }
+
+    private function addEditPhoneNumber(string $phoneNumber, string $phoneType, int $userId): void
+    {
+        $phoneService = new FormatPhoneService();
+        $fPhoneNumber = $phoneService->getPhoneNumber($phoneNumber);
+        $phoneExists = PhoneNumber::query()
+            ->where('user_id', $userId)
+            ->where('phone_type', $phoneType)
+            ->first();
+        if ($phoneExists) {
+            $phoneExists->phone_number = $fPhoneNumber;
+            $phoneExists->save();
+        } else {
+            if ($fPhoneNumber) {
+                $new = new PhoneNumber();
+                $new->user_id = $userId;
+                $new->phone_type = $phoneType;
+                $new->phone_number = $fPhoneNumber;
+                $new->save();
+            }
+        }
+    }
+
 
     private function getColumnHeaders(): array
     {

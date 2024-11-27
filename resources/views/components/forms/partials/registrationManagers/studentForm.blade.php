@@ -28,7 +28,7 @@
     {{-- VOICE PART --}}
     <div class="flex flex-col space-y-0.5 mb-2">
         <label class="font-semibold">Voice Part</label>
-        <select wire:model="voicePartId">
+        <select wire:model="form.voicePartId">
             @foreach($eventVoiceParts AS $voicePart)
                 <option value="{{ $voicePart->id }}">
                     {{ $voicePart->descr }}
