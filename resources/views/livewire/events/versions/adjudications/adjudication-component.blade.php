@@ -18,6 +18,9 @@
         {{-- ADJUDICATION BUTTONS --}}
         <div class="flex flex-col p-2 rounded-lg shadow-lg ml-2 mb-2">
             @include('components.forms.partials.adjudications.adjudicationButtons')
+            @if(count($referenceMaterials))
+                @include('components.forms.partials.adjudications.referenceMaterials')
+            @endif
         </div>
 
         {{-- RECORDING/AUDITION SCORING --}}

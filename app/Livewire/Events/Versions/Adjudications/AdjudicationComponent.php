@@ -12,11 +12,13 @@ use App\Models\Events\Versions\Scoring\Score;
 use App\Models\Events\Versions\Scoring\ScoreCategory;
 use App\Models\Events\Versions\Scoring\ScoreFactor;
 use App\Models\Events\Versions\Version;
+use App\Models\Events\Versions\VersionPitchFile;
 use App\Models\PhoneNumber;
 use App\Models\Students\VoicePart;
 use App\Services\UpdateAuditionResultsService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use LaravelIdea\Helper\App\Models\Events\Versions\_IH_VersionPitchFile_C;
 
 
 class AdjudicationComponent extends BasePage
@@ -31,6 +33,7 @@ class AdjudicationComponent extends BasePage
     public int $pctError = 20;
     public int $pctPending = 10;
     public int $pctWip = 20;
+    public array $referenceMaterials = [];
     public Room $room;
     public string $scoreUpdatedMssg = '';
     public bool $showAllButtons = true;
@@ -51,6 +54,8 @@ class AdjudicationComponent extends BasePage
 
         $recordings = ['audio', 'video'];
         $this->hasRecording = in_array(Version::find($this->versionId)->upload_type, $recordings);
+
+        $this->referenceMaterials = $this->getReferenceMaterials();
     }
 
     public function render()
@@ -135,6 +140,26 @@ class AdjudicationComponent extends BasePage
         }
 
         return $judges;
+    }
+
+    private function getReferenceMaterials(): array
+    {
+        $vpf = VersionPitchFile::query()
+            ->where('version_id', $this->versionId)
+            ->where('file_type', 'pdf')
+            ->get();
+
+        $materials = [];
+
+        foreach ($vpf as $pdf) {
+            $materials[] =
+                [
+                    'descr' => $pdf->description,
+                    'url' => $pdf->url,
+                ];
+        }
+
+        return $materials;
     }
 
     private function getRoom(): Room

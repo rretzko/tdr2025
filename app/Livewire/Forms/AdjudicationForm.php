@@ -61,10 +61,13 @@ class AdjudicationForm extends Form
             $this->scores[$factor->id] = $scores[$factor->id] ?? $factor->best;
         }
 
+        $fileTypes = array_column($this->room->scoringCategories, 'descr');
+
         $this->recordings = Recording::query()
             ->where('candidate_id', $candidate->id)
             ->whereNotNull('approved')
             ->whereNotNull('approved_by')
+            ->whereIn('file_type', $fileTypes)
             ->pluck('url', 'file_type')
             ->toArray();
 
