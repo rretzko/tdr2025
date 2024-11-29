@@ -101,15 +101,26 @@ class ViewDataFactory extends aViewData
     {
         $cards = $viewCards;
 
-        $adjudicationOpen = Carbon::parse(VersionConfigDate::where('version_id', $this->versionId)
+        $versionConfigDateOpen = VersionConfigDate::where('version_id', $this->versionId)
             ->where('date_type', 'adjudication_open')
-            ->first()
-            ->version_date);
+            ->first();
 
-        $adjudicationClose = Carbon::parse(VersionConfigDate::where('version_id', $this->versionId)
-            ->where('date_type', 'adjudication_close')
-            ->first()
-            ->version_date);
+        if ($versionConfigDateOpen) {
+            $adjudicationOpen = Carbon::parse($versionConfigDateOpen->version_date);
+        } else {
+            $adjudicationOpen = null; // or handle it as needed
+        }
+
+
+        $versionConfigDateClose = VersionConfigDate::where('version_id', $this->versionId)
+            ->where('date_type', 'adjudication_open')
+            ->first();
+
+        if ($versionConfigDateClose) {
+            $adjudicationClose = Carbon::parse($versionConfigDateClose->version_date);
+        } else {
+            $adjudicationClose = null; // or handle it as needed
+        }
 
         $now = Carbon::now();
 
