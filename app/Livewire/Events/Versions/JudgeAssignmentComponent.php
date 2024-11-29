@@ -232,7 +232,10 @@ class JudgeAssignmentComponent extends BasePage
      */
     private function cloneRooms(): void
     {
-        $previousVersionRooms = $this->version->event->versions[1]->rooms;
+        $previousVersionRooms = ($this->version->event->versions->count() === 2)
+            ? $this->version->event->versions[1]->rooms
+            : collect();
+
         //Log::info('previousVersionRooms count: '.$previousVersionRooms->count());
         foreach ($previousVersionRooms as $oldRoom) {
 

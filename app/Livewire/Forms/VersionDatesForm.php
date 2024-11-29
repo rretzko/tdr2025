@@ -177,7 +177,7 @@ class VersionDatesForm extends Form
 
         $this->mostRecentVersion = $event->versions()
             ->whereNot('id', $this->sysId)
-            ->first();
+            ->first() ?: $event->versions()->first();
     }
 
 }

@@ -42,12 +42,13 @@ class CandidateAdjudicationStatusService
     private static function init()
     {
         $candidate = Candidate::find(self::$candidateId);
+
         self::$version = Version::find($candidate->version_id);
         self::$versionId = self::$version->id;
         $scoreCount = self::getScoreCount();
         $maxScoreCount = self::getMaxScoreCount();
 
-        //Log::info('scoreCount: '.$scoreCount.' | maxScoreCount: '.$maxScoreCount);
+//        Log::info('scoreCount: '.$scoreCount.' | maxScoreCount: '.$maxScoreCount);
         if (!$scoreCount) {
             self::$status = 'pending';
         } elseif ($scoreCount === $maxScoreCount) {

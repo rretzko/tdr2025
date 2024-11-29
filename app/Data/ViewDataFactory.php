@@ -111,9 +111,8 @@ class ViewDataFactory extends aViewData
             $adjudicationOpen = null; // or handle it as needed
         }
 
-
         $versionConfigDateClose = VersionConfigDate::where('version_id', $this->versionId)
-            ->where('date_type', 'adjudication_open')
+            ->where('date_type', 'adjudication_close')
             ->first();
 
         if ($versionConfigDateClose) {

@@ -210,11 +210,16 @@ class AdjudicationComponent extends BasePage
         $this->countWip = $this->room->getCountWip();
         $this->countPending = ($registeredCount - ($this->countCompleted + $this->countWip + $this->countError));
 
-        $this->pctError = floor(($this->countError / $registeredCount) * 100);
-        $this->pctCompleted = floor(($this->countCompleted / $registeredCount) * 100);
-        $this->pctPending = floor(($this->countPending / $registeredCount) * 100);
-        $this->pctWip = floor(($this->countWip / $registeredCount) * 100);
+        $this->pctError = $this->calculatePercentage($this->countError, $registeredCount);
+        $this->pctCompleted = $this->calculatePercentage($this->countCompleted, $registeredCount);
+        $this->pctPending = $this->calculatePercentage($this->countPending, $registeredCount);
+        $this->pctWip = $this->calculatePercentage($this->countWip, $registeredCount);
 
+    }
+
+    private function calculatePercentage(int $count, int $total): int
+    {
+        return $total ? floor(($count / $total) * 100) : 0;
     }
 
 }

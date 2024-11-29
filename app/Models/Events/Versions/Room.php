@@ -417,6 +417,7 @@ class Room extends Model
             ->orderBy('candidates.id')
             ->get()
             ->toArray();
+
     }
 
     private function getIncompleteCandidatesSql(array $voicePartIds): array
@@ -439,6 +440,11 @@ class Room extends Model
             ->orderBy('candidates.id')
             ->get()
             ->toArray();
+    }
+
+    protected function test(array $voicePartIds)
+    {
+
     }
 
 }
