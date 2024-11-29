@@ -426,24 +426,70 @@ class Room extends Model
         $scoreFactorCount = $this->scoringFactors->count();
         $maxScoreCount = ($judgeCount * $scoreFactorCount);
 
-        return DB::table('candidates')
-            ->join('room_voice_parts', 'room_voice_parts.voice_part_id', '=', 'candidates.voice_part_id')
-            ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
-            ->join('audition_results', 'audition_results.candidate_id', '=', 'candidates.id')
+        $candidates = DB::table('candidates')
+            ->join('room_voice_parts', 'candidates.voice_part_id', '=', 'room_voice_parts.voice_part_id')
+            ->join('voice_parts', 'candidates.voice_part_id', '=', 'voice_parts.id')
+            ->join('rooms', function ($join) {
+                $join->on('room_voice_parts.room_id', '=', 'rooms.id')
+                    ->where('rooms.version_id', $this->version_id);
+            })
+            ->where('candidates.status', 'registered')
             ->where('candidates.version_id', $this->version_id)
             ->whereIn('candidates.voice_part_id', $voicePartIds)
-            ->where('candidates.status', 'registered')
-            ->where('audition_results.score_count', '!=', $maxScoreCount)
             ->distinct()
             ->select('candidates.id', 'candidates.ref', 'voice_parts.descr', 'voice_parts.abbr', 'voice_parts.order_by')
             ->orderBy('voice_parts.order_by')
             ->orderBy('candidates.id')
-            ->get()
-            ->toArray();
+            ->get();
+
+        $filteredCandidates = $candidates->filter(function ($candidate) use ($maxScoreCount) {
+            $ar = AuditionResult::where('candidate_id', $candidate->id)->first();
+            return !$ar || $ar->score_count != $maxScoreCount;
+        });
+
+        return $filteredCandidates->toArray();
     }
 
-    protected function test(array $voicePartIds)
+    protected function test(array $voicePartIds, int $maxScoreCount)
     {
+        $candidates = DB::table('candidates')
+            ->join('room_voice_parts', 'candidates.voice_part_id', '=', 'room_voice_parts.voice_part_id')
+            ->join('voice_parts', 'candidates.voice_part_id', '=', 'voice_parts.id')
+            ->join('rooms', function ($join) {
+                $join->on('room_voice_parts.room_id', '=', 'rooms.id')
+                    ->where('rooms.version_id', $this->version_id);
+            })
+            ->where('candidates.status', 'registered')
+            ->where('candidates.version_id', $this->version_id)
+            ->whereIn('candidates.voice_part_id', $voicePartIds)
+            ->distinct()
+            ->get();
+
+        $filteredCandidates = $candidates->filter(function ($candidate) {
+            $ar = AuditionResult::where('candidate_id', $candidate->id)->first();
+            return !$ar || $ar->score_count != 6;
+        });
+
+        dd($filteredCandidates);
+        $test = DB::table('candidates')
+//            ->join('room_voice_parts', 'candidates.voice_part_id', '=', 'room_voice_parts.voice_part_id')
+//            ->join('voice_parts', 'candidates.voice_part_id', '=', 'voice_parts.id')
+//            ->leftJoin('audition_results', function($join) use($maxScoreCount){
+//                $join->on('candidates.id', '=', 'audition_results.candidate_id')
+//                    ->where('audition_results.score_count', '!=', $maxScoreCount);
+//            })
+//            ->where('candidates.version_id', $this->version_id)
+//            ->whereIn('candidates.voice_part_id', $voicePartIds)
+//            ->where('candidates.status', 'registered')
+            ->distinct()
+            ->select('candidates.id', 'candidates.ref', 'voice_parts.descr', 'voice_parts.abbr', 'voice_parts.order_by',
+                'audition_results.score_count AS scoreCount')
+            ->orderBy('voice_parts.order_by')
+            ->orderBy('candidates.id')
+            ->get()
+            ->toArray();
+
+        dd($test);
 
     }
 
