@@ -57,7 +57,7 @@
             <tr class=" odd:bg-green-50 ">
 
                 {{-- COUNTER --}}
-                <td class="text-center">
+                <td class="border border-gray-200 px-1 text-center">
                     {{ ($key + 1) }}
                 </td>
 
@@ -95,6 +95,10 @@
                 {{-- TOLERANCE --}}
                 <td class="border border-gray-200 px-1 text-center">
                     {{ $row->tolerance }}
+                </td>
+
+                <td class="border border-gray-200 px-1 text-center">
+                    {{ $row->order_by }}
                 </td>
 
                 <td class="border border-gray-200 px-1 text-center">

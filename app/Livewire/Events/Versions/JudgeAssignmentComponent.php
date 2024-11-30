@@ -333,6 +333,7 @@ class JudgeAssignmentComponent extends BasePage
             ['label' => 'score categories', 'sortBy' => null],
             ['label' => 'judges', 'sortBy' => null],
             ['label' => 'tolerance', 'sortBy' => null],
+            ['label' => 'order by', 'sortBy' => null],
         ];
     }
 
