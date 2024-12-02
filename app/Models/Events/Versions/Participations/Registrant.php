@@ -2,6 +2,9 @@
 
 namespace App\Models\Events\Versions\Participations;
 
+use App\Models\Events\Versions\Room;
+use App\Models\Events\Versions\Scoring\ScoreFactor;
+use App\Models\Events\Versions\VersionConfigAdjudication;
 use App\Services\CalcSeniorYearService;
 use App\Services\ConvertToUsdService;
 use App\Services\CoTeachersService;
@@ -23,6 +26,68 @@ class Registrant
         $this->registrants = $this->getRegistrants();
         $seniorYearService = new CalcSeniorYearService();
         $this->seniorYear = $seniorYearService->getSeniorYear();
+    }
+
+    public function getCountOfRegistrants(): int
+    {
+        return ($this->schoolId)
+            ? Candidate::query()
+                ->where('version_id', $this->versionId)
+                ->where('school_id', $this->schoolId)
+                ->where('status', 'registered')
+                ->count('id')
+            : Candidate::query()
+                ->where('version_id', $this->versionId)
+                ->where('status', 'registered')
+                ->count('id');
+    }
+
+    public function getCountOfRegistrantsCompleted(): int
+    {
+        $maxScoreCount = $this->getMaxScoreCount();
+
+        return ($this->schoolId)
+            ? AuditionResult::query()
+                ->where('version_id', $this->versionId)
+                ->where('school_id', $this->schoolId)
+                ->where('score_count', '=', $maxScoreCount)
+                ->count('id')
+            : AuditionResult::query()
+                ->where('version_id', $this->versionId)
+                ->where('score_count', '=', $maxScoreCount)
+                ->count('id');
+    }
+
+    public function getCountOfRegistrantsOverScored(): int
+    {
+        $maxScoreCount = $this->getMaxScoreCount();
+
+        return ($this->schoolId)
+            ? AuditionResult::query()
+                ->where('version_id', $this->versionId)
+                ->where('school_id', $this->schoolId)
+                ->where('score_count', '>', $maxScoreCount)
+                ->count('id')
+            : AuditionResult::query()
+                ->where('version_id', $this->versionId)
+                ->where('score_count', '>', $maxScoreCount)
+                ->count('id');
+    }
+
+    public function getCountOfRegistrantsWip(): int
+    {
+        $maxScoreCount = $this->getMaxScoreCount();
+
+        return ($this->schoolId)
+            ? AuditionResult::query()
+                ->where('version_id', $this->versionId)
+                ->where('school_id', $this->schoolId)
+                ->where('score_count', '<', $maxScoreCount)
+                ->count('id')
+            : AuditionResult::query()
+                ->where('version_id', $this->versionId)
+                ->where('score_count', '<', $maxScoreCount)
+                ->count('id');
     }
 
     public function getCountOfVoicePart(int $voicePartId): int
@@ -65,9 +130,13 @@ class Registrant
         return $core;
     }
 
+    /**
+     * creating synonym for naming consistencu
+     * @return int
+     */
     public function getRegistrantCount(): int
     {
-        return $this->registrants->count();
+        return $this->getCountOfRegistrants();
     }
 
     /**
@@ -83,13 +152,26 @@ class Registrant
         }
     }
 
+    private function getMaxScoreCount(): int
+    {
+        $judgesPerRoomCount = VersionConfigAdjudication::where('version_id',
+            $this->versionId)->first()->judge_per_room_count;
+        $scoringFactorCount = ScoreFactor::where('version_id', $this->versionId)->count('id');
+        return ($scoringFactorCount * $judgesPerRoomCount);
+    }
+
     private function getRegistrants(): Collection
     {
-        return Candidate::query()
-            ->where('version_id', $this->versionId)
-            ->where('school_id', $this->schoolId)
-            ->where('status', 'registered')
-            ->get();
+        return ($this->schoolId)
+            ? Candidate::query()
+                ->where('version_id', $this->versionId)
+                ->where('school_id', $this->schoolId)
+                ->where('status', 'registered')
+                ->get()
+            : Candidate::query()
+                ->where('version_id', $this->versionId)
+                ->where('status', 'registered')
+                ->get();
     }
 
     private function test(): void

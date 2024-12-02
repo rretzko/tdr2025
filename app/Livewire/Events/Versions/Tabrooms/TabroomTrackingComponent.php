@@ -7,6 +7,8 @@ use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Participations\Registrant;
 use App\Models\Events\Versions\Room;
 use App\Models\UserConfig;
+use App\Services\TabroomTrackingBulletsService;
+use Illuminate\Support\Facades\Log;
 
 class TabroomTrackingComponent extends BasePage
 {
@@ -24,24 +26,40 @@ class TabroomTrackingComponent extends BasePage
         return view('livewire..events.versions.tabrooms.tabroom-tracking-component',
             [
                 'rooms' => $this->getCandidatesByRoom(),
+                'progress' => $this->getProgress(),
             ]);
     }
 
     private function getCandidatesByRoom(): array
     {
-        $rooms = Room::query()
-            ->where('rooms.version_id', $this->versionId)
-            ->orderBy('rooms.order_by')
-            ->get();
+        $service = new TabroomTrackingBulletsService($this->versionId);
 
-        $candidates = [];
-        foreach ($rooms as $room) {
-            $candidates[] = [
-                'roomName' => $room->room_name,
-                'candidates' => $room->registrantsByIdForTabroom,
-            ];
+        return $service->getCandidates();
+    }
+
+    private function getProgress(): array
+    {
+        $registrant = new Registrant(0, $this->versionId);
+        $total = $registrant->getCountOfRegistrants();
+
+        $counts = [
+            'completed' => $registrant->getCountOfRegistrantsCompleted(),
+            'errors' => $registrant->getCountOfRegistrantsOverScored(),
+            'total' => $total,
+            'wip' => $registrant->getCountOfRegistrantsWip(),
+        ];
+
+        $counts['pending'] = ($total - ($counts['completed'] + $counts['errors'] + $counts['wip']));
+
+        $progress = [];
+        $progress['total'] = ['count' => $total, 'wpct' => ''];
+        foreach ($counts as $key => $value) {
+
+            $wpct = $value ? floor(($value / $total) * 100) : 0;
+            $progress[$key] = ['count' => $value, 'wpct' => "w-$wpct/100"];
+            Log::info($key.' => '.$value);
         }
-
-        return $candidates;
+        Log::info('===========================================');
+        return $progress;
     }
 }

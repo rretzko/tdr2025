@@ -3,6 +3,20 @@
 
     <x-pageInstructions.instructions instructions="{!! $pageInstructions !!}" firstTimer="{{ $firstTimer }}"/>
 
+    {{-- PROGRESS INDICATOR --}}
+    <div class="flex flex-col">
+        <div class="">{{ $progress['total']['count'] }} students</div>
+        <div class="flex flex-row w-full border border-gray-600 rounded-lg shadow-lg">
+            @foreach($progress AS $label => $data)
+                @if(($label !== 'total') && ($data['count'] > 0))
+                    <div class="flex {{$data['wpct']}}">
+                        {{ $label }}: {{ $data['count'] }}
+                    </div>
+                @endif
+            @endforeach
+        </div>
+    </div>
+
     <div id="container" class="space-y-2">
         <h3>Room count: {{ count($rooms) }}</h3>
 
@@ -11,24 +25,22 @@
                 {{ $room['roomName'] }}
             </div>
             <div class="flex flex-col ">
-                @forelse($room['candidates'] AS $candidate)
-                    <h4 class="ml-2 font-semibold border border-white border-b-gray-400 mb-2">
-                        {{ $candidate['voicePartDescr'] }}
-                    </h4>
-                    <div class="flex flex-row flex-wrap space-x-2 ml-2">
-                        @forelse($candidate['candidates'] AS $button)
-                            <div class=" px-2 border border-gray-600 rounded-full mb-2 {{ $button['statusColors'] }}"
-                                 title="{{ $button['title'] }}"
-                            >
-                                {{ $button['candidateId'] }}
-                            </div>
-                        @empty
-                            <div>No candidates found.</div>
-                        @endforelse
-                    </div>
-                @empty
-                    <div>No voice parts found.</div>
-                @endforelse
+                <h4 class="ml-2 font-semibold border border-white border-b-gray-400 mb-2">
+                    {{ $room['candidates']['voicePartDescr'] }}
+                </h4>
+                <div class="flex flex-row flex-wrap space-x-2 ml-2">
+                    @forelse($room['candidates']['candidates'] AS $button)
+
+                        <div class=" px-2 border border-gray-600 rounded-full mb-2 {{ $button['statusColors'] }}"
+                             title="{{ $button['title'] }}"
+                        >
+                            {{ $button['candidateId'] }}
+                        </div>
+
+                    @empty
+                        <div>No voice parts found.</div>
+                    @endforelse
+                </div>
             </div>
         @empty
             <div>No rooms found.</div>

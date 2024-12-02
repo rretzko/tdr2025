@@ -164,47 +164,6 @@ class Room extends Model
             ->get();
     }
 
-    public function getRegistrantsByIdForTabroomAttribute(): array
-    {
-        $candidates = [];
-
-        foreach ($this->voicePartIds as $key => $voicePartId) {
-
-            $voicePart = VoicePart::find($voicePartId);
-            $candidates[$key]['voicePartDescr'] = $voicePart->descr;
-            $candidatesByVoicePartId = Candidate::query()
-                ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
-                ->where('version_id', $this->version_id)
-                ->where('voice_part_id', $voicePartId)
-                ->where('status', 'registered')
-                ->select('candidates.id AS candidateId', 'voice_parts.abbr', 'voice_parts.descr AS voicePartDescr')
-                ->orderBy('candidates.id')
-                ->get();
-
-            foreach ($candidatesByVoicePartId as $candidate) {
-                $status = CandidateAdjudicationStatusService::getRoomStatus($candidate->candidateId, $this);
-
-                $statuses = [
-                    'completed' => 'bg-green-500 text-white',
-                    'pending' => 'bg-black text-white',
-                    'wip' => 'bg-yellow-400 text-black',
-                    'errors' => 'bg-red-600 text-yellow-400',
-                ];
-
-                $statusColors = $statuses[$status];
-
-                $candidates[$key]['candidates'][] = [
-                    'candidateId' => $candidate->candidateId,
-                    'statusColors' => $statusColors,
-                    'title' => $this->getAdjudicatorsProgress($candidate->candidateId),
-                ];
-            }
-
-        }
-
-        return $candidates;
-    }
-
     /**
      * @return array of [id, voicePartAbbr]
      */
@@ -239,34 +198,6 @@ class Room extends Model
         }
 
         return $a;
-    }
-
-    private function getAdjudicatorsProgress(int $candidateId): string
-    {
-        $crlf = "\n";
-        $str = '';
-        $roomFactorCount = $this->getScoringFactorsAttribute()->count();
-
-        $candidate = Candidate::find($candidateId);
-        $teacher = Teacher::find($candidate->teacher_id);
-        $str .= $candidate->program_name.$crlf;
-        $str .= $teacher->user->name.' @ '.$candidate->school->shortName.$crlf;
-
-        foreach ($this->judges as $judge) {
-
-            $judgeScoreCount = $judge->getCandidateScoreCount($candidateId);
-            $judgeTotalScore = $judge->getCandidateTotalScore($candidateId);
-
-            $str .= $judge->user->name
-                .': '.$judgeScoreCount
-                .'/'
-                .$roomFactorCount
-                .' ('
-                .$judgeTotalScore.')'
-                .$crlf;
-        }
-
-        return $str;
     }
 
     private function getCandidateScoresByJudge(Candidate $candidate, Judge $judge): array
@@ -452,44 +383,6 @@ class Room extends Model
 
     protected function test(array $voicePartIds, int $maxScoreCount)
     {
-        $candidates = DB::table('candidates')
-            ->join('room_voice_parts', 'candidates.voice_part_id', '=', 'room_voice_parts.voice_part_id')
-            ->join('voice_parts', 'candidates.voice_part_id', '=', 'voice_parts.id')
-            ->join('rooms', function ($join) {
-                $join->on('room_voice_parts.room_id', '=', 'rooms.id')
-                    ->where('rooms.version_id', $this->version_id);
-            })
-            ->where('candidates.status', 'registered')
-            ->where('candidates.version_id', $this->version_id)
-            ->whereIn('candidates.voice_part_id', $voicePartIds)
-            ->distinct()
-            ->get();
-
-        $filteredCandidates = $candidates->filter(function ($candidate) {
-            $ar = AuditionResult::where('candidate_id', $candidate->id)->first();
-            return !$ar || $ar->score_count != 6;
-        });
-
-        dd($filteredCandidates);
-        $test = DB::table('candidates')
-//            ->join('room_voice_parts', 'candidates.voice_part_id', '=', 'room_voice_parts.voice_part_id')
-//            ->join('voice_parts', 'candidates.voice_part_id', '=', 'voice_parts.id')
-//            ->leftJoin('audition_results', function($join) use($maxScoreCount){
-//                $join->on('candidates.id', '=', 'audition_results.candidate_id')
-//                    ->where('audition_results.score_count', '!=', $maxScoreCount);
-//            })
-//            ->where('candidates.version_id', $this->version_id)
-//            ->whereIn('candidates.voice_part_id', $voicePartIds)
-//            ->where('candidates.status', 'registered')
-            ->distinct()
-            ->select('candidates.id', 'candidates.ref', 'voice_parts.descr', 'voice_parts.abbr', 'voice_parts.order_by',
-                'audition_results.score_count AS scoreCount')
-            ->orderBy('voice_parts.order_by')
-            ->orderBy('candidates.id')
-            ->get()
-            ->toArray();
-
-        dd($test);
 
     }
 
