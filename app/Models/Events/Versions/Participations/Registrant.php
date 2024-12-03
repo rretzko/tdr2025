@@ -4,6 +4,7 @@ namespace App\Models\Events\Versions\Participations;
 
 use App\Models\Events\Versions\Room;
 use App\Models\Events\Versions\Scoring\ScoreFactor;
+use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionConfigAdjudication;
 use App\Services\CalcSeniorYearService;
 use App\Services\ConvertToUsdService;
@@ -156,7 +157,8 @@ class Registrant
     {
         $judgesPerRoomCount = VersionConfigAdjudication::where('version_id',
             $this->versionId)->first()->judge_per_room_count;
-        $scoringFactorCount = ScoreFactor::where('version_id', $this->versionId)->count('id');
+        $scoringFactorCount = $this->getScoreFactorCount();
+
         return ($scoringFactorCount * $judgesPerRoomCount);
     }
 
@@ -172,6 +174,18 @@ class Registrant
                 ->where('version_id', $this->versionId)
                 ->where('status', 'registered')
                 ->get();
+    }
+
+    private function getScoreFactorCount(): int
+    {
+        $count = ScoreFactor::where('version_id', $this->versionId)->count('id');
+
+        if (!$count) {
+            $eventId = Version::find($this->versionId)->event_id;
+            $count = ScoreFactor::where('event_id', $eventId)->count('id');
+        }
+
+        return $count;
     }
 
     private function test(): void

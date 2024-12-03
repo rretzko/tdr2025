@@ -9,20 +9,31 @@ use App\Models\Events\Versions\Scoring\ScoreFactor;
 use App\Models\Schools\Teacher;
 use App\Models\Students\VoicePart;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class TabroomTrackingBulletsService
 {
+    public int $studentCount = 0;
     private array $candidates = [];
 
-    public function __construct(private int $versionId)
+
+    public function __construct(private int $versionId, private int $roomId = 0)
     {
         $this->init();
     }
 
+    public function getCandidates(): array
+    {
+        return $this->candidates;
+    }
+
+    /** END OF PUBLIC FUNCTIONS **************************************************/
+
     private function init(): void
     {
         $a = [];
-        $rooms = Room::where('version_id', $this->versionId)->orderBy('order_by')->get();
+        $rooms = $this->getRooms();
+
         foreach ($rooms as $room) {
             $roomVoiceParts = RoomVoicePart::where('room_id', $room->id)->get();
             $voicePartIds = $roomVoiceParts->pluck('voice_part_id')->toArray();
@@ -37,6 +48,15 @@ class TabroomTrackingBulletsService
                 ];
             }
         }
+
+        $this->studentCount = $this->setStudentCount();
+    }
+
+    private function getRooms(): Collection
+    {
+        return ($this->roomId)
+            ? Room::where('id', $this->roomId)->get()
+            : Room::where('version_id', $this->versionId)->orderBy('order_by')->get();
     }
 
     private function getVoicePartCandidates(int $voicePartId, Room $room): array
@@ -113,8 +133,16 @@ class TabroomTrackingBulletsService
             ->get();
     }
 
-    public function getCandidates(): array
+    private function setStudentCount(): int
     {
-        return $this->candidates;
+        $count = 0;
+
+        foreach ($this->candidates as $room) {
+            $count += (count($room['candidates']['candidates']));
+        }
+
+        return $count;
     }
+
+
 }
