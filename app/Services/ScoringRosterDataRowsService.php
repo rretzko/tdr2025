@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Events\EventEnsemble;
 use App\Models\Events\Versions\Scoring\Score;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionConfigAdjudication;
@@ -11,7 +12,7 @@ class ScoringRosterDataRowsService
 {
     private array $rows = [];
 
-    public function __construct(private int $versionId, private array $voicePartIds)
+    public function __construct(private int $versionId, private array $voicePartIds, private int $eventEnsembleId = 0)
     {
         $this->init();
     }
@@ -26,6 +27,9 @@ class ScoringRosterDataRowsService
         $versionConfigAdjudication = VersionConfigAdjudication::where('version_id', $this->versionId)->first();
         $scoresAscending = $versionConfigAdjudication->scores_ascending;
         $judgeCount = $versionConfigAdjudication->judge_per_room_count;
+        $ensembleAbbr = ($this->eventEnsembleId)
+            ? EventEnsemble::find($this->eventEnsembleId)->abbr
+            : '%%';
 
         $candidates = DB::table('candidates')
             ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
@@ -34,6 +38,7 @@ class ScoringRosterDataRowsService
             ->where('candidates.version_id', $this->versionId)
             ->where('candidates.status', 'registered')
             ->whereIn('candidates.voice_part_id', $this->voicePartIds)
+            ->where('audition_results.acceptance_abbr', 'LIKE', $ensembleAbbr)
             ->distinct()
             ->select('candidates.id', 'candidates.program_name AS programName',
                 'schools.name AS schoolName',

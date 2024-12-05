@@ -24,7 +24,7 @@
             <th colspan="4" class="clearBorder"></th>
             @for($i=1; $i<=$judgeCount; $i++)
                 <th colspan="{{ $factors->count() }}">
-                    Judge {{ $i }}
+                    Judge {{ $i }}!
                 </th>
             @endfor
             <th colspan="2" class="clearBorder"></th>

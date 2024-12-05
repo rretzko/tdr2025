@@ -93,17 +93,15 @@ class TabroomReportComponent extends BasePage
 
         $uri = '/versions/tabroom/reports/'.$report;
 
-        if ($this->voicePartId) {
-            $uri .= '/'.$this->voicePartId;
-        }
+        //add voice part designation
+        $uri .= ($this->voicePartId)
+            ? '/'.$this->voicePartId
+            : '/'. 74; //all voices
 
-        if ($this->displayReportData === 'allPrivate') {
-            $uri .= '/74/1'; //74=ALL voices, 1=private
-        }
-
-        if ($this->displayReportData === 'allPublic') {
-            $uri .= '/74/0'; //74=ALL voices, 0=NOT private
-        }
+        //add private/public designation
+        $uri .= ($this->displayReportData === 'allPrivate')
+            ? '/1'  //1=private
+            : '/0'; //0=public
 
         //add eventEnsembleId
         $uri .= '/'.$this->showEventEnsembleId;
@@ -119,7 +117,12 @@ class TabroomReportComponent extends BasePage
         //clear any artifacts
         $this->reset('search');
 
-        $fileName = 'ensembleParticipants_'.Carbon::now()->format('Ymd_His').'.csv';
+        $abbr = 'ALL_';
+        if ($this->eventEnsembleId) {
+            $abbr = EventEnsemble::find($this->eventEnsembleId)->abbr.'_';
+        }
+
+        $fileName = $abbr.'ensembleParticipants_'.Carbon::now()->format('Ymd_His').'.csv';
 
         return Excel::download(new EventEnsembleParticipantsExport($this->getParticipants()), $fileName);
     }
@@ -345,7 +348,7 @@ class TabroomReportComponent extends BasePage
     {
         $voicePartIds = $this->voicePartId ? [$this->voicePartId] : $this->getShowEnsembleVoicePartIds(); //voicePartIds;
 
-        $service = new ScoringRosterDataRowsService($this->versionId, $voicePartIds);
+        $service = new ScoringRosterDataRowsService($this->versionId, $voicePartIds, $this->showEventEnsembleId);
 
         return $service->getRows();
     }

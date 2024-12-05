@@ -1,7 +1,7 @@
 <div class="space-y-4 mx-4 p-2 border border-gray-800 ">
 
     @if($eventEnsembleCount > 1)
-        @include('components.selectrors.eventEnsembleSelectors');
+        @include('components.selectrors.eventEnsembleSelectors')
     @endif
 
     <div class="flex justify-end mr-8 p-2 text-blue-500">

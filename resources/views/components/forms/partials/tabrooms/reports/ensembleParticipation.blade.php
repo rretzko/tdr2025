@@ -1,9 +1,9 @@
 <div class="space-y-4 mx-4 p-2 border border-gray-200 ">
 
     @if($eventEnsembleCount > 1)
-        <div class="mx-4 flex flex-col md:flex-row md:space-x-4">
+        <div class="mx-4 flex flex-col md:flex-row md:justify-start md:space-x-4">
             @foreach($eventEnsembles AS $eventEnsemble)
-                <div class="items-center w-fit md:w-full">
+                <div class="items-center">
                     <input type="radio" wire:model.live="eventEnsembleId" value="{{ $eventEnsemble->id }}">
                     <label>{{ $eventEnsemble->ensemble_name }}</label>
                 </div>

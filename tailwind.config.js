@@ -45,6 +45,13 @@ export default {
         'text-blue-600',
         'text-blue-400',
         'text-blue-200',
+        'hover:bg-blue-400',
+        'hover:bg-blue-600',
+        'hover:bg-gray-200',
+        'hover:bg-gray-300',
+        'hover:bg-gray-400',
+        'hover:bg-yellow-400',
+        'hover:text-white',
     ],
     theme: {
         extend: {

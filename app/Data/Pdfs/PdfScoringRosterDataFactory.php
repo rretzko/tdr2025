@@ -65,7 +65,7 @@ class PdfScoringRosterDataFactory
     {
         $voicePartIds = $this->voicePartId ? [$this->voicePartId] : $this->voicePartIds;
 
-        $service = new ScoringRosterDataRowsService($this->versionId, $this->voicePartIds);
+        $service = new ScoringRosterDataRowsService($this->versionId, $this->voicePartIds, $this->eventEnsembleId);
         $this->dto['rows'][$this->voicePartId] = $service->getRows();
     }
 

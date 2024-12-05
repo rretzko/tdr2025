@@ -49,7 +49,7 @@ class AuditionResultsScoreColorsService
 
             $colorScheme = array_key_exists($acceptanceAbbr, $colorSchemes)
                 ? $colorSchemes[$acceptanceAbbr]
-                : 'bg-transparent text-black hover:bg-gray-400';
+                : 'bg-transparent text-black hover:bg-gray-300';
 
             $colors[] = [
                 'score' => $total,
