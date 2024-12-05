@@ -25,7 +25,7 @@
     </thead>
     <tbody>
     @forelse($ensemblesArray AS $ensemble)
-        <tr>
+        <tr class="{{ $ensemble['colorScheme'] }}">
             <td>{{ $ensemble['ensemble_name'] }}</td>
             @forelse($ensembleSummaryCounts[$ensemble['abbr']] AS $count)
                 <td @class([

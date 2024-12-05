@@ -36,7 +36,6 @@ class EventEnsembleSummaryCountService
             $total = array_sum($this->counts[$ensemble->abbr]);
             $this->counts[$ensemble->abbr]['total'] = $total;
         }
-
     }
 
     private function buildCounts(int $voicePartId, EventEnsemble $ensemble): void

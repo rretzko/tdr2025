@@ -3,6 +3,7 @@
 namespace App\Models\Events\Versions;
 
 use App\Models\Events\Event;
+use App\Models\Events\EventEnsemble;
 use App\Models\Events\Versions\Room;
 use App\Models\Events\Versions\Scoring\ScoreCategory;
 use App\Models\Events\Versions\Scoring\ScoreFactor;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class Version extends Model
 {
@@ -42,6 +44,21 @@ class Version extends Model
     public function event(): BelongsTo
     {
         return $this->belongsTo(Event::class);
+    }
+
+    /**
+     * Return eventEnsembles collection ordered by version ordering
+     * @return Collection
+     */
+    public function eventEnsembles(): Collection
+    {
+        return EventEnsemble::query()
+            ->join('version_event_ensemble_orders', 'event_ensembles.id', '=',
+                'version_event_ensemble_orders.event_ensemble_id')
+            ->where('event_ensembles.event_id', $this->event_id)
+            ->orderBy('version_event_ensemble_orders.order_by')
+            ->select('event_ensembles.*', 'version_event_ensemble_orders.order_by')
+            ->get();
     }
 
     public function getVersionManager(): User

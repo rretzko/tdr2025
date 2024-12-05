@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Events\Versions\Participations\AuditionResult;
 use App\Models\Events\Versions\VersionConfigAdjudication;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as SupportCollection;
 
 class AuditionResultsScoreColorsService
 {
@@ -12,9 +13,9 @@ class AuditionResultsScoreColorsService
 
     public function __construct(
         array $scores,
-        private VersionConfigAdjudication $versionConfigAdjudication,
-        private int $voicePartId,
-        private readonly Collection $eventEnsembles
+        private readonly VersionConfigAdjudication $versionConfigAdjudication,
+        private readonly int $voicePartId,
+        private readonly SupportCollection $eventEnsembles
     ) {
     }
 
@@ -38,10 +39,12 @@ class AuditionResultsScoreColorsService
                 ->select('acceptance_abbr')
                 ->value('acceptance_abbr');
 
+            //manually key color scheme to event ensemble abbreviation
             $colorSchemes = [
                 'mx' => 'bg-blue-100 text-black hover:bg-blue-400 hover:text-white',
                 'hsc' => 'bg-blue-800 text-white hover:bg-blue-600',
-                'msc' => ' bg-yellow-100 text-black hover:bg-yellow-400'
+                'msc' => ' bg-yellow-100 text-black hover:bg-yellow-400',
+                'tbl' => ' bg-yellow-100 text-black hover:bg-yellow-400',
             ];
 
             $colorScheme = array_key_exists($acceptanceAbbr, $colorSchemes)

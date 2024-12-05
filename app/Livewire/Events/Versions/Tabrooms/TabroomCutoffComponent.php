@@ -14,12 +14,13 @@ use App\Services\AuditionResultsScoreColorsService;
 use App\Services\EventEnsembleSummaryCountService;
 use App\Services\MaxScoreCountService;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Log;
 
 class TabroomCutoffComponent extends BasePage
 {
     public Factory $factory;
-    public Collection $eventEnsembles;
+    public SupportCollection $eventEnsembles;
     public array $ensemblesArray;
     public Event $event;
     public array $scoresByVoicePart = [];
@@ -38,8 +39,9 @@ class TabroomCutoffComponent extends BasePage
         $this->versionConfigAdjudication = VersionConfigAdjudication::where('version_id', $this->versionId)
             ->first();
         $this->event = $this->version->event;
-        $this->eventEnsembles = $this->event->eventEnsembles;
-        $this->ensemblesArray = $this->eventEnsembles->select('id', 'ensemble_name', 'abbr')->toArray();
+        $this->eventEnsembles = $this->version->eventEnsembles();
+
+        $this->ensemblesArray = $this->buildEnsemblesArray();
         $this->voicePartAbbrs = $this->event->voiceParts->pluck('abbr')->toArray();
 
         $this->factory = new Factory();
@@ -58,13 +60,32 @@ class TabroomCutoffComponent extends BasePage
     {
         //register score and update auditionResults
         $this->factory->setScore(
-            $this->eventEnsembles,
+        //$this->eventEnsembles,
+            $this->version->eventEnsembles(),
             $this->versionConfigAdjudication,
             $score,
             $voicePartId);
     }
 
     /** END OF PUBLIC FUNCTIONS **************************************************/
+
+    private function buildEnsemblesArray(): array
+    {
+        $a = $this->eventEnsembles->select('id', 'ensemble_name', 'abbr')->toArray();
+
+        $colorSchemes = [
+            'hsc' => 'bg-blue-100 text-black hover:bg-blue-600 ',
+            'msc' => ' bg-yellow-100 text-black hover:bg-yellow-400 ',
+            'mx' => ' bg-blue-100 text-black hover:bg-blue-600 ',
+            'tbl' => ' bg-yellow-100 text-black hover:bg-yellow-400',
+        ];
+
+        foreach ($a AS $key => $ensemble) {
+            $a[$key]['colorScheme'] = $colorSchemes[$ensemble['abbr']];
+        }
+
+        return $a;
+    }
 
     private function getEnsembleSummaryCounts(): array
     {
