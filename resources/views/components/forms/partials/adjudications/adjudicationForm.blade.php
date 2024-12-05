@@ -58,15 +58,29 @@
             </fieldset>
 
             <div class="flex flex-row space-x-4 items-center">
-                <div class="mt-4 justify-center">
+                <div class="my-1 justify-center">
                     Total: <span class="ml-2 font-semibold">{{ array_sum($form->scores) }}</span>
                 </div>
+            </div>
+
+            <div class="flex flex-row space-x-4 items-center">
                 <input type="submit" wire:model="save"
                        class="bg-black text-white rounded-lg px-2 shadow-lg cursor-pointer hover:bg-gray-300 hover:text-black focus:bg-gray-300 focus:text-black"
                        value="Save"/>
                 <div class="bg-green-100 text-green-600 text-xs italic px-2 rounded-lg">
                     {{ $scoreUpdatedMssg }}
                 </div>
+            </div>
+
+            <div class="flex flex-row space-x-4 items-center mt-2 ">
+
+                @if(str_contains($nextRef, '-'))
+                    <button type="button" wire:click="clickNextAudition({{ $form->candidate->id }})"
+                            class="bg-green-700 text-white rounded-lg px-2 w-fit shadow-lg cursor-pointer hover:bg-green-900 hover:text-white focus:bg-green-900 focus:text-white"
+                    >
+                        Next Audition ({{ $nextRef }})
+                    </button>
+                @endif
             </div>
 
         </fieldset>

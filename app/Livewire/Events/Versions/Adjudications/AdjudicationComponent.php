@@ -18,6 +18,7 @@ use App\Models\Students\VoicePart;
 use App\Services\UpdateAuditionResultsService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use JetBrains\PhpStorm\NoReturn;
 use LaravelIdea\Helper\App\Models\Events\Versions\_IH_VersionPitchFile_C;
 
 
@@ -29,6 +30,7 @@ class AdjudicationComponent extends BasePage
     public int $countPending = 0;
     public int $countWip = 0;
     public bool $hasRecording = false;
+    public string $nextRef = '';
     public int $pctCompleted = 50;
     public int $pctError = 20;
     public int $pctPending = 10;
@@ -68,6 +70,29 @@ class AdjudicationComponent extends BasePage
             ]);
     }
 
+    #[NoReturn] public function clickNextAudition(int $prevCandidateId): void
+    {
+        $buttons = $this->getRows();
+        foreach ($buttons as $key => $button) {
+            if ($button->id == $prevCandidateId) {
+
+                $nextKey = ($key + 1);
+                while (array_key_exists($nextKey, $buttons) && $buttons[$nextKey]->scoringCompleted) {
+                    $nextKey++;
+                }
+
+                $nextId = $buttons[0]->id; //default
+                if (array_key_exists($nextKey, $buttons)) {
+                    $nextId = $buttons[$nextKey]->id;
+                    $this->setNextRef($prevCandidateId);
+
+                    $this->clickRef($nextId);
+                    break;
+                }
+            }
+        }
+    }
+
     /**
      * Load scoring factors based on button click
      * @param  int  $candidateId
@@ -78,6 +103,9 @@ class AdjudicationComponent extends BasePage
         $judge = $this->room->judges()->where('user_id', auth()->id())->first();
 
         $this->form->setCandidate(Candidate::find($candidateId), $this->room, $judge);
+
+        $this->setNextRef($candidateId, 1);
+
     }
 
     public function save(): void
@@ -142,6 +170,11 @@ class AdjudicationComponent extends BasePage
         return $judges;
     }
 
+    private function getNextRef(int $candidateId): string
+    {
+        return $this->nextRef;
+    }
+
     private function getReferenceMaterials(): array
     {
         $vpf = VersionPitchFile::query()
@@ -200,6 +233,46 @@ class AdjudicationComponent extends BasePage
             ->where('user_id', $userId)
             ->where('phone_type', 'mobile')
             ->value('phone_number') ?? 'cell not found';
+    }
+
+    /**
+     * return the 'ref' value of the next button UNLESS the next button is in 'completed' state.
+     *  - (scoringCompleted === 'completed')
+     * if in 'completed' state, continue  to advance through the $buttons array until a non-completed state is
+     * found or the array ends.
+     * @param  int  $candidateId
+     * @param  int  $interval
+     * @return void
+     */
+    private function setNextRef(int $candidateId): void
+    {
+        $buttons = $this->getRows();
+        //iterate through the buttons array until the target $candidatedId is found
+        foreach ($buttons as $key => $button) {
+
+            if ($button->id == $candidateId) {
+
+                //calculate the next key in the array
+                $nextRefKey = ($key + 1);
+
+                //if the adjudication has already been completed by this judge, move to the next button
+                //if the end of the array is reached, stop the iteration
+                while (array_key_exists($nextRefKey, $buttons) && ($buttons[$nextRefKey]->scoringCompleted)) {
+                    $nextRefKey++;
+                }
+
+                //if not at the end of the array, assign the next bullet's ref to $this->nextRef
+                if (array_key_exists($nextRefKey, $buttons)) {
+                    $this->nextRef = $buttons[$nextRefKey]->ref;
+                    break;
+                } else {
+                    $this->nextRef = 'none';
+                }
+
+            } else {
+                $this->nextRef = 'none';
+            }
+        }
     }
 
     private function setProgressBarCounts(): void
