@@ -70,6 +70,11 @@ class AdjudicationComponent extends BasePage
             ]);
     }
 
+    #[NoReturn] public function clickJudgeScoresToggle(): void
+    {
+        $this->form->hasMyScores = !$this->form->hasMyScores;
+    }
+
     #[NoReturn] public function clickNextAudition(int $prevCandidateId): void
     {
         $buttons = $this->getRows();
@@ -145,6 +150,8 @@ class AdjudicationComponent extends BasePage
         $this->form->roomScores = $this->form->getRoomScores();
 
         $this->form->setScoreTolerance();
+
+        $this->form->setHasMyScores();
 
         event(new UpdateAuditionResultsEvent($this->form->candidate));
 

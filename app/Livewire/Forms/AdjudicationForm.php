@@ -21,6 +21,8 @@ class AdjudicationForm extends Form
     public array $categories = [];
     public bool $displayOnly = false; //used by event managers in tab room
     public Collection $factors;
+    public bool $hasNonMp3Recording = true;
+    public bool $hasMyScores = false;
     public string $ref = '';
     public Room $room;
     public array $roomScores = [];
@@ -57,6 +59,8 @@ class AdjudicationForm extends Form
             ->pluck('score', 'score_factor_id')
             ->toArray() ?? [];
 
+        $this->setHasMyScores();
+
         foreach ($this->factors as $factor) {
             $this->scores[$factor->id] = $scores[$factor->id] ?? $factor->best;
         }
@@ -71,9 +75,24 @@ class AdjudicationForm extends Form
             ->pluck('url', 'file_type')
             ->toArray();
 
+        $this->setHasNonMp3RecordingsSwitch();
+
         $this->roomScores = $this->getRoomScores();
 
         $this->setScoreTolerance();
+    }
+
+    public function setHasMyScores(): void
+    {
+        $judgeId = Judge::query()
+            ->where('user_id', auth()->id())
+            ->where('version_id', $this->candidate->version_id)
+            ->value('id');
+
+        $this->hasMyScores = (bool) Score::query()
+            ->where('candidate_id', $this->sysId)
+            ->where('judge_id', $judgeId)
+            ->first();
     }
 
     /**
@@ -147,6 +166,13 @@ class AdjudicationForm extends Form
         $this->roomScores = $this->getRoomScores();
 
         return count($this->roomScores);
+    }
+
+    private function setHasNonMp3RecordingsSwitch(): void
+    {
+        $this->hasNonMp3Recording = array_reduce($this->recordings, function ($carry, $recording) {
+            return $carry || !str_ends_with($recording, 'mp3');
+        }, false);
     }
 
 

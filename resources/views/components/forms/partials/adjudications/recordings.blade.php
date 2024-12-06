@@ -4,7 +4,7 @@
         <div class="flex flex-col text-white px-1 border border-r-gray-600 rounded-lg bg-gray-800"
              wire:key="{{ $url }}"
         >
-            <label class="text-center">{{ $type }}</label>
+            <label class="text-center">{{ $type }} ({{ substr($url,-3) }})</label>
             <audio id="audioPlayer-{{ $type }}" class="mx-auto" controls
                    style="display: block; justify-self: start; margin-bottom: 0.50rem;">
                 <source id="audioSource-{{ $type }}"
@@ -14,18 +14,10 @@
                 " Your browser does not support the audio element. "
             </audio>
         </div>
-        <div class="w-1/3 ml-4 text-red-600">
-            @php
-                $fileExtension = substr($url,-3);
-            @endphp
-            @if($fileExtension !== 'mp3')
-                The uploaded file is {{ $fileExtension }} format.  If you are on an Apple or mobile device,
-                you may not be able to play this file.  Please try again on a desktop or PC device.
-            @endif
-        </div>
     @empty
         <div class="bg-red-100 px-2 text-red-800 rounded-lg shadow-lg">
             No recordings found.
         </div>
     @endforelse
+
 </div>

@@ -31,6 +31,15 @@
                 @include('components.forms.partials.adjudications.recordings')
             @endif
 
+            {{-- NON-mp3 ADVISORY --}}
+            <div class=" ml-4 text-red-600">
+                @if($form->hasNonMp3Recording)
+                    An uploaded file is not in mp3 format.<br/>
+                    If you are on an Apple or mobile device, you may not be able to play this file.<br/>
+                    If you are unable to play this file, please try again on a desktop or PC device.
+                @endif
+            </div>
+
             <div class="flex flex-col sm:flex-row">
                 <div class="flex flex-col p-2 rounded-lg shadow-lg ml-2 mb-2 w-full sm:w-1/2">
                     @include('components.forms.partials.adjudications.adjudicationForm')

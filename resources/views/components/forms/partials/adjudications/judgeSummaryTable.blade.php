@@ -51,7 +51,12 @@
                     </td>
                     @forelse($scores['scores'] AS $score)
                         <td class="text-center">
-                            {{ $score }}
+                            <div @class([
+                                'block' => $form->hasMyScores,
+                                'hidden' => ! $form->hasMyScores,
+                            ])>
+                                {{ $score }}
+                            </div>
                         </td>
                     @empty
                         {{--                        <td colspan="{{ count($form->factors) }}" class="text-center">--}}
@@ -70,13 +75,38 @@
 
                     {{-- TOTAL SCORES --}}
                     <td class="text-center">
-                        {{ array_sum($scores['scores']) }}
+                        <div @class([
+                                'block' => $form->hasMyScores,
+                                'hidden' => ! $form->hasMyScores,
+                            ])>
+                            {{ array_sum($scores['scores']) }}
+                        </div>
+
                     </td>
 
                 </tr>
             @endforeach
+            <tr>
+                <td colspan="{{ ($form->factors->count() + 2) }}" style="padding: 0.2rem 0.25rem;">
+                    <button wire:click="clickJudgeScoresToggle()"
+                            type="button"
+                            class="bg-gray-300 text-black rounded-lg border border-gray-900 w-full"
+                    >
+                        @if($form->hasMyScores)
+                            Hide
+                        @else
+                            Show
+                        @endif
+                    </button>
+                </td>
+            </tr>
             </tbody>
         </table>
+
+        {{-- ADVISORY --}}
+        <div class="text-sm @if($form->hasMyScores) hidden @else block @endif ">
+            Note: Judge's scores are hidden by default <i>until</i> you have saved your scores.
+        </div>
 
         <div id="toleranceAdvisory">
             @if(! $form->scoreTolerance)
