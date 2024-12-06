@@ -5,7 +5,9 @@ namespace App\Services;
 use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Room;
 use App\Models\Events\Versions\Scoring\RoomVoicePart;
+use App\Models\Events\Versions\Scoring\Score;
 use App\Models\Events\Versions\Scoring\ScoreFactor;
+use App\Models\Events\Versions\VersionConfigAdjudication;
 use App\Models\Schools\Teacher;
 use App\Models\Students\VoicePart;
 use Illuminate\Support\Collection;
@@ -52,6 +54,17 @@ class TabroomTrackingBulletsService
         $this->studentCount = $this->setStudentCount();
     }
 
+    private function getCandidateScores(int $candidateId): array
+    {
+        return Score::query()
+            ->where('candidate_id', $candidateId)
+            //->select('judge_id')
+            ->selectRaw('SUM(score) as total_score')
+            ->groupBy('judge_id')
+            ->pluck('total_score')
+            ->toArray();
+    }
+
     private function getRooms(): Collection
     {
         return ($this->roomId)
@@ -75,6 +88,7 @@ class TabroomTrackingBulletsService
             $candidateId = $candidate['candidateId'];
             $candidates[$key]['statusColors'] = $this->getStatusColors($candidateId, $room);
             $candidates[$key]['title'] = $this->getTitle(Candidate::find($candidateId), $room, $candidateId);
+            $candidates[$key]['tolerance'] = $this->getTolerance($candidateId, $room);
         }
 
         return $candidates;
@@ -120,6 +134,23 @@ class TabroomTrackingBulletsService
         }
 
         return $str;
+    }
+
+    private function getTolerance(int $candidateId, Room $room): bool
+    {
+        $tolerance = $room->tolerance;
+        $judgeCount = VersionConfigAdjudication::where('version_id', $room->version_id)->first()->judge_per_room_count;
+        $scores = $this->getCandidateScores($candidateId);
+
+        //if still judging; defer tolerance evaluation
+        if (count($scores) !== $judgeCount) {
+            return true;
+        }
+
+        $max = max($scores);
+        $min = min($scores);
+
+        return (($max - $min) <= $tolerance);
     }
 
     private function getScoringFactorsAttribute(Room $room): Collection

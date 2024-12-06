@@ -28,6 +28,11 @@
                         <div class=" px-2 border border-gray-600 rounded-full mb-2 mr-1 {{ $button['statusColors'] }}"
                              title="{{ $button['title'] }}"
                         >
+                            <span class="text-red-600">
+                                @if(! $button['tolerance'])
+                                    *
+                                @endif
+                            </span>
                             {{ $button['candidateId'] }}
                         </div>
 
