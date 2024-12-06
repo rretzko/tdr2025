@@ -14,6 +14,15 @@
                 " Your browser does not support the audio element. "
             </audio>
         </div>
+        <div class="w-1/3 ml-4 text-red-600">
+            @php
+                $fileExtension = substr($url,-3);
+            @endphp
+            @if($fileExtension !== 'mp3')
+                The uploaded file is {{ $fileExtension }} format.  If you are on an Apple or mobile device,
+                you may not be able to play this file.  Please try again on a desktop or PC device.
+            @endif
+        </div>
     @empty
         <div class="bg-red-100 px-2 text-red-800 rounded-lg shadow-lg">
             No recordings found.
