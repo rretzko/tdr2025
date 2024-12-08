@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->foreignIdFor(\App\Models\Events\EventEnsemble::class);
             $table->integer('order_by')->default(1);
             $table->timestamps();
-            $table->unique(['version_id', 'event_ensemble_id']);
+            $table->unique(['version_id', 'event_ensemble_id'], 'uAll');
         });
     }
 
