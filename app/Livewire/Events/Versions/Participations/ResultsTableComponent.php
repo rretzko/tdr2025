@@ -164,7 +164,7 @@ class ResultsTableComponent extends BasePage
     public function printResultsConfidential(int $eventEnsembleId = 0)//: \Livewire\Features\SupportRedirects\Redirector
     {
         $versionId = UserConfig::find('versionId');
-        $fileName = "combinedConfidentialPdfs/combinedConfidential_{$versionId}.pdf";
+        $fileName = "combinedConfidentialPdfs/combinedConfidential_{$this->versionId}.pdf";
         $disk = Storage::disk('s3');
 
         if ($this->separatedResults) {
