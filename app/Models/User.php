@@ -84,6 +84,11 @@ class User extends Authenticatable
         return FullNameAlphaService::getName($this);
     }
 
+    public function getPronounDescrAttribute(): string
+    {
+        return Pronoun::find($this->pronoun_id)->descr;
+    }
+
     public function isFounder(): bool
     {
         return $this->email === 'rick@mfrholdings.com';

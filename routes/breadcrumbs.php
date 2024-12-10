@@ -195,6 +195,12 @@ Breadcrumbs::for('students', function (BreadcrumbTrail $trail) {
     $trail->push('Students', route('students'));
 });
 
+//Student Dossier
+Breadcrumbs::for('student dossier', function (BreadcrumbTrail $trail) {
+    $trail->parent('students');
+    $trail->push('Student Dossier', route('students'));
+});
+
 //Student.create
 Breadcrumbs::for('new student', function (BreadcrumbTrail $trail) {
     $trail->parent('students');

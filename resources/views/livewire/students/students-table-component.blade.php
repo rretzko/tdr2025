@@ -7,7 +7,14 @@
     <div class="flex flex-row justify-between px-4 w-full">
 
         {{-- SEARCH --}}
-        <x-tables.searchComponent/>
+        <div class="flex flex-col">
+            <x-tables.searchComponent/>
+            <div>
+                <a href="{{ route('studentDossier') }}" class="text-blue-500 text-sm">
+                    Search For Missing Students & Student Overview
+                </a>
+            </div>
+        </div>
 
         {{-- RECORDS PER PAGE --}}
         <x-forms.indicators.recordsPerPage/>

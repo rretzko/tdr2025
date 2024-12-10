@@ -12,20 +12,31 @@
             <div class="bg-white dark:bg-gray-800 py-2 mb-4 overflow-hidden shadow-sm sm:rounded-lg p-4">
                 <h2 class="font-semibold mb-2">Founder's Page</h2>
 
-                {{-- LOG IN AS --}}
-                <div class="border border-gray-400 p-2">
-                    @include('components.forms.partials.logInAsForm')
-                </div>
+                <div id="container" class="space-y-1 bg-gray-700 p-2">
 
-                {{-- PAYPAL MANUAL ENTRY --}}
-                <div class="border border-gray-400 p-2">
-                    @include('components.forms.partials.paypalManualEntryForm')
-                </div>
+                    {{-- LOG IN AS --}}
+                    <div class="border border-gray-400 p-2 bg-white">
+                        @include('components.forms.partials.logInAsForm')
+                    </div>
 
-                {{-- EPAYMENT UPLOAD --}}
-                <div class="border border-gray-400 p-2">
-                    @include('components.forms.partials.epayments.ePaymentUploadForm')
-                </div>
+                    {{-- PAYPAL MANUAL ENTRY --}}
+                    <div class="border border-gray-400 p-2 bg-white">
+                        @include('components.forms.partials.paypalManualEntryForm')
+                    </div>
+
+                    {{-- EPAYMENT UPLOAD --}}
+                    <div class="border border-gray-400 p-2 bg-white">
+                        @include('components.forms.partials.epayments.ePaymentUploadForm')
+                    </div>
+
+                    {{-- STUDENT DOSSIER --}}
+                    <div class="border border-gray-400 p-2 bg-white">
+                        <a href="" class="text-blue-500">
+                            Open Student Dossier
+                        </a>
+                    </div>
+
+                </div>{{-- end of container --}}
 
             </div>
         </div>

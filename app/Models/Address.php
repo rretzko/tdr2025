@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\ValueObjects\AddressValueObject;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -24,6 +25,11 @@ class Address extends Model
     public function geostate(): BelongsTo
     {
         return $this->belongsTo(Geostate::class);
+    }
+
+    public function getAddressStringAttribute(): string
+    {
+        return AddressValueObject::getStringVo($this);
     }
 
     public function getGeostateAbbrAttribute(): string

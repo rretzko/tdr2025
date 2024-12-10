@@ -153,6 +153,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('school/edit/{school}', [\App\Http\Controllers\Schools\SchoolController::class, 'edit'])
         ->name('school.edit');
 
+    //STUDENT DOSSIER
+    Route::get('studentDossier', \App\Http\Controllers\Students\StudentDossierController::class)
+        ->name('studentDossier');
+
     //STUDENTS
     Route::get('students', \App\Http\Controllers\Students\StudentsController::class)
         ->name('students');

@@ -360,6 +360,9 @@ class ViewDataFactory extends aViewData
             'tabroom tracking' => 'events.versions.tabrooms.tabroom-tracking-component',
             'tabroom close auditions' => 'events.versions.tabrooms.tabroom-close-auditions-component',
 
+            //student dossier
+            'student dossier' => 'students.student-dossier-component',
+
         ];
 
         return $components[$this->viewPage->header];

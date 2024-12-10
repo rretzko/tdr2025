@@ -161,7 +161,7 @@ class TabroomScoringComponent extends BasePage
     {
         $this->reset('candidateError', 'candidates',
             'candidateName', 'candidateSchool', 'candidateTeacher', 'candidateVoicePartDescr',
-            'lastName', 'rooms',
+            'lastName', 'rooms', 'roomId',
         );
 
         //edit input value in case user uses the ref#
@@ -272,6 +272,7 @@ class TabroomScoringComponent extends BasePage
 
     private function updateRooms(Candidate $candidate): void
     {
+
         //set defaults
         $candidate = Candidate::find($this->candidateId);
         $this->roomId = ($this->roomId) ?: $this->rooms->first()->id;

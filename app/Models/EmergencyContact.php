@@ -34,4 +34,9 @@ class EmergencyContact extends Model
     {
         return $this->belongsTo(\string::class, 'bestPhone');
     }
+
+    public function getRelationshipAttribute()
+    {
+        return EmergencyContactType::find($this->emergency_contact_type_id)->relationship;
+    }
 }
