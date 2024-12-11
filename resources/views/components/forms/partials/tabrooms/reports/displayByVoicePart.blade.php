@@ -1,7 +1,7 @@
 <div class="space-y-4 mx-4 p-2 border border-gray-200 ">
 
     @if($eventEnsembleCount > 1)
-        @include('components.selectrors.eventEnsembleSelectors')
+        @include('components.selectors.eventEnsembleSelectors')
     @endif
 
     @if($displayReportData === 'byVoicePart')
