@@ -66,6 +66,7 @@
                         "hover:text-gray-200" => $row['status'] === 'eligible',
                         'text-white' => $row['status'] === 'registered',
                     ])
+                    title="{{ $row['status'] }}"
                 >
                     @if($row['status'] === 'eligible')
                         elig
@@ -79,7 +80,9 @@
                 </td>
 
                 <td class="text-left">
-                    {{ $row['programName'] }}
+                    <div wire:click="selectCandidate({{ $row['candidateId'] }})" class="text-blue-500 cursor-pointer">
+                        {{ $row['programName'] }}
+                    </div>
                 </td>
 
                 <td class="text-center">

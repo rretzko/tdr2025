@@ -17,6 +17,14 @@
 ])
 <form wire:submit="save" class="space-y-2">
 
+    {{-- RETURN TO SUMMARY TABLE --}}
+    <a href="{{ route('candidates') }}" class="flex justify-start">
+        <button type="button"
+                class="bg-green-100 px-2 text-sm text-green-800 border border-gray-600 rounded-full shadow-lg">
+            Return to Summary Table
+        </button>
+    </a>
+
     {{-- STATUS BAR --}}
     <div class="w-full text-center border border-gray-600 {{ $form->statusBg }} {{ $form->statusTextColor }}">
         {{ strtoupper($form->status) }}
@@ -49,7 +57,7 @@
     </div>
 
     {{-- NAME --}}
-    <fieldset class="flex flex-row space-x-1">
+    <fieldset class="flex flex-row space-x-1 text-black">
         <x-forms.elements.livewire.inputTextCompressed
             label="first name"
             name="form.firstName"
@@ -71,7 +79,7 @@
     </fieldset>
 
     {{-- GRADE, VOICEPART --}}
-    <fieldset class="flex flex-row space-x-1">
+    <fieldset class="flex flex-row space-x-1 text-black">
 
         <x-forms.elements.livewire.selectCompressed
             label="grades"
@@ -89,7 +97,7 @@
     </fieldset>
 
     {{-- EMAIL, MOBILE PHONE, HOME PHONE --}}
-    <fieldset class="flex flex-row space-x-1">
+    <fieldset class="flex flex-row space-x-1 text-black">
         <x-forms.elements.livewire.inputTextCompressed
             label="email"
             name="form.email"
@@ -105,7 +113,7 @@
     </fieldset>
 
     {{-- HEIGHT, SHIRT SIZE, PROGRAM NAME --}}
-    <fieldset class="flex flex-row space-x-1 pb-2 border border-transparent border-b-gray-200">
+    <fieldset class="flex flex-row space-x-1 pb-2 border border-transparent border-b-gray-200 text-black">
         @if($height)
             <x-forms.elements.livewire.selectCompressed
                 label="height"
@@ -130,7 +138,7 @@
     </fieldset>
 
     {{-- SPONSORING TEACHER --}}
-    <fieldset class="flex flex-col space-y-1 text-sm pb-2 border border-transparent border-b-gray-200">
+    <fieldset class="flex flex-col space-y-1 text-sm pb-2 border border-transparent border-b-gray-200 text-black">
         <h3 class="text-left font-semibold">Sponsoring Teacher</h3>
         @if(count($teachers) === 1)
             <x-forms.elements.livewire.labeledInfoOnly
@@ -149,7 +157,7 @@
     </fieldset>
 
     {{-- EMERGENCY CONTACT(S) --}}
-    <fieldset class="flex flex-col space-y-1 text-sm pb-2 border border-transparent border-b-gray-200">
+    <fieldset class="flex flex-col space-y-1 text-sm pb-2 border border-transparent border-b-gray-200 text-black">
         <h3 class="text-left font-semibold">Emergency Contacts</h3>
         <hint class="text-xs text-left italic">
             Emergency Contact information can be added/edited from the Students->edit->emergencyContact page.
@@ -188,7 +196,7 @@
 
     {{-- HOME ADDRESS --}}
     <fieldset
-        class="flex flex-col space-y-1 text-sm pb-2 @if($studentHomeAddress) border border-transparent border-b-gray-200 @endif ">
+        class="flex flex-col space-y-1 text-sm text-black pb-2 @if($studentHomeAddress) border border-transparent border-b-gray-200 @endif ">
         @if($studentHomeAddress)
             <h3 class="text-left font-semibold">Home Address</h3>
             <hint class="text-xs text-left italic">
@@ -207,7 +215,7 @@
     </fieldset>
 
     {{-- APPLICATION --}}
-    <fieldset class="flex flex-col space-y-1 text-sm pb-2 border border-transparent border-b-gray-200">
+    <fieldset class="flex flex-col space-y-1 text-sm text-black pb-2 border border-transparent border-b-gray-200">
         <h3 class="text-left font-semibold">
             {{ $form->eApplication ? 'eApplication' : 'Application' }}
         </h3>
@@ -268,7 +276,7 @@
     </fieldset>
 
     {{-- RECORDINGS --}}
-    <fieldset class="flex flex-col w-full space-y-1 text-sm space-x-2">
+    <fieldset class="flex flex-col w-full space-y-1 text-sm space-x-2 text-black">
         @if($form->uploadsRequired)
             <h3 class="text-left font-semibold">Audition Recordings</h3>
 
