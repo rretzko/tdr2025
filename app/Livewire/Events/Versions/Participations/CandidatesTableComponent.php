@@ -19,6 +19,7 @@ use App\Models\UserConfig;
 use App\Services\CalcGradeFromClassOfService;
 use App\Services\CalcSeniorYearService;
 use App\Services\CandidateStatusService;
+use App\Services\CandidateSummaryTableService;
 use App\Services\CoTeachersService;
 use App\Services\EventEnsemblesVoicePartsArrayService;
 use App\Services\FindPdfPathService;
@@ -136,6 +137,7 @@ class CandidatesTableComponent extends BasePage
             [
                 'columnHeaders' => $this->getColumnHeaders(),
                 'rows' => $this->getRows(), //->paginate($this->recordsPerPage),
+                'summaryTable' => $this->getRowsSummaryTable(),
                 'teachers' => $this->teachers,
             ]);
     }
@@ -307,6 +309,9 @@ class CandidatesTableComponent extends BasePage
             ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
             ->join('student_teacher', 'student_teacher.student_id', '=', 'students.id')
             ->join('school_student', 'school_student.student_id', '=', 'students.id')
+            ->leftJoin('signatures AS studentSignature', 'candidates.id', '=', 'studentSignature.candidate_id')
+            ->leftJoin('signatures AS guardianSignature', 'candidates.id', '=', 'guardianSignature.candidate_id')
+            ->leftJoin('signatures AS teacherSignature', 'candidates.id', '=', 'teacherSignature.candidate_id')
             ->where('candidates.version_id', $this->versionId)
             ->whereIn('candidates.teacher_id', $coTeacherIds)
             ->whereIn('candidates.school_id', $schoolIds)
@@ -319,15 +324,31 @@ class CandidatesTableComponent extends BasePage
                 $this->filters->filterCandidatesByStatuses($query, $this->search);
             })
             ->select('candidates.id AS candidateId', 'candidates.ref', 'candidates.status',
-                'candidates.program_name',
+                'candidates.program_name', 'candidates.emergency_contact_id',
                 'users.last_name', 'users.first_name', 'users.middle_name', 'users.suffix_name',
                 'students.class_of',
-                'voice_parts.abbr AS voicePart'
+                'voice_parts.abbr AS voicePart',
+                DB::raw('
+                CASE
+                WHEN (studentSignature.signed = 1 AND guardianSignature.signed = 1)
+                OR
+                (teacherSignature.signed = 1)
+                THEN true
+                ELSE false
+                END AS hasSignature
+                ')
             )
             ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
             ->orderBy('users.last_name', 'asc') //secondary sort ALWAYS applied
             ->orderBy('users.first_name', 'asc') //tertiary sort ALWAYS applied
             ->get();
+    }
+
+    private function getRowsSummaryTable(): array
+    {
+        $service = new CandidateSummaryTableService($this->schoolId, $this->versionId);
+
+        return $service->getRows();
     }
 
     private function getSchoolIds(): array

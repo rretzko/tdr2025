@@ -41,16 +41,16 @@ class CandidateStatusService
             return $candidate->status;
         }
 
-        Log::info(__METHOD__.': '.__LINE__);
-        Log::info('*** candidate status @ start: '.$candidate->status.' ***');
+//        Log::info(__METHOD__.': '.__LINE__);
+//        Log::info('*** candidate status @ start: '.$candidate->status.' ***');
 
         //evaluate registration status conditions
         self::$applicationDownloaded = self::hasDownloadedApplication($candidate);
-        Log::info('%%%%% Application download: '.self::$applicationDownloaded.' %%%%%');
+//        Log::info('%%%%% Application download: '.self::$applicationDownloaded.' %%%%%');
         self::$signaturesVerified = self::hasSignatures($candidate);
-        Log::info('%%%%% Has signatures: '.self::$signaturesVerified.' %%%%%');
+//        Log::info('%%%%% Has signatures: '.self::$signaturesVerified.' %%%%%');
         self::$recordingsApproved = self::hasApprovedRecording($candidate);
-        Log::info('%%%%% Recordings approved: '.self::$recordingsApproved.' %%%%%');
+//        Log::info('%%%%% Recordings approved: '.self::$recordingsApproved.' %%%%%');
         //determine registration status
         $status = self::getRegistrationStatus($candidate);
 
@@ -58,8 +58,8 @@ class CandidateStatusService
         if ($candidate->status !== $status) {
             $candidate->update(['status' => $status]);
         }
-        Log::info('*** status @ end: '.$status.' ***');
-        Log::info('*** candidate status @ end: '.$candidate->status.' ***');
+//        Log::info('*** status @ end: '.$status.' ***');
+//        Log::info('*** candidate status @ end: '.$candidate->status.' ***');
         return $status;
     }
 

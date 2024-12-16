@@ -75,7 +75,6 @@
                             {{-- EPAYMENT STUDENT --}}
                             @include('components.forms.partials.candidates.studentEpaymentOption')
 
-
                             {{-- FORM --}}
                             <div class="advisory text-center text-gray-500">
                                 @if($form->firstName)
