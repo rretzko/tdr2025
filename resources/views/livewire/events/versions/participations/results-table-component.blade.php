@@ -53,7 +53,7 @@
 
                     {{-- DOWNLOAD CONFIDENTIAL PDF WITH ALL SCORES --}}
                     @if($showAllScores)
-                        @if($separatedResults)
+                        @if($separatedResults && ($versionId > 80))
                             <div class="flex flex-col">
                                 @foreach($eventEnsembles AS $ensemble)
                                     <div wire:click="printResultsConfidential({{ $ensemble->id }})"
