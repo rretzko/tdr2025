@@ -5,6 +5,7 @@ namespace App\Livewire\Events\Versions\Tabrooms;
 use App\Events\UpdateAuditionResultsEvent;
 use App\Livewire\BasePage;
 use App\Livewire\Forms\AdjudicationForm;
+use App\Models\Events\Versions\Participations\AuditionResult;
 use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Room;
 use App\Models\Events\Versions\Scoring\Judge;
@@ -27,8 +28,10 @@ class TabroomScoringComponent extends BasePage
     public string $candidateRef = '';
     public Collection $candidates;
     public string $candidateSchool = '';
+    public int $candidateScoreCount = 0;
     public string $candidateTeacher = '';
     public string $candidateVoicePartDescr = '';
+    public Collection $eventVoiceParts;
     public bool $hasRecordings = false;
     public Judge $judge;
     public int $judgeId = 0;
@@ -39,6 +42,7 @@ class TabroomScoringComponent extends BasePage
     public int $roomId = 0;
     public Collection $rooms;
     public string $scoreUpdatedMssg = '';
+    public int $selectedVoicePartId = 0;
     public int $versionId = 0;
 
     public function mount(): void
@@ -49,6 +53,8 @@ class TabroomScoringComponent extends BasePage
         $this->versionId = UserConfig::getValue('versionId');
         $version = Version::find($this->versionId);
         $this->hasRecordings = (bool) ($version->upload_type !== 'none');
+
+        $this->eventVoiceParts = $this->getEventVoiceParts();
     }
 
     public function render()
@@ -65,6 +71,28 @@ class TabroomScoringComponent extends BasePage
         $this->reset('lastName');
         $this->updatedCandidateId();
     }
+
+    public function clickChangeVoicePartId()
+    {
+        //remove audition results
+        AuditionResult::where('candidate_id', $this->candidateId)->first()?->delete();
+
+        //remove scores
+        Score::where('candidate_id', $this->candidateId)->delete();
+
+        //change voice part id
+        $candidate = Candidate::find($this->candidateId);
+        $candidate->voice_part_id = $this->selectedVoicePartId;
+        $candidate->save();
+
+        $this->updatedCandidateId();
+
+        $this->roomId = $this->rooms->first()->id;
+        $this->updatedRoomId();
+
+//        $this->judgeId = $this->judges->first()->id;
+    }
+
 
     public function updatedLastName(): void
     {
@@ -223,6 +251,9 @@ class TabroomScoringComponent extends BasePage
 
         $this->updateRooms($candidate);
         $this->updateCandidateVars($candidate);
+
+        $this->selectedVoicePartId = $candidate->voice_part_id;
+        $this->candidateScoreCount = Score::where('candidate_id', $candidateId)->count('id');
     }
 
     public function updatedJudgeId()
@@ -259,6 +290,13 @@ class TabroomScoringComponent extends BasePage
         }
 
         $this->updateRooms(Candidate::find($this->candidateId));
+    }
+
+    private function getEventVoiceParts(): Collection
+    {
+        $event = Version::find($this->versionId)->event;
+
+        return $event->getVoicePartsAttribute();
     }
 
     private function updateCandidateVars(Candidate $candidate): void

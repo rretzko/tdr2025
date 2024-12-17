@@ -56,8 +56,36 @@
         </div>
         <div class="flex flex-row">
             <label class="w-24 ">Voice Part: </label>
-            <div class="font-semibold">{{ $candidateVoicePartDescr }}</div>
+            <div>{{ $candidateVoicePartDescr }}</div>
         </div>
+
+        <div class="flex flex-row border border-white border-t-gray-400 mt-2 py-2">
+            <label class="w-24">Change voice part: </label>
+            <div class="font-semibold">
+                <select wire:model.live="selectedVoicePartId">
+                    @foreach($eventVoiceParts AS $voicePart)
+                        <option value="{{ $voicePart->id }}">
+                            {{ $voicePart->descr }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="flex items-center justify-center">
+                <button wire:click="clickChangeVoicePartId()"
+                        wire:confirm="Are you sure you want to remove ALL {{ $candidateScoreCount }} previously entered scores?"
+                        class="bg-gray-200 border border-gray-800 ml-2 px-2 rounded-full shadow-lg"
+                >
+                    Change voice part
+                </button>
+            </div>
+            <div>RoomID: {{ $roomId }}</div>
+        </div>
+        @if($candidateScoreCount)
+            <div class="text-red-600 border border-white border-b-gray-400 pb-2">
+                NOTE: Changing voice parts <u>after</u> auditions have started will remove
+                <b>ALL</b> {{ $candidateScoreCount }} previously entered scores for this candidate.
+            </div>
+        @endif
     @endif
     <div class="text-red-600 ml-2 mt-1 text-xs italic">
         {{ $candidateError }}
