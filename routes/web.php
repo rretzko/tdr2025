@@ -140,6 +140,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('pitchFiles', \App\Http\Controllers\Events\Versions\Participations\PitchFileController::class)
         ->name('pitchFiles');
 
+    //REHEARSALMANAGER.PARTICIPATION_FEES
+    Route::get('rehearsalManager/participationFees',
+        \App\Http\Controllers\Events\Versions\RehearsalManagers\ParticipationFeeController::class)
+        ->name('participationFees');
+
     //SCHOOL TIMESLOTS
     Route::get('version/timeslots',
         \App\Http\Controllers\Tdr\LivewireController::class)

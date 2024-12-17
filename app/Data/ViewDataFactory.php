@@ -353,6 +353,9 @@ class ViewDataFactory extends aViewData
             //adjudication
             'adjudication' => 'events.versions.adjudications.adjudication-component',
 
+            //rehearsal manager
+            'participation fees' => 'events.versions.rehearsalManagers.participation-fees-component',
+
             //tab room
             'tabroom cutoff' => 'events.versions.tabrooms.tabroom-cutoff-component',
             'tabroom reports' => 'events.versions.tabrooms.tabroom-report-component',

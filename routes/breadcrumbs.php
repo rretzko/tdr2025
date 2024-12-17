@@ -171,6 +171,12 @@ Breadcrumbs::for('founder page', function (BreadcrumbTrail $trail) {
     $trail->push('Founder Page', route('founder'));
 });
 
+//RehearsalManger:ParticipationFees
+Breadcrumbs::for('participation fees', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('version dashboard', $id);
+    $trail->push('Participation Fees', route('participationFees'));
+});
+
 // Schools
 Breadcrumbs::for('schools', function (BreadcrumbTrail $trail) {
     $trail->parent('home');
