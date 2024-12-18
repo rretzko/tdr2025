@@ -78,7 +78,7 @@
                     Change voice part
                 </button>
             </div>
-            <div>RoomID: {{ $roomId }}</div>
+
         </div>
         @if($candidateScoreCount)
             <div class="text-red-600 border border-white border-b-gray-400 pb-2">

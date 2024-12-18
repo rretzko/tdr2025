@@ -105,7 +105,8 @@
         </table>
 
         {{-- ADVISORY --}}
-        <div class="text-sm @if($form->hasMyScores) hidden @else block @endif ">
+        <div
+            class="text-sm @if($form->hasMyScores || (isset($hideScoresToggle) && $hideScoresToggle)) hidden @else block @endif ">
             Note: Judge's scores are hidden by default <i>until</i> you have saved your scores.
         </div>
 

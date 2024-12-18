@@ -6,7 +6,7 @@
             Id <span class="ml-2 font-semibold">{{ $form->ref }}</span>
         </div>
         <div>
-            Room Tolerance: <span class="ml-2 font-semibold">{{ $form->roomTolerance }}</span>
+            {{ $room->room_name }} Room Tolerance: <span class="ml-2 font-semibold">{{ $form->roomTolerance }}</span>
         </div>
         <div>
             Best scores are always at the top of the drop-down menu.

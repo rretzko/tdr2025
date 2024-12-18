@@ -95,7 +95,6 @@ class TabroomScoringComponent extends BasePage
         $this->roomId = $this->rooms->first()->id;
         $this->updatedRoomId();
 
-//        $this->judgeId = $this->judges->first()->id;
     }
 
 
