@@ -45,6 +45,9 @@ class TabroomScoringComponent extends BasePage
     public int $selectedVoicePartId = 0;
     public int $versionId = 0;
 
+    //switch for hiding show/hide toggle on judges' scores in judgeSummaryTable.blade.php
+    public bool $hideScoresToggle = true;
+
     public function mount(): void
     {
         parent::mount();
@@ -55,6 +58,8 @@ class TabroomScoringComponent extends BasePage
         $this->hasRecordings = (bool) ($version->upload_type !== 'none');
 
         $this->eventVoiceParts = $this->getEventVoiceParts();
+
+        $this->setForm();
     }
 
     public function render()
@@ -254,6 +259,8 @@ class TabroomScoringComponent extends BasePage
 
         $this->selectedVoicePartId = $candidate->voice_part_id;
         $this->candidateScoreCount = Score::where('candidate_id', $candidateId)->count('id');
+
+        $this->setForm();
     }
 
     public function updatedJudgeId()
@@ -299,6 +306,16 @@ class TabroomScoringComponent extends BasePage
         return $event->getVoicePartsAttribute();
     }
 
+    private function setForm(): void
+    {
+        if (isset($this->room) && $this->judge && $this->candidateId) {
+            $candidate = Candidate::find($this->candidateId);
+            $this->form->setRoom($this->room, $this->judge);
+            $this->form->setCandidate($candidate, $this->room, $this->judge);
+            $this->form->hasMyScores = true;
+        }
+    }
+
     private function updateCandidateVars(Candidate $candidate): void
     {
         $this->candidateRef = $candidate->ref;
@@ -310,7 +327,6 @@ class TabroomScoringComponent extends BasePage
 
     private function updateRooms(Candidate $candidate): void
     {
-
         //set defaults
         $candidate = Candidate::find($this->candidateId);
         $this->roomId = ($this->roomId) ?: $this->rooms->first()->id;

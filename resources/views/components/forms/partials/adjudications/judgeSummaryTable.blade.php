@@ -12,6 +12,7 @@
                 border: 1px solid black;
             }
         </style>
+
         <table id="summaryTable" @class([
             "bg-red-100",
             'bg-white' => $form->scoreTolerance,
@@ -86,7 +87,7 @@
 
                 </tr>
             @endforeach
-            <tr>
+            <tr class="@if(isset($hideScoresToggle) && $hideScoresToggle) hidden @endif">
                 <td colspan="{{ ($form->factors->count() + 2) }}" style="padding: 0.2rem 0.25rem;">
                     <button wire:click="clickJudgeScoresToggle()"
                             type="button"
