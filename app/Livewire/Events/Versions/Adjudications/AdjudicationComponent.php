@@ -12,6 +12,7 @@ use App\Models\Events\Versions\Scoring\Score;
 use App\Models\Events\Versions\Scoring\ScoreCategory;
 use App\Models\Events\Versions\Scoring\ScoreFactor;
 use App\Models\Events\Versions\Version;
+use App\Models\Events\Versions\VersionConfigDate;
 use App\Models\Events\Versions\VersionPitchFile;
 use App\Models\PhoneNumber;
 use App\Models\Students\VoicePart;
@@ -25,6 +26,7 @@ use LaravelIdea\Helper\App\Models\Events\Versions\_IH_VersionPitchFile_C;
 class AdjudicationComponent extends BasePage
 {
     public AdjudicationForm $form;
+    public string $auditionDeadline = '';
     public int $countCompleted = 0;
     public int $countError = 0;
     public int $countPending = 0;
@@ -48,6 +50,12 @@ class AdjudicationComponent extends BasePage
     {
         parent::mount();
         $this->versionId = $this->dto['versionId'];
+        $adjudicationClose = VersionConfigDate::query()
+            ->where('version_id', $this->versionId)
+            ->where('date_type', 'adjudication_close')
+            ->first()
+            ->version_date;
+        $this->auditionDeadline = Carbon::parse($adjudicationClose)->format('D, M d, Y @ g:i:s a');
 
         $this->room = $this->getRoom();
         $this->staff = $this->getStaff();

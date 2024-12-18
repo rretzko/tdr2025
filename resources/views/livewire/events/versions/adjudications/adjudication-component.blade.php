@@ -15,6 +15,11 @@
             @include('components.forms.partials.adjudications.progressBar')
         </div>
 
+        {{-- DEADLINE TIMER --}}
+        <div class="flex flex-col p-2 rounded-lg shadow-lg ml-2 mb-2">
+            @include('components.forms.partials.adjudications.deadlineTimer')
+        </div>
+
         {{-- ADJUDICATION BUTTONS --}}
         <div class="flex flex-col p-2 rounded-lg shadow-lg ml-2 mb-2">
             @include('components.forms.partials.adjudications.adjudicationButtons')
