@@ -4,6 +4,7 @@ namespace App\Livewire\Forms;
 
 use App\Models\Events\Event;
 use App\Models\Events\Versions\Version;
+use App\Models\Events\Versions\VersionConfigEmergencyContact;
 use App\Models\UserConfig;
 use App\Services\CalcSeniorYearService;
 use App\Services\ConvertToPenniesService;
@@ -14,6 +15,10 @@ use Livewire\Form;
 class VersionProfileForm extends Form
 {
     public bool $cloneAdvisory = false;
+    public VersionConfigEmergencyContact $emergencyContact;
+    public bool $emergencyContactName = false;
+    public bool $emergencyContactEmail = false;
+    public bool $emergencyContactPhoneMobile = false;
     public string $epaymentVendor = 'none';
     public float $feeEpaymentSurcharge = 0;
     public float $feeParticipation = 0;
@@ -81,6 +86,12 @@ class VersionProfileForm extends Form
         $this->height = $version->height;
         $this->shirtSize = $version->shirt_size;
 
+        $this->emergencyContact = VersionConfigEmergencyContact::where('version_id',
+            $versionId)->first() ?? new VersionConfigEmergencyContact();
+        $this->emergencyContactName = $this->emergencyContact->ec_name;
+        $this->emergencyContactEmail = $this->emergencyContact->ec_email;
+        $this->emergencyContactPhoneMobile = $this->emergencyContact->ec_phone_mobile;
+
         return true;
     }
 
@@ -134,6 +145,8 @@ class VersionProfileForm extends Form
                     'shirt_size' => $this->shirtSize,
                 ]
             );
+
+            $this->updateEmergencyContact();
         }
 
         return $version;
@@ -144,6 +157,14 @@ class VersionProfileForm extends Form
         $service = new CalcSeniorYearService();
 
         $this->seniorClassId = $service->getSeniorYear();
+    }
+
+    private function updateEmergencyContact(): void
+    {
+        $this->emergencyContact->ec_name = $this->emergencyContactName;
+        $this->emergencyContact->ec_email = $this->emergencyContactEmail;
+        $this->emergencyContact->ec_phone_mobile = $this->emergencyContactPhoneMobile;
+        $this->emergencyContact->save();
     }
 
 }

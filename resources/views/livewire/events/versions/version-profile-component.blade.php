@@ -187,6 +187,29 @@
                         livewire="true"
                     />
 
+                    {{-- EMERGENCY CONTACT REQUIREMENTS --}}
+                    <x-forms.elements.livewire.inputCheckbox
+                        blur="false"
+                        label="Student must provide an emergency contact."
+                        name="form.emergencyContactName"
+                        livewire="true"
+                    />
+
+                    <x-forms.elements.livewire.inputCheckbox
+                        blur="false"
+                        label="Emergency Contact must have an email address."
+                        name="form.emergencyContactEmail"
+                        livewire="true"
+                    />
+
+                    <x-forms.elements.livewire.inputCheckbox
+                        blur="false"
+                        label="Emergency Contact must have a cell phone number."
+                        name="form.emergencyContactPhoneMobile"
+                        livewire="true"
+                    />
+
+
                 </div>
             </fieldset>
 
