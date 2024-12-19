@@ -380,10 +380,11 @@ class CandidatesTableComponent extends BasePage
 
     private function makeFileName(string $uploadType): string
     {
-        //ex: 661234_scales.mp3
+        //ex: 661234_scales_63.mp3
         $fileName = $this->form->candidate->id;
         $fileName .= '_';
-        $fileName .= $uploadType;
+        $fileName .= str_replace(' ', '_', $uploadType);
+        $fileName .= '_'.$this->form->voicePartId;
         $fileName .= '.';
         $fileName .= pathInfo($this->auditionFiles[$uploadType]->getClientOriginalName(), PATHINFO_EXTENSION);
 

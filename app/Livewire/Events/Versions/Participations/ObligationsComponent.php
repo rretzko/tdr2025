@@ -24,6 +24,7 @@ class ObligationsComponent extends BasePage
         $version = Version::find($this->versionId);
         $this->eventId = $version->event_id;
         $this->versionShortName = $version->short_name;
+
     }
 
     public function render()
@@ -74,7 +75,7 @@ class ObligationsComponent extends BasePage
             .$this->versionId;
 
         $componentPath = 'components'.DIRECTORY_SEPARATOR.'obligations'.DIRECTORY_SEPARATOR.$this->eventId.DIRECTORY_SEPARATOR;
-//dd('version path: ' . $versionDirectory.DIRECTORY_SEPARATOR.$fileName);
+
         //Log::info('event path: '.$eventDirectory.DIRECTORY_SEPARATOR.$fileName);
         //use the version-specific rendering of the obligations page if it exists
         if (file_exists($versionDirectory.DIRECTORY_SEPARATOR.$fileName)) {
@@ -92,7 +93,9 @@ class ObligationsComponent extends BasePage
             //Log::info($fileName.' not found at: '.$versionDirectory.DIRECTORY_SEPARATOR.$fileName);
             //Log::info($fileName.' not found at: '.$eventDirectory.DIRECTORY_SEPARATOR.$fileName);
 
-            abort(404, 'Obligations page was not found.  Please use your back key to return to the previous page.');
+            abort(403, "Obligations page was not found.
+            Please notify your Event Manager that you received this message.
+            Please use your back key to return to the previous page.");
         }
 
 

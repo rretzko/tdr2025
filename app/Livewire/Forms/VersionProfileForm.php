@@ -88,9 +88,9 @@ class VersionProfileForm extends Form
 
         $this->emergencyContact = VersionConfigEmergencyContact::where('version_id',
             $versionId)->first() ?? new VersionConfigEmergencyContact();
-        $this->emergencyContactName = $this->emergencyContact->ec_name;
-        $this->emergencyContactEmail = $this->emergencyContact->ec_email;
-        $this->emergencyContactPhoneMobile = $this->emergencyContact->ec_phone_mobile;
+        $this->emergencyContactName = $this->emergencyContact->ec_name ?? false;
+        $this->emergencyContactEmail = $this->emergencyContact->ec_email ?? false;
+        $this->emergencyContactPhoneMobile = $this->emergencyContact->ec_phone_mobile ?? false;
 
         return true;
     }
@@ -146,7 +146,7 @@ class VersionProfileForm extends Form
                 ]
             );
 
-            $this->updateEmergencyContact();
+            $this->updateEmergencyContact($versionId);
         }
 
         return $version;
@@ -159,8 +159,9 @@ class VersionProfileForm extends Form
         $this->seniorClassId = $service->getSeniorYear();
     }
 
-    private function updateEmergencyContact(): void
+    private function updateEmergencyContact(int $versionId): void
     {
+        $this->emergencyContact->version_id = $versionId;
         $this->emergencyContact->ec_name = $this->emergencyContactName;
         $this->emergencyContact->ec_email = $this->emergencyContactEmail;
         $this->emergencyContact->ec_phone_mobile = $this->emergencyContactPhoneMobile;

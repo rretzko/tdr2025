@@ -101,7 +101,8 @@ class VersionParticipantsTableComponent extends BasePage
             ->whereNot('id', $this->dto['id'])
             ->first();
 
-        if ($mostRecentVersion->versionParticipants->count()) {
+        //use null-safe operator to manage events with no previous versions
+        if ($mostRecentVersion?->versionParticipants->count()) {
 
             $this->cloneMostRecentParticipants($mostRecentVersion);
 
