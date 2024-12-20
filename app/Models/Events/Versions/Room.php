@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -152,6 +153,14 @@ class Room extends Model
             ->count();
     }
 
+    public function getMaxScoreCount(): int
+    {
+        $judgeIdsCount = count($this->getJudgeIds());
+        $scoringFactorsCount = $this->scoringFactors->count();
+
+        return ($judgeIdsCount * $scoringFactorsCount);
+    }
+
     public function getRegistrantsByIdAttribute(): Collection
     {
         return Candidate::query()
@@ -179,6 +188,11 @@ class Room extends Model
             ->orderBy('candidates.id')
             ->get()
             ->toArray();
+    }
+
+    public function getRegistrantIds(): array
+    {
+        return $this->getRegistrantsByIdAttribute()->pluck('id')->toArray();
     }
 
     public function getScores(Candidate $candidate): array
@@ -304,20 +318,6 @@ class Room extends Model
     {
         return $this->judges->pluck('id')->toArray();
     }
-
-    private function getMaxScoreCount(): int
-    {
-        $judgeIdsCount = count($this->getJudgeIds());
-        $scoringFactorsCount = $this->scoringFactors->count();
-
-        return ($judgeIdsCount * $scoringFactorsCount);
-    }
-
-    private function getRegistrantIds(): array
-    {
-        return $this->getRegistrantsByIdAttribute()->pluck('id')->toArray();
-    }
-
 
     private function getTotalScoresArray(Candidate $candidate): array
     {

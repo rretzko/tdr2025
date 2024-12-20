@@ -18,15 +18,53 @@
             <div class="bg-green-100 rounded-lg px-2 font-semibold">
                 {{ $room['roomName'] }}
             </div>
+
+            {{-- JUDGE STATUS BARS --}}
+            <div class="flex flex-col space-y-1">
+                @forelse($judgeProgress AS $judge)
+                    <div class="flex flex-row w-full">
+                        <div title="{{ $judge['judgeName'] }}" class="w-[8rem] border border-black px-2">
+                            {{ $judge['judgeShortName'] }}
+                        </div>
+                        <div class="flex flex-row w-full border border-black ">
+                            @if($judge['pending']['count'])
+                                <div title="pending" style="width: {{ $judge['pending']['pct'] }}"
+                                     class="bg-black text-white text-center border border-black">
+                                    {{ $judge['pending']['count'] }}
+                                </div>
+                            @endif
+                            @if($judge['wip']['count'])
+                                <div title="wip" style="width: {{ $judge['wip']['pct'] }}"
+                                     class="bg-yellow-400  text-center border border-black">
+                                    {{ $judge['wip']['count'] }}
+                                </div>
+                            @endif
+                            @if($judge['completed']['count'])
+                                <div title="completed" style="width: {{ $judge['completed']['pct'] }}"
+                                     class="bg-green-500 text-white text-center border border-black">
+                                    {{ $judge['completed']['count'] }}
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @empty
+                    <div>No judges found.</div>
+                @endforelse
+            </div>
+
+            {{-- ADJUDICATION BUTTONS --}}
             <div class="flex flex-col ">
                 <h4 class="ml-2 font-semibold border border-white border-b-gray-400 mb-2">
                     {{ $room['candidates']['voicePartDescr'] }}
                 </h4>
+
+                {{-- BUTTONS --}}
                 <div class="flex flex-row flex-wrap ml-2">
                     @forelse($room['candidates']['candidates'] AS $button)
 
-                        <div class=" px-2 border border-gray-600 rounded-full mb-2 mr-1 {{ $button['statusColors'] }}"
-                             title="{{ $button['title'] }}"
+                        <div
+                            class=" px-2 border border-gray-600 rounded-full mb-2 mr-1 font-mono {{ $button['statusColors'] }}"
+                            title="{{ $button['title'] }}"
                         >
                             <span class="text-red-600">
                                 @if(! $button['tolerance'])

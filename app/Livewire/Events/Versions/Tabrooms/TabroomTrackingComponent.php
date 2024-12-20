@@ -18,6 +18,7 @@ class TabroomTrackingComponent extends BasePage
     public int $roomId = 0;
     public array $roomList = [];
     public int $studentCount = 0;
+    public array $judgeList = [];
 
     public function mount(): void
     {
@@ -32,6 +33,7 @@ class TabroomTrackingComponent extends BasePage
     {
         return view('livewire..events.versions.tabrooms.tabroom-tracking-component',
             [
+                'judgeProgress' => $this->getJudgeProgress(),
                 'rooms' => $this->getCandidatesByRoom(),
                 'progress' => $this->getProgress(),
             ]);
@@ -43,6 +45,25 @@ class TabroomTrackingComponent extends BasePage
 
         $this->studentCount = $service->studentCount;
         return $service->getCandidates();
+    }
+
+    private function getJudgeProgress(): array
+    {
+        $room = Room::find($this->roomId);
+        $judges = $room->judges;
+
+        $progress = [];
+        foreach ($judges as $judge) {
+            $progress[] = [
+                'judgeName' => $judge->user->name,
+                'judgeShortName' => $judge->user->last_name.','.substr($judge->user->first_name, 0, 1),
+                'completed' => $judge->progress('completed'),
+                'pending' => $judge->progress('pending'),
+                'wip' => $judge->progress('wip'),
+            ];
+        }
+
+        return $progress;
     }
 
     private function getProgress(): array
@@ -65,9 +86,8 @@ class TabroomTrackingComponent extends BasePage
 
             $wpct = $value ? number_format((($value / $total) * 100), 1) : 0;
             $progress[$key] = ['count' => $value, 'wpct' => "$wpct%"];
-            Log::info($key.' => '.$value);
         }
-        Log::info('===========================================');
+
         return $progress;
     }
 
