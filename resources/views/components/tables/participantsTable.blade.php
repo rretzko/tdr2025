@@ -46,7 +46,9 @@
                     {{ $loop->iteration + (($rows->currentPage() - 1) * $recordsPerPage) }}
                 </td>
                 <td class="border border-gray-200 px-1">
-                    <div>{{ $row['last_name'] . ', ' . $row['first_name'] . ' ' . $row['middle_name'] }}</div>
+                    <div>
+                        {{ $row['last_name'] . ', ' . $row['first_name'] . ' ' . $row['middle_name'] }}
+                    </div>
                 </td>
                 <td class="border border-gray-200 px-1">
                     <div>{{ $row['schoolName'] }}</div>

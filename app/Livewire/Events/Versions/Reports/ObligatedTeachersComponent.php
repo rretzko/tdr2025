@@ -71,7 +71,18 @@ class ObligatedTeachersComponent extends BasePageReports
             ->join('school_teacher', 'school_teacher.teacher_id', '=', 'obligations.teacher_id')
             ->join('schools', 'schools.id', '=', 'school_teacher.school_id')
             ->join('school_grades', 'school_grades.school_id', '=', 'schools.id')
-            ->where('version_id', $this->versionId)
+            ->join('version_config_memberships', 'obligations.version_id', '=', 'version_config_memberships.version_id')
+            ->leftJoin('phone_numbers as mobile', function ($join) {
+                $join->on('mobile.user_id', '=', 'users.id')
+                    ->where('mobile.phone_type', '=',
+                        'mobile'); // Assuming there's a type column to distinguish phone types
+            })
+            ->leftJoin('phone_numbers as work', function ($join) {
+                $join->on('work.user_id', '=', 'users.id')
+                    ->where('work.phone_type', '=',
+                        'work'); // Assuming there's a type column to distinguish phone types
+            })
+            ->where('obligations.version_id', $this->versionId)
             ->where('school_teacher.active', 1)
             ->where(function ($query) use ($search) {
                 return $query
@@ -80,8 +91,13 @@ class ObligatedTeachersComponent extends BasePageReports
             })
             ->select('obligations.accepted',
                 'users.prefix_name', 'users.first_name', 'users.middle_name', 'users.last_name', 'users.suffix_name',
+                'users.name',
                 'schools.name AS schoolName',
-                DB::raw('GROUP_CONCAT(school_grades.grade ORDER BY school_grades.grade ASC SEPARATOR ", ") AS grades')
+                DB::raw('GROUP_CONCAT(school_grades.grade ORDER BY school_grades.grade ASC SEPARATOR ", ") AS grades'),
+                'users.email',
+                'mobile.phone_number AS phoneMobile',
+                'work.phone_number AS phoneWork',
+                'version_config_memberships.valid_thru',
             )
             ->groupBy(
                 'obligations.accepted',
@@ -90,7 +106,12 @@ class ObligatedTeachersComponent extends BasePageReports
                 'users.middle_name',
                 'users.last_name',
                 'users.suffix_name',
-                'schools.name'
+                'schools.name',
+                'version_config_memberships.valid_thru',
+                'users.email',
+                'phoneMobile',
+                'phoneWork',
+                'users.name',
             )
             ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
             ->orderBy('users.last_name')
@@ -102,7 +123,8 @@ class ObligatedTeachersComponent extends BasePageReports
     {
         return Excel::download(new ObligatedTeachersExport(
             $this->versionId,
-            $this->membershipCardRequired
+            $this->membershipCardRequired,
+            $this->getRows()->get()->toArray(),
         ), 'obligatedTeachers.csv');
     }
 
