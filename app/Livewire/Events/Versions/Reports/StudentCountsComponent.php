@@ -99,6 +99,16 @@ class StudentCountsComponent extends BasePageReports
             ->join('schools', 'schools.id', '=', 'candidates.school_id')
             ->join('teachers', 'teachers.id', '=', 'candidates.teacher_id')
             ->join('users AS teacher', 'teacher.id', '=', 'teachers.user_id')
+            ->leftJoin('phone_numbers as mobile', function ($join) {
+                $join->on('mobile.user_id', '=', 'teachers.user_id')
+                    ->where('mobile.phone_type', '=',
+                        'mobile'); // Assuming there's a type column to distinguish phone types
+            })
+            ->leftJoin('phone_numbers as work', function ($join) {
+                $join->on('work.user_id', '=', 'teachers.user_id')
+                    ->where('work.phone_type', '=',
+                        'work'); // Assuming there's a type column to distinguish phone types
+            })
             ->where('candidates.version_id', $this->versionId)
             ->where('candidates.status', 'registered')
             ->where(function ($query) use ($search) {
@@ -117,6 +127,9 @@ class StudentCountsComponent extends BasePageReports
                 'teacher.last_name',
                 'candidates.voice_part_id',
                 DB::raw('COUNT(candidates.voice_part_id) AS vpCount'),
+                'teacher.email',
+                'mobile.phone_number AS phoneMobile',
+                'work.phone_number AS phoneWork',
             )
             ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
             ->orderBy('schoolName')
@@ -128,6 +141,9 @@ class StudentCountsComponent extends BasePageReports
             ->groupBy('teacher.last_name')
             ->groupBy('candidates.teacher_id')
             ->groupBy('candidates.voice_part_id')
+            ->groupBy('teacher.email')
+            ->groupBy('mobile.phone_number')
+            ->groupBy('work.phone_number')
             ->get();
     }
 
@@ -149,7 +165,7 @@ class StudentCountsComponent extends BasePageReports
                 $rows[$key] = $this->initializeRow(
                     $counter++,
                     $row->schoolName,
-                    $row->teacherName,
+                    $this->makeTeacherBlock($row),
                     $voiceParts
                 );
             }
@@ -195,6 +211,34 @@ class StudentCountsComponent extends BasePageReports
         $row['total'] = 0;
 
         return $row;
+    }
+
+    /**
+     * @param  Collection  $row
+     * @return string0 => {#2775 ▼
+     * +"school_id": 6846
+     * +"schoolName": "Bridgewater-Raritan High School"
+     * +"teacher_id": 17376
+     * +"teacherName": "Lisa Rotondi"
+     * +"last_name": "Rotondi"
+     * +"voice_part_id": 63
+     * +"vpCount": 3
+     * +"email": "lrotondi@brrsd.k12.nj.us"
+     * +"phoneMobile": null
+     * +"phoneWork": null
+     * }
+     */
+    private function makeTeacherBlock(\stdClass $row): string
+    {
+        $str = '<div>'.$row->teacherName.'</div>';
+
+        $str .= '<div class="ml-2 text-sm">'.$row->email.'</div>';
+
+        $str .= '<div class="ml-2 text-sm">'.$row->phoneMobile.' (c)</div>';
+
+        $str .= '<div class="ml-2 text-sm">'.$row->phoneWork.' (w)</div>';
+
+        return $str;
     }
 
     private function reSortRowsByTotal(array $rows): array

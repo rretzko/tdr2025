@@ -46,51 +46,9 @@
         'text-gray-300' => ($item === 0),
                         ])
                     >
-                        {{ $item }}
+                        {!! $item !!}
                     </td>
                 @endforeach
-
-                {{-- COUNTER --}}
-                {{--                <td class="text-center">--}}
-                {{--                    {{ $row['counter'] }}--}}
-                {{--                </td>--}}
-
-                {{-- SCHOOL --}}
-                {{--                <td--}}
-                {{--                    @class(--}}
-                {{--                        [--}}
-                {{--                            "border border-gray-200 px-1",--}}
-                {{--//                            'text-gray-400' => ($key && ($rows[$key - 1]->schoolName === $row->schoolName)),--}}
-                {{--                        ])--}}
-                {{--                >--}}
-                {{--                    {{ $row->schoolName }}--}}
-                {{--                </td>--}}
-
-                {{-- TEACHER --}}
-                {{--                <td--}}
-                {{--                    @class([--}}
-                {{--                          "border border-gray-200 px-1",--}}
-                {{--//                          'text-gray-400' => ($key && ($rows[$key - 1]->teacherName === $row->teacherName)),--}}
-                {{--                    ])--}}
-                {{--                >--}}
-                {{--                    {{ $row->teacherName  }}--}}
-                {{--                </td>--}}
-
-                {{-- REGISTRANT --}}
-                {{--                <td class="border border-gray-200 px-1 ">--}}
-                {{--                    {{ $row->studentLastName . ($row->studentSuffix ? ' ' . $row->studentSuffix : '') . ', ' . $row->studentFirstName . ' ' . $row->studentMiddleName  }}--}}
-                {{--                </td>--}}
-
-                {{-- GRADE --}}
-                {{--                <td class="border border-gray-200 px-1 text-center">--}}
-                {{--                    {{ $row->grade  }}--}}
-                {{--                    <span class="text-xs italic"> ({{ $row->class_of }})</span>--}}
-                {{--                </td>--}}
-
-                {{-- Voice Part --}}
-                {{--                <td class="border border-gray-200 px-1 ">--}}
-                {{--                    {{ $row->voicePartDescr }}--}}
-                {{--                </td>--}}
 
             </tr>
 
