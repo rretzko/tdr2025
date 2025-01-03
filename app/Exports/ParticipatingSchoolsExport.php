@@ -19,71 +19,14 @@ class ParticipatingSchoolsExport implements FromArray, WithHeadings
     public function __construct(
         private readonly array $payments,
         private readonly array $paymentsDue,
-        private readonly int $versionId,
-        private readonly array $schoolIds,
+        private readonly array $paymentStatus,
+        private readonly array $schools,
     ) {
-        $this->baseArray = $this->getBaseArray();
-    }
-
-    /**
-     * @return mixed[]
-     */
-    public function getBaseArray(): array
-    {
-        return DB::table('candidates')
-            ->join('schools', 'schools.id', '=', 'candidates.school_id')
-            ->join('teachers', 'teachers.id', '=', 'candidates.teacher_id')
-            ->join('users', 'users.id', '=', 'teachers.user_id')
-            ->where('version_id', $this->versionId)
-            ->where('status', 'registered')
-            ->distinct(['candidates.school_id', 'candidates.teacher_id'])
-            ->select('schools.name AS schoolName', 'schools.id AS schoolId',
-                'users.prefix_name', 'users.last_name', 'users.middle_name', 'users.first_name', 'users.suffix_name',
-                'users.name',
-                DB::raw('COUNT(candidates.id) AS candidateCount'))
-            ->groupBy(
-                'candidates.school_id',
-                'candidates.teacher_id',
-                'schools.name',
-                'users.prefix_name',
-                'users.first_name',
-                'users.middle_name',
-                'users.last_name',
-                'users.suffix_name',
-                'users.name',
-                'schoolId'
-            )
-            ->orderBy('schools.name')
-            ->orderBy('users.last_name')
-            ->orderBy('users.first_name')
-            ->get()
-            ->toArray();
-
     }
 
     public function array(): array
     {
-        $a = [];
-
-        foreach ($this->baseArray as $base) {
-
-            $schoolId = $base->schoolId;
-
-            $a[] = [
-                $base->schoolName,
-                $base->prefix_name,
-                $base->last_name,
-                $base->first_name,
-                $base->middle_name,
-                $base->suffix_name,
-                $base->name,
-                $base->candidateCount,
-                $this->paymentsDue[$schoolId],
-                $this->payments[$schoolId],
-            ];
-        }
-
-        return $a;
+        return $this->mapSchools();
     }
 
     public function headings(): array
@@ -96,59 +39,55 @@ class ParticipatingSchoolsExport implements FromArray, WithHeadings
             'last_name',
             'suffix_name',
             'full_name',
+            'email',
+            'phone_cell',
+            'phone_work',
             'registrant#',
             'due',
-            'paid'
+            'paid',
+            'status',
         ];
     }
 
-    private function getPaymentsDue(): array
+    private function mapSchools(): array
     {
-        $dues = [];
-        $feeRegistration = Version::find($this->versionId)->fee_registration;
+        $a = [];
 
-        foreach ($this->schoolIds as $schoolId) {
-
-            $candidateCount = Candidate::query()
-                ->where('school_id', $schoolId)
-                ->where('version_id', $this->versionId)
-                ->where('status', 'registered')
-                ->count('id');
-
-            $dues[$schoolId] = ($candidateCount * $feeRegistration);
+        foreach ($this->schools as $school) {
+            $a[] = [
+                'school_name' => $school->schoolName,
+                'prefix_name' => $school->prefix_name,
+                'first_name' => $school->first_name,
+                'middle_name' => $school->middle_name,
+                'last_name' => $school->last_name,
+                'suffix_name' => $school->suffix_name,
+                'full_name' => $school->name,
+                'email' => $school->email,
+                'phone_cell' => $school->phoneMobile,
+                'phone_work' => $school->phoneWork,
+                'registrant#' => $school->candidateCount,
+                'due' => $this->getPaymentsDue($school->schoolId),
+                'paid' => $this->getAmountPaid($school->schoolId),
+                'status' => $this->getPaymentStatus($school->schoolId),
+            ];
         }
 
-        return array_map(function ($value) {
-            return ConvertToUsdService::penniesToUsd($value);
-        }, $dues);
+        return $a;
     }
 
-    private function getPaymentsStatus(array $payments, array $paymentsDue): array
+    private function getAmountPaid($schoolId): string
     {
-        $paymentStatuses = [];
-
-        foreach ($this->schoolIds as $schoolId) {
-
-            $balance = ($paymentsDue[$schoolId] - $payments[$schoolId]);
-
-            $paymentStatuses[$schoolId] = match (true) {
-                (!$balance) => 'paid',
-                ($balance > 0) => 'due',
-                ($balance < 0) => 'refund',
-                'default' => 'error',
-            };
-        }
-
-        return $paymentStatuses;
+        return $this->payments[$schoolId];
     }
 
-    private function getSchoolIds(): array
+    private function getPaymentsDue($schoolId): string
     {
-        return Candidate::where('version_id', $this->versionId)
-            ->where('status', 'registered')
-            ->distinct('school_id')
-            ->orderBy('school_id')
-            ->pluck('school_id')
-            ->toArray();
+        return $this->paymentsDue[$schoolId];
     }
+
+    private function getPaymentStatus($schoolId): string
+    {
+        return $this->paymentStatus[$schoolId];
+    }
+
 }

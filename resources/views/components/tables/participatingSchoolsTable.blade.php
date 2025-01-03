@@ -54,7 +54,18 @@
 
                 {{-- TEACHER --}}
                 <td class="border border-gray-200 px-1">
-                    {{ $row->last_name . ($row->suffix_name ? ' ' . $row->suffix_name : '') . ', ' . $row->first_name . ' ' . $row->middle_name . ($row->prefix_name ? ' (' . $row->prefix_name . ')' : '') }}
+                    <div>
+                        {{ $row->last_name . ($row->suffix_name ? ' ' . $row->suffix_name : '') . ', ' . $row->first_name . ' ' . $row->middle_name . ($row->prefix_name ? ' (' . $row->prefix_name . ')' : '') }}
+                    </div>
+                    <div class="ml-2 text-sm">
+                        {{ $row->email }}
+                    </div>
+                    <div class="ml-2 text-sm">
+                        {{ $row->phoneMobile }} (c)
+                    </div>
+                    <div class="ml-2 text-sm">
+                        {{ $row->phoneWork }} (w)
+                    </div>
                 </td>
 
                 {{-- REGISTRANT COUNT --}}
