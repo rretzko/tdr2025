@@ -60,6 +60,16 @@ class ParticipatingTeachersComponent extends BasePageReports
             ->join('users', 'users.id', '=', 'teachers.user_id')
             ->join('schools', 'schools.id', '=', 'school_teacher.school_id')
             ->join('candidates', 'candidates.teacher_id', '=', 'teachers.id')
+            ->leftJoin('phone_numbers as mobile', function ($join) {
+                $join->on('mobile.user_id', '=', 'users.id')
+                    ->where('mobile.phone_type', '=',
+                        'mobile'); // Assuming there's a type column to distinguish phone types
+            })
+            ->leftJoin('phone_numbers as work', function ($join) {
+                $join->on('work.user_id', '=', 'users.id')
+                    ->where('work.phone_type', '=',
+                        'work'); // Assuming there's a type column to distinguish phone types
+            })
             ->whereIn('school_teacher.school_id', $this->schoolIds)
             ->whereIn('school_teacher.teacher_id', $this->teacherIds)
             ->where('candidates.version_id', $this->versionId)
@@ -71,8 +81,11 @@ class ParticipatingTeachersComponent extends BasePageReports
             })
             ->select('school_teacher.school_id AS schoolId', 'school_teacher.teacher_id AS teacherId',
                 'users.prefix_name', 'users.first_name', 'users.middle_name', 'users.last_name', 'users.suffix_name',
+                'users.name', 'users.email',
                 'schools.name AS schoolName',
-                DB::raw('COUNT(candidates.id) AS candidateCount'))
+                DB::raw('COUNT(candidates.id) AS candidateCount'),
+                'mobile.phone_number AS phoneMobile',
+                'work.phone_number AS phoneWork')
             ->groupBy(
                 'school_teacher.school_id',
                 'school_teacher.teacher_id',
@@ -81,7 +94,11 @@ class ParticipatingTeachersComponent extends BasePageReports
                 'users.middle_name',
                 'users.last_name',
                 'users.suffix_name',
-                'schools.name'
+                'schools.name',
+                'users.email',
+                'phoneMobile',
+                'phoneWork',
+                'users.name'
             )
             ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
             ->orderBy('users.last_name')
@@ -103,9 +120,7 @@ class ParticipatingTeachersComponent extends BasePageReports
     public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
     {
         return Excel::download(new ParticipatingTeachersExport(
-            $this->versionId,
-            $this->schoolIds,
-            $this->teacherIds
+            $this->getRows()->get()->toArray()
         ), 'participatingTeachers.csv');
     }
 }

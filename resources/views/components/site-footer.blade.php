@@ -37,7 +37,7 @@
             powered by:
             <a href="https://mfrholdings.com">
                 MFR Holdings, LLC
-                <span style="margin-left: 0.5rem; font-size: smaller;"> v.2024.12.30</span>
+                <span style="margin-left: 0.5rem; font-size: smaller;"> v.2025.01.03</span>
             </a>
 
         </div>

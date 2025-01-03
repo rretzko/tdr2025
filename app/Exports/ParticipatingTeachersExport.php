@@ -2,56 +2,42 @@
 
 namespace App\Exports;
 
-use Illuminate\Database\Query\Builder;
-use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\FromQuery;
+use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class ParticipatingTeachersExport implements FromQuery, WithHeadings
+readonly class ParticipatingTeachersExport implements FromArray, WithHeadings
 {
     public function __construct(
-        private readonly int $versionId,
-        private readonly array $schoolIds,
-        private readonly array $teacherIds
+        private array $teachers,
     ) {
     }
 
-    /**
-     * @return Builder
-     */
-    public function query(): Builder
+    public function array(): array
     {
-        return DB::table('school_teacher')
-            ->join('teachers', 'teachers.id', '=', 'school_teacher.teacher_id')
-            ->join('users', 'users.id', '=', 'teachers.user_id')
-            ->join('schools', 'schools.id', '=', 'school_teacher.school_id')
-            ->join('candidates', 'candidates.teacher_id', '=', 'teachers.id')
-            ->whereIn('school_teacher.school_id', $this->schoolIds)
-            ->whereIn('school_teacher.teacher_id', $this->teacherIds)
-            ->where('candidates.version_id', $this->versionId)
-            ->where('candidates.status', 'registered')
-            ->select('users.prefix_name', 'users.first_name', 'users.middle_name', 'users.last_name',
-                'users.suffix_name',
-                'users.name', 'users.email',
-                'schools.name AS schoolName',
-                DB::raw('COUNT(candidates.id) AS candidateCount'))
-            ->groupBy(
-                'school_teacher.school_id',
-                'school_teacher.teacher_id',
-                'users.prefix_name',
-                'users.first_name',
-                'users.middle_name',
-                'users.last_name',
-                'users.suffix_name',
-                'users.email',
-                'schools.name',
-                'users.name'
-            )
-            ->orderBy('users.last_name')
-            ->orderBy('users.first_name')
-            ->orderBy('schools.name');
+        return $this->mapArray();
+    }
 
+    private function mapArray(): array
+    {
+        $a = [];
+        foreach ($this->teachers as $teacher) {
+
+            $a[] = [
+                'prefix_name' => $teacher->prefix_name,
+                'first_name' => $teacher->first_name,
+                'middle_name' => $teacher->middle_name,
+                'last_name' => $teacher->last_name,
+                'suffix_name' => $teacher->suffix_name,
+                'full_name' => $teacher->name,
+                'email' => $teacher->email,
+                'phone_cell' => $teacher->phoneMobile,
+                'phone_work' => $teacher->phoneWork,
+                'school_name' => $teacher->schoolName,
+                'registrant#' => $teacher->candidateCount,
+            ];
+        }
+
+        return $a;
     }
 
     public function headings(): array
@@ -64,6 +50,8 @@ class ParticipatingTeachersExport implements FromQuery, WithHeadings
             'suffix_name',
             'full_name',
             'email',
+            'phone_cell',
+            'phone_work',
             'school_name',
             'registrant#',
         ];
