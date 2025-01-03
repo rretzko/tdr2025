@@ -189,6 +189,16 @@ class ParticipatingStudentsComponent extends BasePageReports
             ->join('students', 'students.id', '=', 'candidates.student_id')
             ->join('users AS student', 'student.id', '=', 'students.user_id')
             ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
+            ->leftJoin('phone_numbers as mobile', function ($join) {
+                $join->on('mobile.user_id', '=', 'teachers.user_id')
+                    ->where('mobile.phone_type', '=',
+                        'mobile'); // Assuming there's a type column to distinguish phone types
+            })
+            ->leftJoin('phone_numbers as work', function ($join) {
+                $join->on('work.user_id', '=', 'teachers.user_id')
+                    ->where('work.phone_type', '=',
+                        'work'); // Assuming there's a type column to distinguish phone types
+            })
             ->where('candidates.version_id', $this->versionId)
             ->where('candidates.status', 'registered')
             ->where(function ($query) use ($search) {
@@ -205,12 +215,14 @@ class ParticipatingStudentsComponent extends BasePageReports
                 'schools.name as schoolName',
                 DB::raw("CONCAT(teacher.last_name, ', ', teacher.first_name, ' ', teacher.middle_name) AS teacherFullName"),
                 'teacher.prefix_name', 'teacher.first_name', 'teacher.middle_name', 'teacher.last_name',
-                'teacher.suffix_name',
+                'teacher.suffix_name', 'teacher.email',
                 'student.first_name AS studentFirstName', 'student.middle_name AS studentMiddleName',
                 'student.last_name AS studentLastName', 'student.suffix_name AS studentSuffix',
                 'voice_parts.descr AS voicePartDescr', 'voice_parts.order_by',
                 'students.class_of',
-                DB::raw("((12 - (students.class_of - 2025))) AS grade")
+                DB::raw("((12 - (students.class_of - 2025))) AS grade"),
+                'mobile.phone_number AS phoneMobile',
+                'work.phone_number AS phoneWork'
             )
             ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
             ->orderBy('schools.name')
@@ -222,7 +234,7 @@ class ParticipatingStudentsComponent extends BasePageReports
     public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
     {
         return Excel::download(new ParticipatingStudentsExport(
-            $this->versionId,
+            $this->getRows()->get()->toArray(),
         ), 'participatingStudents.csv');
     }
 

@@ -62,7 +62,30 @@
                           'text-gray-400' => ($key && ($rows[$key - 1]->teacherFullName === $row->teacherFullName)),
                     ])
                 >
-                    {{ $row->last_name . ($row->suffix_name ? ' ' . $row->suffix_name : '') . ', ' . $row->first_name . ' ' . $row->middle_name . ($row->prefix_name ? ' (' . $row->prefix_name . ')' : '') }}
+                    <div>
+                        {{ $row->last_name . ($row->suffix_name ? ' ' . $row->suffix_name : '') . ', ' . $row->first_name . ' ' . $row->middle_name . ($row->prefix_name ? ' (' . $row->prefix_name . ')' : '') }}
+                    </div>
+                    <div @class([
+                          "ml-2 text-sm",
+                          'hidden' => ($key && ($rows[$key - 1]->teacherFullName === $row->teacherFullName)),
+                        ])
+                    >
+                        {{ $row->email }}
+                    </div>
+                    <div @class([
+                          "ml-2 text-sm",
+                          'hidden' => ($key && ($rows[$key - 1]->teacherFullName === $row->teacherFullName)),
+                        ])
+                    >
+                        {{ $row->phoneMobile }} (c)
+                    </div>
+                    <div @class([
+                          "ml-2 text-sm",
+                          'hidden' => ($key && ($rows[$key - 1]->teacherFullName === $row->teacherFullName)),
+                        ])
+                    >
+                        {{ $row->phoneWork }} (w)
+                    </div>
                 </td>
 
                 {{-- REGISTRANT --}}
