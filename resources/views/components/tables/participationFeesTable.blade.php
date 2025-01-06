@@ -16,6 +16,9 @@
                 amount
             </th>
             <th>
+                transaction id
+            </th>
+            <th>
                 comments
             </th>
             <th>
@@ -37,6 +40,9 @@
                 </td>
                 <td class="border border-gray-200 px-1">
                     ${{ $row->amount }}
+                </td>
+                <td class="border border-gray-200 px-1">
+                    {{ $row->transactionId }}
                 </td>
                 <td class="border border-gray-200 px-1">
                     {{ $row->comments }}

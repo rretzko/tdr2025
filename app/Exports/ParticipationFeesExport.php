@@ -23,6 +23,7 @@ class ParticipationFeesExport implements FromArray, WithHeadings
             'student name',
             'school',
             'amount',
+            'transaction id',
             'comments',
             'date',
         ];

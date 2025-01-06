@@ -35,6 +35,7 @@ class ParticipationFeesComponent extends BasePage
             ->where('fee_type', 'participation')
             ->select('users.name', 'schools.name AS schoolName',
                 DB::raw('epayments.amount * .01 AS amount'),
+                'epayments.transaction_id AS transactionId',
                 'epayments.comments',
                 DB::raw("DATE_FORMAT(epayments.created_at, '%b %d, %Y %h:%i:%s') AS createdAt")
             )
