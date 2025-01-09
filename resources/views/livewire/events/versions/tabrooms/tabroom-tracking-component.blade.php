@@ -28,20 +28,20 @@
                         </div>
                         <div class="flex flex-row w-full border border-black ">
                             @if($judge['pending']['count'])
-                                <div title="pending" style="width: {{ $judge['pending']['pct'] }}"
-                                     class="bg-black text-white text-center border border-black">
+                                <div title="pending"
+                                     class="{{ $barFormats['pending'] }} w-[ {{$judge['pending']['pct'] }} text-center border border-black">
                                     {{ $judge['pending']['count'] }}
                                 </div>
                             @endif
                             @if($judge['wip']['count'])
-                                <div title="wip" style="width: {{ $judge['wip']['pct'] }}"
-                                     class="bg-yellow-400  text-center border border-black">
+                                <div title="wip"
+                                     class="{{ $barFormats['wip'] }}  w-[{{ $judge['wip']['pct'] }}] text-center border border-black">
                                     {{ $judge['wip']['count'] }}
                                 </div>
                             @endif
                             @if($judge['completed']['count'])
-                                <div title="completed" style="width: {{ $judge['completed']['pct'] }}"
-                                     class="bg-green-500 text-white text-center border border-black">
+                                <div title="completed"
+                                     class="{{ $barFormats['completed'] }} w-[{{ $judge['completed']['pct'] }}] text-center border border-black">
                                     {{ $judge['completed']['count'] }}
                                 </div>
                             @endif

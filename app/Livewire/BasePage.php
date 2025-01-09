@@ -46,6 +46,13 @@ class BasePage extends Component
     protected $userSort;
     public const AWSBUCKET = 'https://auditionsuite-production.s3.amazonaws.com/';
 
+    public const BARFORMATS = [
+        'completed' => 'bg-green-500 text-white',
+        'error' => 'bg-red-500 text-yellow-400',
+        'pending' => 'bg-black text-white',
+        'wip' => 'bg-yellow-400 text-black',
+    ];
+
     public const ENSEMBLETABS = ['ensembles', 'members', 'assets', 'inventory'];
 
     protected const SHIRTSIZES = [

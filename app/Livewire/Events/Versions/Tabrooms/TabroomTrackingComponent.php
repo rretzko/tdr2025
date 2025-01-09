@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Log;
 
 class TabroomTrackingComponent extends BasePage
 {
+    public array $barFormats = [];
     public int $versionId = 0;
     public int $roomId = 0;
     public array $roomList = [];
@@ -24,6 +25,7 @@ class TabroomTrackingComponent extends BasePage
     {
         parent::mount();
 
+        $this->barFormats = self::BARFORMATS;
         $this->versionId = UserConfig::getValue('versionId');
         $this->roomList = $this->getRoomList();
         $this->roomId = $this->roomList[0]->id;
@@ -41,7 +43,7 @@ class TabroomTrackingComponent extends BasePage
 
     private function getCandidatesByRoom(): array
     {
-        $service = new TabroomTrackingBulletsService($this->versionId, $this->roomId);
+        $service = new TabroomTrackingBulletsService($this->versionId, $this->roomId, $this->barFormats);
 
         $this->studentCount = $service->studentCount;
         return $service->getCandidates();
@@ -81,7 +83,7 @@ class TabroomTrackingComponent extends BasePage
         $counts['pending'] = ($total - ($counts['completed'] + $counts['errors'] + $counts['wip']));
 
         $progress = [];
-        $progress['total'] = ['count' => $total, 'wpct' => ''];
+        $progress['total'] = ['count' => $total, 'wpct' => '']; //wpct = width percent
         foreach ($counts as $key => $value) {
 
             $wpct = $value ? number_format((($value / $total) * 100), 1) : 0;

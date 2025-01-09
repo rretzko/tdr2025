@@ -268,6 +268,43 @@
                         </div>
                     </div> {{-- END OF REHEARSAL DATES --}}
 
+                    {{-- PARTICIPATION FEE DATES --}}
+                    @if($version->fee_participation && ($version->epayment_student || $version->epayment_teacher))
+                        <div class="border border-white border-b-gray-200 py-2">
+                            <h3>Dates for <b>participation fee</b> collection:</h3>
+                            <div class="flex flex-col space-y-2">
+                                <div class="flex flex-row items-center space-x-2">
+                                    <label>Open</label>
+                                    <x-forms.elements.livewire.inputDate
+                                        label=""
+                                        name="form.participationFeeOpen"
+                                        type="datetime-local"
+                                    />
+                                    {{-- SUCCESS INDICATOR --}}
+                                    @if($successIndicators['participationFeeOpen'])
+                                        <div class="text-green-600 italic text-xs">
+                                            {{ $successMessage }}
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="flex flex-row items-center space-x-2">
+                                    <label>Close</label>
+                                    <x-forms.elements.livewire.inputDate
+                                        label=""
+                                        name="form.participationFeeClose"
+                                        type="datetime-local"
+                                    />
+                                    {{-- SUCCESS INDICATOR --}}
+                                    @if($successIndicators['participationFeeClose'])
+                                        <div class="text-green-600 italic text-xs">
+                                            {{ $successMessage }}
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div> {{-- END OF PARTICIPATION FEE DATES --}}
+                    @endif
+
                 </fieldset> {{-- END OF ADJUDICATION FIELDSET --}}
 
 

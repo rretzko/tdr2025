@@ -4,6 +4,7 @@ namespace App\Livewire\Events\Versions;
 
 use App\Livewire\BasePage;
 use App\Livewire\Forms\VersionDatesForm;
+use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionConfigDate;
 use App\Models\UserConfig;
 use Illuminate\Support\Str;
@@ -11,6 +12,7 @@ use Illuminate\Support\Str;
 class VersionDatesEditComponent extends BasePage
 {
     public VersionDatesForm $form;
+    public Version $version;
     public int $versionId = 0;
     public array $successIndicators = [
         'adjudicationOpen' => false,
@@ -21,6 +23,8 @@ class VersionDatesEditComponent extends BasePage
         'membershipOpen' => false,
         'membershipClose' => false,
         'postmarkDeadline' => false,
+        'participationFeeOpen' => false,
+        'participationFeeClose' => false,
         'studentOpen' => false,
         'studentClose' => false,
         'studentCommitmentOpen' => false,
@@ -36,6 +40,7 @@ class VersionDatesEditComponent extends BasePage
         parent::mount();
 
         $this->versionId = UserConfig::getValue('versionId');
+        $this->version = Version::find($this->versionId);
         $this->form->setDates($this->versionId);
     }
 

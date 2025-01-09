@@ -19,6 +19,8 @@ class VersionDatesForm extends Form
     public string $finalTeacherChanges = '';
     public string $membershipClose = '';
     public string $membershipOpen = '';
+    public string $participationFeeOpen = '';
+    public string $participationFeeClose = '';
     public string $postmarkDeadline = '';
     public string $rehearsalClose = '';
     public string $rehearsalOpen = '';
@@ -40,6 +42,8 @@ class VersionDatesForm extends Form
             'finalTeacherChanges' => 'required|date',
             'membershipOpen' => 'required|date',//|before:membershipClose',
             'membershipClose' => 'required|date|after:membershipOpen',
+            'participationFeeOpen' => 'required|date',//|before:participationFeeClose',
+            'participationFeeClose' => 'required|date|after:membershipOpen',
             'postmarkDeadline' => 'required|date',
             'studentOpen' => 'required|date',//|before:studentClose',
             'studentClose' => 'required|date|after:studentOpen',
@@ -58,6 +62,7 @@ class VersionDatesForm extends Form
             'admin_close', 'admin_open',
             'final_teacher_changes',
             'membership_close', 'membership_open',
+            'participation_fee_close', 'participation_fee_open',
             'postmark_deadline',
             'rehearsal_open', 'rehearsal_close',
             'student_close', 'student_open',

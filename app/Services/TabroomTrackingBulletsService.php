@@ -19,7 +19,7 @@ class TabroomTrackingBulletsService
     private array $candidates = [];
 
 
-    public function __construct(private int $versionId, private int $roomId = 0)
+    public function __construct(private int $versionId, private int $roomId = 0, private readonly array $statuses)
     {
         $this->init();
     }
@@ -98,14 +98,7 @@ class TabroomTrackingBulletsService
     {
         $status = CandidateAdjudicationStatusService::getRoomStatus($candidateId, $room);
 
-        $statuses = [
-            'completed' => 'bg-green-500 text-white',
-            'pending' => 'bg-black text-white',
-            'wip' => 'bg-yellow-400 text-black',
-            'errors' => 'bg-red-600 text-yellow-400',
-        ];
-
-        return $statuses[$status];
+        return $this->statuses[$status];
     }
 
     private function getTitle(Candidate $candidate, Room $room, int $candidateId): string
