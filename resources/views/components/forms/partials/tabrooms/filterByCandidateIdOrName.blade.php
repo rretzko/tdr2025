@@ -72,7 +72,7 @@
             </div>
             <div class="flex items-center justify-center">
                 <button wire:click="clickChangeVoicePartId()"
-                        wire:confirm="Are you sure you want to remove ALL {{ $candidateScoreCount }} previously entered scores?"
+                        wire:confirm="Are you sure you want to remove ALL {{ $candidateScoreCount }} previously entered scores @if($hasRecordings) and any non-relevant recordings @endif ?"
                         class="bg-gray-200 border border-gray-800 ml-2 px-2 rounded-full shadow-lg"
                 >
                     Change voice part
@@ -83,7 +83,11 @@
         @if($candidateScoreCount)
             <div class="text-red-600 border border-white border-b-gray-400 pb-2">
                 NOTE: Changing voice parts <u>after</u> auditions have started will remove
-                <b>ALL</b> {{ $candidateScoreCount }} previously entered scores for this candidate.
+                <b>ALL</b> {{ $candidateScoreCount }} previously entered scores
+                @if($hasRecordings)
+                    and any non-relevant recordings
+                @endif
+                for this candidate.
             </div>
         @endif
     @endif

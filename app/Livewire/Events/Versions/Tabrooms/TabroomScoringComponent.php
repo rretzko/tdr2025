@@ -7,6 +7,7 @@ use App\Livewire\BasePage;
 use App\Livewire\Forms\AdjudicationForm;
 use App\Models\Events\Versions\Participations\AuditionResult;
 use App\Models\Events\Versions\Participations\Candidate;
+use App\Models\Events\Versions\Participations\Recording;
 use App\Models\Events\Versions\Room;
 use App\Models\Events\Versions\Scoring\Judge;
 use App\Models\Events\Versions\Scoring\Score;
@@ -18,6 +19,7 @@ use App\Models\UserConfig;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class TabroomScoringComponent extends BasePage
 {
@@ -84,6 +86,16 @@ class TabroomScoringComponent extends BasePage
 
         //remove scores
         Score::where('candidate_id', $this->candidateId)->delete();
+
+        //remove non-relevant voice part recordings
+        $recordings = Recording::where('candidate_id', $this->candidateId)->pluck('url', 'id')->toArray();
+        $needle = '_'.$this->selectedVoicePartId.'.';
+
+        foreach ($recordings as $id => $recording) {
+            if (!Str::contains($recording, $needle)) {
+                Recording::find($id)->delete();
+            }
+        }
 
         //change voice part id
         $candidate = Candidate::find($this->candidateId);
@@ -296,6 +308,9 @@ class TabroomScoringComponent extends BasePage
         }
 
         $this->updateRooms(Candidate::find($this->candidateId));
+
+        //set switch to alwasy display judges scores
+        $this->form->hasMyScores = true;
     }
 
     private function getEventVoiceParts(): Collection
