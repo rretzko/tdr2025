@@ -257,7 +257,19 @@ class CandidatesTableComponent extends BasePage
 
     private function checkTeacherPhoneRequirements(): bool
     {
-        return false;
+        $mobilePhone = false;
+        if (($this->version->teacher_phone_mobile && strlen(auth()->user()->phoneMobile())) ||
+            (!$this->version->teacher_phone_mobile)) {
+            $mobilePhone = true;
+        }
+
+        $workPhone = false;
+        if (($this->version->teacher_phone_work && strlen(auth()->user()->phoneWork())) ||
+            (!$this->version->teacher_phone_work)) {
+            $workPhone = true;
+        }
+
+        return ($mobilePhone && $workPhone);
     }
 
     private function getColumnHeaders(): array

@@ -38,6 +38,8 @@ class Version extends Model
         'shirt_size',
         'student_home_address',
         'status',
+        'teacher_phone_mobile',
+        'teacher_phone_work',
         'upload_type',
     ];
 

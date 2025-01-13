@@ -180,12 +180,14 @@
                         name="form.teacherPhoneWork"
                         livewire="true"
                     />
+                    <div>teacherPhoneWork: {{ $form->teacherPhoneWork }}</div>
                     <x-forms.elements.livewire.inputCheckbox
                         blur="false"
                         label="Student must have a complete home address."
                         name="form.studentHomeAddress"
                         livewire="true"
                     />
+
                     <x-forms.elements.livewire.inputCheckbox
                         blur="false"
                         label="Student must have a height measurement."

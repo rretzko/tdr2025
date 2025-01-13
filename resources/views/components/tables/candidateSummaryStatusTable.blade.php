@@ -49,7 +49,7 @@
                     <x-heroicons.pencilSquare/>
                 </div>
             </th>
-            @if(count($summaryTable[0]['recordings']))
+            @if(array_key_exists(0, $summaryTable) && count($summaryTable[0]['recordings']))
                 <th title="recordings">
                     <div class="flex items-center justify-center">
                         <x-heroicons.microphone/>
