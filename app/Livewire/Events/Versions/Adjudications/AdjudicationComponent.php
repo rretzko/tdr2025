@@ -16,6 +16,7 @@ use App\Models\Events\Versions\VersionConfigDate;
 use App\Models\Events\Versions\VersionPitchFile;
 use App\Models\PhoneNumber;
 use App\Models\Students\VoicePart;
+use App\Services\SetAveragedScoresService;
 use App\Services\UpdateAuditionResultsService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -154,6 +155,8 @@ class AdjudicationComponent extends BasePage
                 ]
             );
         }
+
+        new SetAveragedScoresService($this->form->room, $this->form->candidate);
 
         $this->form->roomScores = $this->form->getRoomScores();
 

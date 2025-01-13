@@ -47,7 +47,9 @@
 
             <div class="flex flex-col sm:flex-row">
                 <div class="flex flex-col p-2 rounded-lg shadow-lg ml-2 mb-2 w-full sm:w-1/2">
-                    @include('components.forms.partials.adjudications.adjudicationForm')
+                    @if(! $form->isMyStudent)
+                        @include('components.forms.partials.adjudications.adjudicationForm')
+                    @endif
                 </div>
 
 

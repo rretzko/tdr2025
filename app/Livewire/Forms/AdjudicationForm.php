@@ -9,8 +9,11 @@ use App\Models\Events\Versions\Room;
 use App\Models\Events\Versions\Scoring\Score;
 use App\Models\Events\Versions\Scoring\ScoreCategory;
 use App\Models\Events\Versions\Scoring\ScoreFactor;
+use App\Models\Events\Versions\VersionConfigAdjudication;
+use App\Models\Events\Versions\VersionConfigDate;
 use App\Models\Students\VoicePart;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Validation\Rules\Can;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
 use Illuminate\Support\Facades\Log;
@@ -23,6 +26,7 @@ class AdjudicationForm extends Form
     public Collection $factors;
     public bool $hasNonMp3Recording = true;
     public bool $hasMyScores = false;
+    public string|bool $isMyStudent = false;
     public string $ref = '';
     public Room $room;
     public array $roomScores = [];
@@ -52,6 +56,8 @@ class AdjudicationForm extends Form
         $this->factors = $room->scoringFactors;
 
         $this->categories = $room->scoringCategories;
+
+        $this->isMyStudent = $this->setIsMyStudent($candidate);
 
         $scores = Score::query()
             ->where('candidate_id', $this->sysId)
@@ -173,6 +179,18 @@ class AdjudicationForm extends Form
         $this->hasNonMp3Recording = array_reduce($this->recordings, function ($carry, $recording) {
             return $carry || !str_ends_with($recording, 'mp3');
         }, false);
+    }
+
+    private function setIsMyStudent(Candidate $candidate): string|bool
+    {
+        $vca = VersionConfigAdjudication::where('version_id', $candidate->version->id)->first();
+
+        //early exit
+        if (!$vca->averaged_scores) {
+            return false;
+        }
+
+        return ($candidate->teacher_id === auth()->id()) ? $candidate->program_name : false;
     }
 
 
