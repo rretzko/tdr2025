@@ -5,12 +5,19 @@ namespace App\Http\Controllers\Ensembles;
 use App\Data\ViewDataFactory;
 use App\Http\Controllers\Controller;
 use App\Models\Ensembles\Ensemble;
+use App\Services\MissingGradesService;
 use Illuminate\Http\Request;
 
 class EnsembleController extends Controller
 {
     public function index()
     {
+        //abort if user should not have access to the module
+        //i.e. grades or gradesITeach is missing from the UserConfig::getValue('schoolId') school profile
+        if (MissingGradesService::missingGrades()) {
+            abort(404);
+        }
+
         $data = new ViewDataFactory(__METHOD__);
 
         $dto = $data->getDto();

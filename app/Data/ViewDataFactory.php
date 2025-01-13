@@ -6,6 +6,9 @@ use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionParticipant;
 use App\Models\Events\Versions\VersionRole;
 use App\Models\PageInstruction;
+use App\Models\Schools\GradesITeach;
+use App\Models\Schools\School;
+use App\Models\Schools\Teacher;
 use App\Models\UserConfig;
 use App\Models\Events\Versions\VersionConfigDate;
 use App\Models\Events\Versions\Scoring\Judge;
@@ -88,6 +91,10 @@ class ViewDataFactory extends aViewData
     private function filterCards(array $viewCards): array
     {
         $cards = $this->filterCardsByRole($viewCards);
+
+        if ($this->dto['header'] === 'home') {
+            $cards = $this->filterHomeCards($cards);
+        }
 
         if ($this->versionId) {
 
@@ -218,6 +225,30 @@ class ViewDataFactory extends aViewData
         return array_filter($cards, function ($card) {
             return ($card['role'] === 'tab room');
         });
+    }
+
+    private function filterHomeCards(array $cards): array
+    {
+        $teacher = Teacher::where('user_id', auth()->id())->first();
+        $schoolId = UserConfig::getValue('schoolId');
+        $school = School::find($schoolId);
+        //array
+        $grades = $school->grades;
+        //Collection
+        $gradesITeach = GradesITeach::where('school_id', $schoolId)->where('teacher_id', $teacher->id)->get();
+        //bool
+        $hasAllGrades = count($grades) && $gradesITeach->count();
+
+        $suppressedCards = ['ensembles', 'events', 'libraries', 'students',];
+        if (!$hasAllGrades) {
+            foreach ($cards as $key => $card) {
+                if (in_array($card['label'], $suppressedCards)) {
+                    unset($cards[$key]);
+                }
+            }
+        }
+
+        return $cards;
     }
 
     private function getColumnHeaders(): array
