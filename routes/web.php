@@ -21,6 +21,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //PROFILE
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/phoneUpdate', [ProfileController::class, 'phoneUpdate'])->name('profile.phoneUpdate');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     //Candidates

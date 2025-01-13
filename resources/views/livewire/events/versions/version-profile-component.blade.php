@@ -170,6 +170,18 @@
                 <div class="ml-4 space-y-0">
                     <x-forms.elements.livewire.inputCheckbox
                         blur="false"
+                        label="Teacher must have a cell phone number."
+                        name="form.teacherPhoneMobile"
+                        livewire="true"
+                    />
+                    <x-forms.elements.livewire.inputCheckbox
+                        blur="false"
+                        label="Teacher must have a work phone number."
+                        name="form.teacherPhoneWork"
+                        livewire="true"
+                    />
+                    <x-forms.elements.livewire.inputCheckbox
+                        blur="false"
                         label="Student must have a complete home address."
                         name="form.studentHomeAddress"
                         livewire="true"

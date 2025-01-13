@@ -1053,14 +1053,14 @@
                             var r = {event: t.event, channel: t.channel, data: n};
                             return t.user_id && (r.user_id = t.user_id), r
                         } catch (i) {
-                            throw{type: "MessageParseError", error: i, data: e.data}
+                            throw {type: "MessageParseError", error: i, data: e.data}
                         }
                     }, encodeMessage: function (e) {
                         return JSON.stringify(e)
                     }, processHandshake: function (e) {
                         var t = Vt.decodeMessage(e);
                         if (t.event === "pusher:connection_established") {
-                            if (!t.data.activity_timeout) throw"No activity timeout specified in handshake";
+                            if (!t.data.activity_timeout) throw "No activity timeout specified in handshake";
                             return {
                                 action: "connected",
                                 id: t.data.socket_id,
@@ -1071,7 +1071,7 @@
                                 action: this.getCloseAction(t.data),
                                 error: this.getCloseError(t.data)
                             };
-                            throw"Invalid handshake"
+                            throw "Invalid handshake"
                         }
                     }, getCloseAction: function (e) {
                         return e.code < 4e3 ? e.code >= 1002 && e.code <= 1004 ? "backoff" : null : e.code === 4e3 ? "tls_only" : e.code < 4100 ? "refused" : e.code < 4200 ? "backoff" : e.code < 4300 ? "retry" : "refused"
@@ -2340,7 +2340,7 @@
                     createSocketRequest: function (e, t) {
                         if (this.isXHRSupported()) return this.HTTPFactory.createXHR(e, t);
                         if (this.isXDRSupported(t.indexOf("https:") === 0)) return this.HTTPFactory.createXDR(e, t);
-                        throw"Cross-origin HTTP requests are not supported"
+                        throw "Cross-origin HTTP requests are not supported"
                     },
                     isXHRSupported: function () {
                         var e = this.getXHRAPI();
@@ -2477,7 +2477,7 @@
                     }
                     return n
                 }, Xr = function (e) {
-                    if (typeof b.getAuthorizers()[e.transport] > "u") throw"'" + e.transport + "' is not a recognized auth transport";
+                    if (typeof b.getAuthorizers()[e.transport] > "u") throw "'" + e.transport + "' is not a recognized auth transport";
                     return function (t, n) {
                         var r = Br(t, e);
                         b.getAuthorizers()[e.transport](b, r, e, v.UserAuthentication, n)
@@ -2492,7 +2492,7 @@
                     }
                     return n
                 }, Vr = function (e) {
-                    if (typeof b.getAuthorizers()[e.transport] > "u") throw"'" + e.transport + "' is not a recognized auth transport";
+                    if (typeof b.getAuthorizers()[e.transport] > "u") throw "'" + e.transport + "' is not a recognized auth transport";
                     return function (t, n) {
                         var r = Wr(t, e);
                         b.getAuthorizers()[e.transport](b, r, e, v.ChannelAuthorization, n)
@@ -2795,7 +2795,7 @@
                 }(), Pt = h.default = ee;
 
                 function fi(e) {
-                    if (e == null) throw"You must pass your app key when you instantiate Pusher."
+                    if (e == null) throw "You must pass your app key when you instantiate Pusher."
                 }
 
                 b.setup(ee)

@@ -36,6 +36,8 @@ class VersionProfileForm extends Form
     public bool $studentHomeAddress = false;
     public string $sysId = 'new';
     public bool $teacher = false;
+    public bool $teacherPhoneMobile = true;
+    public bool $teacherPhoneWork = true;
     public string $uploadType = 'none';
 
     public function add(): Version
@@ -60,6 +62,8 @@ class VersionProfileForm extends Form
                 'student_home_address' => $this->studentHomeAddress,
                 'height' => $this->height,
                 'shirt_size' => $this->shirtSize,
+                'teacher_phone_mobile' => $this->teacherPhoneMobile,
+                'teacher_phone_work' => $this->teacherPhoneWork,
             ]
         );
     }
@@ -91,6 +95,9 @@ class VersionProfileForm extends Form
         $this->emergencyContactName = $this->emergencyContact->ec_name ?? false;
         $this->emergencyContactEmail = $this->emergencyContact->ec_email ?? false;
         $this->emergencyContactPhoneMobile = $this->emergencyContact->ec_phone_mobile ?? false;
+
+        $this->teacherPhoneMobile = $version->teacher_phone_mobile;
+        $this->teacherPhoneWork = $version->teacher_phone_work;
 
         return true;
     }
@@ -143,6 +150,8 @@ class VersionProfileForm extends Form
                     'student_home_address' => $this->studentHomeAddress,
                     'height' => $this->height,
                     'shirt_size' => $this->shirtSize,
+                    'teacher_phone_mobile' => $this->teacherPhoneMobile,
+                    'teacher_phone_work' => $this->teacherPhoneWork,
                 ]
             );
 

@@ -115,9 +115,24 @@ class User extends Authenticatable
             ->exists();
     }
 
+    public function phoneHome(): string
+    {
+        return PhoneNumber::where('user_id', $this->id)->where('phone_type', 'home')->first()?->phone_number ?? '';
+    }
+
+    public function phoneMobile(): string
+    {
+        return PhoneNumber::where('user_id', $this->id)->where('phone_type', 'mobile')->first()?->phone_number ?? '';
+    }
+
     public function phoneNumbers(): HasMany
     {
         return $this->hasMany(PhoneNumber::class);
+    }
+
+    public function phoneWork(): string
+    {
+        return PhoneNumber::where('user_id', $this->id)->where('phone_type', 'work')->first()?->phone_number ?? '';
     }
 
     public function student(): HasOne

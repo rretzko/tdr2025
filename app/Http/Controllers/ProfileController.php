@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\PhoneNumber;
+use App\Services\FormatPhoneService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,6 +22,14 @@ class ProfileController extends Controller
             'user' => $request->user(),
             'dto' => ['header' => 'profile'],
         ]);
+    }
+
+    public function phoneUpdate(Request $request): RedirectResponse
+    {
+        $this->phoneUpdatePhone('mobile', $request->all());
+        $this->phoneUpdatePhone('work', $request->all());
+
+        return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
     /**
@@ -57,5 +67,27 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    private function phoneUpdatePhone(string $phoneType, array $request): void
+    {
+        $key = 'phone'.ucfirst($phoneType);
+        $phoneNumber = '';
+        $service = new FormatPhoneService();
+
+        if (array_key_exists($key, $request)) {
+            if (strlen($request[$key])) {
+                $phoneNumber = $service->getPhoneNumber($request[$key]);
+            }
+        }
+        PhoneNumber::updateOrCreate(
+            [
+                'user_id' => auth()->id(),
+                'phone_type' => $phoneType,
+            ],
+            [
+                'phone_number' => $phoneNumber,
+            ]
+        );
     }
 }

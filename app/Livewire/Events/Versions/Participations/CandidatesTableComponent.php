@@ -46,6 +46,7 @@ class CandidatesTableComponent extends BasePage
     public string $ePaymentVendor = '';
     public array $ensembleVoiceParts = [];
     public array $eventGrades = [];
+    public bool $hasTeacherPhoneReqs = false;
     public bool $height = false;
     public array $heights = [];
     public bool $obligationAccepted = false;
@@ -121,6 +122,9 @@ class CandidatesTableComponent extends BasePage
             ->where('teacher_id', $teacherId)
             ->whereNotNull('accepted')
             ->first();
+
+        //check for teacher phone requirements
+        $this->hasTeacherPhoneReqs = $this->checkTeacherPhoneRequirements();
     }
 
     public function render()
@@ -249,6 +253,11 @@ class CandidatesTableComponent extends BasePage
             $this->showSuccessIndicator = true;
             $this->successMessage = Str::remove('Id', Str::headline($key)).' updated.';
         }
+    }
+
+    private function checkTeacherPhoneRequirements(): bool
+    {
+        return false;
     }
 
     private function getColumnHeaders(): array

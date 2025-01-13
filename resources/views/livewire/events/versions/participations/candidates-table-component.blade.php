@@ -19,6 +19,7 @@
             @endif
         </div>
 
+        {{-- OBLIGATION GATE --}}
         <div
             @class([
                 "my-1 text-red-500 text-sm w-2/3 mx-auto rounded-lg",
@@ -31,8 +32,26 @@
             @endif
         </div>
 
+        {{-- TEACHER PHONE REQUIREMENTS GATE --}}
+        <div
+            @class([
+                "my-1 text-red-500 text-sm w-2/3 mx-auto rounded-lg",
+                'bg-red-100 text-center' => (! $hasTeacherPhoneReqs)
+            ])
+        >
+            @if(! $hasTeacherPhoneReqs)
+                <div>This event requires that you have a cell and work phone available.</div>
+                <div>Please return to your
+                    <a href="{{ route('profile.edit') }}" class="bold underline">
+                        Profile page
+                    </a>
+                    to update this information.
+                </div>
+            @endif
+        </div>
+
         {{-- FILTERS and TABLE --}}
-        @if($obligationAccepted)
+        @if($obligationAccepted && $hasTeacherPhoneReqs)
             <div class="flex flex-row">
                 @if(count($ensembleVoiceParts))
                     {{-- FILTERS --}}
