@@ -36,6 +36,12 @@
                         >
                             I Reject These Obligations
                         </button>
+                    @elseif($schoolCountyName === 'Unknown')
+                        <div class="text-red-500">
+                            A valid school county is required to Accept these obligations. Please return to the
+                            <a href="{{ route('schools') }}" class="underline font-semibold">Schools page</a> to edit
+                            this value.
+                        </div>
                     @else
                         <button type="button"
                                 wire:click="acceptObligation()"

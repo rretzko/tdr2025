@@ -33,6 +33,7 @@ class Version extends Model
         'participation_contract',
         'pitch_files_student',
         'pitch_files_teacher',
+        'school_county',
         'short_name',
         'senior_class_of',
         'shirt_size',

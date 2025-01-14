@@ -226,6 +226,13 @@
                         livewire="true"
                     />
 
+                    <x-forms.elements.livewire.inputCheckbox
+                        blur="false"
+                        label="School address must include a valid county."
+                        name="form.schoolCounty"
+                        livewire="true"
+                    />
+
                 </div>
             </fieldset>
 

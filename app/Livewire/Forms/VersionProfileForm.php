@@ -30,6 +30,7 @@ class VersionProfileForm extends Form
     public string $name = '';
     public bool $pitchFilesStudent = false;
     public bool $pitchFilesTeacher = false;
+    public bool $schoolCounty = false;
     public string $shortName = '';
     public bool $shirtSize = false;
     public int $seniorClassId = 2025;
@@ -66,6 +67,7 @@ class VersionProfileForm extends Form
                 'shirt_size' => $this->shirtSize,
                 'teacher_phone_mobile' => $this->teacherPhoneMobile,
                 'teacher_phone_work' => $this->teacherPhoneWork,
+                'school_county' => $this->schoolCounty,
             ]
         );
 
@@ -74,28 +76,6 @@ class VersionProfileForm extends Form
         UserConfig::setProperty('versionId', $version->id);
 
         return $version;
-    }
-
-    private function addParticipant(Version $version): VersionParticipant
-    {
-        return VersionParticipant::create(
-            [
-                'version_id' => $version->id,
-                'user_id' => auth()->id(),
-                'status' => 'participating',
-            ]
-        );
-    }
-
-    private function addVersionManager(Version $version, VersionParticipant $versionParticipant): void
-    {
-        VersionRole::create(
-            [
-                'version_id' => $version->id,
-                'version_participant_id' => $versionParticipant->id,
-                'role' => 'event manager',
-            ]
-        );
     }
 
     public function setProfile(int $versionId, bool $clone = false): bool
@@ -119,6 +99,7 @@ class VersionProfileForm extends Form
         $this->studentHomeAddress = $version->student_home_address;
         $this->height = $version->height;
         $this->shirtSize = $version->shirt_size;
+        $this->schoolCounty = $version->school_county;
 
         $this->emergencyContact = VersionConfigEmergencyContact::where('version_id',
             $versionId)->first() ?? new VersionConfigEmergencyContact();
@@ -180,6 +161,7 @@ class VersionProfileForm extends Form
                     'shirt_size' => $this->shirtSize,
                     'teacher_phone_mobile' => $this->teacherPhoneMobile,
                     'teacher_phone_work' => $this->teacherPhoneWork,
+                    'school_county' => $this->schoolCounty,
                 ]
             );
 
@@ -194,6 +176,28 @@ class VersionProfileForm extends Form
         $service = new CalcSeniorYearService();
 
         $this->seniorClassId = $service->getSeniorYear();
+    }
+
+    private function addParticipant(Version $version): VersionParticipant
+    {
+        return VersionParticipant::create(
+            [
+                'version_id' => $version->id,
+                'user_id' => auth()->id(),
+                'status' => 'participating',
+            ]
+        );
+    }
+
+    private function addVersionManager(Version $version, VersionParticipant $versionParticipant): void
+    {
+        VersionRole::create(
+            [
+                'version_id' => $version->id,
+                'version_participant_id' => $versionParticipant->id,
+                'role' => 'event manager',
+            ]
+        );
     }
 
     private function updateEmergencyContact(int $versionId): void

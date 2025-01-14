@@ -40,4 +40,23 @@
         auditions.
     </li>
 
+    @if($versionSchoolCounty)
+        <li class="mb-2">
+            <div>{{ $schoolName }} is in <b>{{ $schoolCountyName }}</b> county.</div>
+            @if($schoolCountyName === 'Unknown')
+                <div class="text-red-500">
+                    Your school county is not a valid name. Please return to the
+                    <a href="{{ route('schools') }}" class="underline font-semibold">Schools page</a> to edit this
+                    value.
+                </div>
+            @else
+                <div class="text-red-500">
+                    If your school county is incorrect, please return to the
+                    <a href="{{ route('schools') }}" class="underline font-semibold">Schools page</a> to edit this
+                    value.
+                </div>
+            @endif
+        </li>
+    @endif
+
 </ul>

@@ -6,6 +6,8 @@ use App\Livewire\BasePage;
 use App\Models\Events\Versions\Participations\Obligation;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionParticipant;
+use App\Models\Schools\School;
+use App\Models\UserConfig;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
@@ -13,18 +15,25 @@ class ObligationsComponent extends BasePage
 {
     public int $eventId = 0;
     public string $obligationFile = '';
+    public string $schoolName = '';
+    public string $schoolCountyName = '';
     public int $versionId = 0;
+    public int $versionSchoolCounty = 0;
     public string $versionShortName = '';
 
     public function mount(): void
     {
         parent::mount();
 
+        $school = School::find(UserConfig::getValue('schoolId'));
+        $this->schoolName = $school->name;
+        $this->schoolCountyName = $school->county->name;
+
         $this->versionId = $this->dto['id'];
         $version = Version::find($this->versionId);
         $this->eventId = $version->event_id;
         $this->versionShortName = $version->short_name;
-
+        $this->versionSchoolCounty = $version->school_county;
     }
 
     public function render()
