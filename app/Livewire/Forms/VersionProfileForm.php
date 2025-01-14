@@ -5,6 +5,8 @@ namespace App\Livewire\Forms;
 use App\Models\Events\Event;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionConfigEmergencyContact;
+use App\Models\Events\Versions\VersionParticipant;
+use App\Models\Events\Versions\VersionRole;
 use App\Models\UserConfig;
 use App\Services\CalcSeniorYearService;
 use App\Services\ConvertToPenniesService;
@@ -42,7 +44,7 @@ class VersionProfileForm extends Form
 
     public function add(): Version
     {
-        return Version::create(
+        $version = Version::create(
             [
                 'epayment_student' => $this->student,
                 'epayment_teacher' => $this->teacher,
@@ -64,6 +66,34 @@ class VersionProfileForm extends Form
                 'shirt_size' => $this->shirtSize,
                 'teacher_phone_mobile' => $this->teacherPhoneMobile,
                 'teacher_phone_work' => $this->teacherPhoneWork,
+            ]
+        );
+
+        $versionParticipant = $this->addParticipant($version);
+        $this->addVersionManager($version, $versionParticipant);
+        UserConfig::setProperty('versionId', $version->id);
+
+        return $version;
+    }
+
+    private function addParticipant(Version $version): VersionParticipant
+    {
+        return VersionParticipant::create(
+            [
+                'version_id' => $version->id,
+                'user_id' => auth()->id(),
+                'status' => 'participating',
+            ]
+        );
+    }
+
+    private function addVersionManager(Version $version, VersionParticipant $versionParticipant): void
+    {
+        VersionRole::create(
+            [
+                'version_id' => $version->id,
+                'version_participant_id' => $versionParticipant->id,
+                'role' => 'event manager',
             ]
         );
     }
@@ -123,9 +153,7 @@ class VersionProfileForm extends Form
     public function update(int $versionId): Version
     {
         if ($this->sysId === 'new') {
-            dd(__LINE__);
             $version = $this->add();
-
         } else {
 
             $version = Version::find($this->sysId);

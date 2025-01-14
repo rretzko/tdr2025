@@ -168,19 +168,21 @@
             <fieldset id="pitchFiles" class="space-y-0 pb-4 border border-white border-b-gray-300">
                 <label>The following are required to register for audition:</label>
                 <div class="ml-4 space-y-0">
+
                     <x-forms.elements.livewire.inputCheckbox
                         blur="false"
                         label="Teacher must have a cell phone number."
                         name="form.teacherPhoneMobile"
                         livewire="true"
                     />
+
                     <x-forms.elements.livewire.inputCheckbox
                         blur="false"
                         label="Teacher must have a work phone number."
                         name="form.teacherPhoneWork"
                         livewire="true"
                     />
-                    <div>teacherPhoneWork: {{ $form->teacherPhoneWork }}</div>
+
                     <x-forms.elements.livewire.inputCheckbox
                         blur="false"
                         label="Student must have a complete home address."
@@ -194,6 +196,7 @@
                         name="form.height"
                         livewire="true"
                     />
+
                     <x-forms.elements.livewire.inputCheckbox
                         blur="false"
                         label="Student must have a shirt size."
@@ -222,7 +225,6 @@
                         name="form.emergencyContactPhoneMobile"
                         livewire="true"
                     />
-
 
                 </div>
             </fieldset>

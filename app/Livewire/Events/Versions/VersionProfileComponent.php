@@ -56,11 +56,15 @@ class VersionProfileComponent extends BasePageVersion
     {
         $founder = User::find(config('app.founderId'));
         $email = $founder->email;
-        if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            Mail::to($founder)->send(new VersionStatusChangedMail($this->form->statusId));
 
-        } else {
-            Log::error("Invalid email address: $email");
+        //send email for versions which are NOT being created
+        if ($this->form->sysId !== 'new') {
+            if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                Mail::to($founder)->send(new VersionStatusChangedMail($this->form->statusId));
+
+            } else {
+                Log::error("Invalid email address: $email");
+            }
         }
 
     }
