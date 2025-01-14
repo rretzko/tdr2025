@@ -107,6 +107,8 @@ class EventForm extends Form
                 'required_shirt_size' => $this->requiredShirtSize,
             ]
         );
+
+        $this->setEnsembles();
     }
 
     public function updateEventEnsemble(int $id): bool
