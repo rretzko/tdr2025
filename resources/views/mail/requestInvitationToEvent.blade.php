@@ -10,12 +10,16 @@
     </ul>
 
     <div>
-        <a href="{{$verificationUrl}}" class="mx-auto bg-green-500 text-white rounded-full">
+        <a href="{{$verificationUrl}}" class="mx-auto bg-green-500 text-white rounded-full" style="cursor:pointer">
             <button type="button"
                     style="background-color: royalblue; color: white; border-radius: 9999px;  padding: 0.5rem; cursor: pointer;">
                 Please click here to invite {{ $requesterName }} to {{ $versionName }}.
             </button>
         </a>
+    </div>
+
+    <div style="margin-top:1rem;">
+        Note: This button will expire in two days!
     </div>
 
 </div>
