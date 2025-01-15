@@ -182,13 +182,19 @@ scores may contain multiple individuals.';
         $mostRecentVersion = $event->versions()
             ->whereNot('id', $versionId)
             ->first();
-        $mostRecentVca = VersionConfigAdjudication::where('version_id', $mostRecentVersion->id)
-            ->first();
+
+        if ($mostRecentVersion) {
+            $mostRecentVca = VersionConfigAdjudication::where('version_id', $mostRecentVersion->id)
+                ->first();
+        } else {
+            $vca = VersionConfigAdjudication::create(['version_id' => $versionId]);
+            $mostRecentVca = $vca;
+        }
 
         return VersionConfigAdjudication::create(
             [
                 'version_id' => $versionId,
-                'upload_count' => $mostRecentVca->upload_count,
+                'upload_count' => $mostRecentVca->upload_count ?? 0,
                 'upload_types' => $mostRecentVca->upload_types,
                 'judge_per_room_count' => $mostRecentVca->judge_per_room_count,
                 'room_monitor' => $mostRecentVca->room_monitor,

@@ -25,6 +25,7 @@
         }
 
     </style>
+    {{--@dd($summaryTable)--}}
     <table id="candidateStatusTable">
         <thead>
         <tr>
@@ -49,7 +50,7 @@
                     <x-heroicons.pencilSquare/>
                 </div>
             </th>
-            @if(array_key_exists(0, $summaryTable) && count($summaryTable[0]['recordings']))
+            @if(array_key_exists(0, $summaryTable) && in_array($summaryTable[0]['recordings'][0]['uploadType'], ['audio','video']))
                 <th title="recordings">
                     <div class="flex items-center justify-center">
                         <x-heroicons.microphone/>
@@ -122,24 +123,26 @@
                     </div>
 
                 </td>
-                @if(count($row['recordings']))
-                    <td>
-                        <div class="flex flex-row">
-                            @foreach($row['recordings'] AS $recording)
-                                <div
-                                    title="{{ $recording['uploadType'] }} | {{ $recording['uploaded'] ? 'uploaded' : 'not uploaded' }} | {{ $recording['approved'] ? 'approved' : 'not approved' }}"
-                                    @class([
-                                        'mr-1',
-                                        'text-red-500' => ((! $recording['uploaded']) && (! $recording['approved'])),
-                                        'text-yellow-500' => (($recording['uploaded'] && (! $recording['approved'])) || ((! $recording['uploaded']) && $recording['approved'])),
-                                        'text-green-500' => ($recording['uploaded'] && $recording['approved'])
-                                    ])
-                                >
-                                    <x-heroicons.microphone/>
-                                </div>
-                            @endforeach
-                        </div>
-                    </td>
+                @if(array_key_exists(0, $summaryTable) && in_array($summaryTable[0]['recordings'][0]['uploadType'], ['audio','video']))
+                    @if(count($row['recordings']))
+                        <td>
+                            <div class="flex flex-row">
+                                @foreach($row['recordings'] AS $recording)
+                                    <div
+                                        title="{{ $recording['uploadType'] }} | {{ $recording['uploaded'] ? 'uploaded' : 'not uploaded' }} | {{ $recording['approved'] ? 'approved' : 'not approved' }}"
+                                        @class([
+                                            'mr-1',
+                                            'text-red-500' => ((! $recording['uploaded']) && (! $recording['approved'])),
+                                            'text-yellow-500' => (($recording['uploaded'] && (! $recording['approved'])) || ((! $recording['uploaded']) && $recording['approved'])),
+                                            'text-green-500' => ($recording['uploaded'] && $recording['approved'])
+                                        ])
+                                    >
+                                        <x-heroicons.microphone/>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </td>
+                    @endif
                 @endif
             </tr>
         @empty

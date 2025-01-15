@@ -131,7 +131,6 @@ class CandidateStatusService
             return true;
         }
 
-        return true;
         /**
          * @todo implement application download logging for SFdi.
          */

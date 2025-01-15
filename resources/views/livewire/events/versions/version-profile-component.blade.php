@@ -169,6 +169,7 @@
                 <label>The following are required to register for audition:</label>
                 <div class="ml-4 space-y-0">
 
+                    <label class="font-semibold underline">Teacher requirements</label>
                     <x-forms.elements.livewire.inputCheckbox
                         blur="false"
                         label="Teacher must have a cell phone number."
@@ -183,6 +184,7 @@
                         livewire="true"
                     />
 
+                    <label class="font-semibold underline">Student requirements</label>
                     <x-forms.elements.livewire.inputCheckbox
                         blur="false"
                         label="Student must have a complete home address."
@@ -212,6 +214,7 @@
                         livewire="true"
                     />
 
+                    <label class="font-semibold underline">Emergency Contact requirements</label>
                     <x-forms.elements.livewire.inputCheckbox
                         blur="false"
                         label="Emergency Contact must have an email address."
@@ -226,10 +229,51 @@
                         livewire="true"
                     />
 
+                    <label class="font-semibold underline">School requirements</label>
                     <x-forms.elements.livewire.inputCheckbox
                         blur="false"
                         label="School address must include a valid county."
                         name="form.schoolCounty"
+                        livewire="true"
+                    />
+
+                    <label class="font-semibold underline">Supervisor requirements</label>
+                    <x-forms.elements.livewire.inputCheckbox
+                        blur="false"
+                        label="Teacher's supervisor name is required."
+                        name="form.supervisorNameRequired"
+                        livewire="true"
+                    />
+                    <x-forms.elements.livewire.inputCheckbox
+                        blur="false"
+                        label="Teacher's supervisor email is required."
+                        name="form.supervisorEmailRequired"
+                        livewire="true"
+                    />
+                    <x-forms.elements.livewire.inputCheckbox
+                        blur="false"
+                        label="Teacher's supervisor phone is required."
+                        name="form.supervisorPhoneRequired"
+                        livewire="true"
+                    />
+
+                    <label class="font-semibold underline">Supervisor preferences</label>
+                    <x-forms.elements.livewire.inputCheckbox
+                        blur="false"
+                        label="Teacher's supervisor name is preferred but not required."
+                        name="form.supervisorNamePreferred"
+                        livewire="true"
+                    />
+                    <x-forms.elements.livewire.inputCheckbox
+                        blur="false"
+                        label="Teacher's supervisor email is preferred but not required."
+                        name="form.supervisorEmailPreferred"
+                        livewire="true"
+                    />
+                    <x-forms.elements.livewire.inputCheckbox
+                        blur="false"
+                        label="Teacher's supervisor phone is preferred but not required."
+                        name="form.supervisorPhonePreferred"
                         livewire="true"
                     />
 

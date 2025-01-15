@@ -37,6 +37,12 @@ class VersionProfileForm extends Form
     public string $statusId = 'sandbox';
     public bool $student = false;
     public bool $studentHomeAddress = false;
+    public bool $supervisorEmailRequired = false;
+    public bool $supervisorNameRequired = false;
+    public bool $supervisorPhoneRequired = false;
+    public bool $supervisorEmailPreferred = false;
+    public bool $supervisorNamePreferred = false;
+    public bool $supervisorPhonePreferred = false;
     public string $sysId = 'new';
     public bool $teacher = false;
     public bool $teacherPhoneMobile = true;
@@ -68,6 +74,12 @@ class VersionProfileForm extends Form
                 'teacher_phone_mobile' => $this->teacherPhoneMobile,
                 'teacher_phone_work' => $this->teacherPhoneWork,
                 'school_county' => $this->schoolCounty,
+                'supervisor_name_required' => $this->supervisorNameRequired,
+                'supervisor_email_required' => $this->supervisorEmailRequired,
+                'supervisor_phone_required' => $this->supervisorPhoneRequired,
+                'supervisor_name_preferred' => $this->supervisorNamePreferred,
+                'supervisor_email_preferred' => $this->supervisorEmailPreferred,
+                'supervisor_phone_preferred' => $this->supervisorPhonePreferred,
             ]
         );
 
@@ -100,6 +112,12 @@ class VersionProfileForm extends Form
         $this->height = $version->height;
         $this->shirtSize = $version->shirt_size;
         $this->schoolCounty = $version->school_county;
+        $this->supervisorNameRequired = $version->supervisor_name_required;
+        $this->supervisorEmailRequired = $version->supervisor_email_required;
+        $this->supervisorPhoneRequired = $version->supervisor_phone_required;
+        $this->supervisorNamePreferred = $version->supervisor_name_preferred;
+        $this->supervisorEmailPreferred = $version->supervisor_email_preferred;
+        $this->supervisorPhonePreferred = $version->supervisor_phone_preferred;
 
         $this->emergencyContact = VersionConfigEmergencyContact::where('version_id',
             $versionId)->first() ?? new VersionConfigEmergencyContact();
@@ -162,6 +180,12 @@ class VersionProfileForm extends Form
                     'teacher_phone_mobile' => $this->teacherPhoneMobile,
                     'teacher_phone_work' => $this->teacherPhoneWork,
                     'school_county' => $this->schoolCounty,
+                    'supervisor_name_required' => $this->supervisorNameRequired,
+                    'supervisor_email_required' => $this->supervisorEmailRequired,
+                    'supervisor_phone_required' => $this->supervisorPhoneRequired,
+                    'supervisor_name_preferred' => $this->supervisorNamePreferred,
+                    'supervisor_email_preferred' => $this->supervisorEmailPreferred,
+                    'supervisor_phone_preferred' => $this->supervisorPhonePreferred,
                 ]
             );
 

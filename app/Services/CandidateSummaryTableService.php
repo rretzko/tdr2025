@@ -23,17 +23,17 @@ class CandidateSummaryTableService
     private array $uploadTypes = [];
     private Version $version;
 
-    public function __construct(private int $schoolId, private int $versionId)
+    public function __construct(private readonly int $schoolId, private readonly int $versionId)
     {
         $this->coteacherIds = CoTeachersService::getCoTeachersIds();
         $this->version = Version::find($this->versionId);
         $this->hasRecordings = ($this->version->upload_type !== 'none');
 
         $vca = VersionConfigAdjudication::where('version_id', $this->versionId)->first();
-        $this->uploadTypes = explode(',', $vca->upload_types);
+        $this->uploadTypes = $vca ? explode(',', $vca->upload_types) : [];
 
         $vcr = VersionConfigRegistrant::where('version_id', $this->versionId)->first();
-        $this->eApplication = $vcr->eapplication;
+        $this->eApplication = $vcr ? $vcr->eapplication : 0;
 
         $this->init();
     }

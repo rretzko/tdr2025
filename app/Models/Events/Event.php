@@ -6,6 +6,7 @@ use App\Models\Ensembles\Ensemble;
 use App\Models\Events\Versions\Version;
 use App\Models\Students\VoicePart;
 use App\Models\User;
+use App\Services\CalcClassOfFromGradeService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -40,6 +41,18 @@ class Event extends Model
         return $this->hasMany(EventEnsemble::class);
     }
 
+    public function getClassOfsAttribute(): array
+    {
+        $classOfs = [];
+        $grades = array_map('trim', explode(',', $this->grades));
+        $service = new CalcClassOfFromGradeService();
+
+        foreach ($grades as $grade) {
+            $classOfs[] = $service->getClassOf($grade);
+        }
+
+        return $classOfs;
+    }
     /**
      * Return the event version with the most recent senior_class_of value
      * or a new Version object if none found

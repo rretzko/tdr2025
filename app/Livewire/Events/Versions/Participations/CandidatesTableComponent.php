@@ -283,6 +283,12 @@ class CandidatesTableComponent extends BasePage
         ];
     }
 
+    private function getEligibleClassOfs(): array
+    {
+        $event = $this->version->event;
+        return $event->classOfs;
+    }
+
     private function getEnsembleVoiceParts(): array
     {
         $service = new CalcGradeFromClassOfService();
@@ -316,11 +322,11 @@ class CandidatesTableComponent extends BasePage
 
     private function getRows(): \Illuminate\Support\Collection //Builder
     {
-        // $this->troubleShooting($this->versionId, $this->schoolId, $this->search);
-
         $coTeacherIds = CoTeachersService::getCoTeachersIds();
-        $versionSeniorYear = $this->version->senior_class_of;
         $schoolIds = $this->getSchoolIds();
+        $eligibleClassOfs = $this->getEligibleClassOfs();
+
+//        $this->troubleShooting($coTeacherIds, $eligibleClassOfs, $schoolIds);
 
         return DB::table('candidates')
             ->join('students', 'students.id', '=', 'candidates.student_id')
@@ -336,7 +342,7 @@ class CandidatesTableComponent extends BasePage
             ->where('candidates.version_id', $this->versionId)
             ->whereIn('candidates.teacher_id', $coTeacherIds)
             ->whereIn('candidates.school_id', $schoolIds)
-            ->where('students.class_of', '>=', $versionSeniorYear)
+            ->whereIn('students.class_of', $eligibleClassOfs)
             ->whereIn('student_teacher.teacher_id', $coTeacherIds)
             ->whereIn('school_student.school_id', $schoolIds)
             ->where('school_student.active', 1)

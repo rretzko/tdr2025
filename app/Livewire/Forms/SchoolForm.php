@@ -9,7 +9,10 @@ use App\Models\Schools\School;
 use App\Models\Schools\SchoolGrade;
 use App\Models\Schools\SchoolTeacher;
 use App\Models\Schools\Teacher;
+use App\Models\Schools\Teachers\Supervisor;
 use App\Models\Schools\Teachers\TeacherSubject;
+use App\Models\UserConfig;
+use App\Services\FormatPhoneService;
 use App\ValueObjects\SchoolResultsValueObject;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Validate;
@@ -42,6 +45,9 @@ class SchoolForm extends Form
     public SchoolTeacher $schoolTeacher;
     #[Validate('min:1', message: 'At least one subject must be selected.')]
     public array $subjects = [];
+    public string $supervisorEmail = '';
+    public string $supervisorName = '';
+    public string $supervisorPhone = '';
     public string $sysId = 'new';
     public TeacherSubject $teacherSubject;
 
@@ -128,6 +134,8 @@ class SchoolForm extends Form
         if ($emailChanged || is_null($this->schoolTeacher->email_verified_at)) {
             $this->sendVerificationEmailIfNeeded();
         }
+
+        $this->updateSupervisor();
     }
 
     public function updatedCity(): void
@@ -301,6 +309,17 @@ class SchoolForm extends Form
         return in_array($emailDomain, $commercialDomains);
     }
 
+    private function getSupervisorPhone(): string
+    {
+        //early exit
+        if (!strlen($this->supervisorPhone)) {
+            return '';
+        }
+
+        $service = new FormatPhoneService();
+        return $service->getPhoneNumber($this->supervisorPhone);
+    }
+
     private function restoreTrashedRow(School $school): void
     {
         $trashedRowFound = SchoolTeacher::withTrashed()
@@ -333,6 +352,8 @@ class SchoolForm extends Form
         $this->setGradesITeach();
         $this->setGradesTaught();
         $this->setSubjects();
+
+        $this->setSupervisorVars();
     }
 
     private function setGradesITeach(): void
@@ -351,12 +372,47 @@ class SchoolForm extends Form
             ->toArray();
     }
 
+    private function setSupervisorVars(): void
+    {
+        $schoolId = UserConfig::getValue('schoolId');
+        $teacherId = Teacher::where('user_id', auth()->id())->first()->id;
+        $supervisor = Supervisor::query()
+            ->where('school_id', $schoolId)
+            ->where('teacher_id', $teacherId)
+            ->first();
+
+        if ($supervisor) {
+            $this->supervisorName = $supervisor->supervisor_name ?? '';
+            $this->supervisorEmail = $supervisor->supervisor_email ?? '';
+            $this->supervisorPhone = $supervisor->supervisor->phone ?? '';
+        }
+    }
+
     private function updateSchoolTeacherEmail(): void
     {
         $this->schoolTeacher->update(
             [
                 'email' => $this->email,
                 'email_verified_at' => null,
+            ]
+        );
+    }
+
+    private function updateSupervisor(): void
+    {
+        $schoolId = UserConfig::getValue('schoolId');
+        $teacherId = Teacher::where('user_id', auth()->id())->first()->id;
+        $supervisorPhone = $this->getSupervisorPhone();
+
+        Supervisor::updateOrCreate(
+            [
+                'school_id' => $schoolId,
+                'teacher_id' => $teacherId,
+            ],
+            [
+                'supervisor_email' => $this->supervisorEmail,
+                'supervisor_name' => $this->supervisorName,
+                'supervisor_phone' => $supervisorPhone,
             ]
         );
     }

@@ -284,6 +284,11 @@ class Filters extends Form
 
     public function filterCandidatesByClassOfs($query)
     {
+        //early exit
+        if (!$this->candidateGradesSelectedIds) {
+            return $query;
+        }
+
         return $query->whereIn('students.class_of', $this->candidateGradesSelectedIds);
     }
 
@@ -306,6 +311,11 @@ class Filters extends Form
 
     public function filterCandidatesByStatuses($query)
     {
+        //early exit
+        if (!$this->candidateStatusesSelectedIds) {
+            return $query;
+        }
+
         return $query->whereIn('candidates.status', $this->candidateStatusesSelectedIds);
     }
 

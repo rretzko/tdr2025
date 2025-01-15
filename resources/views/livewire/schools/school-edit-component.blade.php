@@ -162,9 +162,40 @@
                 @endif
             </div>
 
-        </div>
+            <hr/>
 
-        {{-- SUBMIT --}}
+            <div>
+                <label>In case of emergency, please provide your supervisor's name, email and best contact
+                    phone.</label>
+                <div class="flex flex-row space-x-2">
+                    <div class="flex flex-col">
+                        <x-forms.elements.livewire.inputTextWide label="supervisor name"
+                                                                 name="form.supervisorName"
+                                                                 type="text"
+                        />
+                    </div>
+
+                    <div class="flex flex-col">
+                        <x-forms.elements.livewire.inputTextWide label="email"
+                                                                 name="form.supervisorEmail"
+                                                                 type="email"
+                        />
+                    </div>
+
+                    <div class="flex flex-col">
+                        <x-forms.elements.livewire.inputTextWide label="phone"
+                                                                 name="form.supervisorPhone"
+                                                                 type="text"
+                        />
+                    </div>
+                </div>
+
+
+            </div>
+
+            <hr/>
+
+            {{-- SUBMIT --}}
         <div class="flex flex-col mt-2 max-w-xs">
             <button type="submit"
                     class="bg-gray-800 text-white px-2 rounded-full disabled:cursor-not-allowed disabled:opacity-50"

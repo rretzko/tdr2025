@@ -52,7 +52,8 @@
 
         {{-- FILTERS and TABLE --}}
         @if($obligationAccepted && $hasTeacherPhoneReqs)
-            <div class="flex flex-row">
+
+        <div class="flex flex-row">
                 @if(count($ensembleVoiceParts))
                     {{-- FILTERS --}}
                     @if($hasFilters && count($filterMethods))
