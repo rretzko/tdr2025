@@ -50,8 +50,34 @@
             @endif
         </div>
 
+        {{-- SUPERVISOR INFO REQUIREMENT/PREFERRED --}}
+        <div
+            @class([
+                "my-1 text-red-500 text-sm w-2/3 mx-auto rounded-lg",
+                'bg-red-100 text-center' => (1 === 1)
+            ])
+        >
+            @if(count($supervisorRequiredInfoTypes))
+                <div>
+                    This event requires your Supervisor {{ implode(' and ', $supervisorRequiredInfoTypes) }}.
+                    Candidate records cannot be managed until this is updated using the
+                    <a href="{{ route('schools') }}" class="font-bold underline">schools page</a> "Edit" button.
+                </div>
+            @endif
+
+            @if(count($supervisorPreferredInfoTypes))
+                <div>
+                    This event requests your Supervisor {{ implode(' and ', $supervisorPreferredInfoTypes) }}
+                    information.
+                    This is updated using the
+                    <a href="{{ route('schools') }}" class="font-bold underline">schools page</a> "Edit" button.
+                </div>
+            @endif
+
+        </div>
+
         {{-- FILTERS and TABLE --}}
-        @if($obligationAccepted && $hasTeacherPhoneReqs)
+        @if($obligationAccepted && $hasTeacherPhoneReqs && $hasSupervisorReqs)
 
         <div class="flex flex-row">
                 @if(count($ensembleVoiceParts))
@@ -93,6 +119,7 @@
                         <div class="w-full ml-2 overflow-y-auto h-screen">
 
                             {{-- EPAYMENT STUDENT --}}
+
                             @include('components.forms.partials.candidates.studentEpaymentOption')
 
                             {{-- FORM --}}

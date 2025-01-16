@@ -12,6 +12,7 @@ use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Participations\Obligation;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionTeacherConfig;
+use App\Models\Schools\Teachers\Supervisor;
 use App\Models\Schools\Teacher;
 use App\Models\Schools\Teachers\Coteacher;
 use App\Models\Students\Student;
@@ -46,6 +47,7 @@ class CandidatesTableComponent extends BasePage
     public string $ePaymentVendor = '';
     public array $ensembleVoiceParts = [];
     public array $eventGrades = [];
+    public bool $hasSupervisorReqs = false;
     public bool $hasTeacherPhoneReqs = false;
     public bool $height = false;
     public array $heights = [];
@@ -59,6 +61,10 @@ class CandidatesTableComponent extends BasePage
     public int $showFormEdit = 0;
     public bool $showRegistrationPath = false;
     public bool $studentHomeAddress = false;
+    public array $supervisorPreferredInfoTypes = [];
+    public array $supervisorRequiredInfoTypes = [];
+    public bool $supervisorInfoRequired = false;
+    public bool $supervisorInfoPreferred = false;
     public bool $teacherEpaymentStudent = false;
     public string $teacherEpaymentStudentLastUpdated = '';
     public array $teachers = [];
@@ -125,6 +131,11 @@ class CandidatesTableComponent extends BasePage
 
         //check for teacher phone requirements
         $this->hasTeacherPhoneReqs = $this->checkTeacherPhoneRequirements();
+
+        //check for supervisor info requirement
+        $this->checkSupervisorInfoRequirement();
+        $this->checkSupervisorInfoPreferred();
+        $this->hasSupervisorReqs = $this->checkSupervisorRequirements();
     }
 
     public function render()
@@ -253,6 +264,122 @@ class CandidatesTableComponent extends BasePage
             $this->showSuccessIndicator = true;
             $this->successMessage = Str::remove('Id', Str::headline($key)).' updated.';
         }
+    }
+
+    /**
+     * Remove rows from $this->supervisorPreferredInfoTypes
+     * if a matching value exists in the database
+     */
+    private function checkCurrentStateOfSupervisorPreferreds(): void
+    {
+        $schoolId = UserConfig::getValue('schoolId');
+        $teacherId = Teacher::where('user_id', auth()->id())->first()->id;
+        $supervisor = Supervisor::where('school_id', $schoolId)->where('teacher_id', $teacherId)->first();
+
+        //early exit because there is no $supervisor to check
+        if (!$supervisor) {
+            return;
+        }
+
+        //if there are rows in $this->supervisorInfoPreferred
+        if ($this->supervisorInfoPreferred) {
+
+            //check each $type to see if any value has been entered
+            foreach ($this->supervisorPreferredInfoTypes as $key => $type) {
+
+                $property = 'supervisor_'.$type;
+
+                //if there is a value, remove that row from the array
+                if (strlen($supervisor->$property)) {
+                    unset($this->supervisorPreferredInfoTypes[$key]);
+                }
+            }
+        }
+    }
+
+    /**
+     * Remove rows from $this->supervisorRequiredInfoTypes
+     * if a matching value exists in the database
+     */
+    private function checkCurrentStateOfSupervisorRequirements(): void
+    {
+        $schoolId = UserConfig::getValue('schoolId');
+        $teacherId = Teacher::where('user_id', auth()->id())->first()->id;
+        $supervisor = Supervisor::where('school_id', $schoolId)->where('teacher_id', $teacherId)->first();
+
+        //early exit because there is no $supervisor to check
+        if (!$supervisor) {
+            return;
+        }
+
+        //if there are rows in $this->supervisorInfoRequired
+        if ($this->supervisorInfoRequired) {
+
+            //check each $type to see if any value has been entered
+            foreach ($this->supervisorRequiredInfoTypes as $key => $type) {
+
+                $property = 'supervisor_'.$type;
+
+                //if there is a value, remove that row from the array
+                if (strlen($supervisor->$property)) {
+                    unset($this->supervisorRequiredInfoTypes[$key]);
+                }
+            }
+        }
+    }
+
+    private function checkSupervisorInfoRequirement()
+    {
+        $requirements = [
+            'name' => $this->version->supervisor_name_required,
+            'email' => $this->version->supervisor_email_required,
+            'phone' => $this->version->supervisor_phone_required,
+        ];
+
+        foreach ($requirements as $type => $isRequired) {
+            if ($isRequired) {
+                $this->supervisorInfoRequired = true;
+                $this->supervisorRequiredInfoTypes[] = $type;
+            }
+        }
+
+        $this->checkCurrentStateOfSupervisorRequirements();
+    }
+
+    private function checkSupervisorInfoPreferred()
+    {
+        $preferences = [
+            'name' => $this->version->supervisor_name_preferred,
+            'email' => $this->version->supervisor_email_preferred,
+            'phone' => $this->version->supervisor_phone_preferred,
+        ];
+
+        foreach ($preferences as $type => $isPreferred) {
+            if ($isPreferred) {
+                $this->supervisorInfoPreferred = true;
+                $this->supervisorPreferredInfoTypes[] = $type;
+            }
+        }
+
+        $this->checkCurrentStateOfSupervisorPreferreds();
+    }
+
+    /**
+     * Return true if the user has completed the required supervisor information
+     * @return bool
+     */
+    private function checkSupervisorRequirements(): bool
+    {
+        //early exit
+        if (!$this->supervisorInfoRequired) {
+            return true;
+        }
+
+        if (!$this->supervisorRequiredInfoTypes) {
+            return true;
+        }
+
+        return false;
     }
 
     private function checkTeacherPhoneRequirements(): bool
