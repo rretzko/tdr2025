@@ -20,6 +20,7 @@ class EnsembleForm extends Form
     #[Validate('required', message: 'A description is required.')]
     public string $description = '';
     public array $ensembleAssets = [];
+    public array $grades = [];
     //#[Validate('required', message: 'The ensemble name is required.')]
     public string $name = '';
     public int $schoolId = 0;
@@ -52,6 +53,8 @@ class EnsembleForm extends Form
         if ($ensemble->assets->isNotEmpty()) {
             $this->ensembleAssets = $ensemble->assets->pluck('id')->toArray();
         }
+
+        $this->grades = explode(',', $ensemble->grades);
     }
 
     public function setSchool(School $school)
@@ -86,6 +89,7 @@ class EnsembleForm extends Form
                 'abbr' => $this->abbr,
                 'description' => $this->description,
                 'active' => $this->active,
+                'grades' => implode(',', $this->grades),
             ]
         );
 
@@ -103,6 +107,7 @@ class EnsembleForm extends Form
     #[NoReturn] private function updateEnsemble(): void
     {
         $ensemble = Ensemble::find($this->sysId);
+        sort($this->grades);
 
         $ensemble->update(
             [
@@ -112,6 +117,7 @@ class EnsembleForm extends Form
                 'abbr' => $this->abbr,
                 'description' => $this->description,
                 'active' => $this->active,
+                'grades' => implode(',', $this->grades),
             ]
         );
 

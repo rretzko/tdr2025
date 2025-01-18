@@ -3,11 +3,13 @@
 namespace App\Livewire\Ensembles\Members;
 
 use App\Models\Ensembles\Ensemble;
+use App\Models\Ensembles\Members\Member;
 use App\Models\Pronoun;
 use App\Models\Students\Student;
 use App\Models\UserConfig;
+use App\Services\CalcClassOfFromGradeService;
+use App\Services\CalcSeniorYearService;
 use Illuminate\Support\Facades\DB;
-use Livewire\Component;
 
 class MemberCreateComponent extends BasePageMember
 {
@@ -21,6 +23,8 @@ class MemberCreateComponent extends BasePageMember
 
             $this->form->schoolId = array_key_first($this->schools);
             $this->form->schoolName = $this->schools[$this->form->schoolId];
+            $service = new CalcSeniorYearService();
+            $this->form->schoolYear = $service->getSeniorYear();
         }
 
         if (count($this->filters->ensembles()) === 1) {
@@ -78,12 +82,17 @@ class MemberCreateComponent extends BasePageMember
             $this->reset('resultsName');
 
         } else {
+            $classOfs = $this->getEnsembleClassOfs();
+            $members = $this->getCurrentMembers();
 
             $names = Student::query()
                 ->join('users', 'users.id', '=', 'students.user_id')
                 ->join('school_student', 'school_student.student_id', '=', 'students.id')
+                ->leftJoin('ensemble_members', 'students.id', '=', 'ensemble_members.student_id')
                 ->where('users.name', 'LIKE', '%'.$this->form->name.'%')
                 ->where('school_student.school_id', $this->form->schoolId)
+                ->whereIn('students.class_of', $classOfs)
+                ->whereNotIn('students.id', $members)
                 ->select(DB::raw("CONCAT(users.name, ' (', students.class_of, ')') as name_with_class"), 'students.id')
                 ->pluck('name_with_class', 'students.id')
                 ->toArray();
@@ -102,20 +111,41 @@ class MemberCreateComponent extends BasePageMember
                 }
 
                 $str .= '</ul>';
+            } else {
+                $str = '<ul><li class="text-red-500">No non-members found like "' . $this->form->name . '".</li></ul>';
             }
         }
 
         $this->resultsName = $str;
     }
 
+    private function getCurrentMembers(): array
+    {
+        return Member::query()
+            ->where('ensemble_id', $this->form->ensembleId)
+            ->where('school_year', $this->form->schoolYear)
+            ->where('school_id', $this->form->schoolId)
+            ->pluck('student_id')
+            ->toArray();
+    }
+
+    private function getEnsembleClassOfs(): array
+    {
+        $ensemble = Ensemble::find($this->form->ensembleId);
+        return $ensemble->classOfsArray($this->form->schoolYear);
+    }
+
     private function getNonmembers(): array
     {
         $schoolId = UserConfig::getValue('schoolId');
+        $ensemble = Ensemble::find($this->form->ensembleId);
+        $classOfs = $ensemble->classOfsArray($this->form->srYear);
 
         return DB::table('school_student')
-            ->join('students', 'students.id', '=', 'school_student.student_id')
-            ->join('users', 'users.id', '=', 'students.user_id')
+            ->join('students', 'school_student.student_id', '=', 'students.id')
+            ->join('users', 'students.user_id', '=', 'users.id')
             ->where('school_id', $schoolId)
+            ->whereIn('students.class_of', $classOfs)
             ->select('school_student.student_id AS studentId',
                 'users.name AS name',
                 DB::raw('CONCAT(users.last_name, ",",users.first_name," ",users.middle_name) AS alphaName')

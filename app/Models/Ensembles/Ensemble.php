@@ -4,6 +4,8 @@ namespace App\Models\Ensembles;
 
 use App\Models\Ensembles\Members\Member;
 use App\Models\Schools\School;
+use App\Services\CalcClassOfFromGradeService;
+use App\Services\CalcSeniorYearService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,6 +23,7 @@ class Ensemble extends Model
         'abbr',
         'description',
         'active',
+        'grades',
     ];
 
     public function assets(): BelongsToMany
@@ -47,5 +50,18 @@ class Ensemble extends Model
             ->where('ensemble_id', $this->id)
             ->whereNot('status', 'active')
             ->count('id');
+    }
+
+    public function classOfsArray(int $srYear): array
+    {
+        $service = new CalcClassOfFromGradeService();
+        $grades = explode(',', $this->grades);
+
+        $classOfs = [];
+        foreach ($grades as $grade) {
+            $classOfs[] = $service->getClassOf($grade);
+        }
+
+        return $classOfs;
     }
 }

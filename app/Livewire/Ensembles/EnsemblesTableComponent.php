@@ -69,7 +69,7 @@ class EnsemblesTableComponent extends BasePageEnsemble
     private function getColumnHeaders(): array
     {
         return [
-            'name/school', 'short name', 'abbr', 'description', 'members', 'active', 'assets',
+            'name/school', 'short name', 'abbr', 'description', 'grades', 'members', 'active', 'assets',
         ];
     }
 

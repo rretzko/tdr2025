@@ -60,23 +60,6 @@
 
                         {{-- CHECKBOX AND INDIVIDUAL SELECTIONS --}}
                         <div class="flex flex-col mb-4 sm:flex-row sm:space-x-4 ">
-                            {{-- CHECKBOX SELECTION --}}
-                            <div class="pr-2 sm:border sm:border-white sm:border-r-gray-200">
-                                <h3 class="font-semibold underline">
-                                    {{ count($nonmembers) }} students found.
-                                </h3>
-                                @forelse($nonmembers AS $key => $nonmember)
-                                    <div class="flex flex-row space-x-2">
-                                        <input type="checkbox" wire:model="newMembers"
-                                               value="{{ $nonmember->studentId }}"/>
-                                        <label for="">
-                                            {{ $nonmember->name }}
-                                        </label>
-                                    </div>
-                                @empty
-                                    <div>No students found.</div>
-                                @endforelse
-                            </div>
 
                             {{-- SINGLE SELECTION --}}
                             <div>
@@ -134,5 +117,6 @@
                 <x-forms.indicators.successIndicator :showSuccessIndicator="$showSuccessIndicator"
                                                      message="{{  $successMessage }}"/>
             </div>
+        </div>
     </form>
 </div>

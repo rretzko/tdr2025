@@ -79,6 +79,9 @@
                                 <td class="border border-gray-200 px-1 text-center">
                                     {{ $row['description'] }}
                                 </td>
+                                <td class="border border-gray-200 px-1 text-center">
+                                    {{ $row['grades'] }}
+                                </td>
                                 <td class="border border-gray-200 px-1 text-center cursor-help text-indigo-500">
                                     <span title="active">{{ $memberCounts[$row['id']]['countActive'] }}</span>
                                     /
