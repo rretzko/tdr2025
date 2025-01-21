@@ -11,7 +11,7 @@
             <div>{{ $version->short_name . ' ' . ucwords($dto['header']) }} ({{ $rows->count() }})</div>
         </div>
 
-        {{-- ENSEMBLE VOICE PARTS CHECK --}}
+        {{-- ENSEMBLE VOICE PARTS GATE --}}
         <div class="my-1 text-red-500 text-sm w-2/3 mx-auto">
             @if(! count($ensembleVoiceParts))
                 Please let your event manager know that candidate records cannot be displayed because
@@ -50,7 +50,7 @@
             @endif
         </div>
 
-        {{-- SUPERVISOR INFO REQUIREMENT/PREFERRED --}}
+        {{-- SUPERVISOR INFO REQUIREMENT/PREFERRED GATE --}}
         <div
             @class([
                 "my-1 text-red-500 text-sm w-2/3 mx-auto rounded-lg",
@@ -119,8 +119,18 @@
                         <div class="w-full ml-2 overflow-y-auto h-screen">
 
                             {{-- EPAYMENT STUDENT --}}
-
                             @include('components.forms.partials.candidates.studentEpaymentOption')
+
+                            {{-- RECORDINGS ONLY PAGE --}}
+                            @if($version->upload_type !== 'none')
+                                <div
+                                    class="border border-white border-t-indigo-500 border-b-indigo-500 bg-indigo-100 text-center">
+                                    <a href="{{ route('candidates.recordings') }}"
+                                       class="text-indigo-900 hover:underline">
+                                        To quickly check uploaded recordings, click here...
+                                    </a>
+                                </div>
+                            @endif
 
                             {{-- FORM --}}
                             <div class="advisory text-center text-gray-500">

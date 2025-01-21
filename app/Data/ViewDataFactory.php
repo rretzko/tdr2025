@@ -311,6 +311,7 @@ class ViewDataFactory extends aViewData
             'adjudication monitor checklist' => 'events.versions.reports.adjudication-monitor-checklist-component',
 
             'candidates' => 'events.versions.participations.candidates-table-component',
+            'candidates recordings' => 'events.versions.participations.candidates-recordings-table-component',
             'candidates table' => 'events.versions.participations.candidates-table-component',
 
             'new school' => 'schools.school-create-component',

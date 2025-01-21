@@ -7,7 +7,8 @@
             @else
                 Incomplete Scores
             @endif Candidates ({{ count($rows) }})</label>
-        <div wire:click="$toggle('showAllButtons')" class="font-semibold text-green-600 cursor-pointer">
+        {{-- Hidden as of 20-Jan-25 due to doubts of its usefullness --}}
+        <div wire:click="$toggle('showAllButtons')" class="font-semibold text-green-600 cursor-pointer hidden">
             @if($showAllButtons)
                 Incomplete...
             @else

@@ -27,6 +27,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Candidates
     Route::get('candidates', \App\Http\Controllers\Events\Versions\Participations\CandidateController::class)
         ->name('candidates');
+    Route::get('candidates/recordings', \App\Http\Controllers\Events\Versions\Participations\CandidateRecordingController::class)
+        ->name('candidates.recordings');
 
     //ENSEMBLES
     Route::get('ensembles', [\App\Http\Controllers\Ensembles\EnsembleController::class, 'index'])
