@@ -40,39 +40,32 @@ class CandidatesRecordingsTableComponent extends BasePage
     {
         $coTeacherIds = CoTeachersService::getCoTeachersIds();
         $schoolIds = $this->getSchoolIds();
-        $eligibleClassOfs = $this->getEligibleClassOfs();
 
-//        $this->troubleShooting($coTeacherIds, $eligibleClassOfs, $schoolIds);
-
+//        $this->troubleShooting($coTeacherIds, $eligibleClassOfs, $schoolIds, $this->versionId);
         return DB::table('candidates')
             ->join('students', 'students.id', '=', 'candidates.student_id')
             ->join('users', 'users.id', '=', 'students.user_id')
-            ->join('teachers', 'teachers.id', '=', 'candidates.teacher_id')
-            ->join('users AS tusers', 'tusers.id', '=', 'teachers.user_id')
             ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
-            ->join('student_teacher', 'student_teacher.student_id', '=', 'students.id')
-            ->join('school_student', 'school_student.student_id', '=', 'students.id')
             ->leftJoin('recordings AS scales', 'candidates.id', '=', 'scales.candidate_id')
             ->leftJoin('recordings AS solo', 'candidates.id', '=', 'solo.candidate_id')
             ->leftJoin('recordings AS quintet', 'candidates.id', '=', 'quintet.candidate_id')
             ->where('candidates.version_id', $this->versionId)
             ->whereIn('candidates.teacher_id', $coTeacherIds)
             ->whereIn('candidates.school_id', $schoolIds)
-            ->whereIn('students.class_of', $eligibleClassOfs)
-            ->whereIn('student_teacher.teacher_id', $coTeacherIds)
-            ->whereIn('school_student.school_id', $schoolIds)
-            ->where('school_student.active', 1)
-            ->where('scales.file_type', 'scales')
-            ->where('solo.file_type', 'solo')
-            ->where('quintet.file_type', 'quintet')
-            ->tap(function ($query) {
-                $this->filters->filterCandidatesByClassOfs($query);
-                $this->filters->filterCandidatesByStatuses($query, $this->search);
+            ->where(function ($query) {
+                $query->where('scales.file_type', 'scales')
+                    ->orWhereNull('scales.file_type');
             })
-            ->select('candidates.id AS candidateId', 'candidates.ref', 'candidates.status',
-                'candidates.program_name', 'candidates.emergency_contact_id',
+            ->where(function ($query) {
+                $query->where('solo.file_type', 'solo')
+                    ->orWhereNull('solo.file_type');
+            })
+            ->where(function ($query) {
+                $query->where('quintet.file_type', 'quintet')
+                    ->orWhereNull('quintet.file_type');
+            })
+            ->select('candidates.id AS candidateId', 'candidates.status',
                 'users.last_name', 'users.first_name', 'users.middle_name', 'users.suffix_name',
-                'students.class_of',
                 'voice_parts.abbr AS voicePart', 'voice_parts.order_by', 'voice_parts.descr AS voicePartDescr',
                 'scales.url AS scalesUrl', 'scales.file_type AS scalesFileType',
                 'solo.url AS soloUrl', 'solo.file_type AS soloFileType',
@@ -96,11 +89,5 @@ class CandidatesRecordingsTableComponent extends BasePage
             ->toArray();
 
         return array_merge($schoolIds, $coTeacherSchoolIds);
-    }
-
-    private function getEligibleClassOfs(): array
-    {
-        $event = $this->version->event;
-        return $event->classOfs;
     }
 }

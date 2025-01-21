@@ -49,53 +49,68 @@
                         <td class="text-center">{{ $loop->iteration }}</td>
                         <td>{{ $row->last_name . ', ' . $row->first_name . ' ' . $row->middle_name }}</td>
                         <td class="text-center">{{ $row->voicePart }}</td>
-                        <td>
-                            <div class="flex flex-col text-white px-1 border border-r-gray-600 rounded-lg bg-gray-800"
-                                 wire:key="{{ $row->scalesUrl }}"
-                            >
-                                <label class="text-center text-xs">{{ $row->scalesFileType }}
-                                    ({{ substr($row->scalesUrl,-3) }})</label>
-                                <audio id="audioPlayer-{{ $row->scalesFileType }}" class="mx-auto" controls
-                                       style="display: block; justify-self: start; margin-bottom: 0.50rem; width: 250px;">
-                                    <source id="audioSource-{{ $row->scalesFileType }}"
-                                            src="https://auditionsuite-production.s3.amazonaws.com/{{ $row->scalesUrl }}"
-                                            type="audio/mpeg"
-                                    >
-                                    " Your browser does not support the audio element. "
-                                </audio>
-                            </div>
+                        <td class="text-center">
+                            @if($row->scalesUrl)
+                                <div
+                                    class="flex flex-col text-white px-1 border border-r-gray-600 rounded-lg bg-gray-800"
+                                    wire:key="{{ $row->scalesUrl }}"
+                                >
+                                    <label class="text-center text-xs">{{ $row->scalesFileType }}
+                                        ({{ substr($row->scalesUrl,-3) }})</label>
+                                    <audio id="audioPlayer-{{ $row->scalesFileType }}" class="mx-auto" controls
+                                           style="display: block; justify-self: start; margin-bottom: 0.50rem; width: 250px;">
+                                        <source id="audioSource-{{ $row->scalesFileType }}"
+                                                src="https://auditionsuite-production.s3.amazonaws.com/{{ $row->scalesUrl }}"
+                                                type="audio/mpeg"
+                                        >
+                                        " Your browser does not support the audio element. "
+                                    </audio>
+                                </div>
+                            @else
+                                Scales file not uploaded.
+                            @endif
                         </td>
-                        <td>
-                            <div class="flex flex-col text-white px-1 border border-r-gray-600 rounded-lg bg-gray-800"
-                                 wire:key="{{ $row->soloUrl }}"
-                            >
-                                <label class="text-center text-xs">{{ $row->soloFileType }}
-                                    ({{ substr($row->soloUrl,-3) }})</label>
-                                <audio id="audioPlayer-{{ $row->soloFileType }}" class="mx-auto" controls
-                                       style="display: block; justify-self: start; margin-bottom: 0.50rem; width: 250px;">
-                                    <source id="audioSource-{{ $row->soloFileType }}"
-                                            src="https://auditionsuite-production.s3.amazonaws.com/{{ $row->soloUrl }}"
-                                            type="audio/mpeg"
-                                    >
-                                    " Your browser does not support the audio element. "
-                                </audio>
-                            </div>
+                        <td class="text-center">
+                            @if($row->soloUrl)
+                                <div
+                                    class="flex flex-col text-white px-1 border border-r-gray-600 rounded-lg bg-gray-800"
+                                    wire:key="{{ $row->soloUrl }}"
+                                >
+                                    <label class="text-center text-xs">{{ $row->soloFileType }}
+                                        ({{ substr($row->soloUrl,-3) }})</label>
+                                    <audio id="audioPlayer-{{ $row->soloFileType }}" class="mx-auto" controls
+                                           style="display: block; justify-self: start; margin-bottom: 0.50rem; width: 250px;">
+                                        <source id="audioSource-{{ $row->soloFileType }}"
+                                                src="https://auditionsuite-production.s3.amazonaws.com/{{ $row->soloUrl }}"
+                                                type="audio/mpeg"
+                                        >
+                                        " Your browser does not support the audio element. "
+                                    </audio>
+                                </div>
+                            @else
+                                Solo file not uploaded.
+                            @endif
                         </td>
-                        <td>
-                            <div class="flex flex-col text-white px-1 border border-r-gray-600 rounded-lg bg-gray-800"
-                                 wire:key="{{ $row->quintetUrl }}"
-                            >
-                                <label class="text-center text-xs">{{ $row->quintetFileType }}
-                                    ({{ substr($row->quintetUrl,-3) }})</label>
-                                <audio id="audioPlayer-{{ $row->quintetFileType }}" class="mx-auto" controls
-                                       style="display: block; justify-self: start; margin-bottom: 0.50rem; width: 250px;">
-                                    <source id="audioSource-{{ $row->quintetFileType }}"
-                                            src="https://auditionsuite-production.s3.amazonaws.com/{{ $row->quintetUrl }}"
-                                            type="audio/mpeg"
-                                    >
-                                    " Your browser does not support the audio element. "
-                                </audio>
-                            </div>
+                        <td class="text-center">
+                            @if($row->quintetUrl)
+                                <div
+                                    class="flex flex-col text-white px-1 border border-r-gray-600 rounded-lg bg-gray-800"
+                                    wire:key="{{ $row->quintetUrl }}"
+                                >
+                                    <label class="text-center text-xs">{{ $row->quintetFileType }}
+                                        ({{ substr($row->quintetUrl,-3) }})</label>
+                                    <audio id="audioPlayer-{{ $row->quintetFileType }}" class="mx-auto" controls
+                                           style="display: block; justify-self: start; margin-bottom: 0.50rem; width: 250px;">
+                                        <source id="audioSource-{{ $row->quintetFileType }}"
+                                                src="https://auditionsuite-production.s3.amazonaws.com/{{ $row->quintetUrl }}"
+                                                type="audio/mpeg"
+                                        >
+                                        " Your browser does not support the audio element. "
+                                    </audio>
+                                </div>
+                            @else
+                                Quintet file not uploaded.
+                            @endif
                         </td>
                     </tr>
                 @empty
