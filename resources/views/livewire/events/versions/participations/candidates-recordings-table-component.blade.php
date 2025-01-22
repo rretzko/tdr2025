@@ -47,7 +47,12 @@
                     @endif
                     <tr>
                         <td class="text-center">{{ $loop->iteration }}</td>
-                        <td>{{ $row->last_name . ', ' . $row->first_name . ' ' . $row->middle_name }}</td>
+                        <td>
+                            <a href="{{ route('candidate', ['candidate' => $row->candidateId])}}"
+                               class="text-blue-500 hover:underline">
+                                {{ $row->last_name . ', ' . $row->first_name . ' ' . $row->middle_name }}
+                            </a>
+                        </td>
                         <td class="text-center">{{ $row->voicePart }}</td>
                         <td class="text-center">
                             @if($row->scalesUrl)

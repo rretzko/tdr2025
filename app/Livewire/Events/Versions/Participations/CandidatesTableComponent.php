@@ -136,6 +136,10 @@ class CandidatesTableComponent extends BasePage
         $this->checkSupervisorInfoRequirement();
         $this->checkSupervisorInfoPreferred();
         $this->hasSupervisorReqs = $this->checkSupervisorRequirements();
+
+        if (array_key_exists('candidateId', $this->dto)) {
+            $this->selectCandidate($this->dto['candidateId']);
+        }
     }
 
     public function render()
@@ -202,7 +206,6 @@ class CandidatesTableComponent extends BasePage
 
         //set audition voicing to grade-specific options matching the selected Candidate's grade
         $this->ensembleVoiceParts = $this->setEnsembleVoiceParts($candidateId);
-
     }
 
     public function updatedAuditionFiles($value, $key): void

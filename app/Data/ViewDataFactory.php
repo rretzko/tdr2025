@@ -2,6 +2,7 @@
 
 namespace App\Data;
 
+use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionParticipant;
 use App\Models\Events\Versions\VersionRole;

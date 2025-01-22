@@ -25,6 +25,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     //Candidates
+    Route::get('candidate/{candidate}', \App\Http\Controllers\Events\Versions\Participations\CandidateController::class)
+        ->name('candidate');
     Route::get('candidates', \App\Http\Controllers\Events\Versions\Participations\CandidateController::class)
         ->name('candidates');
     Route::get('candidates/recordings', \App\Http\Controllers\Events\Versions\Participations\CandidateRecordingController::class)

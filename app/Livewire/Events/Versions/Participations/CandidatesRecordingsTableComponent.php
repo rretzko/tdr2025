@@ -3,16 +3,26 @@
 namespace App\Livewire\Events\Versions\Participations;
 
 use App\Livewire\BasePage;
+use App\Livewire\Forms\CandidateForm;
+use App\Models\Events\Event;
+use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Version;
 use App\Models\Schools\Teacher;
 use App\Models\Schools\Teachers\Coteacher;
+use App\Models\Students\Student;
 use App\Models\UserConfig;
+use App\Services\CalcGradeFromClassOfService;
 use App\Services\CoTeachersService;
+use App\Services\PathToRegistrationService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class CandidatesRecordingsTableComponent extends BasePage
 {
+    public CandidateForm $form;
+    public array $ensembleVoiceParts = [];
+    public Event $event;
+    public string $pathToRegistration = '';
     public int $schoolId = 0;
     public Version $version;
     public int $versionId = 0;
@@ -24,6 +34,7 @@ class CandidatesRecordingsTableComponent extends BasePage
         $this->schoolId = UserConfig::getValue('schoolId');
         $this->version = Version::find($this->dto['versionId']);
         $this->versionId = $this->version->id;
+        $this->event = $this->version->event;
 
         $this->sortCol = 'voice_parts.order_by';
     }
@@ -34,6 +45,17 @@ class CandidatesRecordingsTableComponent extends BasePage
             [
                 'rows' => $this->getRows(),
             ]);
+    }
+
+    public function selectCandidate(int $candidateId): void
+    {
+        $this->form->setCandidate($candidateId);
+
+        //return a <ul></ul> string of registration requirements, completed and pending
+        $this->pathToRegistration = PathToRegistrationService::getPath($candidateId);
+
+        //set audition voicing to grade-specific options matching the selected Candidate's grade
+        $this->ensembleVoiceParts = $this->setEnsembleVoiceParts($candidateId);
     }
 
     private function getRows(): Collection
@@ -89,5 +111,22 @@ class CandidatesRecordingsTableComponent extends BasePage
             ->toArray();
 
         return array_merge($schoolIds, $coTeacherSchoolIds);
+    }
+
+    private function setEnsembleVoiceParts(int $candidateId): array
+    {
+        $candidate = Candidate::find($candidateId);
+        $student = Student::find($candidate->student_id);
+        $classOf = $student->class_of;
+
+        $service = new CalcGradeFromClassOfService();
+        $grade = $service->getGrade($classOf);
+        $voiceParts = [];
+
+        foreach ($this->event->voicePartsByGrade($grade) as $voicePart) {
+            $voiceParts[$voicePart->id] = $voicePart->descr;
+        }
+
+        return $voiceParts;
     }
 }
