@@ -24,6 +24,7 @@ class CandidatesRecordingsTableComponent extends BasePage
     public Event $event;
     public string $pathToRegistration = '';
     public int $schoolId = 0;
+    public bool $showRegistered = false;
     public Version $version;
     public int $versionId = 0;
 
@@ -58,19 +59,34 @@ class CandidatesRecordingsTableComponent extends BasePage
         $this->ensembleVoiceParts = $this->setEnsembleVoiceParts($candidateId);
     }
 
+    public function toggleRows(): void
+    {
+        $this->showRegistered = (!$this->showRegistered);
+    }
+
     private function getRows(): Collection
     {
         $coTeacherIds = CoTeachersService::getCoTeachersIds();
         $schoolIds = $this->getSchoolIds();
 
-//        $this->troubleShooting($coTeacherIds, $eligibleClassOfs, $schoolIds, $this->versionId);
-        return DB::table('candidates')
+//        $this->troubleShooting($coTeacherIds, $schoolIds, $this->versionId);
+
+        $query = DB::table('candidates')
             ->join('students', 'students.id', '=', 'candidates.student_id')
             ->join('users', 'users.id', '=', 'students.user_id')
             ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
-            ->leftJoin('recordings AS scales', 'candidates.id', '=', 'scales.candidate_id')
-            ->leftJoin('recordings AS solo', 'candidates.id', '=', 'solo.candidate_id')
-            ->leftJoin('recordings AS quintet', 'candidates.id', '=', 'quintet.candidate_id')
+            ->leftJoin('recordings AS scales', function ($join) {
+                $join->on('candidates.id', '=', 'scales.candidate_id')
+                    ->where('scales.file_type', '=', 'scales');
+            })
+            ->leftJoin('recordings AS solo', function ($join) {
+                $join->on('candidates.id', '=', 'solo.candidate_id')
+                    ->where('solo.file_type', '=', 'solo');
+            })
+            ->leftJoin('recordings AS quintet', function ($join) {
+                $join->on('candidates.id', '=', 'quintet.candidate_id')
+                    ->where('quintet.file_type', '=', 'quintet');
+            })
             ->where('candidates.version_id', $this->versionId)
             ->whereIn('candidates.teacher_id', $coTeacherIds)
             ->whereIn('candidates.school_id', $schoolIds)
@@ -89,14 +105,19 @@ class CandidatesRecordingsTableComponent extends BasePage
             ->select('candidates.id AS candidateId', 'candidates.status',
                 'users.last_name', 'users.first_name', 'users.middle_name', 'users.suffix_name',
                 'voice_parts.abbr AS voicePart', 'voice_parts.order_by', 'voice_parts.descr AS voicePartDescr',
-                'scales.url AS scalesUrl', 'scales.file_type AS scalesFileType',
-                'solo.url AS soloUrl', 'solo.file_type AS soloFileType',
-                'quintet.url AS quintetUrl', 'quintet.file_type AS quintetFileType',
+                'scales.url AS scalesUrl', 'scales.file_type AS scalesFileType', 'scales.approved AS scalesApproved',
+                'solo.url AS soloUrl', 'solo.file_type AS soloFileType', 'solo.approved AS soloApproved',
+                'quintet.url AS quintetUrl', 'quintet.file_type AS quintetFileType', 'quintet.approved AS quintetApproved',
             )
             ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
             ->orderBy('users.last_name', 'asc') //secondary sort ALWAYS applied
-            ->orderBy('users.first_name', 'asc') //tertiary sort ALWAYS applied
-            ->get();
+            ->orderBy('users.first_name', 'asc'); //tertiary sort ALWAYS applied
+
+        if ($this->showRegistered) {
+            $query->where('candidates.status', 'registered');
+        }
+
+        return $query->get();
     }
 
     private function getSchoolIds(): array

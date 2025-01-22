@@ -11,6 +11,18 @@
             <div>{{ $version->short_name . ' ' . ucwords($dto['header']) }} ({{ $rows->count() }})</div>
         </div>
 
+        {{-- FILTER RESULTS --}}
+        <div class="my-2">
+            <button class="bg-green-300 px-2 text-green-900 rounded-full border border-green-900 shadow-lg text-sm"
+                    wire:click="toggleRows">
+                @if($showRegistered)
+                    Show All candidates
+                @else
+                    Show Registered Candidates only
+                @endif
+            </button>
+        </div>
+
         {{-- RECORDINGS TABLE --}}
         <div id="recordingsTable">
             @php {{ $voiceOrderBy=0; }} @endphp
@@ -70,6 +82,20 @@
                                         >
                                         " Your browser does not support the audio element. "
                                     </audio>
+                                    <label
+                                        @class([
+                                            "text-center text-xs italic pb-1",
+                                            "text-green-500" => strlen($row->scalesApproved),
+                                            "bg-yellow-400 text-black w-fit rounded-full px-2 mx-auto mb-1 " => is_null($row->scalesApproved),
+                                    ])
+                                    >
+                                        @if(strlen($row->scalesApproved))
+                                            Approved: {{ $row->scalesApproved }}
+                                        @else
+                                            Pending...
+                                        @endif
+
+                                    </label>
                                 </div>
                             @else
                                 Scales file not uploaded.
@@ -91,6 +117,20 @@
                                         >
                                         " Your browser does not support the audio element. "
                                     </audio>
+                                    <label
+                                        @class([
+                                            "text-center text-xs italic pb-1",
+                                            "text-green-500" => strlen($row->soloApproved),
+                                            "bg-yellow-400 text-black w-fit rounded-full px-2 mx-auto mb-1 " => is_null($row->soloApproved),
+                                    ])
+                                    >
+                                        @if(strlen($row->soloApproved))
+                                            Approved: {{ $row->soloApproved }}
+                                        @else
+                                            Pending...
+                                        @endif
+
+                                    </label>
                                 </div>
                             @else
                                 Solo file not uploaded.
@@ -112,6 +152,20 @@
                                         >
                                         " Your browser does not support the audio element. "
                                     </audio>
+                                    <label
+                                        @class([
+                                            "text-center text-xs italic pb-1",
+                                            "text-green-500" => strlen($row->quintetApproved),
+                                            "bg-yellow-400 text-black w-fit rounded-full px-2 mx-auto mb-1 " => is_null($row->quintetApproved),
+                                    ])
+                                    >
+                                        @if(strlen($row->quintetApproved))
+                                            Approved: {{ $row->quintetApproved }}
+                                        @else
+                                            Pending...
+                                        @endif
+
+                                    </label>
                                 </div>
                             @else
                                 Quintet file not uploaded.
