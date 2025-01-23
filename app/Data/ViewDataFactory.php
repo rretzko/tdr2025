@@ -347,6 +347,7 @@ class ViewDataFactory extends aViewData
             'members' => 'ensembles.members.members-table-component',
             'member create' => 'ensembles.members.member-create-component',
             'member edit' => 'ensembles.members.member-edit-component',
+            'member mass add' => 'ensembles.members.member-mass-add-component',
 
             'estimate' => 'events.versions.participations.estimate-component',
             'obligations' => 'events.versions.participations.obligations-component',

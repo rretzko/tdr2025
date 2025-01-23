@@ -97,6 +97,12 @@ Breadcrumbs::for('member edit', function (BreadcrumbTrail $trail, int $id) {
     $trail->push('Edit Member', route('members', ['member' => $id]));
 });
 
+// Ensembles.Members.MassAdd
+Breadcrumbs::for('member mass add', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('members');
+    $trail->push('Member Mass Add', route('schoolEnsembleMember.massAdd'));
+});
+
 //Estimate
 Breadcrumbs::for('estimate', function (BreadcrumbTrail $trail, $id) {
     $trail->parent('participation active', $id);

@@ -65,6 +65,29 @@
                         required
                     />
 
+                    {{-- GRADES --}}
+                    <div class="flex flex-col mt-4">
+                        <label for="form.grades" class="w-full md:2-1/2 ">
+                            Members are students in grades:
+                            <div class="flex flex-row space-x-2">
+                                @foreach($gradesITeaches AS $grade)
+                                    <div class="flex flex-row space-x-1 items-center">
+                                        <input
+                                            type="checkbox"
+                                            value="{{ $grade }}"
+                                            class="ml-2 mt-0.5 rounded"
+                                            wire:model.live="form.grades"
+                                            aria-label="grade-{{ $grade }}"
+                                        >
+                                        <label for="form.grades[]" class="">
+                                            {{ $grade }}
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </label>
+                    </div>
+
                     {{-- ACTIVE --}}
                     <x-forms.elements.livewire.inputCheckbox
                         label="active"

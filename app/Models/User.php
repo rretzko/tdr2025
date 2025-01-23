@@ -91,7 +91,7 @@ class User extends Authenticatable
 
     public function isFounder(): bool
     {
-        return $this->email === 'rick@mfrholdings.com';
+        return (($this->email === 'rick@mfrholdings.com') || (auth()->id() === 285)); //285 == Matt Lee
     }
 
     public function isStudent(): bool

@@ -2,7 +2,7 @@
     'selectedTab',
     'tabs' => [],
 ])
-<div>
+<div class="mb-2">
     {{-- SMALL VIEWPORT DROP-DOWN --}}
     <div class="sm:hidden">
         <label for="tabs" class="sr-only">Select a tab</label>
@@ -17,7 +17,7 @@
 
     {{-- LARGE VIEWPORT BUTTONS --}}
     <div class="hidden sm:block ">
-        <div class="border border-gray-200 border-b-transparent shadow-lg">
+        <div class="border border-gray-200 border-b-transparent shadow-lg mb-2">
             <nav class=" flex" aria-label="Tabs">
 
                 @foreach($tabs AS $tab)

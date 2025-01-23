@@ -3,10 +3,16 @@
 
     <x-pageInstructions.instructions instructions="{!! $pageInstructions !!}" firstTimer="{{ $firstTimer }}"/>
 
-    <form wire:submit="save" class="my-4 p-4 border border-gray-200 rounded-lg shadow-lg">
+    <form wire:submit="save" class="my-4 p-2 border border-gray-200 rounded-lg shadow-lg">
 
         <div class="space-y-4">
             <x-forms.styles.genericStyle/>
+
+            <div class="text-right mr-4">
+                <a href="{{ route('schoolEnsembleMember.massAdd') }}" class="text-blue-500 hover:underline">
+                    Mass Add
+                </a>
+            </div>
 
             <div class="flex flex-col ">
 

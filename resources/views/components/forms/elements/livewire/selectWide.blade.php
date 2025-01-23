@@ -9,6 +9,7 @@
     'placeholder' => '',
     'required' => false,
 ])
+
 <div class="flex flex-col">
     <label for="{{ $name }}" class="{{ $required }}">
         {{ ucwords($label) }}
