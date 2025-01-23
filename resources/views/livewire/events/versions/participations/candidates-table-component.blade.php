@@ -124,10 +124,13 @@
                             {{-- RECORDINGS ONLY PAGE --}}
                             @if($version->upload_type !== 'none')
                                 <div
-                                    class="border border-white border-t-indigo-500 border-b-indigo-500 bg-indigo-100 text-center">
+                                    class="flex items-center justify-center">
                                     <a href="{{ route('candidates.recordings') }}"
-                                       class="text-indigo-900 hover:underline">
-                                        To quickly check uploaded recordings, click here...
+                                       class="text-indigo-900">
+                                        <button
+                                            class="border border-indigo-500 bg-indigo-100 text-center rounded-full hover:underline px-4">
+                                            To quickly check uploaded recordings, click here...
+                                        </button>
                                     </a>
                                 </div>
                             @endif
