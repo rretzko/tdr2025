@@ -9,6 +9,8 @@ use App\Models\Students\Student;
 use App\Models\UserConfig;
 use App\Services\CalcClassOfFromGradeService;
 use App\Services\CalcSeniorYearService;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class MemberMassAddComponent extends BasePage
 {
@@ -26,8 +28,14 @@ class MemberMassAddComponent extends BasePage
 
         $this->schoolId = UserConfig::getValue('schoolId');
 
+        //set default value in $form
+        if (!$this->form->schoolId) {
+            $this->form->schoolId = $this->schoolId;
+        }
+
         $this->ensembles = $this->getEnsemblesArray($this->schoolId);
 
+        //set default value in $form
         if (!$this->form->ensembleId) {
             $this->form->ensembleId = array_key_first($this->ensembles);
         }
@@ -39,11 +47,36 @@ class MemberMassAddComponent extends BasePage
             $this->srYear = $srYearService->getSeniorYear();
         }
 
+        //set default value in $form
+        if (!$this->form->schoolYear) {
+            $this->form->schoolYear = $this->srYear;
+        }
+
         $this->ensembleClassOfs = $this->getEnsembleClassOfsArray($this->form->ensembleId, $this->srYear);
 
-        $this->students = $this->getStudentsArray($this->schoolId, $this->ensembleClassOfs);
-
+        $this->students = $this->getStudentsArray($this->schoolId, $this->ensembleClassOfs, $this->srYear);
     }
+
+    public function render()
+    {
+        return view('livewire..ensembles.members.member-mass-add-component');
+    }
+
+    public function save(): void
+    {
+        $this->form->save();
+
+        $this->students = $this->getStudentsArray($this->schoolId, $this->ensembleClassOfs, $this->srYear);
+    }
+
+    public function updatedSrYear(): void
+    {
+        $this->ensembleClassOfs = $this->getEnsembleClassOfsArray($this->form->ensembleId, $this->srYear);
+        $this->students = $this->getStudentsArray($this->schoolId, $this->ensembleClassOfs, $this->srYear);
+        $this->form->schoolYear = $this->srYear;
+    }
+
+    /** END OF PUBLIC FUNCTIONS ******************************************************************/
 
     private function getEnsemblesArray(int $schoolId): array
     {
@@ -65,8 +98,6 @@ class MemberMassAddComponent extends BasePage
             ->toArray();
     }
 
-    /** END OF PUBLIC FUNCTIONS ******************************************************************/
-
     private function getEnsembleClassOfsArray(int $ensembleId, int $srYear): array
     {
         $classOfs = [];
@@ -80,29 +111,25 @@ class MemberMassAddComponent extends BasePage
         return $classOfs;
     }
 
-    private function getStudentsArray(int $schoolId, array $classOfs): array
+    private function getStudentsArray(int $schoolId, array $classOfs, $srYear): array
     {
+        $ensembleMemberStudentIds = Ensemble::find($this->form->ensembleId)
+            ->activeMemberStudentIdsArray($this->srYear);
+
         return Student::query()
             ->join('school_student', 'students.id', '=', 'school_student.student_id')
             ->join('users', 'students.user_id', '=', 'users.id')
             ->where('school_student.school_id', $schoolId)
             ->whereIn('students.class_of', $classOfs)
+            ->whereNotIn('students.id', $ensembleMemberStudentIds)
             ->select('students.id', 'students.class_of',
                 'users.last_name', 'users.first_name', 'users.middle_name')
+            ->selectRaw('? AS srYear', [$srYear])
+            ->selectRaw('(students.class_of - ?) AS delta', [$srYear])
+            ->selectRaw('(12 - (students.class_of - ?)) AS calcGrade', [$srYear])
             ->orderBy('users.last_name')
             ->orderBy('users.first_name')
             ->get()
             ->toArray();
-    }
-
-    public function render()
-    {
-        return view('livewire..ensembles.members.member-mass-add-component');
-    }
-
-    public function updatedSrYear(): void
-    {
-        $this->ensembleClassOfs = $this->getEnsembleClassOfsArray($this->form->ensembleId, $this->srYear);
-        $this->students = $this->getStudentsArray($this->schoolId, $this->ensembleClassOfs);
     }
 }

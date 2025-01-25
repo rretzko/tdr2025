@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 class Ensemble extends Model
 {
@@ -63,5 +64,21 @@ class Ensemble extends Model
         }
 
         return $classOfs;
+    }
+
+    public function activeMembers(int $schoolYear): Collection
+    {
+        return Member::query()
+            ->where('ensemble_id', $this->id)
+            ->where('school_year', $schoolYear)
+            ->where('status', 'active')
+            ->get();
+    }
+
+    public function activeMemberStudentIdsArray($schoolYear): array
+    {
+        return $this->activeMembers($schoolYear)
+            ->pluck('student_id')
+            ->toArray();
     }
 }
