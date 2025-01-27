@@ -72,7 +72,7 @@
                                 {{-- NAME --}}
                                 <x-forms.elements.livewire.inputTextWide
                                     blur=""
-                                    label="member name"
+                                    label="non-member name"
                                     name="form.name"
                                     placeholder="Enter first or last name"
                                     required

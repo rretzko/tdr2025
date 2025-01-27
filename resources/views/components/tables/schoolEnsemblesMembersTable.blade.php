@@ -5,7 +5,7 @@
     'sortAsc',
     'sortColLabel',
 ])
-<div class="relative">
+<div class="relative overflow-x-auto">
 
     <table class="px-4 shadow-lg w-full">
         <thead>
@@ -51,33 +51,67 @@
                 <td class="border border-gray-200 px-1 text-center">
                     {{ $loop->iteration }}
                 </td>
-                <td class="border border-gray-200 px-1">
-                    <div>{{ $row->name }}</div>
+                <td @class([
+    "border border-gray-200 px-1",
+    'text-red-300' => ($row->status === 'removed')
+    ])
+                >
+                    <div>{{ $row->last_name }}, {{ $row->first_name }} {{ $row->middle_name }}</div>
                     <div class="ml-2 text-xs italic">{{ $row->schoolName }}</div>
                 </td>
-                <td class="border border-gray-200 px-1 text-center">
+                <td @class([
+    "border border-gray-200 px-1 text-center",
+    'text-red-300' => ($row->status === 'removed')
+    ])
+                >
                     {{ $row->ensembleName }}
                 </td>
-                <td class="border border-gray-200 px-1 text-center">
+                <td @class([
+    "border border-gray-200 px-1 text-center",
+    'text-red-300' => ($row->status === 'removed')
+    ])
+                >
                     {{ $row->voicePartDescr }}
                 </td>
-                <td class="border border-gray-200 px-1 text-center">
-                    {{ $row->class_of }}
+                <td @class([
+    "border border-gray-200 px-1 text-center",
+    'text-red-300' => ($row->status === 'removed')
+    ])
+                >
+                    {{ $row->calcGrade }}/{{ $row->class_of }}
                 </td>
-                <td class="border border-gray-200 px-1 text-center">
+                <td @class([
+    "border border-gray-200 px-1 text-center",
+    'text-red-300' => ($row->status === 'removed')
+    ])
+                >
                     {{ $row->school_year }}
                 </td>
-                <td class="border border-gray-200 px-1 text-center">
+                <td @class([
+    "border border-gray-200 px-1 text-center",
+    'text-red-300' => ($row->status === 'removed')
+    ])
+                >
                     {{ $row->status }}
                 </td>
-                <td class="border border-gray-200 px-1 text-center">
+                <td @class([
+    "border border-gray-200 px-1 text-center",
+    'text-red-300' => ($row->status === 'removed')
+    ])
+                >
                     {{ $row->office }}
                 </td>
                 <td class="text-center border border-gray-200">
-                    <x-buttons.edit id="{{ $row->id }}" route="schoolEnsembleMember.edit"/>
+                    @if($row->status === 'removed')
+                        <x-buttons.restore id="{{ $row->id }}" livewire="true"/>
+                    @else
+                        <x-buttons.edit id="{{ $row->id }}" route="schoolEnsembleMember.edit"/>
+                    @endif
                 </td>
                 <td class="text-center border border-gray-200">
-                    <x-buttons.remove id="{{ $row->id }}" livewire="1"/>
+                    @if($row->status !== 'removed')
+                        <x-buttons.remove id="{{ $row->id }}" livewire="1"/>
+                    @endif
                 </td>
             </tr>
         @empty

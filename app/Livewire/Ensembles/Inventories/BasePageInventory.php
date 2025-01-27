@@ -5,6 +5,7 @@ namespace App\Livewire\Ensembles\Inventories;
 use App\Livewire\BasePage;
 use App\Livewire\Forms\InventoryForm;
 use App\Models\Ensembles\Asset;
+use App\Models\Ensembles\AssetEnsemble;
 
 
 class BasePageInventory extends BasePage
@@ -27,12 +28,19 @@ class BasePageInventory extends BasePage
         $this->form->userId = auth()->id();
 
         $this->form->creator = auth()->user()->name;
+    }
 
-        $this->assets = Asset::query()
-            ->whereNull('user_id')
-            ->orWhere('user_id', auth()->id())
-            ->orderBy('name')
-            ->pluck('name', 'id')
+    public function getAssests(): array
+    {
+        if (!$this->form->ensembleId) {
+            return [];
+        }
+
+        return AssetEnsemble::query()
+            ->join('assets', 'asset_ensemble.asset_id', '=', 'assets.id')
+            ->where('asset_ensemble.ensemble_id', $this->form->ensembleId)
+            ->orderBy('assets.name')
+            ->pluck('assets.name', 'assets.id')
             ->toArray();
     }
 }

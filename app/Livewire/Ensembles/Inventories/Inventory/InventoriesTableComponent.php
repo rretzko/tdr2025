@@ -1,12 +1,15 @@
 <?php
 
-namespace App\Livewire\Ensembles\Inventories;
+namespace App\Livewire\Ensembles\Inventories\Inventory;
 
 use App\Livewire\Ensembles\Inventories\BasePageInventory;
+use App\Models\Ensembles\Ensemble;
+use App\Models\UserConfig;
 use Illuminate\Support\Facades\DB;
 
 class InventoriesTableComponent extends BasePageInventory
 {
+    public array $ensembles = [];
     public string $selectedTab = 'inventory';
     public array $tabs = self::ENSEMBLETABS;
     public string $sortColLabel = 'asset';
@@ -14,11 +17,13 @@ class InventoriesTableComponent extends BasePageInventory
     public function mount(): void
     {
         parent::mount();
+
+        $this->ensembles = $this->getEnsembles();
     }
 
     public function render()
     {
-        return view('livewire..ensembles.inventories.inventories-table-component',
+        return view('livewire..ensembles.inventories._inventories-table-component',
             [
                 'columnHeaders' => $this->getColumnHeaders(),
                 'rows' => $this->getInventories(),
@@ -30,7 +35,9 @@ class InventoriesTableComponent extends BasePageInventory
     {
         return [
             ['label' => '###', 'sortBy' => ''],
+            ['label' => 'ensemble', 'sortBy' => 'ensemble'],
             ['label' => 'asset', 'sortBy' => 'asset'],
+            ['label' => 'id', 'sortBy' => ''],
             ['label' => 'size', 'sortBy' => 'size'],
             ['label' => 'color(s)', 'sortBy' => ''],
             ['label' => 'comments', 'sortBy' => ''],
@@ -38,12 +45,26 @@ class InventoriesTableComponent extends BasePageInventory
         ];
     }
 
+    private function getEnsembles(): array
+    {
+        $schoolId = UserConfig::getValue('schoolId');
+
+        return Ensemble::query()
+            ->where('school_id', $schoolId)
+            ->orderBy('name')
+            ->pluck('name', 'id')
+            ->toArray();
+    }
+
     private function getInventories(): array
     {
         return DB::table('inventories')
             ->join('assets', 'assets.id', '=', 'inventories.asset_id')
-            ->select('inventories.id', 'inventories.item_id', 'inventories.size', 'inventories.color',
+            ->join('ensembles', 'inventories.ensemble_id', '=', 'ensembles.id')
+            ->select('inventories.id', 'inventories.ensemble_id', 'inventories.item_id',
+                'inventories.size', 'inventories.color',
                 'inventories.comments', 'inventories.status',
+                'ensembles.name AS ensembleName', 'ensembles.short_name', 'ensembles.abbr',
                 'assets.name')
             ->get()
             ->toArray();

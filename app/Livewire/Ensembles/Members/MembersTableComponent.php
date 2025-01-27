@@ -3,7 +3,9 @@
 namespace App\Livewire\Ensembles\Members;
 
 use App\Exports\SchoolEnsembleMembersExport;
+use App\Models\Ensembles\Members\Member;
 use App\Models\UserSort;
+use App\Services\CalcSeniorYearService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -45,6 +47,20 @@ class MembersTableComponent extends BasePageMember
     public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
     {
         return Excel::download(new SchoolEnsembleMembersExport, 'members.csv');
+    }
+
+    public function remove(int $memberId): void
+    {
+        $ensembleMember = Member::find($memberId);
+        $ensembleMember->update(['status' => 'removed']);
+        $ensembleMember->delete();
+    }
+
+    public function restore(int $memberId): void
+    {
+        $member = Member::withTrashed()->where('id', $memberId)->first();
+        $member->restore();
+        $member->update(['status' => 'active']);
     }
 
     public function sortBy(string $key): void
@@ -90,7 +106,7 @@ class MembersTableComponent extends BasePageMember
             ['label' => 'ensemble', 'sortBy' => 'ensemble'],
             ['label' => 'voice part', 'sortBy' => 'voicePart'],
             ['label' => 'grade', 'sortBy' => 'classOf'],
-            ['label' => 'year', 'sortBy' => 'schoolYear'],
+            ['label' => 'ensemble year', 'sortBy' => 'schoolYear'],
             ['label' => 'status', 'sortBy' => 'status'],
             ['label' => 'office', 'sortBy' => 'office'],
         ];
@@ -100,7 +116,8 @@ class MembersTableComponent extends BasePageMember
     {
         $schoolIds = auth()->user()->teacher->schools->pluck('id')->toArray();
 
-        //$this->logSql($schoolIds);
+        $service = new CalcSeniorYearService();
+        $srYear = $service->getSeniorYear();
 
         return DB::table('ensemble_members')
             ->join('students', 'ensemble_members.student_id', '=', 'students.id')
@@ -116,10 +133,17 @@ class MembersTableComponent extends BasePageMember
                 $this->filters->filterMembersByEnsemble($query);
                 $this->filters->filterMembersBySchoolYear($query);
             })
-            ->select('users.name', 'schools.name AS schoolName', 'ensembles.name AS ensembleName',
+            ->select('users.name', 'users.first_name', 'users.middle_name', 'users.last_name',
+                'schools.name AS schoolName', 'ensembles.name AS ensembleName',
                 'voice_parts.descr AS voicePartDescr', 'students.class_of',
                 'ensemble_members.school_year', 'ensemble_members.status', 'ensemble_members.office',
                 'ensemble_members.id')
+            ->selectRaw("
+                CASE
+                    WHEN ? > students.class_of THEN 'alum'
+                    ELSE (12 - (students.class_of - ?))
+                END AS calcGrade", [$srYear, $srYear]
+            )
             ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
             ->get()
             ->toArray();

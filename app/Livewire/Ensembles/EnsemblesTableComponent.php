@@ -113,12 +113,12 @@ class EnsemblesTableComponent extends BasePageEnsemble
             foreach ($schoolEnsembles as $ensemble) {
 
                 $schoolEnsemble = Ensemble::find($ensemble['id']);
-                $activeMemberCount = $schoolEnsemble->countActiveMembers();
-                $nonActiveMemberCount = $schoolEnsemble->countNonActiveMembers();
+                $currentMemberCount = $schoolEnsemble->countCurrentMembers();
+                $lifetimeMemberCount = $schoolEnsemble->countLifetimeMembers();
 
                 $a[$ensemble['id']] = [
-                    'countActive' => $activeMemberCount,
-                    'countNonActive' => $nonActiveMemberCount,
+                    'countCurrent' => $currentMemberCount,
+                    'countLifetime' => $lifetimeMemberCount,
                 ];
             }
         }

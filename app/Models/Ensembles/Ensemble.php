@@ -37,20 +37,23 @@ class Ensemble extends Model
         return $this->belongsTo(School::class);
     }
 
-    public function countActiveMembers(): int
+    public function countCurrentMembers(): int
     {
+        $service = new CalcSeniorYearService();
+
         return Member::query()
             ->where('ensemble_id', $this->id)
             ->where('status', 'active')
+            ->where('school_year', $service->getSeniorYear())
             ->count('id');
     }
 
-    public function countNonActiveMembers(): int
+    public function countLifetimeMembers(): int
     {
         return Member::query()
             ->where('ensemble_id', $this->id)
-            ->whereNot('status', 'active')
-            ->count('id');
+            ->distinct('student_id')
+            ->count('student_id');
     }
 
     public function classOfsArray(int $srYear): array
@@ -78,6 +81,16 @@ class Ensemble extends Model
     public function activeMemberStudentIdsArray($schoolYear): array
     {
         return $this->activeMembers($schoolYear)
+            ->pluck('student_id')
+            ->toArray();
+    }
+
+    public function allStatusStudentIdsArray($schoolYear): array
+    {
+        return Member::query()
+            ->withTrashed()
+            ->where('ensemble_id', $this->id)
+            ->where('school_year', $schoolYear)
             ->pluck('student_id')
             ->toArray();
     }

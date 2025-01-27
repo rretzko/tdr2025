@@ -83,9 +83,10 @@
                                     {{ $row['grades'] }}
                                 </td>
                                 <td class="border border-gray-200 px-1 text-center cursor-help text-indigo-500">
-                                    <span title="active">{{ $memberCounts[$row['id']]['countActive'] }}</span>
+                                    <span title="current active">{{ $memberCounts[$row['id']]['countCurrent'] }}</span>
                                     /
-                                    <span title="nonActive">{{ $memberCounts[$row['id']]['countNonActive'] }}</span>
+                                    <span
+                                        title="lifetime any status">{{ $memberCounts[$row['id']]['countLifetime'] }}</span>
                                 </td>
                                 <td class="border border-gray-200 px-1 text-center">
                                     {{ $row['active'] ? 'Y' : 'N' }}

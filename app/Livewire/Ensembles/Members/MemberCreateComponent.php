@@ -9,6 +9,7 @@ use App\Models\Students\Student;
 use App\Models\UserConfig;
 use App\Services\CalcClassOfFromGradeService;
 use App\Services\CalcSeniorYearService;
+use App\Services\EnsembleNonMemberService;
 use Illuminate\Support\Facades\DB;
 
 class MemberCreateComponent extends BasePageMember
@@ -82,20 +83,13 @@ class MemberCreateComponent extends BasePageMember
             $this->reset('resultsName');
 
         } else {
-            $classOfs = $this->getEnsembleClassOfs();
-            $members = $this->getCurrentMembers();
 
-            $names = Student::query()
-                ->join('users', 'users.id', '=', 'students.user_id')
-                ->join('school_student', 'school_student.student_id', '=', 'students.id')
-                ->leftJoin('ensemble_members', 'students.id', '=', 'ensemble_members.student_id')
-                ->where('users.name', 'LIKE', '%'.$this->form->name.'%')
-                ->where('school_student.school_id', $this->form->schoolId)
-                ->whereIn('students.class_of', $classOfs)
-                ->whereNotIn('students.id', $members)
-                ->select(DB::raw("CONCAT(users.name, ' (', students.class_of, ')') as name_with_class"), 'students.id')
-                ->pluck('name_with_class', 'students.id')
-                ->toArray();
+            $service = new EnsembleNonMemberService(
+                Ensemble::find($this->form->ensembleId),
+                $this->form->schoolId,
+                $this->form->schoolYear
+            );
+            $names = $service->getNamesArray($this->form->name);
 
             if ($names) {
 
@@ -138,6 +132,12 @@ class MemberCreateComponent extends BasePageMember
     private function getNonmembers(): array
     {
         $schoolId = UserConfig::getValue('schoolId');
+
+        //early exit
+        if (!$this->form->ensembleId) {
+            return [];
+        }
+
         $ensemble = Ensemble::find($this->form->ensembleId);
         $classOfs = $ensemble->classOfsArray($this->form->srYear);
 

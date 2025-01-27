@@ -5,7 +5,7 @@
     'sortAsc',
     'sortColLabel',
 ])
-<div class="relative">
+<div class="relative overflow-x-auto">
 
     <table class="px-4 shadow-lg w-full">
         <thead>
@@ -50,6 +50,9 @@
             >
                 <td class="border border-gray-200 px-1 text-center">
                     {{ $loop->iteration }}
+                </td>
+                <td class="border border-gray-200 px-1 text-center cursor-help" title="{{ $row->ensembleName }}">
+                    {{ $row->abbr }}
                 </td>
                 <td class="border border-gray-200 px-1">
                     {{ $row->name }}

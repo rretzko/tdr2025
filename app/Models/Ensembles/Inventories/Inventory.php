@@ -14,6 +14,7 @@ class Inventory extends Model
         'assigned_to',
         'color',
         'comments',
+        'ensemble_id',
         'item_id',
         'size',
         'status',

@@ -10,18 +10,25 @@
 
             <div class="flex flex-col ">
 
-                {{-- SCHOOL ENSEMBLE MEMBER FIELDS --}}
-                <div id="schoolEnsembleMemberDefinition">
+                {{-- SCHOOL ENSEMBLE INVENTORY FIELDS --}}
+                <div id="schoolEnsembleInventoryDefinition">
 
                     {{-- SYS ID --}}
                     <x-forms.elements.livewire.labeledInfoOnly label="Sys.Id" wireModel="form.sysId"/>
 
+                    {{-- ENSEMBLE --}}
+                    <x-forms.elements.livewire.selectWide
+                        :autofocus=true
+                        label="ensemble"
+                        name="form.ensembleId"
+                        :options="$ensembles"
+                        required="required"
+                    />
+
                     {{-- ASSETS --}}
                     <x-forms.elements.livewire.selectWide
-                        autofocus="true"
                         label="asset"
                         name="form.assetId"
-                        option0
                         :options="$assets"
                         required="required"
                     />
@@ -61,7 +68,7 @@
                     <x-forms.elements.livewire.inputTextWide
                         hint='Add any helpful comments...'
                         label='comments'
-                        name='comments'
+                        name='form.comments'
                     />
 
                     {{-- CREATOR --}}
@@ -75,10 +82,10 @@
 
             <div class="flex flex-row space-x-2">
                 {{-- SUBMIT AND RETURN TO TABLE VIEW--}}
-                <x-buttons.submit/>
+                <x-buttons.submit value="save"/>
 
                 {{-- SUBMIT AND STAY --}}
-                <x-buttons.submitAndStay/>
+                <x-buttons.submitAndStay value="save and add another"/>
 
             </div>
 
@@ -87,5 +94,8 @@
                                                  message="{{  $successMessage }}"/>
         </div>
     </form>
+    <div>
+        {{ $successMessage }}
+    </div>
 </div>
 

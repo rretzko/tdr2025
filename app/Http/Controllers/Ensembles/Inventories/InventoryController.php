@@ -33,7 +33,11 @@ class InventoryController extends Controller
 
         $dto = $data->getDto();
 
-        return view($dto['pageName'], compact('dto'));
+        $id = $inventory->id;
+
+        $dto['inventoryId'] = $id;
+
+        return view($dto['pageName'], compact('dto', 'id'));
     }
 
 }

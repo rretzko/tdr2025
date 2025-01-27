@@ -74,9 +74,21 @@ Breadcrumbs::for('inventories', function (BreadcrumbTrail $trail) {
 });
 
 // Ensembles.Inventory.Create
-Breadcrumbs::for('inventory create', function (BreadcrumbTrail $trail) {
-    $trail->parent('inventories');
-    $trail->push('Add Inventory', route('inventories'));
+Breadcrumbs::for('inventory new', function (BreadcrumbTrail $trail) {
+    $trail->parent('inventory');
+    $trail->push('Add Inventory', route('inventory.create'));
+});
+
+// Ensembles.Inventory.Edit
+Breadcrumbs::for('inventory edit', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('inventory');
+    $trail->push('Edit Inventory', route('inventory.edit', ['inventory' => $id]));
+});
+
+// Ensembles.Inventory
+Breadcrumbs::for('inventory', function (BreadcrumbTrail $trail) {
+    $trail->parent('ensembles');
+    $trail->push('Inventory', route('ensembles.inventory'));
 });
 
 // Ensembles.Members

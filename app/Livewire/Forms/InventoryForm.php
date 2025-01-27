@@ -21,6 +21,8 @@ class InventoryForm extends Form
     public string $color = '';
     //#[Validate('nullable', 'string')]
     public string $comments = '';
+    #[Validate('min:1', message: 'An ensemble must be selected.')]
+    public int $ensembleId = 0;
     // #[Validate('required', 'string')]
     public string $itemId = '';
     // #[Validate('nullable', 'string')]
@@ -69,6 +71,20 @@ class InventoryForm extends Form
         }
     }
 
+    public function setInventoryItem(int $inventoryId)
+    {
+        $inventory = Inventory::find($inventoryId);
+
+        $this->sysId = $inventory->id;
+        $this->assetId = $inventory->asset_id;
+        $this->ensembleId = $inventory->ensemble_id;
+        $this->itemId = $inventory->item_id;
+        $this->size = $inventory->size;
+        $this->color = $inventory->color;
+        $this->status = $inventory->status;
+        $this->comments = $inventory->comments;
+    }
+
     public function setSchool(School $school)
     {
         $this->schoolId = $school->id;
@@ -97,12 +113,14 @@ class InventoryForm extends Form
         $inventory = Inventory::create(
             [
                 'asset_id' => $this->assetId,
-                'item_id' => $this->itemId,
-                'size' => $this->size,
                 'color' => $this->color,
                 'comments' => $this->comments,
+                'ensemble_id' => $this->ensembleId,
+                'item_id' => $this->itemId,
+                'size' => $this->size,
                 'status' => $this->status,
                 'user_id' => $this->userId,
+                'updated_by' => auth()->id(),
             ]
         );
 
@@ -123,6 +141,7 @@ class InventoryForm extends Form
                 'comments' => $this->comments,
                 'status' => $this->status,
                 'user_id' => $this->userId,
+                'updated_by' => auth()->id(),
             ]
         );
     }

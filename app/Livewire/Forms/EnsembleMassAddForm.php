@@ -19,7 +19,11 @@ class EnsembleMassAddForm extends Form
         foreach ($this->newMembers as $studentId) {
 
             $student = Student::find($studentId);
-            Member::updateOrCreate(
+
+            //if deleted, restore deleted member
+            $this->restoreDeletedMember($student);
+
+            $member = Member::updateOrCreate(
                 [
                     'school_id' => $this->schoolId,
                     'ensemble_id' => $this->ensembleId,
@@ -32,9 +36,24 @@ class EnsembleMassAddForm extends Form
                     'status' => 'active',
                 ]
             );
+
         }
 
         //reset array
         $this->newMembers = [];
+    }
+
+    private function restoreDeletedMember(Student $student)
+    {
+        $member = Member::query()
+            ->where('student_id', $student->id)
+            ->where('ensemble_id', $this->ensembleId)
+            ->where('school_year', $this->schoolYear)
+            ->withTrashed()
+            ->first();
+
+        if ($member->trashed()) {
+            $member->restore();
+        }
     }
 }
