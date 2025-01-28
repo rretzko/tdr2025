@@ -58,71 +58,71 @@
 
                         @if($form->ensembleId) {{-- ensure an ensemble is selected --}}
 
-                            {{-- SCHOOL YEAR --}}
-                            <x-forms.elements.livewire.inputTextNarrow
-                                label="School Year"
-                                name="form.schoolYear"
-                                required
-                                hint="Enter the school year for this member (ex. 2025 = school year: 2024-25)."
-                            />
+                        {{-- SCHOOL YEAR --}}
+                        <x-forms.elements.livewire.inputTextNarrow
+                            label="School Year"
+                            name="form.schoolYear"
+                            required
+                            hint="Enter the school year for this member (ex. 2025 = school year: 2024-25)."
+                        />
 
-                            {{-- CHECKBOX AND INDIVIDUAL SELECTIONS --}}
-                            <div class="flex flex-col mb-4 sm:flex-row sm:space-x-4 ">
+                        {{-- CHECKBOX AND INDIVIDUAL SELECTIONS --}}
+                        <div class="flex flex-col mb-4 sm:flex-row sm:space-x-4 ">
 
-                                {{-- SINGLE SELECTION --}}
-                                <div>
-                                    {{-- NAME --}}
-                                    <x-forms.elements.livewire.inputTextWide
-                                        blur=""
-                                        label="non-member name"
-                                        name="form.name"
-                                        placeholder="Enter first or last name"
-                                        required
-                                        :results="$resultsName"
+                            {{-- SINGLE SELECTION --}}
+                            <div>
+                                {{-- NAME --}}
+                                <x-forms.elements.livewire.inputTextWide
+                                    blur=""
+                                    label="non-member name"
+                                    name="form.name"
+                                    placeholder="Enter first or last name"
+                                    required
+                                    :results="$resultsName"
+                                />
+
+                                @if($nonMemberFound)
+
+                                    {{-- VOICE PARTS --}}
+                                    <x-forms.elements.livewire.selectWide
+                                        label="voice part"
+                                        name="form.voicePartId"
+                                        :options="$voiceParts"
+                                        required="required"
                                     />
 
-                                    @if($nonMemberFound)
+                                    {{-- OFFICES --}}
+                                    <x-forms.elements.livewire.selectWide
+                                        label="office"
+                                        name="form.office"
+                                        :options="$offices"
+                                        required="required"
+                                    />
 
-                                        {{-- VOICE PARTS --}}
-                                        <x-forms.elements.livewire.selectWide
-                                            label="voice part"
-                                            name="form.voicePartId"
-                                            :options="$voiceParts"
-                                            required="required"
-                                        />
+                                    {{-- STATUS --}}
+                                    <x-forms.elements.livewire.selectWide
+                                        label="status"
+                                        name="form.status"
+                                        :options="$statuses"
+                                        required="required"
+                                    />
 
-                                        {{-- OFFICES --}}
-                                        <x-forms.elements.livewire.selectWide
-                                            label="office"
-                                            name="form.office"
-                                            :options="$offices"
-                                            required="required"
-                                        />
-
-                                        {{-- STATUS --}}
-                                        <x-forms.elements.livewire.selectWide
-                                            label="status"
-                                            name="form.status"
-                                            :options="$statuses"
-                                            required="required"
-                                        />
-
-                                    @endif
-
-                                </div>
+                                @endif
 
                             </div>
 
-                            @if($nonMemberFound)
-                                <div class="flex flex-row space-x-2">
-                                    {{-- SUBMIT AND RETURN TO TABLE VIEW--}}
-                                    <x-buttons.submit value="save"/>
+                        </div>
 
-                                    {{-- SUBMIT AND STAY --}}
-                                    <x-buttons.submitAndStay value="save and add another"/>
+                        @if($nonMemberFound)
+                            <div class="flex flex-row space-x-2">
+                                {{-- SUBMIT AND RETURN TO TABLE VIEW--}}
+                                <x-buttons.submit value="save"/>
 
-                                </div>
-                            @endif
+                                {{-- SUBMIT AND STAY --}}
+                                <x-buttons.submitAndStay value="save and add another"/>
+
+                            </div>
+                        @endif
 
                         @endif {{-- end of if($form->ensembleId) --}}
 

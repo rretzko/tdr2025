@@ -8,6 +8,12 @@
         <div class="space-y-4">
             <x-forms.styles.genericStyle/>
 
+            <div class="text-right mr-4">
+                <a href="{{ route('inventory.massAdd') }}" class="text-blue-500 hover:underline">
+                    Mass Add
+                </a>
+            </div>
+
             <div class="flex flex-col ">
 
                 {{-- SCHOOL ENSEMBLE INVENTORY FIELDS --}}
@@ -18,7 +24,7 @@
 
                     {{-- ENSEMBLE --}}
                     <x-forms.elements.livewire.selectWide
-                        :autofocus=true
+                        :autofocus="true"
                         label="ensemble"
                         name="form.ensembleId"
                         :options="$ensembles"
