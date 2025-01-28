@@ -37,4 +37,5 @@
     @error($name)
     <x-input-error messages="{{ $message }}" aria-live="polite"/> @enderror
     <div class="mt-2 text-sm text-blue-600">{!! $advisory !!}</div>
+
 </div>

@@ -21,6 +21,7 @@ class SchoolEnsembleMemberForm extends Form
     public int $classOf = 1960;
     public int $classOfGrade;
     public Ensemble $ensemble;
+    #[Validate('required|int')]
     public int $ensembleId = 0;
     public string $ensembleName = '';
     public int $grade;

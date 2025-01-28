@@ -26,8 +26,12 @@
 
             {{-- STUDENTS --}}
             <div class="flex flex-row justify-between mr-4">
-                <label class="font-semibold underline">Eligible Students ({{ count($students) }}
-                    ) {{ $this->srYear }}</label>
+                <label class="font-semibold underline">
+                    {{ $form->ensembleName }}
+                    {{ $this->srYear }}
+                    Eligible Students
+                    ({{ count($students) }})
+                </label>
                 <div>
                     <button type="button" wire:click="save()" class="bg-green-600 text-white px-2 rounded-lg shadow-lg">
                         Save New Members

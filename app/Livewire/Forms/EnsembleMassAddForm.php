@@ -10,6 +10,7 @@ use Livewire\Form;
 class EnsembleMassAddForm extends Form
 {
     public int $ensembleId = 0;
+    public string $ensembleName = '';
     public array $newMembers = [];
     public int $schoolId = 0;
     public int $schoolYear = 0;
@@ -43,7 +44,7 @@ class EnsembleMassAddForm extends Form
         $this->newMembers = [];
     }
 
-    private function restoreDeletedMember(Student $student)
+    private function restoreDeletedMember(Student $student): void
     {
         $member = Member::query()
             ->where('student_id', $student->id)
@@ -52,7 +53,7 @@ class EnsembleMassAddForm extends Form
             ->withTrashed()
             ->first();
 
-        if ($member->trashed()) {
+        if ($member && $member->trashed()) {
             $member->restore();
         }
     }

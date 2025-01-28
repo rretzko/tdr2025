@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 
 class MemberCreateComponent extends BasePageMember
 {
+    public bool $nonMemberFound = false;
     public string $resultsName = '';
 
     public function mount(): void
@@ -41,6 +42,7 @@ class MemberCreateComponent extends BasePageMember
             [
                 'schools' => $this->schools,
                 'ensembles' => $this->filters->ensembles(),
+                'ensembleShortNames' => $this->getEnsembleShortNames(),
                 'voiceParts' => $this->getVoiceParts(),
                 'offices' => self::OFFICES,
                 'pronouns' => Pronoun::orderBy('order_by')->pluck('descr', 'id'),
@@ -64,23 +66,29 @@ class MemberCreateComponent extends BasePageMember
     {
         $this->form->updateAndStay();
 
+        $this->reset('nonMemberFound');
+
         return redirect()->back();
     }
 
-    public function setStudent(Student $student): void
+    public function clickStudentName(Student $student): void
     {
         $this->reset('resultsName');
+
+        $this->nonMemberFound = true;
 
         $this->form->setStudentAsMember($student);
     }
 
     public function updatedFormName(): void
     {
+        $this->reset('nonMemberFound');
+
         $str = '';
 
         if (!strlen($this->form->name)) {
 
-            $this->reset('resultsName');
+            $this->reset('nonMemberFound', 'resultsName');
 
         } else {
 
@@ -98,7 +106,7 @@ class MemberCreateComponent extends BasePageMember
                 foreach ($names as $id => $name) {
 
                     $str .= '<li>'
-                        .'<button type="button" wire:click="setStudent('.$id.')" class="text-blue-500">'
+                        . '<button type="button" wire:click="clickStudentName(' . $id . ')" class="text-blue-500">'
                         .$name
                         .'</button>'
                         .'</li>';
@@ -127,6 +135,14 @@ class MemberCreateComponent extends BasePageMember
     {
         $ensemble = Ensemble::find($this->form->ensembleId);
         return $ensemble->classOfsArray($this->form->schoolYear);
+    }
+
+    private function getEnsembleShortNames(): array
+    {
+        $ensembleIds = array_keys($this->filters->ensembles());
+        return Ensemble::whereIn('id', $ensembleIds)
+            ->pluck('short_name', 'id')
+            ->toArray();
     }
 
     private function getNonmembers(): array

@@ -31,7 +31,6 @@
                             />
                         @else
                             <x-forms.elements.livewire.selectWide
-                                autofocus
                                 label="school"
                                 name="form.schoolId"
                                 option0
@@ -48,73 +47,85 @@
                             />
                         @else
                             <x-forms.elements.livewire.selectWide
+                                :autofocus="true"
                                 label="ensemble"
                                 name="form.ensembleId"
                                 option0
-                                :options="$ensembles"
+                                :options="$ensembleShortNames"
                                 required="required"
                             />
                         @endif
 
-                        {{-- SCHOOL YEAR --}}
-                        <x-forms.elements.livewire.inputTextNarrow
-                            label="School Year"
-                            name="form.schoolYear"
-                            required
-                            hint="Enter the school year for this member (ex. 2025 = school year: 2024-25)."
-                        />
+                        @if($form->ensembleId) {{-- ensure an ensemble is selected --}}
 
-                        {{-- CHECKBOX AND INDIVIDUAL SELECTIONS --}}
-                        <div class="flex flex-col mb-4 sm:flex-row sm:space-x-4 ">
+                            {{-- SCHOOL YEAR --}}
+                            <x-forms.elements.livewire.inputTextNarrow
+                                label="School Year"
+                                name="form.schoolYear"
+                                required
+                                hint="Enter the school year for this member (ex. 2025 = school year: 2024-25)."
+                            />
 
-                            {{-- SINGLE SELECTION --}}
-                            <div>
-                                {{-- NAME --}}
-                                <x-forms.elements.livewire.inputTextWide
-                                    blur=""
-                                    label="non-member name"
-                                    name="form.name"
-                                    placeholder="Enter first or last name"
-                                    required
-                                    :results="$resultsName"
-                                />
+                            {{-- CHECKBOX AND INDIVIDUAL SELECTIONS --}}
+                            <div class="flex flex-col mb-4 sm:flex-row sm:space-x-4 ">
 
-                                {{-- VOICE PARTS --}}
-                                <x-forms.elements.livewire.selectWide
-                                    label="voice part"
-                                    name="form.voicePartId"
-                                    :options="$voiceParts"
-                                    required="required"
-                                />
+                                {{-- SINGLE SELECTION --}}
+                                <div>
+                                    {{-- NAME --}}
+                                    <x-forms.elements.livewire.inputTextWide
+                                        blur=""
+                                        label="non-member name"
+                                        name="form.name"
+                                        placeholder="Enter first or last name"
+                                        required
+                                        :results="$resultsName"
+                                    />
 
-                                {{-- OFFICES --}}
-                                <x-forms.elements.livewire.selectWide
-                                    label="office"
-                                    name="form.office"
-                                    :options="$offices"
-                                    required="required"
-                                />
+                                    @if($nonMemberFound)
 
-                                {{-- STATUS --}}
-                                <x-forms.elements.livewire.selectWide
-                                    label="status"
-                                    name="form.status"
-                                    :options="$statuses"
-                                    required="required"
-                                />
+                                        {{-- VOICE PARTS --}}
+                                        <x-forms.elements.livewire.selectWide
+                                            label="voice part"
+                                            name="form.voicePartId"
+                                            :options="$voiceParts"
+                                            required="required"
+                                        />
+
+                                        {{-- OFFICES --}}
+                                        <x-forms.elements.livewire.selectWide
+                                            label="office"
+                                            name="form.office"
+                                            :options="$offices"
+                                            required="required"
+                                        />
+
+                                        {{-- STATUS --}}
+                                        <x-forms.elements.livewire.selectWide
+                                            label="status"
+                                            name="form.status"
+                                            :options="$statuses"
+                                            required="required"
+                                        />
+
+                                    @endif
+
+                                </div>
 
                             </div>
 
-                        </div>
+                            @if($nonMemberFound)
+                                <div class="flex flex-row space-x-2">
+                                    {{-- SUBMIT AND RETURN TO TABLE VIEW--}}
+                                    <x-buttons.submit value="save"/>
 
-                        <div class="flex flex-row space-x-2">
-                            {{-- SUBMIT AND RETURN TO TABLE VIEW--}}
-                            <x-buttons.submit/>
+                                    {{-- SUBMIT AND STAY --}}
+                                    <x-buttons.submitAndStay value="save and add another"/>
 
-                            {{-- SUBMIT AND STAY --}}
-                            <x-buttons.submitAndStay/>
+                                </div>
+                            @endif
 
-                        </div>
+                        @endif {{-- end of if($form->ensembleId) --}}
+
                     </div>{{-- END OF SINGLE SELECTION --}}
 
                 </div>{{-- END OF CHECKBOX AND SINGLE SELECTION --}}

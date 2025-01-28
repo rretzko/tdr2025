@@ -40,6 +40,8 @@ class MemberMassAddComponent extends BasePage
             $this->form->ensembleId = array_key_first($this->ensembles);
         }
 
+        $this->form->ensembleName = Ensemble::find($this->form->ensembleId)->name;
+
         $this->schoolYears = $this->getSchoolYearsArray($this->schoolId);
 
         if (!$this->srYear) {
@@ -67,6 +69,13 @@ class MemberMassAddComponent extends BasePage
         $this->form->save();
 
         $this->students = $this->getStudentsArray($this->schoolId, $this->ensembleClassOfs, $this->srYear);
+    }
+
+    public function updatedFormEnsembleId(): void
+    {
+        $this->form->ensembleName = Ensemble::find($this->form->ensembleId)->name;
+        $ensembleClassOfs = $this->getEnsembleClassOfsArray($this->form->ensembleId, $this->srYear);
+        $this->students = $this->getStudentsArray($this->form->schoolId, $ensembleClassOfs, $this->form->schoolYear);
     }
 
     public function updatedSrYear(): void
