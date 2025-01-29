@@ -342,6 +342,7 @@ class ViewDataFactory extends aViewData
             'inventory new' => 'ensembles.inventories.inventory-create-component',
             'inventory edit' => 'ensembles.inventories.inventory-edit-component',
             'inventory' => 'ensembles.inventories.inventory.inventories-table-component',
+            'inventory mass add' => 'ensembles.inventories.inventory-mass-add-component',
 
             'judge assignment' => 'events.versions.judge-assignment-component',
 

@@ -14,13 +14,21 @@ use Illuminate\Validation\Rule;
 
 class InventoryForm extends Form
 {
+    public int $assetCount = 1;
     #[Validate('required', message: 'An asset must be selected')]
     #[Validate('min:1', message: 'An asset must be selected.')]
     public int $assetId = 0;
+//    #[Validate('required', 'An id starting point must be entered')]
+    #[Validate('int', 'A numeric id starting point must be entered')]
+    public string $assetIdStartingPoint = '1';
+    public string $assetName = '';
+
+    public string $assetNamePlural = '';
     //#[Validate('nullable', 'string')]
     public string $color = '';
     //#[Validate('nullable', 'string')]
     public string $comments = '';
+    public array $duplicateItemComments = [];
     #[Validate('min:1', message: 'An ensemble must be selected.')]
     public int $ensembleId = 0;
     // #[Validate('required', 'string')]
@@ -54,6 +62,36 @@ class InventoryForm extends Form
             'assetId.exists' => 'An asset must be selected.',
             'itemId.required' => 'An item id must be entered.',
         ];
+    }
+
+    public function addMultiple(): void
+    {
+        $itemId = (int)$this->assetIdStartingPoint;
+
+        for ($i = 0; $i < $this->assetCount; $i++) {
+
+            $itemId = $this->checkForDuplicateItemId($this->ensembleId, $this->assetId, $itemId);
+            if (count($this->duplicateItemComments)) {
+                $this->comments .= implode('Note: ', $this->duplicateItemComments);
+            }
+
+            Inventory::create(
+                [
+                    'asset_id' => $this->assetId,
+                    'color' => $this->color,
+                    'comments' => $this->comments,
+                    'ensemble_id' => $this->ensembleId,
+                    'item_id' => $itemId,
+                    'size' => $this->size,
+                    'status' => $this->status,
+                    'updated_by' => auth()->id(),
+                ]
+            );
+
+            $itemId++;
+            $this->duplicateItemComments = [];
+        }
+
     }
 
     public function setEnsemble(Ensemble $ensemble)
@@ -110,13 +148,18 @@ class InventoryForm extends Form
 
     private function add(): void
     {
+        $itemId = $this->checkForDuplicateItemId($this->ensembleId, $this->assetId, $this->itemId);
+        if (count($this->duplicateItemComments)) {
+            $this->comments .= implode('Note: ', $this->duplicateItemComments);
+        }
+
         $inventory = Inventory::create(
             [
                 'asset_id' => $this->assetId,
                 'color' => $this->color,
                 'comments' => $this->comments,
                 'ensemble_id' => $this->ensembleId,
-                'item_id' => $this->itemId,
+                'item_id' => $itemId,
                 'size' => $this->size,
                 'status' => $this->status,
                 'user_id' => $this->userId,
@@ -126,6 +169,26 @@ class InventoryForm extends Form
 
         //change systId from "new" to current id
         $this->sysId = $inventory->id;
+
+        $this->duplicateItemComments = [];
+    }
+
+    private function checkForDuplicateItemId(int $ensemble_id, int $assetId, int $itemId): int
+    {
+        while (Inventory::query()
+            ->where('ensemble_id', $ensemble_id)
+            ->where('asset_id', $assetId)
+            ->where('item_id', $itemId)
+            ->exists()) {
+            //record duplicate-found action
+            $this->duplicateItemComments[] = 'Duplicate item id: ' . $itemId . ' was found.  The item id has been
+            changed to: ' . ($itemId + 1) . '.';
+
+            //increment $itemId and try again
+            $itemId++;
+        }
+
+        return $itemId;
     }
 
     #[NoReturn] private function updateInventory(): void

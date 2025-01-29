@@ -9,8 +9,8 @@
             <x-forms.styles.genericStyle/>
 
             <div class="text-right mr-4">
-                <a href="{{ route('inventory.massAdd') }}" class="text-blue-500 hover:underline">
-                    Mass Add
+                <a href="{{ route('inventory.create') }}" class="text-blue-500 hover:underline">
+                    Single Add
                 </a>
             </div>
 
@@ -39,19 +39,22 @@
                         required="required"
                     />
 
-                    {{-- ITEM ID --}}
+                    {{-- ASSET COUNT --}}
+                    <x-forms.elements.livewire.selectNarrow
+                        label="How many {{ $form->assetNamePlural }} do you want to add?"
+                        name="form.assetCount"
+                        :options="$oneToThreeHundred"
+                        required="required"
+                    />
+
+                    {{-- ITEM ID STARTING POINT --}}
                     <x-forms.elements.livewire.inputTextNarrow
-                        label="item id"
-                        name="form.itemId"
+                        label="The first id number for these {{  $form->assetNamePlural }} should be: "
+                        name="form.assetIdStartingPoint"
                         required="required"
                         type="number"
-                        hint="Enter <u>your</u> numeric identification number for this item."
+                        hint="This must be a numeric value."
                     />
-                    <div class="ml-4 text-red-500 text-sm">
-                        @if($duplicateItemIdMessage)
-                            {{ $duplicateItemIdMessage }}
-                        @endif
-                    </div>
 
                     {{-- ITEM SIZE --}}
                     <x-forms.elements.livewire.inputTextNarrow
@@ -110,4 +113,5 @@
         {{ $successMessage }}
     </div>
 </div>
+
 

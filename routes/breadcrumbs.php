@@ -91,6 +91,12 @@ Breadcrumbs::for('inventory', function (BreadcrumbTrail $trail) {
     $trail->push('Inventory', route('ensembles.inventory'));
 });
 
+// Ensembles.Inventory.MassAdd
+Breadcrumbs::for('inventory mass add', function (BreadcrumbTrail $trail) {
+    $trail->parent('inventory');
+    $trail->push('Inventory Mass Add', route('inventory.massAdd'));
+});
+
 // Ensembles.Members
 Breadcrumbs::for('members', function (BreadcrumbTrail $trail) {
     $trail->parent('ensembles');

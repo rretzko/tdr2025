@@ -6,10 +6,12 @@ use App\Models\Ensembles\Ensemble;
 use App\Models\Ensembles\Inventories\Inventory;
 use App\Models\UserConfig;
 use Illuminate\Routing\Redirector;
+use Illuminate\Support\Str;
 
 class InventoryCreateComponent extends BasePageInventory
 {
     public array $ensembles = [];
+    public string $duplicateItemIdMessage = '';
 
     public function mount(): void
     {
@@ -21,6 +23,10 @@ class InventoryCreateComponent extends BasePageInventory
 
         //$this->form->ensembleId must be a valid id number to return assets
         $this->assets = $this->getAssests();
+        if (!$this->form->assetName) {
+            $this->form->assetName = $this->assets[array_key_first($this->assets)];
+            $this->form->assetNamePlural = Str::plural($this->form->assetName);
+        }
 
         $this->form->assetId = array_key_first($this->assets);
     }
@@ -35,12 +41,13 @@ class InventoryCreateComponent extends BasePageInventory
     public function updatedFormItemId()
     {
         $itemIdExists = Inventory::query()
+            ->where('ensemble_id', $this->form->ensembleId)
             ->where('asset_id', $this->form->assetId)
             ->where('item_id', $this->form->itemId)
             ->exists();
 
         if ($itemIdExists) {
-            dd('Item_id ' . $this->form->itemId . ' exists and cannot be re-used.');
+            $this->duplicateItemIdMessage = ('Item id #' . $this->form->itemId . ' exists and cannot be re-used. This value will be incremented if saved.');
         }
     }
 
