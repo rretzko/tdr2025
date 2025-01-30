@@ -84,6 +84,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('ensembles/inventory/{inventory}', [\App\Http\Controllers\Ensembles\Inventories\InventoryController::class, 'edit'])
         ->name('inventory.edit');
 
+    //INVENTORY.ASSIGN-ASSETS
+    Route::get('assignAssets', \App\Http\Controllers\Ensembles\Inventories\AssignAssetController::class)
+        ->name('inventory.assignAssets');
+
     //JUDGE ASSIGNMENTS
     Route::get('version/judgeAssignment',
         \App\Http\Controllers\Tdr\LivewireController::class)

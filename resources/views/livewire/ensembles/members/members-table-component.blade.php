@@ -42,6 +42,15 @@
                 {{-- TABS --}}
                 <x-tabs.genericTabs :selectedTab="$selectedTab" :tabs="$tabs"/>
 
+                {{-- ASSIGN ASSETS BUTTON --}}
+                <div class="flex justify-end ml-4 mb-2">
+                    <a href="{{ route('inventory.assignAssets') }}">
+                        <button class="px-2 text-sm bg-yellow-700 text-yellow-300 rounded-full shadow-lg">
+                            Assign Assets
+                        </button>
+                    </a>
+                </div>
+
                 {{-- TABLE --}}
                 <x-tables.schoolEnsemblesMembersTable
                     :columnHeaders="$columnHeaders"
@@ -51,7 +60,8 @@
                     :sortAsc="$sortAsc"
                 />
 
-            </div>
+            </
+            >
 
         </div>
 

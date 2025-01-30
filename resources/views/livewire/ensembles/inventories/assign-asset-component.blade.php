@@ -21,7 +21,7 @@
         <div class="flex justify-between mb-1">
             <div>{{ ucwords($dto['header']) }}</div>
             <div class="flex items-center space-x-2">
-                <x-buttons.addNew route="inventory.create"/>
+                <x-buttons.addNew route="schoolEnsembleMember.create"/>
                 <x-buttons.export/>
             </div>
         </div>
@@ -36,14 +36,37 @@
                 </div>
             @endif
 
-            {{-- TABS AND TABLE--}}
+            {{-- SELECTORS AND TABLE--}}
             <div class="flex flex-col w-full">
 
-                {{-- TABS --}}
-                <x-tabs.genericTabs :selectedTab="$selectedTab" :tabs="$tabs"/>
+                {{-- SELECTORS --}}
+                <div id="selectors" class="mb-2">
+
+                    {{-- ENSEMBLE --}}
+                    <div>
+                        <x-forms.elements.livewire.selectNarrow
+                            :autofocus="true"
+                            label="Ensemble"
+                            name="ensembleId"
+                            :options="$ensembles"
+                            :required="true"
+                        />
+                    </div>
+
+                    {{-- SCHOOL YEAR --}}
+                    <div>
+                        <x-forms.elements.livewire.selectCompressed
+                            label="School Year"
+                            name="srYear"
+                            :options="$classOfs"
+                            :required="true"
+                        />
+                    </div>
+
+                </div>
 
                 {{-- TABLE --}}
-                <x-tables.InventoriesTable
+                <x-tables.schoolEnsemblesMembersTable
                     :columnHeaders="$columnHeaders"
                     :header="$dto['header']"
                     :rows="$rows"
@@ -51,11 +74,19 @@
                     :sortAsc="$sortAsc"
                 />
 
-            </div>{{-- END OF TABLS AND TABLE}}
-
-        </div>{{-- END OF FILTERS AND TABLE --}}
+            </div>
 
         </div>
 
+        {{-- SUCCESS INDICATOR --}}
+        <x-forms.indicators.successIndicator :showSuccessIndicator="$showSuccessIndicator"
+                                             message="{{  $successMessage }}"/>
+    </div>{{-- END OF PAGE CONTENT --}}
 
-    </div>
+</div>
+
+
+
+
+
+
