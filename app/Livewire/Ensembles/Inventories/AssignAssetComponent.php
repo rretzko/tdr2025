@@ -3,15 +3,18 @@
 namespace App\Livewire\Ensembles\Inventories;
 
 use App\Livewire\Ensembles\Members\MembersTableComponent;
-use App\Models\Ensembles\AssetEnsemble;
 use App\Models\Ensembles\Ensemble;
 use App\Models\UserConfig;
 use App\Services\CalcSeniorYearService;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 class AssignAssetComponent extends MembersTableComponent
 {
+    public Ensemble $ensemble;
     public int $ensembleId = 0;
+    public Collection $ensembleAssets;
+    public array $ensembleClassOfs = [];
     public array $ensembles = [];
     public int $srYear = 0;
 
@@ -19,10 +22,20 @@ class AssignAssetComponent extends MembersTableComponent
     {
         parent::mount();
 
+        $this->hasFilters = false;
+
         $this->ensembles = $this->getEnsembles();
+
+        if (!$this->srYear) {
+            $service = new CalcSeniorYearService();
+            $this->srYear = $service->getSeniorYear();
+        }
 
         if (!$this->ensembleId) {
             $this->ensembleId = array_key_first($this->ensembles);
+            $this->ensemble = Ensemble::find($this->ensembleId);
+            $this->ensembleClassOfs = $this->ensemble->classOfsArray($this->srYear);
+            $this->ensembleAssets = $this->ensemble->assets;
         }
     }
 
@@ -49,6 +62,18 @@ class AssignAssetComponent extends MembersTableComponent
         );
     }
 
+    public function updatedEnsembleId(): void
+    {
+        $this->ensemble = Ensemble::find($this->ensembleId);
+        $this->ensembleClassOfs = $this->ensemble->classOfsArray($this->srYear);
+        $this->ensembleAssets = $this->ensemble->assets;
+    }
+
+    public function updatedSrYear(): void
+    {
+        $this->ensembleClassOfs = $this->ensemble->classOfsArray($this->srYear);
+    }
+
     private function getColumnHeaders(): array
     {
         $assetNames = $this->getAssetNames();
@@ -56,6 +81,8 @@ class AssignAssetComponent extends MembersTableComponent
         $headers = [
             ['label' => '###', 'sortBy' => ''],
             ['label' => 'name', 'sortBy' => 'name'],
+            ['label' => 'status', 'sortBy' => 'status'],
+            ['label' => 'grade', 'sortBy' => 'grade'],
         ];
 
         // If there are no asset names, return the default headers
@@ -64,7 +91,7 @@ class AssignAssetComponent extends MembersTableComponent
         }
 
         // Map asset names to header arrays
-        $assetHeaders = array_map(fn($name) => ['label' => $name, 'sortBy' => ''],
+        $assetHeaders = array_map(fn($name) => ['label' => substr($name, 0, 8), 'sortBy' => ''],
             $assetNames);
 
         // Merge default headers with asset headers
@@ -78,45 +105,34 @@ class AssignAssetComponent extends MembersTableComponent
             return [];
         }
 
-        return DB::table('asset_ensemble')
-            ->join('assets', 'asset_ensemble.asset_id', '=', 'assets.id')
-            ->where('asset_ensemble.ensemble_id', $this->ensembleId)
-            ->orderBy('assets.name')
-            ->pluck('assets.name')
-            ->toArray();
+        return $this->ensembleAssets->pluck('name')->toArray();
     }
 
     private function getRows(): array
     {
-        $schoolIds = auth()->user()->teacher->schools->pluck('id')->toArray();
-
-        $service = new CalcSeniorYearService();
-        $srYear = $service->getSeniorYear();
+        $schoolId = UserConfig::getValue('schoolId');
 
         return DB::table('ensemble_members')
             ->join('students', 'ensemble_members.student_id', '=', 'students.id')
             ->join('users', 'students.user_id', '=', 'users.id')
-            ->join('school_student', 'ensemble_members.student_id', '=', 'school_student.student_id')
-            ->join('ensembles', 'ensemble_members.ensemble_id', '=', 'ensembles.id')
-            ->join('voice_parts', 'ensemble_members.voice_part_id', '=', 'voice_parts.id')
-            ->join('schools', 'school_student.school_id', '=', 'schools.id')
-            ->whereIn('ensemble_members.school_id', $schoolIds)
+            ->where('ensemble_members.school_id', $schoolId)
+            ->where('ensemble_members.ensemble_id', $this->ensembleId)
+            ->where('ensemble_members.school_year', $this->srYear)
+            ->whereIn('students.class_of', $this->ensembleClassOfs)
             ->where('users.name', 'LIKE', '%' . $this->search . '%')
             ->tap(function ($query) {
-                $this->filters->filterStudentsBySchools($query);
-                $this->filters->filterMembersByEnsemble($query);
-                $this->filters->filterMembersBySchoolYear($query);
+//                $this->filters->filterMembersByEnsemble($query);
+//                $this->filters->filterMembersBySchoolYear($query);
             })
             ->select('users.name', 'users.first_name', 'users.middle_name', 'users.last_name',
-                'schools.name AS schoolName', 'ensembles.name AS ensembleName',
-                'voice_parts.descr AS voicePartDescr', 'students.class_of',
+                'students.class_of',
                 'ensemble_members.school_year', 'ensemble_members.status', 'ensemble_members.office',
                 'ensemble_members.id')
             ->selectRaw("
                 CASE
                     WHEN ? > students.class_of THEN 'alum'
                     ELSE (12 - (students.class_of - ?))
-                END AS calcGrade", [$srYear, $srYear]
+                END AS calcGrade", [$this->srYear, $this->srYear]
             )
             ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
             ->get()

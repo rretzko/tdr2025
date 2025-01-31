@@ -29,7 +29,8 @@ class Ensemble extends Model
 
     public function assets(): BelongsToMany
     {
-        return $this->belongsToMany(Asset::class);
+        return $this->belongsToMany(Asset::class)
+            ->orderBy('assets.name');
     }
 
     public function school(): BelongsTo

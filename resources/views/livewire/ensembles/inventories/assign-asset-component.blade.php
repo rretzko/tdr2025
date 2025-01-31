@@ -66,8 +66,9 @@
                 </div>
 
                 {{-- TABLE --}}
-                <x-tables.schoolEnsemblesMembersTable
+                <x-tables.assignAssetsTable
                     :columnHeaders="$columnHeaders"
+                    :ensembleAssets="$ensembleAssets"
                     :header="$dto['header']"
                     :rows="$rows"
                     sortColLabel="{{  $sortColLabel }}"
