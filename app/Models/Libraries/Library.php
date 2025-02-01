@@ -3,6 +3,7 @@
 namespace App\Models\Libraries;
 
 use App\Models\Schools\School;
+use App\Models\Schools\Teacher;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,7 +14,7 @@ class Library extends Model
 
     protected $fillable = [
         'school_id',
-        'user_id',
+        'teacher_id',
         'name',
     ];
 
@@ -22,8 +23,13 @@ class Library extends Model
         return $this->belongsTo(School::class);
     }
 
-    public function user(): BelongsTo
+    public function teacher(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Teacher::class);
+    }
+
+    public function user(): User
+    {
+        return User::find($this->teacher->user_id);
     }
 }

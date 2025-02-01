@@ -175,6 +175,14 @@ Breadcrumbs::for('adjudication', function (BreadcrumbTrail $trail, $id) {
     $trail->push('Adjudication', route('adjudication', $id));
 });
 
+//Libraries start =================================================================================
+Breadcrumbs::for('libraries', function (BreadcrumbTrail $trail) {
+    $trail->parent('home');
+    $trail->push('Libraries', route('libraries'));
+});
+
+//Libraries end ===================================================================================
+
 //Obligations
 Breadcrumbs::for('obligations', function (BreadcrumbTrail $trail, $id) {
     $trail->parent('participation active', $id);

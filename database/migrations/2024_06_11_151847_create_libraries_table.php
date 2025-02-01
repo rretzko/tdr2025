@@ -10,9 +10,9 @@ return new class extends Migration {
         Schema::create('libraries', function (Blueprint $table) {
             $table->id();
             $table->foreignId('school_id')->index();
-            $table->foreignId('user_id')->index();
+            $table->foreignId('teacher_id')->index();
             $table->string('name');
-            $table->unique('school_id', 'name');
+            $table->unique(['school_id', 'name']);
         });
     }
 

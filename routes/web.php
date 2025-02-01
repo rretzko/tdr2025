@@ -45,8 +45,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //ENSEMBLES:ASSETS
     Route::get('ensembles/assets', [\App\Http\Controllers\Ensembles\Assets\AssetController::class, 'index'])
         ->name('assets');
-//    Route::get('ensembles/asset/edit/{asset}', [\App\Http\Controllers\Ensembles\Assets\AssetController::class, 'edit'])
-//        ->name('asset.edit');
 
     //ENSEMBLES:MEMBERS
     Route::get('ensembles/members', [\App\Http\Controllers\Ensembles\Members\MemberController::class, 'index'])
@@ -98,7 +96,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('adjudication');
 
     //LIBRARIES
-    Route::get('libraries', [\App\Http\Controllers\Libraries\libraryController::class, 'index'])
+    Route::get('libraries', \App\Http\Controllers\Libraries\libraryController::class)
         ->name('libraries');
 
     //OBLIGATIONS
@@ -302,10 +300,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //VERIFIED SIGNED ROUTES
     Route::get('/invite/{version}/{user}', \App\Http\Controllers\Events\Versions\InviteVersionUserController::class)
         ->name('inviteVersionUser');
-
-//    Route::get('event/edit/{event}', EventManageEditController::class)
-//        ->middleware('can:update,event') //check EventPolicy
-//        ->name('event.edit');
 });
 
 require __DIR__.'/auth.php';
