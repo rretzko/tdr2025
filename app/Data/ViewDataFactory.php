@@ -93,12 +93,11 @@ class ViewDataFactory extends aViewData
     {
         $cards = $this->filterCardsByRole($viewCards);
 
-        if ($this->dto['header'] === 'home') {
-            $cards = $this->filterHomeCards($cards);
-        }
+//        if ($this->dto['header'] === 'home') {
+//            $cards = $this->filterHomeCards($cards);
+//        }
 
         if ($this->versionId) {
-
             $cards = $this->filterCardsByAdjudicationFactors($cards);
         }
 

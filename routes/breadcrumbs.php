@@ -15,7 +15,7 @@ Breadcrumbs::for('home', function (BreadcrumbTrail $trail) {
 
 //Attachments
 Breadcrumbs::for('attachments', function (BreadcrumbTrail $trail, $id) {
-    $trail->parent('participation active', $id);
+    $trail->parent('version dashboard', $id);
     $trail->push('Attachments', route('version.attachments', $id));
 });
 
