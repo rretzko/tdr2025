@@ -13,6 +13,12 @@ Breadcrumbs::for('home', function (BreadcrumbTrail $trail) {
     $trail->push('Home', route('home'));
 });
 
+//Attachments
+Breadcrumbs::for('attachments', function (BreadcrumbTrail $trail, $id) {
+    $trail->parent('participation active', $id);
+    $trail->push('Attachments', route('version.attachments', $id));
+});
+
 //Candidates
 Breadcrumbs::for('candidates', function (BreadcrumbTrail $trail, $id) {
     $trail->parent('participation dashboard', $id);

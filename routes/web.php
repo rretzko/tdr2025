@@ -188,7 +188,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         \App\Http\Controllers\Students\StudentResetPasswordController::class) //invokable
     ->name('student.reset');
 
-    //VERSIONS
+    //VERSIONS.ATTACHMENTS
+    Route::get('version/attachments', \App\Http\Controllers\Events\Versions\VersionAttachmentController::class)
+        ->name('version.attachments');
+
+    //VERSIONS.CONFIGS
     Route::get('version/configs', [\App\Http\Controllers\Events\Versions\VersionConfigController::class, 'edit'])
         ->name('version.configs');
 

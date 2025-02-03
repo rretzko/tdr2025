@@ -311,6 +311,8 @@ class ViewDataFactory extends aViewData
             'adjudication csv backup' => 'events.versions.reports.adjudication-csv-backup-component',
             'adjudication monitor checklist' => 'events.versions.reports.adjudication-monitor-checklist-component',
 
+            'attachments' => 'events.versions.attachments.attachment-component',
+
             'candidates' => 'events.versions.participations.candidates-table-component',
             'candidates recordings' => 'events.versions.participations.candidates-recordings-table-component',
             'candidates table' => 'events.versions.participations.candidates-table-component',
