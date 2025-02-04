@@ -52,6 +52,8 @@ class EstimateComponent extends BasePage
     public string $lastName = '';
     public string $phone = '';
     public string $city = '';
+    public string $dataUrl = '';
+    public string $href = '';
     public string $geostateAbbr = 'NJ';
 
     public function mount(): void
@@ -91,6 +93,10 @@ class EstimateComponent extends BasePage
         $this->phone = $user->phoneNumbers()->where('phone_type', 'mobile')->first() ?? '';
         $this->city = $address->city ?? '';
         $this->geostateAbbr = $address->geostateAbbr ?? 'NJ';
+        $version = Version::find($this->versionId);
+        $squareEpaymentCredential = EpaymentCredentials->where('event_id', $version->event->id)->first();
+        $this->dataUrl = $squareEpaymentCredential->epayment_id; //ex. https://square.link/u/12345678?src=embed
+        $this->href = $squareEpaymentCredential->epayment_id; //ex. https://square.link/u/12345678?src=embed
 
     }
 

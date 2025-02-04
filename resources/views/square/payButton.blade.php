@@ -13,8 +13,8 @@
   font-family: SQ Market, SQ Market, Helvetica, Arial, sans-serif;
   ">
         <div style="padding: 20px;">
-            <a target="_blank" data-url="https://square.link/u/cXu7fc0p?src=embd"
-               href="https://square.link/u/cXu7fc0p?src=embed" style="
+            <a target="_blank" data-url="{{ $dataUrl }}"
+               href="{{ $href }}" style="
     display: inline-block;
     font-size: 18px;
     line-height: 48px;
@@ -28,7 +28,6 @@
   ">Pay now</a>
         </div>
     </div>
-
 
     <script>
         function showCheckoutWindow(e) {
