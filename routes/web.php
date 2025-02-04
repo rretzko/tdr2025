@@ -96,7 +96,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('adjudication');
 
     //LIBRARIES
-    Route::get('libraries', \App\Http\Controllers\Libraries\libraryController::class)
+    Route::get('libraries', \App\Http\Controllers\Libraries\LibraryController::class)
         ->name('libraries');
 
     //OBLIGATIONS
