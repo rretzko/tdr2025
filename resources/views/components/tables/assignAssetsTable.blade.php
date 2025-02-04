@@ -57,7 +57,11 @@
     'text-red-300' => ($row->status === 'removed')
     ])
                 >
-                    <div>{{ $row->last_name }}, {{ $row->first_name }} {{ $row->middle_name }}</div>
+                    <div>
+                        <button wire:click="clickName({{ $row->studentId }})" class="text-blue-500 hover:underline">
+                            {{ $row->last_name }}, {{ $row->first_name }} {{ $row->middle_name }}
+                        </button>
+                    </div>
                 </td>
                 <td @class([
     "border border-gray-200 px-1 text-center",

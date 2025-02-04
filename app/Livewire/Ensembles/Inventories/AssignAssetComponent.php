@@ -3,7 +3,9 @@
 namespace App\Livewire\Ensembles\Inventories;
 
 use App\Livewire\Ensembles\Members\MembersTableComponent;
+use App\Livewire\Forms\AssetAssignmentForm;
 use App\Models\Ensembles\Ensemble;
+use App\Models\Ensembles\Inventories\Inventory;
 use App\Models\UserConfig;
 use App\Services\CalcSeniorYearService;
 use Illuminate\Database\Eloquent\Collection;
@@ -11,6 +13,9 @@ use Illuminate\Support\Facades\DB;
 
 class AssignAssetComponent extends MembersTableComponent
 {
+    public array $availables = [];
+    public AssetAssignmentForm $assetForm;
+    public bool $displayAssetAssignmentForm = false;
     public Ensemble $ensemble;
     public int $ensembleId = 0;
     public Collection $ensembleAssets;
@@ -37,17 +42,8 @@ class AssignAssetComponent extends MembersTableComponent
             $this->ensembleClassOfs = $this->ensemble->classOfsArray($this->srYear);
             $this->ensembleAssets = $this->ensemble->assets;
         }
-    }
 
-    private function getEnsembles(): array
-    {
-        $schoolId = UserConfig::getValue('schoolId');
-
-        return Ensemble::query()
-            ->where('school_id', $schoolId)
-            ->orderBy('name')
-            ->pluck('name', 'id')
-            ->toArray();
+        $this->availables = $this->setAvailables($this->ensemble->assets);
     }
 
     public function render()
@@ -62,6 +58,13 @@ class AssignAssetComponent extends MembersTableComponent
         );
     }
 
+    public function clickName(int $studentId)
+    {
+        $this->assetForm->setStudent($studentId, $this->ensembleId, $this->srYear);
+        $this->toggleDisplayAssetAssignmentForm();
+
+    }
+
     public function updatedEnsembleId(): void
     {
         $this->ensemble = Ensemble::find($this->ensembleId);
@@ -72,6 +75,36 @@ class AssignAssetComponent extends MembersTableComponent
     public function updatedSrYear(): void
     {
         $this->ensembleClassOfs = $this->ensemble->classOfsArray($this->srYear);
+    }
+
+    /** END OF PUBLIC FUNCTIONS *******************************************************************************************/
+
+    private function getAssetNames()
+    {
+        //early exit
+        if (!$this->ensembleId) {
+            return [];
+        }
+
+        return $this->ensembleAssets->pluck('name')->toArray();
+    }
+
+    /**
+     * Return array of class_ofs based on ensemble members
+     * @return array
+     */
+    private function getClassOfs(): array
+    {
+        //early exit
+        if (!$this->ensembleId) {
+            return [];
+        }
+
+        return DB::table('ensemble_members')
+            ->where('ensemble_id', $this->ensembleId)
+            ->distinct()
+            ->pluck('school_year', 'school_year')
+            ->toArray();
     }
 
     private function getColumnHeaders(): array
@@ -98,14 +131,15 @@ class AssignAssetComponent extends MembersTableComponent
         return array_merge($headers, $assetHeaders);
     }
 
-    private function getAssetNames()
+    private function getEnsembles(): array
     {
-        //early exit
-        if (!$this->ensembleId) {
-            return [];
-        }
+        $schoolId = UserConfig::getValue('schoolId');
 
-        return $this->ensembleAssets->pluck('name')->toArray();
+        return Ensemble::query()
+            ->where('school_id', $schoolId)
+            ->orderBy('name')
+            ->pluck('name', 'id')
+            ->toArray();
     }
 
     private function getRows(): array
@@ -125,7 +159,7 @@ class AssignAssetComponent extends MembersTableComponent
 //                $this->filters->filterMembersBySchoolYear($query);
             })
             ->select('users.name', 'users.first_name', 'users.middle_name', 'users.last_name',
-                'students.class_of',
+                'students.id AS studentId', 'students.class_of',
                 'ensemble_members.school_year', 'ensemble_members.status', 'ensemble_members.office',
                 'ensemble_members.id')
             ->selectRaw("
@@ -140,21 +174,58 @@ class AssignAssetComponent extends MembersTableComponent
     }
 
     /**
-     * Return array of class_ofs based on ensemble members
+     * @param Collection $assets
      * @return array
+     * array:5 [▼ // app\Livewire\Ensembles\Inventories\AssignAssetComponent.php:192
+     * 1 => array:2 [▼
+     * 0 => array:1 [▼
+     * "assetString" => "5 |  |  |  | "
+     * ]
+     * 1 => array:1 [▼
+     * "assetString" => "6 | 1 | folio | dark green | "
+     * ]
+     * ]
+     * 2 => array:1 [▶]
+     * 4 => array:10 [▼
+     * 0 => array:1 [▶]
+     * 1 => array:1 [▼
+     * "assetString" => "14 | 1 |  |  | "
+     * ]
+     * 2 => array:1 [▶]
+     * 3 => array:1 [▼
+     * "assetString" => "16 | 3 |  |  | "
+     * ]
+     * 4 => array:1 [▶]
+     * 5 => array:1 [▶]
+     * 6 => array:1 [▼
+     * "assetString" => "20 | 7 | large | light green | "
+     * ]
+     * 7 => array:1 [▶]
      */
-    private function getClassOfs(): array
+    private function setAvailables(Collection $assets): array
     {
-        //early exit
-        if (!$this->ensembleId) {
-            return [];
+        $inventories = [];
+        foreach ($assets as $asset) {
+            $assetId = $asset->id;
+            $inventories[$assetId] = Inventory::query()
+                ->where('asset_id', $assetId)
+                ->where('ensemble_id', $this->ensembleId)
+                ->where('status', 'available')
+                ->select(
+                    DB::raw("CONCAT(id, ' | ', item_id, ' | ', size, ' | ', color, ' | ', comments) AS assetString")
+                )
+                ->orderBy('id')
+                ->get()
+                ->toArray();
         }
 
-        return DB::table('ensemble_members')
-            ->where('ensemble_id', $this->ensembleId)
-            ->distinct()
-            ->pluck('school_year', 'school_year')
-            ->toArray();
+        return $inventories;
+
+    }
+
+    private function toggleDisplayAssetAssignmentForm(): void
+    {
+        $this->displayAssetAssignmentForm = (!$this->displayAssetAssignmentForm);
     }
 
 

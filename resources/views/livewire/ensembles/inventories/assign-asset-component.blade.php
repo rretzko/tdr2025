@@ -65,6 +65,13 @@
 
                 </div>
 
+                {{-- ASSET ASSIGNMENT FORM --}}
+                <div class="bg-gray-300 rounded-lg shadow-lg mb-2">
+                    @if($displayAssetAssignmentForm)
+                        @include('components.forms.ensembles.inventories.assignAssetsForm')
+                    @endif
+                </div>
+
                 {{-- TABLE --}}
                 <x-tables.assignAssetsTable
                     :columnHeaders="$columnHeaders"
