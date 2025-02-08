@@ -2,6 +2,7 @@
     'columnHeaders',
     'ensembleAssets',
     'header',
+    'inventories',
     'rows',
     'sortAsc',
     'sortColLabel',
@@ -53,9 +54,9 @@
                     {{ $loop->iteration }}
                 </td>
                 <td @class([
-    "border border-gray-200 px-1",
-    'text-red-300' => ($row->status === 'removed')
-    ])
+                    "border border-gray-200 px-1",
+                    'text-red-300' => ($row->status === 'removed')
+                    ])
                 >
                     <div>
                         <button wire:click="clickName({{ $row->studentId }})" class="text-blue-500 hover:underline">
@@ -78,7 +79,10 @@
                     {{ $row->calcGrade }}/{{ $row->class_of }}
                 </td>
                 @for($i=0; $i<$ensembleAssets->count(); $i++)
-                    <td>{{ $i }}</td>
+                    <td class="text-center" wire:key="{{$row->studentId}}_{{$i}}">
+                        @php($arrayId = $row->studentId . '_' . $i)
+                        <input type="text" wire:model="inventories.{{ $arrayId }}" class="w-[6rem] h-2.5"/>
+                    </td>
                 @endfor
             </tr>
         @empty
@@ -92,7 +96,16 @@
 
     </table>
 
+    <div class="flex flex-row space-x-2">
+        <x-buttons.submit type="button" :livewire="true" wireClick="save"/>
+        <x-buttons.submitAndStay value="submit and stay on page"/>
+    </div>
+
+    <div>
+        @json($inventories)
+    </div>
+
     {{-- LOADING COMPONENT AND SPINNER --}}
-    <x-tables.loadingComponentAndSpinner/>
+    {{--    <x-tables.loadingComponentAndSpinner/>--}}
 
 </div>

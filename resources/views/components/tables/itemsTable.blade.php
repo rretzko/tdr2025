@@ -40,24 +40,19 @@
                     {{ $loop->iteration }}
                 </td>
                 <td class="border border-gray-200 px-1 text-center cursor-help" title="">
-                    <a href="{{ route('library.items', ['library' => $row->id]) }}"
-                       class="text-blue-600 font-bold hover:underline">
-                        {{ $row->name }}
-                    </a>
+                    {{--                    <a href="{{ route('library.items', ['library' => $row->id]) }}" class="text-blue-600 font-bold hover:underline">--}}
+                    {{ $row->title }}
+                    {{--                    </a>--}}
                 </td>
-                <td class="border border-gray-200 px-1">
-                    {{ $row->schoolName ?? $row->name}}
+                {{--                <td class="border border-gray-200 px-1">--}}
+                {{--                    {{ $row->schoolName ?? $row->name}}--}}
+                {{--                </td>--}}
+                <td @class(["text-center border border-gray-200", "border-transparent" => ($row->name === 'Home Library')])>
+                    <x-buttons.edit id="{{ $row->id }}" :livewire="true" id="{{ $row->id }}"/>
                 </td>
                 <td @class(["text-center border border-gray-200", "border-transparent" => ($row->name === 'Home Library')])>
-                    @if($row->name !== "Home Library")
-                        <x-buttons.edit id="{{ $row->id }}" :livewire="true" id="{{ $row->id }}"/>
-                    @endif
-                </td>
-                <td @class(["text-center border border-gray-200", "border-transparent" => ($row->name === 'Home Library')])>
-                    @if($row->name !== "Home Library")
-                        <x-buttons.remove id="{{ $row->id }}" livewire="1"
-                                          message="Removing this library will unlink ALL associated items (music, books, cds, etc). Are you sure you want to remove this?"/>
-                    @endif
+                    <x-buttons.remove id="{{ $row->id }}" livewire="1"
+                                      message="Are you sure you want to remove this library item?"/>
                 </td>
             </tr>
         @empty

@@ -99,6 +99,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('libraries', \App\Http\Controllers\Libraries\LibraryController::class)
         ->name('libraries');
 
+    //LIBRARY.ITEMS
+    Route::get('library/{library}/items', \App\Http\Controllers\Libraries\Items\ItemTableController::class)
+        ->name('library.items');
+    Route::get('library/{library}/item/new', \App\Http\Controllers\Libraries\Items\ItemController::class)
+        ->name('library.item.new');
+
     //OBLIGATIONS
     Route::get('obligations', \App\Http\Controllers\Events\Versions\Participations\ObligationController::class)
         ->name('obligations');

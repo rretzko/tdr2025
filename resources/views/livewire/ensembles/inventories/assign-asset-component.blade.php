@@ -77,6 +77,7 @@
                     :columnHeaders="$columnHeaders"
                     :ensembleAssets="$ensembleAssets"
                     :header="$dto['header']"
+                    :inventories="$inventories"
                     :rows="$rows"
                     sortColLabel="{{  $sortColLabel }}"
                     :sortAsc="$sortAsc"

@@ -17,7 +17,7 @@ class AssetAssignmentForm extends Form
     public int $ensembleId = 0;
     public string $ensembleStatus = '';
     public string $gradeClassOf = '';
-    public array $inventory = [];
+//    public array $inventory = [];
     public string $nameAlpha = '';
     public int $srYear = 0;
     public int $studentId = 0;
@@ -35,7 +35,7 @@ class AssetAssignmentForm extends Form
         $this->ensemble = Ensemble::find($this->ensembleId);
 
         $this->assets = $this->setAssets();
-        $this->inventory = $this->setInventory();
+//        $this->inventory = $this->setInventory();
         $this->ensembleStatus = $this->setEnsembleStatus();
         $this->gradeClassOf = $this->setGradeClassOf();
     }
@@ -45,10 +45,10 @@ class AssetAssignmentForm extends Form
         return $this->ensemble->assets->pluck('name', 'id')->toArray();
     }
 
-    private function setInventory(): array
-    {
-        return [];
-    }
+//    private function setInventory(): array
+//    {
+//        return [];
+//    }
 
     private function setEnsembleStatus(): string
     {

@@ -187,6 +187,16 @@ Breadcrumbs::for('libraries', function (BreadcrumbTrail $trail) {
     $trail->push('Libraries', route('libraries'));
 });
 
+Breadcrumbs::for('items', function (BreadcrumbTrail $trail, $id) {
+    $trail->parent('libraries');
+    $trail->push('Items', route('library.items', $id));
+});
+
+Breadcrumbs::for('new item', function (BreadcrumbTrail $trail, $id) {
+    $trail->parent('items', $id);
+    $trail->push('Items', route('library.item.new', $id));
+});
+
 //Libraries end ===================================================================================
 
 //Obligations

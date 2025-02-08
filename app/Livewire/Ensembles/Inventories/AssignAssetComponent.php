@@ -21,6 +21,7 @@ class AssignAssetComponent extends MembersTableComponent
     public Collection $ensembleAssets;
     public array $ensembleClassOfs = [];
     public array $ensembles = [];
+    public array $inventories = [];
     public int $srYear = 0;
 
     public function mount(): void
@@ -63,6 +64,33 @@ class AssignAssetComponent extends MembersTableComponent
         $this->assetForm->setStudent($studentId, $this->ensembleId, $this->srYear);
         $this->toggleDisplayAssetAssignmentForm();
 
+    }
+
+    public function save()
+    {
+        foreach ($this->inventories as $inventory) {
+            $parts = explode('_', $inventory);
+            $studentId = $parts[0];
+            $assetId = $this->assetForm->assetIds[$parts[1]];
+            Inventory::updateOrCreate(
+                [
+                    'ensemble_id' => $this->ensembleId,
+                    'asset_id' => $assetId,
+                ],
+                [
+                    'item_id' => '',
+                    'assigned_to' => $studentId,
+                    'status' => 'assigned',
+                ]
+            );
+        }
+
+        return $this->redirectRoute('members');
+    }
+
+    public function saveAndStay(): void
+    {
+        dd($this->inventories);
     }
 
     public function updatedEnsembleId(): void
