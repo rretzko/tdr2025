@@ -2,7 +2,9 @@
     'columnHeaders',
     'ensembleAssets',
     'header',
-    'inventories',
+    'inventoryAdds',
+    'inventoryEdits',
+    'inventoryErrors',
     'rows',
     'sortAsc',
     'sortColLabel',
@@ -65,23 +67,39 @@
                     </div>
                 </td>
                 <td @class([
-    "border border-gray-200 px-1 text-center",
-    'text-red-300' => ($row->status === 'removed')
-    ])
+                        "border border-gray-200 px-1 text-center",
+                        'text-red-300' => ($row->status === 'removed')
+                        ])
                 >
                     {{ $row->status }}
                 </td>
                 <td @class([
-    "border border-gray-200 px-1 text-center",
-    'text-red-300' => ($row->status === 'removed')
-    ])
+                        "border border-gray-200 px-1 text-center",
+                        'text-red-300' => ($row->status === 'removed')
+                        ])
                 >
                     {{ $row->calcGrade }}/{{ $row->class_of }}
                 </td>
                 @for($i=0; $i<$ensembleAssets->count(); $i++)
                     <td class="text-center" wire:key="{{$row->studentId}}_{{$i}}">
                         @php($arrayId = $row->studentId . '_' . $i)
-                        <input type="text" wire:model="inventories.{{ $arrayId }}" class="w-[6rem] h-2.5"/>
+                        <input type="text" wire:model="inventoryEdits.{{ $arrayId }}" class="w-[6rem] h-2.5"/>
+                        {{-- ERROR MESSAGE --}}
+                        <div class="text-sm text-red-500">
+                            @if(isset($inventoryErrors[$arrayId]))
+                                <ul>
+                                    @foreach($inventoryErrors[$arrayId] AS $mssg)
+                                        <li>{{ $mssg }}</li>
+                                    @endforeach
+                                </ul>
+                            @endif
+                        </div>
+                        {{-- SUCCESS MESSAGE --}}
+                        <div class="text-sm text-green-700">
+                            @if(isset($inventoryAdds[$arrayId]))
+                                {{ $inventoryAdds[$arrayId] }}
+                            @endif
+                        </div>
                     </td>
                 @endfor
             </tr>
@@ -101,11 +119,8 @@
         <x-buttons.submitAndStay value="submit and stay on page"/>
     </div>
 
-    <div>
-        @json($inventories)
-    </div>
 
     {{-- LOADING COMPONENT AND SPINNER --}}
-    {{--    <x-tables.loadingComponentAndSpinner/>--}}
+    <x-tables.loadingComponentAndSpinner/>
 
 </div>

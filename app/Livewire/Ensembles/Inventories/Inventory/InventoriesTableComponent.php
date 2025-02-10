@@ -23,7 +23,7 @@ class InventoriesTableComponent extends BasePageInventory
 
     public function render()
     {
-        return view('livewire..ensembles.inventories._inventories-table-component',
+        return view('livewire..ensembles.inventories.inventory.inventories-table-component',
             [
                 'columnHeaders' => $this->getColumnHeaders(),
                 'rows' => $this->getInventories(),

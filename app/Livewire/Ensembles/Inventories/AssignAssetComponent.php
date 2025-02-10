@@ -6,6 +6,7 @@ use App\Livewire\Ensembles\Members\MembersTableComponent;
 use App\Livewire\Forms\AssetAssignmentForm;
 use App\Models\Ensembles\Ensemble;
 use App\Models\Ensembles\Inventories\Inventory;
+use App\Models\Students\Student;
 use App\Models\UserConfig;
 use App\Services\CalcSeniorYearService;
 use Illuminate\Database\Eloquent\Collection;
@@ -21,7 +22,10 @@ class AssignAssetComponent extends MembersTableComponent
     public Collection $ensembleAssets;
     public array $ensembleClassOfs = [];
     public array $ensembles = [];
-    public array $inventories = [];
+    public array $inventoryEdits = [];
+    public array $inventoryAdds = [];
+    public array $inventoryErrors = [];
+
     public int $srYear = 0;
 
     public function mount(): void
@@ -90,7 +94,27 @@ class AssignAssetComponent extends MembersTableComponent
 
     public function saveAndStay(): void
     {
-        dd($this->inventories);
+        $this->reset('inventoryAdds', 'inventoryErrors');
+
+        foreach ($this->inventoryEdits as $key => $inventoryId) {
+
+            if ($this->isValid($key, $inventoryId)) {
+
+                //$inventoryId may be system id or may be user's personal identification
+                $inventory = $this->getInventoryObject($key, $inventoryId);
+                $studentId = explode('_', $key)[0];
+
+                $inventory->update(
+                    [
+                        'status' => 'assigned',
+                        'assigned_to' => $studentId,
+                    ]
+                );
+
+                $this->inventoryAdds[$key] = 'Added.';
+            }
+        }
+
     }
 
     public function updatedEnsembleId(): void
@@ -106,6 +130,25 @@ class AssignAssetComponent extends MembersTableComponent
     }
 
     /** END OF PUBLIC FUNCTIONS *******************************************************************************************/
+
+    private function currentStudentAsset(string $key, string $inventoryId): bool
+    {
+        $parts = explode('_', $key);
+        $assetKey = $parts[1];
+        $asset = $this->ensembleAssets[$assetKey];
+        $studentId = $parts[0];
+
+        return Inventory::query()
+            ->where('ensemble_id', $this->ensembleId)
+            ->where('asset_id', $asset->id)
+            ->where('status', 'assigned')
+            ->where('assigned_to', $studentId)
+            ->where(function ($query) use ($asset, $inventoryId) {
+                $query->where('id', $inventoryId)
+                    ->orWhere('item_id', $inventoryId);
+            })
+            ->exists();
+    }
 
     private function getAssetNames()
     {
@@ -170,6 +213,29 @@ class AssignAssetComponent extends MembersTableComponent
             ->toArray();
     }
 
+    /**
+     * Prevalidated object must exist, so no testing for that here
+     *
+     * @param string $key
+     * @param string $inventoryId
+     * @return Inventory
+     */
+    private function getInventoryObject(string $key, string $inventoryId): Inventory
+    {
+        $assetKey = explode('_', $key)[1];
+        $asset = $this->ensembleAssets[$assetKey];
+
+        return Inventory::query()
+            ->where('ensemble_id', $this->ensembleId)
+            ->where('asset_id', $asset->id)
+            ->where('status', 'available')
+            ->where(function ($query) use ($asset, $inventoryId) {
+                $query->where('id', $inventoryId)
+                    ->orWhere('item_id', $inventoryId);
+            })
+            ->first();
+    }
+
     private function getRows(): array
     {
         $schoolId = UserConfig::getValue('schoolId');
@@ -199,6 +265,82 @@ class AssignAssetComponent extends MembersTableComponent
             ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
             ->get()
             ->toArray();
+    }
+
+    /**
+     * @param string $key //ex. 17290_1 = studentid_$this->assets[key]
+     * @param string $inventoryId //ex. 40 or 92d15L = inventories.id or inventories.item_id
+     * @return bool
+     */
+    private function isValid(string $key, string $inventoryId): bool
+    {
+        //early exit
+        if ($this->currentStudentAsset($key, $inventoryId)) {
+            return false;
+        }
+
+        return ($this->isValidAsset($key, $inventoryId) && $this->isValidStudentMember($key));
+    }
+
+    private function isValidAsset(string $key, string $inventoryId): bool
+    {
+        $keys = explode('_', $key);
+        $assetKey = $keys[1] ?? null;
+        $studentId = $keys[0] ?? null;
+
+        //early exit
+        if (!isset($this->ensembleAssets[$assetKey])) {
+            return false;
+        }
+
+        //ex Cummerbund, Gown, etc.
+        $asset = $this->ensembleAssets[$assetKey];
+
+        //early exit
+        if (!$asset) {
+            return false;
+        }
+
+        $inventory = Inventory::query()
+            ->where('ensemble_id', $this->ensembleId)
+            ->where('asset_id', $asset->id)
+            ->where('status', 'available')
+            ->where(function ($query) use ($asset, $inventoryId) {
+                $query->where('id', $inventoryId)
+                    ->orWhere('item_id', $inventoryId);
+            })
+            ->exists();
+
+        if ($inventory) {
+            return true;
+        }
+
+        $this->inventoryErrors[$key][] = "Inventory id #$inventoryId is either invalid or assigned.";
+        return false;
+    }
+
+    private function isValidStudentMember(string $key): bool
+    {
+        $parts = explode('_', $key);
+        $studentId = $parts[0] ?? null;
+
+        //early exit
+        if (!$studentId) {
+            return false;
+        }
+
+        $studentMember = Student::query()
+            ->join('ensemble_members', 'students.id', '=', 'ensemble_members.student_id')
+            ->where('students.id', $parts[0])
+            ->where('ensemble_members.ensemble_id', $this->ensembleId)
+            ->exists();
+
+        if ($studentMember) {
+            return true;
+        }
+
+        $this->inventoryErrors[$key][] = 'Student id is invalid.';
+        return false;
     }
 
     /**
