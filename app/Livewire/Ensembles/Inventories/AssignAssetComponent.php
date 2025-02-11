@@ -49,6 +49,9 @@ class AssignAssetComponent extends MembersTableComponent
         }
 
         $this->availables = $this->setAvailables($this->ensemble->assets);
+
+        //preload edits with assigned inventory
+        $this->inventoryEdits = $this->getAssignedInventories();
     }
 
     public function render()
@@ -158,6 +161,45 @@ class AssignAssetComponent extends MembersTableComponent
         }
 
         return $this->ensembleAssets->pluck('name')->toArray();
+    }
+
+    private function getAssignedInventories(): array
+    {
+        $ensembleAssets = $this->ensembleAssets;
+
+        $inventoryItems = Inventory::query()
+            ->where('ensemble_id', $this->ensembleId)
+            ->where('status', 'assigned')
+            ->get(['id', 'assigned_to', 'item_id', 'asset_id'])
+            ->mapWithKeys(function ($inventory) use ($ensembleAssets) {
+                // Filter the ensembleAssets collection to find the index of $ensembleAssets with the matching asset_id
+                $index = $ensembleAssets->search(function ($item) use ($inventory) {
+                    return $item->id === $inventory->asset_id;
+                });
+
+                if (is_numeric($index)) {
+                    // Construct the key using assigned_to and the asset's id
+                    $key = $inventory->assigned_to . '_' . $index;
+                    return [$key => $inventory->item_id ?: $inventory->id];
+                }
+
+                return [];
+            })
+            ->toArray();
+
+        return $inventoryItems;
+
+//        return Inventory::query()
+//            ->where('ensemble_id', $this->ensembleId)
+//            ->where('status', 'assigned')
+//            ->get(['id', 'assigned_to', 'item_id', 'asset_id'])
+//            ->mapWithKeys(function ($inventory) use ($ensembleAssets) {
+//                $key = $inventory->assigned_to . '_' . $ensembleAssets->filter(function ($asset) {
+//                        return ?;
+//                    })->keys()->first();
+//                return [$key => $inventory->item_id ?: $inventory->id];
+//            })
+//            ->toArray();
     }
 
     /**

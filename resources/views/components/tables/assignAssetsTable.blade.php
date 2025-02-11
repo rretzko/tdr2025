@@ -83,7 +83,11 @@
                 @for($i=0; $i<$ensembleAssets->count(); $i++)
                     <td class="text-center" wire:key="{{$row->studentId}}_{{$i}}">
                         @php($arrayId = $row->studentId . '_' . $i)
-                        <input type="text" wire:model="inventoryEdits.{{ $arrayId }}" class="w-[6rem] h-2.5"/>
+                        <input
+                            type="text"
+                            wire:model="inventoryEdits.{{ $arrayId }}"
+                            class="w-[6rem] h-2.5"
+                        />
                         {{-- ERROR MESSAGE --}}
                         <div class="text-sm text-red-500">
                             @if(isset($inventoryErrors[$arrayId]))
