@@ -5,16 +5,21 @@ namespace App\Livewire\Events\Versions\Participations;
 use App\Livewire\BasePage;
 use App\Models\Events\Versions\Participations\Obligation;
 use App\Models\Events\Versions\Version;
+use App\Models\Events\Versions\VersionConfigDate;
 use App\Models\Events\Versions\VersionParticipant;
 use App\Models\Schools\School;
 use App\Models\UserConfig;
+use App\Services\ConvertToUsdService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use Money\Currency;
 
 class ObligationsComponent extends BasePage
 {
     public int $eventId = 0;
+    public string $finalTeacherChanges = '';
     public string $obligationFile = '';
+    public float $registrationFee = 0;
     public string $schoolName = '';
     public string $schoolCountyName = '';
     public int $versionId = 0;
@@ -32,6 +37,8 @@ class ObligationsComponent extends BasePage
         $this->versionId = $this->dto['id'];
         $version = Version::find($this->versionId);
         $this->eventId = $version->event_id;
+        $this->finalTeacherChanges = $this->getFinalTeacherChangeDate($version);
+        $this->registrationFee = ConvertToUsdService::penniesToUsd($version->fee_registration);
         $this->versionShortName = $version->short_name;
         $this->versionSchoolCounty = $version->school_county;
     }
@@ -132,6 +139,16 @@ class ObligationsComponent extends BasePage
             ->where('version_id', $this->versionId)
             ->where('teacher_id', auth()->user()->teacher->id)
             ->value('accepted') ?? '';
+    }
+
+    private function getFinalTeacherChangeDate(Version $version): string
+    {
+        $dt = VersionConfigDate::query()
+            ->where('version_id', $version->id)
+            ->where('date_type', 'final_teacher_changes')
+            ->value('version_date');
+
+        return Carbon::parse($dt)->format('l F jS'); //ex Thursday April 9th
     }
 
     private function setObligation(string $status)
