@@ -4,6 +4,8 @@ namespace App\Livewire\Ensembles\Inventories\Inventory;
 
 use App\Livewire\Ensembles\Inventories\BasePageInventory;
 use App\Models\Ensembles\Ensemble;
+use App\Models\Ensembles\Inventories\Inventory;
+use App\Models\Libraries\Items\Item;
 use App\Models\UserConfig;
 use Illuminate\Support\Facades\DB;
 
@@ -29,6 +31,20 @@ class InventoriesTableComponent extends BasePageInventory
                 'rows' => $this->getInventories(),
             ]
         );
+    }
+
+    public function remove(int $inventoryId): void
+    {
+        $inventory = Inventory::find($inventoryId);
+
+        $nonDeletableStatuses = ['assigned'];
+
+        //confirm that item is deletable
+        if (in_array($inventory->status, $nonDeletableStatuses)) {
+            return;
+        }
+
+        $inventory->delete();
     }
 
     private function getColumnHeaders()

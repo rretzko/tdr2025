@@ -41,39 +41,23 @@ class InventoryForm extends Form
     public int $userId = 0;
     public string $creator = '';
 
-//    public function rules(): array
-//    {
-//        return [
-//            'assetId' => ['required', 'exists:assets,id'],
-//        ];
-//        return [
-//            'name' => [
-//                'required', 'string', Rule::unique('ensembles')->where(function ($query) {
-//                    return $query->where('school_id', $this->schoolId);
-//                })
-//            ]
-//        ];
-//
-//    }
-
     public function messages(): array
     {
         return [
             'assetId.exists' => 'An asset must be selected.',
-            'itemId.required' => 'An item id must be entered.',
         ];
     }
 
     public function addMultiple(): void
     {
-        $itemId = (int)$this->assetIdStartingPoint;
+//        $itemId = (int)$this->assetIdStartingPoint;
 
         for ($i = 0; $i < $this->assetCount; $i++) {
 
-            $itemId = $this->checkForDuplicateItemId($this->ensembleId, $this->assetId, $itemId);
-            if (count($this->duplicateItemComments)) {
-                $this->comments .= implode('Note: ', $this->duplicateItemComments);
-            }
+//            $itemId = $this->checkForDuplicateItemId($this->ensembleId, $this->assetId, $itemId);
+//            if (count($this->duplicateItemComments)) {
+//                $this->comments .= implode('Note: ', $this->duplicateItemComments);
+//            }
 
             Inventory::create(
                 [
@@ -81,15 +65,15 @@ class InventoryForm extends Form
                     'color' => $this->color,
                     'comments' => $this->comments,
                     'ensemble_id' => $this->ensembleId,
-                    'item_id' => $itemId,
+//                    'item_id' => $itemId,
                     'size' => $this->size,
                     'status' => $this->status,
                     'updated_by' => auth()->id(),
                 ]
             );
 
-            $itemId++;
-            $this->duplicateItemComments = [];
+//            $itemId++;
+//            $this->duplicateItemComments = [];
         }
 
     }
@@ -116,7 +100,7 @@ class InventoryForm extends Form
         $this->sysId = $inventory->id;
         $this->assetId = $inventory->asset_id;
         $this->ensembleId = $inventory->ensemble_id;
-        $this->itemId = $inventory->item_id;
+        $this->itemId = $inventory->item_id ?? '';
         $this->size = $inventory->size;
         $this->color = $inventory->color;
         $this->status = $inventory->status;
@@ -133,7 +117,7 @@ class InventoryForm extends Form
         $this->validate(
             [
                 'assetId' => ['required', 'exists:assets,id'],
-                'itemId' => ['required', 'string'],
+                'itemId' => ['nullable', 'string'],
                 'size' => ['nullable', 'string'],
                 'color' => ['nullable', 'string'],
                 'status' => ['required', 'string'],
@@ -148,10 +132,10 @@ class InventoryForm extends Form
 
     private function add(): void
     {
-        $itemId = $this->checkForDuplicateItemId($this->ensembleId, $this->assetId, $this->itemId);
-        if (count($this->duplicateItemComments)) {
-            $this->comments .= implode('Note: ', $this->duplicateItemComments);
-        }
+//        $itemId = $this->checkForDuplicateItemId($this->ensembleId, $this->assetId, $this->itemId);
+//        if (count($this->duplicateItemComments)) {
+//            $this->comments .= implode('Note: ', $this->duplicateItemComments);
+//        }
 
         $inventory = Inventory::create(
             [
@@ -159,7 +143,7 @@ class InventoryForm extends Form
                 'color' => $this->color,
                 'comments' => $this->comments,
                 'ensemble_id' => $this->ensembleId,
-                'item_id' => $itemId,
+                'item_id' => $this->itemId,
                 'size' => $this->size,
                 'status' => $this->status,
                 'user_id' => $this->userId,
@@ -173,23 +157,23 @@ class InventoryForm extends Form
         $this->duplicateItemComments = [];
     }
 
-    private function checkForDuplicateItemId(int $ensemble_id, int $assetId, int $itemId): int
-    {
-        while (Inventory::query()
-            ->where('ensemble_id', $ensemble_id)
-            ->where('asset_id', $assetId)
-            ->where('item_id', $itemId)
-            ->exists()) {
-            //record duplicate-found action
-            $this->duplicateItemComments[] = 'Duplicate item id: ' . $itemId . ' was found.  The item id has been
-            changed to: ' . ($itemId + 1) . '.';
-
-            //increment $itemId and try again
-            $itemId++;
-        }
-
-        return $itemId;
-    }
+//    private function checkForDuplicateItemId(int $ensemble_id, int $assetId, int $itemId): int
+//    {
+//        while (Inventory::query()
+//            ->where('ensemble_id', $ensemble_id)
+//            ->where('asset_id', $assetId)
+//            ->where('item_id', $itemId)
+//            ->exists()) {
+//            //record duplicate-found action
+//            $this->duplicateItemComments[] = 'Duplicate item id: ' . $itemId . ' was found.  The item id has been
+//            changed to: ' . ($itemId + 1) . '.';
+//
+//            //increment $itemId and try again
+//            $itemId++;
+//        }
+//
+//        return $itemId;
+//    }
 
     #[NoReturn] private function updateInventory(): void
     {

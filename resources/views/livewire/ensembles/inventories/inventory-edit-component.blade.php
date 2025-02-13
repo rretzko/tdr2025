@@ -37,8 +37,7 @@
                     <x-forms.elements.livewire.inputTextNarrow
                         label="item id"
                         name="form.itemId"
-                        required
-                        hint="Enter <u>your</u> identification number for this item."
+                        hint="Optionally enter <u>your</u> identification number for this item."
                     />
 
                     {{-- ITEM SIZE --}}

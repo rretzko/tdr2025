@@ -58,7 +58,7 @@
                     {{ $row->name }}
                 </td>
                 <td class="border border-gray-200 px-1 text-center">
-                    {{ $row->item_id }}
+                    {{ $row->id }}{{ $row->item_id ? '/' . $row->item_id : '' }}
                 </td>
                 <td class="border border-gray-200 px-1 text-center">
                     {{ $row->size }}
@@ -76,7 +76,9 @@
                     <x-buttons.edit id="{{ $row->id }}" route="inventory.edit"/>
                 </td>
                 <td class="text-center border border-gray-200">
-                    <x-buttons.remove id="{{ $row->id }}" livewire="1"/>
+                    @if($row->status !== 'assigned')
+                        <x-buttons.remove id="{{ $row->id }}" livewire="1"/>
+                    @endif
                 </td>
             </tr>
         @empty

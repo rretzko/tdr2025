@@ -33,6 +33,8 @@ class BasePageMember extends BasePage
         'active', 'inactive', 'probationary', 'conditional', 'removed', 'withdrew', 'other'
     ];
     public SchoolEnsembleMemberForm $form;
+    public bool $hasAssets = false;
+    public bool $hasInventory = false;
     public string $selectedTab = 'members';
 
     protected function getAssets(): array

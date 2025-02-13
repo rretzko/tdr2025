@@ -43,9 +43,7 @@
                     <x-forms.elements.livewire.inputTextNarrow
                         label="item id"
                         name="form.itemId"
-                        required="required"
-                        type="number"
-                        hint="Enter <u>your</u> numeric identification number for this item."
+                        hint="Optionally enter <u>your</u> numeric identification number for this item."
                     />
                     <div class="ml-4 text-red-500 text-sm">
                         @if($duplicateItemIdMessage)

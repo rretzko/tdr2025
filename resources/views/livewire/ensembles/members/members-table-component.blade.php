@@ -43,13 +43,15 @@
                 <x-tabs.genericTabs :selectedTab="$selectedTab" :tabs="$tabs"/>
 
                 {{-- ASSIGN ASSETS BUTTON --}}
-                <div class="flex justify-end ml-4 mb-2">
-                    <a href="{{ route('inventory.assignAssets') }}">
-                        <button class="px-2 text-sm bg-yellow-700 text-yellow-300 rounded-full shadow-lg">
-                            Assign Assets
-                        </button>
-                    </a>
-                </div>
+                @if($hasAssets && $hasInventory && count($rows))
+                    <div class="flex justify-end ml-4 mb-2">
+                        <a href="{{ route('inventory.assignAssets') }}">
+                            <button class="px-2 text-sm bg-yellow-700 text-yellow-300 rounded-full shadow-lg">
+                                Assign Assets
+                            </button>
+                        </a>
+                    </div>
+                @endif
 
                 {{-- TABLE --}}
                 <x-tables.schoolEnsemblesMembersTable
@@ -60,9 +62,14 @@
                     :sortAsc="$sortAsc"
                 />
 
-            </
-            >
+            </div>
 
+        </div>
+
+        <div>
+            <div>member count: {{ count($rows) }}</div>
+            <div>has assets: {{ $hasAssets }}</div>
+            <div>has inventory: {{ $hasInventory }}</div>
         </div>
 
         {{-- SUCCESS INDICATOR --}}

@@ -26,6 +26,9 @@ class MembersTableComponent extends BasePageMember
         $this->sortCol = $this->userSort ? $this->userSort->column : 'users.last_name';
         $this->sortAsc = $this->userSort ? $this->userSort->asc : $this->sortAsc;
         $this->sortColLabel = $this->userSort ? $this->userSort->label : 'name/school';
+
+        //assets and inventory
+        $this->hasAssets = $this->ensembleHasAssets();
     }
 
     public function render()
@@ -96,6 +99,13 @@ class MembersTableComponent extends BasePageMember
             : '/ensembles/'.$this->selectedTab;
 
         $this->redirect($uri);
+    }
+
+    private function ensembleHasAssets(): bool
+    {
+        return false;
+//        return AssetEnsemble::query()
+//            ->where('ensemble_id', $this->en)
     }
 
     private function getColumnHeaders(): array

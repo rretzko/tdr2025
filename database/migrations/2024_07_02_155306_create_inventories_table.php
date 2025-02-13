@@ -10,7 +10,7 @@ return new class extends Migration {
         Schema::create('inventories', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(\App\Models\Ensembles\Asset::class)->constrained();
-            $table->string('item_id');
+            $table->string('item_id')->nullable();
             $table->string('size')->nullable();
             $table->string('color')->nullable();
             $table->longText('comments')->nullable();

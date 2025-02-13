@@ -48,13 +48,13 @@
                     />
 
                     {{-- ITEM ID STARTING POINT --}}
-                    <x-forms.elements.livewire.inputTextNarrow
-                        label="The first id number for these {{  $form->assetNamePlural }} should be: "
-                        name="form.assetIdStartingPoint"
-                        required="required"
-                        type="number"
-                        hint="This must be a numeric value."
-                    />
+                    {{--                    <x-forms.elements.livewire.inputTextNarrow--}}
+                    {{--                        label="The first id number for these {{  $form->assetNamePlural }} should be: "--}}
+                    {{--                        name="form.assetIdStartingPoint"--}}
+                    {{--                        required="required"--}}
+                    {{--                        type="number"--}}
+                    {{--                        hint="This must be a numeric value."--}}
+                    {{--                    />--}}
 
                     {{-- ITEM SIZE --}}
                     <x-forms.elements.livewire.inputTextNarrow
