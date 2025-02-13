@@ -25,7 +25,7 @@
 
     <li class="mb-2">
         I understand that <b>THERE ARE NO VOICE PART CHANGES AFTER THE FINAL DIRECTOR DEADLINE/POSTMARK DEADLINE</b>
-        - {{ $finalTeacherChanges }} Friday April 4th. If the Recording (MP3) is unacceptable or I wish to change the
+        - {{ $finalTeacherChanges }}. If the Recording (MP3) is unacceptable or I wish to change the
         voice part, I can <b><u>REJECT</u></b>
         the Recording (MP3). If I <b><u>REJECT</u></b> the Recording (MP3) file, it will no longer be accessible.
     </li>
