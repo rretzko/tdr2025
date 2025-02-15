@@ -4,7 +4,9 @@ namespace App\Livewire\Ensembles;
 
 use App\Livewire\Forms\EnsembleForm;
 use App\Models\Ensembles\Ensemble;
+use App\Models\Schools\Teacher;
 use App\Models\UserFilter;
+use Illuminate\Support\Facades\DB;
 use Livewire\Features\SupportRedirects\Redirector;
 
 class EnsemblesTableComponent extends BasePageEnsemble
@@ -75,6 +77,7 @@ class EnsemblesTableComponent extends BasePageEnsemble
 
     private function getEnsembles(): array
     {
+        $teacherId = Teacher::where('user_id', auth()->id())->first()->id;
         $a = [];
 
         foreach (array_flip($this->schools) as $schoolId) {
@@ -92,7 +95,10 @@ class EnsemblesTableComponent extends BasePageEnsemble
                 })
                 ->orderBy('ensembles.active')
                 ->orderBy('ensembles.name')
-                ->select('ensembles.*', 'schools.name AS schoolName')
+                ->select('ensembles.*', 'schools.name AS schoolName',
+                    DB::raw("ensembles.teacher_id=$teacherId AS canEdit"),
+                    DB::raw("ensembles.teacher_id=$teacherId AS canRemove")
+                )
                 ->get()
                 ->toArray();
         }

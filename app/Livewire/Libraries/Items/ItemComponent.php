@@ -4,6 +4,7 @@ namespace App\Livewire\Libraries\Items;
 
 class ItemComponent extends BaseLibraryItemPage
 {
+    public string $errorMessage = '';
     public array $itemTypes = [];
     public string $searchResults = 'Search Results';
 
@@ -25,12 +26,21 @@ class ItemComponent extends BaseLibraryItemPage
 
     public function save(): void
     {
+        $this->reset('errorMessage', 'successMessage');
+
         dd(__METHOD__);
     }
 
     public function saveAndStay(): void
     {
-        dd(__METHOD__);
+        $this->reset('errorMessage', 'successMessage');
+
+        if ($this->form->save()) {
+            $this->successMessage = 'Item Saved.';
+        } else {
+            $this->errorMessage = 'Unable to save item.';
+        }
+
     }
 
 

@@ -5,6 +5,7 @@ namespace App\Livewire\Forms;
 use App\Models\Ensembles\AssetEnsemble;
 use App\Models\Ensembles\Ensemble;
 use App\Models\Schools\School;
+use App\Models\Schools\Teacher;
 use App\Rules\UniqueSchoolEnsembleName;
 use JetBrains\PhpStorm\NoReturn;
 use Livewire\Attributes\Validate;
@@ -17,6 +18,8 @@ class EnsembleForm extends Form
     public string $abbr = '';
     #[Validate('nullable', 'bool')]
     public bool $active = false;
+    public bool $canEdit = false;
+    public bool $canRemove = false;
     #[Validate('required', message: 'A description is required.')]
     public string $description = '';
     public array $ensembleAssets = [];
@@ -24,6 +27,7 @@ class EnsembleForm extends Form
     //#[Validate('required', message: 'The ensemble name is required.')]
     public string $name = '';
     public int $schoolId = 0;
+    public int $teacherId = 0;
     #[Validate('required', message: 'A short name is required.')]
     public string $shortName = '';
     public string $sysId = 'new';
@@ -49,12 +53,17 @@ class EnsembleForm extends Form
         $this->schoolId = $ensemble->school_id;
         $this->shortName = $ensemble->short_name;
         $this->sysId = $ensemble->id;
+        $this->teacherId = $ensemble->teacher_id;
 
         if ($ensemble->assets->isNotEmpty()) {
             $this->ensembleAssets = $ensemble->assets->pluck('id')->toArray();
         }
 
         $this->grades = explode(',', $ensemble->grades);
+
+        $teacherId = Teacher::where('user_id', auth()->id())->first()->id;
+        $this->canEdit = $this->getCanEditGate($ensemble, $teacherId);
+        $this->canRemove = $this->getCanRemoveGate($ensemble, $teacherId);
     }
 
     public function setSchool(School $school)
@@ -84,6 +93,7 @@ class EnsembleForm extends Form
         $ensemble = Ensemble::create(
             [
                 'school_id' => $this->schoolId,
+                'teacher_id' => $this->getTeacherId(),
                 'name' => $this->name,
                 'short_name' => $this->shortName,
                 'abbr' => $this->abbr,
@@ -93,7 +103,7 @@ class EnsembleForm extends Form
             ]
         );
 
-        //change systId from "new" to current id
+        //change sysId from "new" to current id
         $this->sysId = $ensemble->id;
 
         $this->updateEnsembleAssets();
@@ -104,6 +114,21 @@ class EnsembleForm extends Form
         AssetEnsemble::where('ensemble_id', $this->sysId)->delete();
     }
 
+    private function getCanEditGate(Ensemble $ensemble, int $teacherId): bool
+    {
+        return $ensemble->teacher_id === $teacherId;
+    }
+
+    private function getCanRemoveGate(Ensemble $ensemble, int $teacherId): bool
+    {
+        return $ensemble->teacher_id === $teacherId;
+    }
+
+    private function getTeacherId(): int
+    {
+        return Teacher::where('user_id', auth()->id())->first()->id;
+    }
+
     #[NoReturn] private function updateEnsemble(): void
     {
         $ensemble = Ensemble::find($this->sysId);
@@ -112,6 +137,7 @@ class EnsembleForm extends Form
         $ensemble->update(
             [
                 'school_id' => $this->schoolId,
+                'teacher_id' => $this->getTeacherId(),
                 'name' => $this->name,
                 'short_name' => $this->shortName,
                 'abbr' => $this->abbr,

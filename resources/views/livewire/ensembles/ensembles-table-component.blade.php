@@ -94,11 +94,23 @@
                                 <td class="border border-gray-200 px-1 text-center">
                                     {{ array_key_exists($row['id'], $ensembleAssetsArray) ? implode(', ', $ensembleAssetsArray[$row['id']]) : '' }}
                                 </td>
-                                <td class="text-center border border-gray-200">
-                                    <x-buttons.edit id="{{ $row['id'] }}" route="ensemble.edit"/>
+                                <td @class([
+                                    "text-center px-2",
+                                    "border border-gray-200" => $row['canEdit'],
+                                    ])
+                                >
+                                    @if($row['canEdit'])
+                                        <x-buttons.edit id="{{ $row['id'] }}" route="ensemble.edit"/>
+                                    @endif
                                 </td>
-                                <td class="text-center border border-gray-200">
-                                    <x-buttons.remove id="{{ $row['id'] }}" livewire="1"/>
+                                <td @class([
+                                    "text-center px-2",
+                                    "border border-gray-200" => $row['canRemove'],
+                                    ])
+                                >
+                                    @if($row['canRemove'])
+                                        <x-buttons.remove id="{{ $row['id'] }}" livewire="1"/>
+                                    @endif
                                 </td>
                             </tr>
                         @empty

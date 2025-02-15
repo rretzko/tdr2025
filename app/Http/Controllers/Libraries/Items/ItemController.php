@@ -14,6 +14,11 @@ class ItemController extends Controller
      */
     public function __invoke(Request $request, Library $library)
     {
+        //access policy
+        if (!policy($library)->view($request->user(), $library)) {
+            abort(403);
+        }
+
         $id = $library->id;
 
         $data = new ViewDataFactory(__METHOD__, $id);

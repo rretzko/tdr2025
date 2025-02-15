@@ -1,7 +1,8 @@
 @props([
     'showSuccessIndicator' => false,
-    'message' => '',
+    'message' => 'test',
 ])
+
 <div
     x-show="$wire.showSuccessIndicator"
     x-transition.out.opacity.duration.2000ms

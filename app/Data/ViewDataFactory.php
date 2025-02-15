@@ -348,10 +348,9 @@ class ViewDataFactory extends aViewData
 
             'judge assignment' => 'events.versions.judge-assignment-component',
 
-            'items' => 'libraries.items.item-table-component',
-            'new item' => 'libraries.items.item-component',
-
             'libraries' => 'libraries.libraries-table-component',
+            'library items' => 'libraries.items.item-table-component',
+            'library item' => 'libraries.items.item-component',
 
             'members' => 'ensembles.members.members-table-component',
             'member create' => 'ensembles.members.member-create-component',

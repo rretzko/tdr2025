@@ -12,7 +12,7 @@ return new class extends Migration {
             $table->foreignId('school_id')->index();
             $table->foreignId('teacher_id')->index();
             $table->string('name');
-            $table->unique(['school_id', 'name']);
+            $table->unique(['school_id', 'teacher_id', 'name'], 'uAll');
         });
     }
 

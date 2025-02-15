@@ -103,6 +103,8 @@ class MembersTableComponent extends BasePageMember
 
     private function ensembleHasAssets(): bool
     {
+        $ensembleId = $this->form->ensembleId ?: $this->getFirstEnsembleId();
+
         return false;
 //        return AssetEnsemble::query()
 //            ->where('ensemble_id', $this->en)
@@ -120,6 +122,11 @@ class MembersTableComponent extends BasePageMember
             ['label' => 'status', 'sortBy' => 'status'],
             ['label' => 'office', 'sortBy' => 'office'],
         ];
+    }
+
+    private function getFirstEnsembleId(): int
+    {
+
     }
 
     private function getMembers(): array

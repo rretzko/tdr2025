@@ -7,9 +7,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Ensembles\Ensemble;
 use App\Services\MissingGradesService;
 use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class EnsembleController extends Controller
 {
+    use AuthorizesRequests;
+
     public function index()
     {
         //abort if user should not have access to the module
@@ -25,8 +28,13 @@ class EnsembleController extends Controller
         return view($dto['pageName'], compact('dto'));
     }
 
-    public function edit(Ensemble $ensemble)
+    public function edit(Request $request, Ensemble $ensemble)
     {
+        //only Ensemble originator (teacher_id can edit the Ensemble model
+        if ($request->user()->cannot('edit', $ensemble)) {
+            abort(403);
+        }
+
         $data = new ViewDataFactory(__METHOD__, $ensemble->id);
 
         $dto = $data->getDto();
@@ -51,6 +59,8 @@ class EnsembleController extends Controller
 
     public function create()
     {
+        $this->authorize('create', Ensemble::class);
+
         $data = new ViewDataFactory(__METHOD__);
 
         $dto = $data->getDto();
