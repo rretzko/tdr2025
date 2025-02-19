@@ -94,7 +94,7 @@ class EstimateComponent extends BasePage
         $this->city = $address->city ?? '';
         $this->geostateAbbr = $address->geostateAbbr ?? 'NJ';
         $version = Version::find($this->versionId);
-        $squareEpaymentCredential = EpaymentCredentials->where('event_id', $version->event->id)->first();
+        $squareEpaymentCredential = EpaymentCredentials::where('event_id', $version->event->id)->first();
         $this->dataUrl = $squareEpaymentCredential->epayment_id; //ex. https://square.link/u/12345678?src=embed
         $this->href = $squareEpaymentCredential->epayment_id; //ex. https://square.link/u/12345678?src=embed
 

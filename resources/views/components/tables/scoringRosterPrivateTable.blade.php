@@ -70,13 +70,21 @@
                 <td style="text-align: left;">{{ $row->programName }}</td>
                 <td style="text-align: left;">{{ substr($schoolName, 0, 12) }}</td>
                 <td>{{ $row->voicePartAbbr }}</td>
-                @forelse($row->scores AS $score)
-                    <td class=" @if($score === 0) text-gray-300 @endif ">
-                        {{ $score }}
-                    </td>
-                @empty
-                    <td>No scores found</td>
-                @endforelse
+                @if(isset($rowsScores[$row->id]))
+                    @forelse($rowsScores[$row->id] AS $score)
+                        <td class=" @if($score === 0) text-gray-300 @endif ">
+                            {{ $score }}
+                        </td>
+                    @empty
+                        <td>No scores found</td>
+                    @endforelse
+                @else
+                    @for($i=0; $i<$factors->count() * $judgeCount; $i++)
+                        <td class="text-gray-300 ">
+                            0
+                        </td>
+                    @endfor
+                @endif
                 <td class=" @if(! $row->total) text-gray-300 @endif">
                     {{ $row->total ?: 0 }}
                 </td>

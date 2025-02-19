@@ -31,7 +31,9 @@ class ScoringRosterController extends Controller
         $dto = $data->getDto();
 
         set_time_limit(120);
-        $pdf = PDF::loadView($path, compact('dto'))
+        $rows = $dto['rows'];
+        $rowsScores = $dto['rowsScores'];
+        $pdf = PDF::loadView($path, compact('dto', 'rows', 'rowsScores'))
             ->setPaper('letter', 'landscape');
 
         $fileNameRoot = '_ScoringRoster_'.Carbon::now()->format('Ymd_His').'.pdf';

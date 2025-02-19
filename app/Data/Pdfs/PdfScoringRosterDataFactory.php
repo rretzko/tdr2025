@@ -64,9 +64,22 @@ class PdfScoringRosterDataFactory
     private function getRows(): void
     {
         $voicePartIds = $this->voicePartId ? [$this->voicePartId] : $this->voicePartIds;
+        $eventEnsembleAbbr = $this->eventEnsembleId
+            ? EventEnsemble::find($this->eventEnsembleId)->abbr
+            : '';
 
-        $service = new ScoringRosterDataRowsService($this->versionId, $this->voicePartIds, $this->eventEnsembleId);
+        $service = new ScoringRosterDataRowsService(
+            $this->versionId,
+            $this->voicePartIds,
+            $this->eventEnsembleId,
+            $this->dto['judgeCount'],
+            $this->scoresAscending,
+            $this->dto['factors']->count(),
+            $this->voicePartId,
+            $eventEnsembleAbbr,
+        );
         $this->dto['rows'][$this->voicePartId] = $service->getRows();
+        $this->dto['rowsScores'] = $service->getRowsScores();
     }
 
     private function getVoicePartIds(): array

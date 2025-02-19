@@ -5,6 +5,7 @@ namespace App\Livewire\Events\Versions\Tabrooms;
 use App\Exports\EventEnsembleParticipantsExport;
 use App\Exports\EventEnsembleSeniorityParticipationExport;
 use App\Livewire\BasePage;
+use App\Models\Events\Event;
 use App\Models\Events\EventEnsemble;
 use App\Models\Events\Versions\Scoring\Score;
 use App\Models\Events\Versions\Scoring\ScoreFactor;
@@ -25,12 +26,14 @@ class TabroomReportComponent extends BasePage
     public array $categories = [];
     public string $displayReportData = '';
     public bool $displayReport = false;
+    public string $eventEnsembleAbbr = '';
     public int $eventEnsembleCount = 0;
     public int $eventEnsembleId = 0;
     public Collection $eventEnsembles;
     public array $eventEnsembleSeniorYears = [];
     public Collection $factors;
     public int $judgeCount;
+    public array $rowsScores = [];
     public bool $scoresAscending = true;
     public array $seniorityParticipation = [];
     public int $showEventEnsembleId = 0;
@@ -52,14 +55,15 @@ class TabroomReportComponent extends BasePage
         $this->factors = $this->getFactorAbbrs();
         $this->voiceParts = $this->getVoiceParts();
         $this->voicePartIds = $this->voiceParts->pluck('id')->toArray();
-
+        $this->voicePartId = $this->voicePartIds[0];
+//
         $this->eventEnsembles = Version::find($this->versionId)->event->eventEnsembles;
         $this->eventEnsembleCount = $this->eventEnsembles->count();
         $this->eventEnsembleId = $this->eventEnsembles->first()->id;
-
-        $this->versionSeniorYears = $this->getVersionSeniorYears();
-        $this->eventEnsembleSeniorYears = $this->getEventEnsembleYears();
-        $this->seniorityParticipation = $this->getParticipantsForSeniority(); //$this->getSeniorityParticipation();
+        $this->showEventEnsembleId = $this->eventEnsembleId;
+        if ($this->eventEnsembleId) {
+            $this->eventEnsembleAbbr = EventEnsemble::find($this->eventEnsembleId)->abbr;
+        }
 
     }
 
@@ -79,6 +83,12 @@ class TabroomReportComponent extends BasePage
 
         if ($type === 'byVoicePart') {
             $this->voicePartId = $this->voiceParts->first()->id;
+        }
+
+        if ($type === 'seniorityParticipation') {
+            $this->versionSeniorYears = $this->getVersionSeniorYears();
+            $this->eventEnsembleSeniorYears = $this->getEventEnsembleYears();
+            $this->seniorityParticipation = $this->getParticipantsForSeniority(); //$this->getSeniorityParticipation();
         }
 
         $this->displayReport = !$this->displayReport;
@@ -139,6 +149,17 @@ class TabroomReportComponent extends BasePage
             $fileName);
     }
 
+    public function updatedShowEventEnsembleId(int $value): void
+    {
+        if (!$value) {
+            $this->reset('eventEnsembleAbbr', 'eventEnsembleId');
+        } else {
+            $this->eventEnsembleId = $value;
+            $eventEnsemble = EventEnsemble::find($this->eventEnsembleId);
+            $this->eventEnsembleAbbr = $eventEnsemble->abbr;
+        }
+    }
+
     public function updatedEventEnsembleId(): void
     {
         $this->seniorityParticipation = $this->getParticipantsForSeniority();
@@ -185,7 +206,6 @@ class TabroomReportComponent extends BasePage
                     $participant->years[] = '';
                 }
             }
-
 
         }
     }
@@ -286,8 +306,10 @@ class TabroomReportComponent extends BasePage
 
     private function getEventEnsembleYears(): array
     {
-        $eventEnsemble = EventEnsemble::find($this->eventEnsembleId);
-        $grades = explode(',', $eventEnsemble->grades);
+        $grades = ($this->eventEnsembleId)
+            ? explode(',', EventEnsemble::find($this->eventEnsembleId)->grades)
+            : explode(',', Version::find($this->versionId)->event->grades);
+
         $maxGrade = max($grades);
         arsort($grades);
 
@@ -348,29 +370,40 @@ class TabroomReportComponent extends BasePage
     {
         $voicePartIds = $this->voicePartId ? [$this->voicePartId] : $this->getShowEnsembleVoicePartIds(); //voicePartIds;
 
-        $service = new ScoringRosterDataRowsService($this->versionId, $voicePartIds, $this->showEventEnsembleId);
+        $service = new ScoringRosterDataRowsService(
+            $this->versionId,
+            $voicePartIds,
+            $this->showEventEnsembleId,
+            $this->judgeCount,
+            $this->scoresAscending,
+            $this->factors->count(),
+            $this->voicePartId,
+            $this->eventEnsembleAbbr,
+        );
+
+        $this->rowsScores = $service->getRowsScores();
 
         return $service->getRows();
     }
 
-    private function getScores(array &$candidates): void
-    {
-        foreach ($candidates as $candidate) {
-
-            for ($i = 1; $i <= $this->judgeCount; $i++) {
-
-                foreach ($this->factors as $factor) {
-
-                    $candidate->scores[] = Score::query()
-                        ->where('candidate_id', $candidate->id)
-                        ->where('judge_order_by', $i)
-                        ->where('score_factor_order_by', $factor->order_by)
-                        ->select('score')
-                        ->value('score') ?? 0;
-                }
-            }
-        }
-    }
+//    private function getScores(array &$candidates): void
+//    {
+//        foreach ($candidates as $candidate) {
+//
+//            for ($i = 1; $i <= $this->judgeCount; $i++) {
+//
+//                foreach ($this->factors as $factor) {
+//
+//                    $candidate->scores[] = Score::query()
+//                        ->where('candidate_id', $candidate->id)
+//                        ->where('judge_order_by', $i)
+//                        ->where('score_factor_order_by', $factor->order_by)
+//                        ->select('score')
+//                        ->value('score') ?? 0;
+//                }
+//            }
+//        }
+//    }
 
     private function getShowEnsembleVoicePartIds(): array
     {

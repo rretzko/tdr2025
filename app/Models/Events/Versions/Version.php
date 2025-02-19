@@ -99,15 +99,12 @@ class Version extends Model
         $categorySpans = [];
         foreach ($categories as $category) {
             $colSpan = ScoreFactor::query()
-                ->where('version_id', $this->id)
                 ->where('score_category_id', $category->id)
+                ->where(function ($query) use ($category) {
+                    $query->where('version_id', $this->id)
+                        ->orWhere('event_id', $this->event_id);
+                })
                 ->count('id');
-            if (!$colSpan) {
-                $colSpan = ScoreFactor::query()
-                    ->where('event_id', $this->event_id)
-                    ->where('score_category_id', $category->id)
-                    ->count('id');
-            }
 
             $categorySpans[] = [
                 'descr' => $category->descr,
