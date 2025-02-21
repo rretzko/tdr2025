@@ -50,6 +50,11 @@
                             Download full audition scoring <b><i>including</i></b> personal identification.<br/>
                             NOTE: This is intended for event management use ONLY!
                         </li>
+                        @if(\Illuminate\Support\Facades\Session::has('success'))
+                            <li class="bg-green-100 text-green-900 px-2 rounded-lg">
+                                {{ \Illuminate\Support\Facades\Session::get('success') }}
+                            </li>
+                        @endif
                     </ul>
                 </li>
 

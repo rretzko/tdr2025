@@ -16,7 +16,7 @@
         (MP3)
         submitted by my students.
         <ul>
-            <li>
+            <li class="text-2xl">
                 <b>Please note: MP3 Recordings will not be reviewed by registration managers. If the uploaded MP3 is an
                     incorrect MP3 Recording, it will receive a score of all 9’s.</b>
             </li>

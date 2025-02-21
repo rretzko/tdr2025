@@ -24,7 +24,7 @@
             <th colspan="4" class="clearBorder"></th>
             @for($i=1; $i<=$judgeCount; $i++)
                 <th colspan="{{ $factors->count() }}">
-                    Judge {{ $i }}!
+                    Judge {{ $i }}
                 </th>
             @endfor
             <th colspan="2" class="clearBorder"></th>
@@ -64,6 +64,9 @@
                 $rhs = str_replace('Regional High School', 'RHS', $row->schoolName);
                 $schoolName = str_replace('High School', 'HS', $rhs);
             @endphp
+            @if(!($loop->iteration % 20))
+                <div style="page-break-after: always"></div>
+            @endif
 
             <tr class="hover:bg-green-100 hover:font-semibold">
                 <td style="text-align: left;">{{ $row->id }}</td>
@@ -97,6 +100,7 @@
                 <td>No candidates found.</td>
             </tr>
         @endforelse
+
         </tbody>
     </table>
 </div>

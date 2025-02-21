@@ -33,6 +33,7 @@ class TabroomReportComponent extends BasePage
     public array $eventEnsembleSeniorYears = [];
     public Collection $factors;
     public int $judgeCount;
+    public int $rowLimit = 0;
     public array $rowsScores = [];
     public bool $scoresAscending = true;
     public array $seniorityParticipation = [];
@@ -79,10 +80,14 @@ class TabroomReportComponent extends BasePage
 
     #[NoReturn] public function clickButton(string $type): void
     {
-        $this->reset('voicePartId');
+        $this->reset('voicePartId', 'rowLimit');
 
         if ($type === 'byVoicePart') {
             $this->voicePartId = $this->voiceParts->first()->id;
+        }
+
+        if ($type === 'allPrivate') {
+            $this->rowLimit = 1000;
         }
 
         if ($type === 'seniorityParticipation') {
@@ -379,6 +384,7 @@ class TabroomReportComponent extends BasePage
             $this->factors->count(),
             $this->voicePartId,
             $this->eventEnsembleAbbr,
+            $this->rowLimit,
         );
 
         $this->rowsScores = $service->getRowsScores();

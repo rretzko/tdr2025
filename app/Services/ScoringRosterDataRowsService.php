@@ -24,6 +24,7 @@ class ScoringRosterDataRowsService
         private readonly int    $scoreFactorCount,
         private readonly int    $voicePartId,
         private readonly string $ensembleAbbr = '',
+        private readonly int $rowLimit,
     )
     {
         $this->init();
@@ -46,6 +47,15 @@ class ScoringRosterDataRowsService
             ->where('audition_results.acceptance_abbr', 'LIKE', $this->ensembleAbbr);
     }
 
+    private function addRowLimitToBuilder(Builder $query): Builder
+    {
+        if (!$this->rowLimit) {
+            return $query;
+        }
+
+        return $query->limit($this->rowLimit);
+    }
+
     private function addVoicePartIdToBuilder(Builder $query): Builder
     {
         if (!$this->voicePartId) {
@@ -64,6 +74,8 @@ class ScoringRosterDataRowsService
         $query = $this->addVoicePartIdToBuilder($query);
 
         $query = $this->addAuditionResultsToBuilder($query);
+
+        $query = $this->addRowLimitToBuilder($query);
 
         return $query->pluck('candidates.id')
             ->toArray();
