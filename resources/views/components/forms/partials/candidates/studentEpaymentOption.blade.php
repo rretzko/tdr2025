@@ -19,6 +19,12 @@
                     Last Updated: {{ $teacherEpaymentStudentLastUpdated }}
                 @endif
             </div>
+            @if(!$hasEpaymentId)
+                <div class="border border-gray-600 mt-2 mx-4 p-2 text-sm bg-gray-300 shadow-lg">
+                    Please note: The Square credentials are currently pending. Your students will be able to use Square
+                    payments as soon as the credentials are confirmed.
+                </div>
+            @endif
         </div>
     @endif
 </div>

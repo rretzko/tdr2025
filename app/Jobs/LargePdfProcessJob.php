@@ -48,6 +48,7 @@ class LargePdfProcessJob implements ShouldQueue
         Storage::disk('local')->put($filePath, $pdf->output());
 
         // Send email with the PDF attachment
+        dd(auth()->user());
         $emailAddress = auth()->user()->email;
         $user = User::find(368);
         $email = 'rick@mfrholdings.com';

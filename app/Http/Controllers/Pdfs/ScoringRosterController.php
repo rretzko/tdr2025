@@ -35,7 +35,7 @@ class ScoringRosterController extends Controller
         set_time_limit(120);
         $rows = $dto['rows'];
         $rowsScores = $dto['rowsScores'];
-
+        Log::info(count($rows[0]) . ' | ' . count($rowsScores));
         $fileNameRoot = '_ScoringRoster_' . Carbon::now()->format('Ymd_His') . '.pdf';
         $fileName = $voicePart->abbr . $fileNameRoot;
 

@@ -35,7 +35,7 @@
         on any Recording (MP3) submitted by my students.
     </li>
 
-    <li class="mb-2">
+    <li class="mb-2 text-2xl font-bold">
         Please Note: MP3 Recordings will not be reviewed by registration managers. If the uploaded MP3 is an incorrect
         MP3 Recording or uploaded in the wrong place, it will receive a score of all 9’s.
     </li>

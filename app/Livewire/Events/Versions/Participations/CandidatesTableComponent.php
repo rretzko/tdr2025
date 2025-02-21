@@ -7,6 +7,7 @@ use App\Http\Controllers\Pdfs\ApplicationPdfController;
 use App\Livewire\BasePage;
 use App\Livewire\Filters;
 use App\Livewire\Forms\CandidateForm;
+use App\Models\EpaymentCredentials;
 use App\Models\Events\Event;
 use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Participations\Obligation;
@@ -47,6 +48,7 @@ class CandidatesTableComponent extends BasePage
     public string $ePaymentVendor = '';
     public array $ensembleVoiceParts = [];
     public array $eventGrades = [];
+    public bool $hasEpaymentId = false;
     public bool $hasSupervisorReqs = false;
     public bool $hasTeacherPhoneReqs = false;
     public bool $height = false;
@@ -139,6 +141,16 @@ class CandidatesTableComponent extends BasePage
 
         if (array_key_exists('candidateId', $this->dto)) {
             $this->selectCandidate($this->dto['candidateId']);
+        }
+
+        //check ePaymentId
+        $ePaymentCredentials = EpaymentCredentials::where('version_id', $this->versionId)->first();
+        if (!$ePaymentCredentials) {
+            $eventId = $this->version->event_id;
+            $ePaymentCredentials = EpaymentCredentials::where('event_id', $eventId)->first();
+        }
+        if ($ePaymentCredentials) {
+            $this->hasEpaymentId = $ePaymentCredentials->epayment_id !== 'pending';
         }
     }
 

@@ -77,7 +77,7 @@ class PdfScoringRosterDataFactory
             $this->dto['factors']->count(),
             $this->voicePartId,
             $eventEnsembleAbbr,
-            525,
+            410,
         );
         $this->dto['rows'][$this->voicePartId] = $service->getRows();
         $this->dto['rowsScores'] = $service->getRowsScores();
