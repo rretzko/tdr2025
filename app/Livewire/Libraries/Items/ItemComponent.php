@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Libraries\Items;
 
+use App\Models\Libraries\Items\Components\LibTitle;
+
 class ItemComponent extends BaseLibraryItemPage
 {
     public string $errorMessage = '';
@@ -45,7 +47,30 @@ class ItemComponent extends BaseLibraryItemPage
 
     public function updatedFormTitle()
     {
-        $this->searchResults = $this->form->title;
+        $this->search('title', $this->form->title);
+    }
+
+    private function search(string $property, string $value): void
+    {
+        $searchString = '%' . $value . '%';
+
+        $this->searchResults = '<div><h3>SearchResults</h3>';
+
+        $titles = LibTitle::where('title', 'LIKE', $searchString)->pluck('title', 'id')->toArray();
+
+        if (count($titles)) {
+
+            $this->searchResults .= '<ul>';
+
+            foreach ($titles as $id => $title) {
+
+                $this->searchResults .= "<li><a href='findItem: $id'>$title</a></li>";
+            }
+
+            $this->searchResults .= '</ul>';
+        }
+
+        $this->searchResults .= '</div>';
     }
 
 }

@@ -9,7 +9,7 @@ class LibraryItemForm extends Form
 {
     public string $itemType = 'sheetMusic';
     public int $sysId = 0;
-    public string $title = 'Item title';
+    public string $title = '';
 
 
     public function save(): bool

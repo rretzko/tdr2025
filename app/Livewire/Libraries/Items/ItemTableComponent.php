@@ -3,15 +3,19 @@
 namespace App\Livewire\Libraries\Items;
 
 use App\Livewire\BasePage;
+use App\Models\Libraries\Library;
 
 class ItemTableComponent extends BasePage
 {
     public array $columnHeaders;
+    public Library $library;
     public bool $displayForm = false;
 
     public function mount(): void
     {
         parent::mount();
+
+        $this->library = Library::find($this->dto['id']);
 
         $this->columnHeaders = $this->getColumnHeaders();
     }

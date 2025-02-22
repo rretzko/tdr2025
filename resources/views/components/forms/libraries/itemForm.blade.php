@@ -40,7 +40,7 @@
 
                 {{-- SEARCH RESULTS --}}
                 <div id="results" class="bg-gray-300 w-full rounded-lg p-2 mb-1 border ">
-                    {{ $searchResults }}
+                    {!! $searchResults !!}
                 </div>
             </div>
 

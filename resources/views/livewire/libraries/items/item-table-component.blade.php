@@ -15,7 +15,7 @@
 
         {{-- HEADER and ADD-NEW BUTTON --}}
         <div class="flex justify-between mb-1">
-            <div>{{ ucwords($dto['header']) }}</div>
+            <div>{{ $library->name }} Items</div>
             @if(! $displayForm)
                 <button
                     type="button"
