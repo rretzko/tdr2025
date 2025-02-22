@@ -43,5 +43,9 @@ class ItemComponent extends BaseLibraryItemPage
 
     }
 
+    public function updatedFormTitle()
+    {
+        $this->searchResults = $this->form->title;
+    }
 
 }

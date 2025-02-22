@@ -4,6 +4,7 @@ namespace App\Models\Schools;
 
 use App\Models\Students\Student;
 use App\Models\User;
+use App\Models\Libraries\Library;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -49,6 +50,11 @@ class Teacher extends Model
             ->pluck('subject', 'id')
             ->toArray();
 
+    }
+
+    public function hasLibrary(): bool
+    {
+        return Library::where('teacher_id', $this->id)->exists();
     }
 
     public function isVerified(): bool

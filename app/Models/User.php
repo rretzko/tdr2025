@@ -89,6 +89,13 @@ class User extends Authenticatable
         return Pronoun::find($this->pronoun_id)->descr;
     }
 
+    public function hasLibrary(): bool
+    {
+        return ($this->teacher)
+            ? $this->teacher->hasLibrary()
+            : false;
+    }
+
     public function isFounder(): bool
     {
         //prod

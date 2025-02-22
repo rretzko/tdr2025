@@ -144,14 +144,8 @@ class CandidatesTableComponent extends BasePage
         }
 
         //check ePaymentId
-        $ePaymentCredentials = EpaymentCredentials::where('version_id', $this->versionId)->first();
-        if (!$ePaymentCredentials) {
-            $eventId = $this->version->event_id;
-            $ePaymentCredentials = EpaymentCredentials::where('event_id', $eventId)->first();
-        }
-        if ($ePaymentCredentials) {
-            $this->hasEpaymentId = $ePaymentCredentials->epayment_id !== 'pending';
-        }
+        $this->setEpaymentCredentials();
+
     }
 
     public function render()
@@ -563,6 +557,18 @@ class CandidatesTableComponent extends BasePage
     private function makeNewCandidates(): void
     {
         $service = new \App\Services\MakeCandidateRecordsService($this->versionId);
+    }
+
+    private function setEpaymentCredentials(): void
+    {
+        $ePaymentCredentials = EpaymentCredentials::where('version_id', $this->versionId)->first();
+        if (!$ePaymentCredentials) {
+            $eventId = $this->version->event_id;
+            $ePaymentCredentials = EpaymentCredentials::where('event_id', $eventId)->first();
+        }
+        if ($ePaymentCredentials) {
+            $this->hasEpaymentId = $ePaymentCredentials->epayment_id !== 'pending';
+        }
     }
 
     /**

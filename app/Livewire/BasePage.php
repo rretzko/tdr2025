@@ -69,38 +69,43 @@ class BasePage extends Component
 
     public function mount(): void
     {
-        $this->participatingSchools = $this->getParticipatingSchools();
-        $this->participatingClassOfs = $this->getParticipatingClassOfs();
-        $this->participatingVoiceParts = $this->getParticipatingVoiceParts();
-
         $this->header = $this->dto['header'];
         $this->pageInstructions = $this->dto['pageInstructions'];
         $this->setFirstTimer($this->dto['header']);
 
-        /** @since 2024-10-05 13:08 */
-        $this->schools = $this->getSchools();
-        /** @deprecated
-         * $this->schools = auth()->user()->teacher->schools
-         * ->sortBy('name')
-         * ->pluck('name', 'id')
-         * ->toArray();
-         */
+        //identify non-event-related modules
+        $nonEvents = ['libraries', 'library item', 'library items'];
+        if (!in_array($this->header, $nonEvents)) {
+            $this->participatingSchools = $this->getParticipatingSchools();
+            $this->participatingClassOfs = $this->getParticipatingClassOfs();
+            $this->participatingVoiceParts = $this->getParticipatingVoiceParts();
 
-        //$this->schoolCount is used to determine if the schools filter should be displayed
-        $this->schoolCount = count($this->schools);
+            /** @since 2024-10-05 13:08 */
+            $this->schools = $this->getSchools();
+            /** @deprecated
+             * $this->schools = auth()->user()->teacher->schools
+             * ->sortBy('name')
+             * ->pluck('name', 'id')
+             * ->toArray();
+             */
 
-        $this->school = ($this->schoolCount === 1)
-            ? School::find(array_key_first($this->schools))
-            : new School();
+            //$this->schoolCount is used to determine if the schools filter should be displayed
+            $this->schoolCount = count($this->schools);
 
-        //caution check
-        if ($this->school->id && ($this->school->id != UserConfig::getValue('schoolId'))) {
-            UserConfig::setProperty('schoolId', $this->school->id);
+
+            $this->school = ($this->schoolCount === 1)
+                ? School::find(array_key_first($this->schools))
+                : new School();
+
+            //caution check
+            if ($this->school->id && ($this->school->id != UserConfig::getValue('schoolId'))) {
+                UserConfig::setProperty('schoolId', $this->school->id);
+            }
+
+            $this->schoolName = ($this->school->id)
+                ? $this->school->name
+                : '';
         }
-
-        $this->schoolName = ($this->school->id)
-            ? $this->school->name
-            : '';
 
         $this->filters->init($this->dto['header']);
 
