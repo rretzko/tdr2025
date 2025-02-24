@@ -202,6 +202,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('version/configs', [\App\Http\Controllers\Events\Versions\VersionConfigController::class, 'edit'])
         ->name('version.configs');
 
+    //VERSIONS.COREGISTRATION MANAGERS
+    Route::get('version/coregistrationManagers', \App\Http\Controllers\Events\Versions\VersionCoregistrationManagerController::class)
+        ->name('version.coregistrationManagers');
+
     //VERSIONS.DATES
     Route::get('version/dates', [\App\Http\Controllers\Events\Versions\VersionDateController::class, 'edit'])
         ->name('version.dates');

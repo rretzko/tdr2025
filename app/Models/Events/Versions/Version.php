@@ -39,6 +39,12 @@ class Version extends Model
         'shirt_size',
         'student_home_address',
         'status',
+        'supervisor_email_preferred',
+        'supervisor_name_preferred',
+        'supervisor_phone_preferred',
+        'supervisor_email_required',
+        'supervisor_name_required',
+        'supervisor_phone_required',
         'teacher_phone_mobile',
         'teacher_phone_work',
         'upload_type',
@@ -75,6 +81,20 @@ class Version extends Model
         $versionParticipant = VersionParticipant::find($versionRole->version_participant_id);
 
         return User::find($versionParticipant->user_id);
+    }
+
+    public function participantsArray(): array
+    {
+        return VersionParticipant::query()
+            ->join('users', 'version_participants.user_id', '=', 'users.id')
+            ->where('version_id', $this->id)
+            ->select('users.name', 'users.id',
+                DB::raw("CONCAT(users.last_name,', ',users.first_name,' ',users.middle_name) AS alphaName")
+            )
+            ->orderBy('users.last_name')
+            ->orderBy('users.first_name')
+            ->get()
+            ->toArray();
     }
 
     public function rooms(): HasMany

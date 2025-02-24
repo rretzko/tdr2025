@@ -343,6 +343,12 @@ Breadcrumbs::for('version configs edit', function (BreadcrumbTrail $trail, int $
     $trail->push('Version Configs Edit', route('version.configs'));
 });
 
+//Version.Coregistration Managers
+Breadcrumbs::for('coregistration managers', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('version dashboard', $id);
+    $trail->push('Co-registration Managers', route('version.coregistrationManagers'));
+});
+
 //Version.Dates
 Breadcrumbs::for('version dates edit', function (BreadcrumbTrail $trail, int $id) {
     $trail->parent('version dashboard', $id);

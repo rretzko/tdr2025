@@ -316,6 +316,8 @@ class ViewDataFactory extends aViewData
             'candidates recordings' => 'events.versions.participations.candidates-recordings-table-component',
             'candidates table' => 'events.versions.participations.candidates-table-component',
 
+            'coregistration managers' => 'events.versions.coregistration-managers-component',
+
             'new school' => 'schools.school-create-component',
             'schools' => 'schools.schools-table-component',
             'school edit' => 'schools.school-edit-component',

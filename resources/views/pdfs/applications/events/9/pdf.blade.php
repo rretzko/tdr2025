@@ -106,32 +106,19 @@
                         I fail to learn my music.
                     </li>
                     <li>
-                        @if(count($dto['ensembleNames']))
-                            I understand that {{ $dto['ensembleNames'][1] }} members are expected to attend all
-                            rehearsals from
-                            October through November.
-                            @if(array_key_exists(1, $dto['ensembleNames']))
-                                {{ $dto['ensembleNames'][0] }} rehearsals are held in January through February.  One
-                                absence will result in testing at the following rehearsal.
-                            @endif
-                        @else
-                            <span style="color: red;">[No ensembles found]</span>
-                        @endif
-                        An absence is defined as missing any
-                        scheduled rehearsal or any part thereof. I further understand that all activities must be
-                        attended in their entirety.
+                        I understand that Mixed Chorus members are expected to attend all rehearsals from
+                        October through November. Treble Chorus rehearsals are held in January through February. One
+                        absence will result in testing at the following rehearsal.
+                        An absence is defined as missing any scheduled rehearsal or any part thereof.
+                        I further understand that all activities must be attended in their entirety.
                         I understand that it is not possible for me to be a member of the {{ $dto['versionShortName'] }}
-                        and participate in fall
-                        activities including Conference/NJSIAA tournament games that may take place before/during the
-                        completion of my {{ $dto['versionShortName'] }} obligations. Failure to fulfill
-                        my {{ $dto['versionShortName'] }} obligations will
-                        result in disqualification from any {{ $dto['organizationName'] }} sponsored event for the
-                        period of one year, up to and
+                        and participate in fall activities including Conference/NJSIAA tournament games that may take
+                        place before/during the completion of my {{ $dto['versionShortName'] }} obligations.
+                        Failure to fulfill my {{ $dto['versionShortName'] }} obligations will result in disqualification
+                        from any {{ $dto['organizationName'] }} sponsored event for the period of one year, up to and
                         including the applicable event. I understand that the manager, with the approval of the NJ
-                        All-State
-                        Choral Procedures Committee, will resolve all serious conflicts and/or questionable
-                        circumstances
-                        not specifically covered by the above.
+                        All-State Choral Procedures Committee, will resolve all serious conflicts and/or questionable
+                        circumstances not specifically covered by the above.
                     </li>
                     <li>
                         I will respect the property of others, will act professionally, and will treat all members of
@@ -145,7 +132,7 @@
                     <li>
                         I will cooperate fully with managers, counselors, and all other administrative officials of the
                         {{ $dto['versionShortName'] }} and the New Jersey Music Educators
-                        Association{{ $dto['organizationName'] }}.
+                        Association.
                     </li>
                     <li>
                         I will assume all responsibility for my music, folder, performance apparel, luggage and other
@@ -156,17 +143,9 @@
                         weapons of any kind.
                     </li>
                     <li>
-                        I acknowledge that
-                        @if(count($dto['ensembleNames']))
-                            {{ $dto['ensembleNames'][1] }}
-                        @else
-                            <span style="color: red;">[No ensemble found]</span>
-                        @endif
-                        members may not also participate in any of these other
+                        I acknowledge that Mixed Chorus members may not also participate in any of these other
                         NJ All-State ensembles: Orchestra, Jazz Ensemble or Vocal Jazz Ensemble.
-                        @if(array_key_exists(1, $dto['ensembleNames']))
-                            {{ $dto['ensembleNames'][0] }} members may not be a member of the NJ All-State Band.
-                        @endif
+                        Treble Chorus members may not be a member of the NJ All-State Band.
                     </li>
                     <li>
                         I understand that a total evaluation of my {{ $dto['versionShortName'] }} experience is used to
@@ -295,7 +274,7 @@
                 read the endorsement, which {{ $dto['first'] }} has signed, and I give permission
                 for {{ $dto['pronounObject'] }} to audition to become a member of the
                 {{ $dto['versionShortName'] }}. I promise to assist {{ $dto['first'] }} in
-                fulfilling {{ $dto['versionShortName'] }} obligations and in meeting any expenses necessary for
+                fulfilling the {{ $dto['versionShortName'] }} obligations and in meeting any expenses necessary for
                 rehearsals and concerts. I
                 understand it is the policy of {{ $dto['organizationName'] }} that if an All-State student is
                 incapacitated in any way that
@@ -344,15 +323,14 @@
                 enrolled in grade {{ $dto['grade'] }} at {{ $dto['schoolName'] }}.
                 We understand that <b>{{ $dto['teacherFullName'] }}</b>, who is sponsoring <b>{{ $dto['fullName'] }}</b>,
                 is a current (paid) member of the National Association of Music Educators (NAfME), and is required to
-                participate as a JUDGE FOR ONLINE AUDITIONS, as described in the Directors's Packet,
-                from {{ $dto['auditionPeriod'] }}.
+                participate as a JUDGE FOR ONLINE AUDITIONS, as described in the Directors's Packet.
 
                 We will review this application to ensure that all parts are complete and accurate. This application
-                will be mailed to the Registration Manager postmarked by the application deadline of
+                will be mailed to the Registration Manager postmarked by the application postmark deadline of
                 <b>{{ $dto['applicationDeadline'] }}</b>.
-                LATE APPLICATIONS WILL NOT BE ACCEPTED. If <b>{{ $dto['fullName'] }}</b> is accepted,
-                we will ensure that <b>{{ $dto['first'] }}</b> is prepared and adheres to
-                the rules and regulations set forth by the {{ $dto['organizationName'] }}.
+                LATE APPLICATIONS WILL NOT BE ACCEPTED and all deadlines are non-negotiable.
+                If <b>{{ $dto['fullName'] }}</b> is accepted, we will ensure that <b>{{ $dto['first'] }}</b> is prepared
+                and adheres to the rules and regulations set forth by the {{ $dto['organizationName'] }}.
 
             </div>
 
