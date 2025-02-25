@@ -83,11 +83,12 @@ class Version extends Model
         return User::find($versionParticipant->user_id);
     }
 
-    public function participantsArray(): array
+    public function participantsArray(array $suppressIds): array
     {
         return VersionParticipant::query()
             ->join('users', 'version_participants.user_id', '=', 'users.id')
             ->where('version_id', $this->id)
+            ->whereNotIn('user_id', $suppressIds)
             ->select('users.name', 'users.id',
                 DB::raw("CONCAT(users.last_name,', ',users.first_name,' ',users.middle_name) AS alphaName")
             )

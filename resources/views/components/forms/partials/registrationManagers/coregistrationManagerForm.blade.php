@@ -32,9 +32,9 @@
         <div class="flex flex-col w-full">
             <label style="">Assigned to the following counties</label>
             <div>
-                @forelse($counties AS $countyId => $county)
-                    <div wireKey="countyId_{{ $countyId }}">
-                        <input type="checkbox" wire:model="form.countyIds" value="{{ $countyId }}"/>
+                @forelse($availableCounties AS $countyId => $county)
+                    <div wire:key="countyId_{{ $countyId }}">
+                        <input type="checkbox" wire:model.live="form.countyIds" value="{{ $countyId }}"/>
                         <label>{{ $county }}</label>
                     </div>
 

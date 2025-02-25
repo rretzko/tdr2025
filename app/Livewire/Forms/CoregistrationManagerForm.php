@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Forms;
 
+use App\Models\Events\Versions\VersionCountyAssignment;
 use App\Models\Events\Versions\VersionParticipant;
 use App\Models\Events\Versions\VersionRole;
 use Livewire\Attributes\Validate;
@@ -26,14 +27,30 @@ class CoregistrationManagerForm extends Form
         $this->validate();
 
         $versionRoleId = $this->setVersionRole($versionId);
-        dd($versionRoleId);
-        return (bool)VersionRole::create(
-            [
-                'version_id' => $versionId,
-                'version_participant_id' => $versionParticipantId,
-                'role' => 'coregistration manager',
-            ]
-        );
+
+        return (bool)$this->assignCounties($versionId);
+
+    }
+
+    public function assignCounties(int $versionId): bool
+    {
+        //remove any current counties
+        VersionCountyAssignment::query()
+            ->where('version_id', $versionId)
+            ->where('user_id', $this->userId)
+            ->delete();
+        //add new counties
+        foreach ($this->countyIds as $countyId) {
+            VersionCountyAssignment::create(
+                [
+                    'version_id' => $versionId,
+                    'user_id' => $this->userId,
+                    'county_id' => $countyId,
+                ]
+            );
+        }
+
+        return true;
     }
 
     private function setVersionRole(int $versionId): int
@@ -44,7 +61,7 @@ class CoregistrationManagerForm extends Form
             ->first()
             ->id;
 
-        return VersionRole::create(
+        return VersionRole::updateOrCreate(
             [
                 'version_id' => $versionId,
                 'version_participant_id' => $versionParticipantId,

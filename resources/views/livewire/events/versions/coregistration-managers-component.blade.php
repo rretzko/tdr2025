@@ -45,6 +45,9 @@
             </div>
         @endif
 
+        {{-- COREGISTRATION MANAGER TABLE --}}
+        @include('components.tables.coregistrationManagersTable')
+
 
 
         {{--        <x-tables.roomsTable--}}
