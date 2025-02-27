@@ -11,8 +11,10 @@
         {{-- PARTICIPANT NAME --}}
         <div class="flex flex-row items-center">
             <label style="width: 4rem;">Name</label>
-            <select wire:model.live="form.userId">
-                <option value="0">- select -</option>
+            <select wire:model.live="form.versionParticipantId">
+                @if($form->sysId === 0)
+                    <option value="0">- select -</option>
+                @endif
                 @forelse($participants AS $participant)
                     <option value="{{ $participant['id'] }}">
                         {{ $participant['alphaName'] }}

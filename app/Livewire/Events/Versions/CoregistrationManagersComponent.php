@@ -13,7 +13,7 @@ class CoregistrationManagersComponent extends BasePage
 {
     public coregistrationManagerForm $form;
     public array $counties = [];
-    public array $participants = [];
+//    public array $participants = [];
     public bool $showForm = false;
     public int $versionId = 0;
 
@@ -23,7 +23,7 @@ class CoregistrationManagersComponent extends BasePage
 
         $this->counties = $this->getCounties([]);
         $this->versionId = $this->dto['id'];
-        $this->participants = $this->getParticipants();
+//        $this->participants = $this->getParticipants();
     }
 
     public function render()
@@ -32,22 +32,32 @@ class CoregistrationManagersComponent extends BasePage
             [
                 'availableCounties' => $this->getAvailableCounties(),
                 'rows' => $this->getRows(),
+                'participants' => $this->getParticipants(),
             ]);
     }
 
     public function addCoregistrationManager(): void
     {
+        $this->form->resetVars();
         $this->showForm = true;
     }
 
-    public function edit(int $userId): void
+    public function edit(int $versionParticipantId): void
     {
-        dd(__METHOD__);
+        $set = $this->form->setEdit($versionParticipantId, $this->versionId);
+
+        if ($set) {
+//            $this->participants = $this->getParticipants();
+            $this->showForm = !$this->showForm;
+        }
     }
 
-    public function remove(int $userId): void
+    public function remove(int $versionParticipantId): void
     {
-        dd(__METHOD__);
+        DB::table('version_county_assignments')
+            ->where('version_id', $this->versionId)
+            ->where('version_participant_id', $versionParticipantId)
+            ->delete();
     }
 
     public function saveCoregistrationManager()
@@ -60,10 +70,21 @@ class CoregistrationManagersComponent extends BasePage
         return $this->redirect('/version/coregistrationManagers');
     }
 
+    public function updateCoregistrationManager()
+    {
+        if ($this->form->update($this->versionId)) {
+            $this->successMessage = 'Coregistration manager updated';
+            $this->reset('showForm');
+        }
+
+        return $this->redirect('/version/coregistrationManagers');
+    }
+
     public function getAvailableCounties(): array
     {
         $assignedCountyIds = VersionCountyAssignment::query()
             ->where('version_id', $this->versionId)
+            ->whereNotIn('version_participant_id', [$this->form->sysId])
             ->pluck('county_id')
             ->toArray();
 
@@ -85,23 +106,34 @@ class CoregistrationManagersComponent extends BasePage
      */
     private function getParticipants(): array
     {
-        $coregistrationManagers = VersionCountyAssignment::query()
+        $suppress = ($this->form->sysId === 0);
+
+        $query = VersionCountyAssignment::query()
             ->where('version_id', $this->versionId)
-            ->distinct()
-            ->pluck('user_id')
+            ->distinct();
+
+        //user has requested to edit a record
+        if ($this->form->sysId) {
+            $query->where('version_county_assignments.version_participant_id', $this->form->sysId);
+        }
+
+        $coregistrationManagers = $query->pluck('version_participant_id')
             ->toArray();
 
         return Version::find($this->versionId)
-            ->participantsArray($coregistrationManagers);
+            ->participantsArray($coregistrationManagers, $suppress);
     }
 
     private function getRows(): array
     {
         return DB::table('version_county_assignments')
-            ->join('users', 'version_county_assignments.user_id', '=', 'users.id')
+            ->join('version_participants', 'version_county_assignments.version_participant_id', '=', 'version_participants.id')
+            ->join('users', 'version_participants.user_id', '=', 'users.id')
             ->join('counties', 'version_county_assignments.county_id', '=', 'counties.id')
-            ->select('users.id as userId', 'users.name as name', DB::raw('GROUP_CONCAT(counties.name ORDER BY counties.name ASC SEPARATOR ", ") as countyNames'))
-            ->groupBy('users.id', 'users.name')
+            ->where('version_county_assignments.version_id', $this->versionId)
+            ->select('version_participants.id as versionParticipantId', 'users.name as name',
+                DB::raw('GROUP_CONCAT(counties.name ORDER BY counties.name ASC SEPARATOR ", ") as countyNames'))
+            ->groupBy('version_participants.id', 'users.name')
             ->get()
             ->toArray();
     }

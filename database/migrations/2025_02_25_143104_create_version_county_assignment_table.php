@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('version_county_assignments', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(App\Models\Events\Versions\Version::class)->index()->constrained();
-            $table->foreignIdFor(\App\Models\User::class)->constrained();
+            $table->foreignIdFor(\App\Models\Events\Versions\VersionParticipant::class)->constrained();
             $table->foreignIdFor(\App\Models\County::class)->constrained();
             $table->timestamps();
             $table->unique(['version_id', 'county_id']);

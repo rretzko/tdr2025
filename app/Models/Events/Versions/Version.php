@@ -83,13 +83,22 @@ class Version extends Model
         return User::find($versionParticipant->user_id);
     }
 
-    public function participantsArray(array $suppressIds): array
+    /**
+     * @param array $ids //include or suppress version_participant.ids
+     * @param bool $suppress //if false, limit results to ids in array $ids
+     * @return array
+     */
+    public function participantsArray(array $ids, bool $suppress = true): array
     {
-        return VersionParticipant::query()
+        $query = VersionParticipant::query()
             ->join('users', 'version_participants.user_id', '=', 'users.id')
-            ->where('version_id', $this->id)
-            ->whereNotIn('user_id', $suppressIds)
-            ->select('users.name', 'users.id',
+            ->where('version_id', $this->id);
+
+        $suppress
+            ? $query->whereNotIn('version_participants.id', $ids)
+            : $query->whereIn('version_participants.id', $ids);
+
+        return $query->select('users.name', 'version_participants.id',
                 DB::raw("CONCAT(users.last_name,', ',users.first_name,' ',users.middle_name) AS alphaName")
             )
             ->orderBy('users.last_name')

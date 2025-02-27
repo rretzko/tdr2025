@@ -29,7 +29,7 @@
                     {{ $row->countyNames }}
                 </td>
                 <td class="border border-gray-200 px-1 text-center">
-                    <button wire:click="editAsset({{ $row->userId }})"
+                    <button wire:click="edit({{ $row->versionParticipantId }})"
                             type="button"
                             class="bg-indigo-600 text-white text-xs px-2 rounded-full hover:bg-indigo-700"
                     >
@@ -38,8 +38,8 @@
                 </td>
                 <td class="text-center border border-gray-200 text-center">
                     <button type="button"
-                            wire:click="remove({{ $row->userId }})"
-                            wire:confirm="Are you sure you want to remove this co-registration manager?"
+                            wire:click="remove({{ $row->versionParticipantId }})"
+                            wire:confirm="Are you sure you want to remove this co-registration manager's county assignments?"
                             class="bg-red-600 text-white text-xs px-2 rounded-full hover:bg-red-700"
                     >
                         Remove

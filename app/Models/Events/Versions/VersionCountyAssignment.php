@@ -12,6 +12,6 @@ class VersionCountyAssignment extends Model
     protected $fillable = [
         'county_id',
         'version_id',
-        'user_id',
+        'version_participant_id',
     ];
 }
