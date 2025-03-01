@@ -40,7 +40,8 @@ class RequestInvitationToEventMail extends Mailable
     {
         return new Envelope(
             from: new Address('rick@mfrholdings.com', 'Rick Retzko'),
-            cc: new Address('safflitto@nbtschools.org', 'Sarah Afflitto'),
+            cc: ['safflitto@nbtschools.org'],
+            bcc: ['rick@mfrholdings.com'],
             subject: 'Request Invitation To Event Mail',
         );
     }

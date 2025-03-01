@@ -82,10 +82,14 @@ class CoregistrationManagersComponent extends BasePage
 
     public function getAvailableCounties(): array
     {
-        $assignedCountyIds = VersionCountyAssignment::query()
-            ->where('version_id', $this->versionId)
-            ->whereNotIn('version_participant_id', [$this->form->sysId])
-            ->pluck('county_id')
+        $query = VersionCountyAssignment::query()
+            ->where('version_id', $this->versionId);
+
+        if ($this->form && $this->form->sysId) {
+            $query->whereNotIn('version_participant_id', [$this->form->sysId]);
+        }
+
+        $assignedCountyIds = $query->pluck('county_id')
             ->toArray();
 
         return $this->getCounties($assignedCountyIds);

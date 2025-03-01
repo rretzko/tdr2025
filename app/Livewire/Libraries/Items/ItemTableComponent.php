@@ -4,6 +4,7 @@ namespace App\Livewire\Libraries\Items;
 
 use App\Livewire\BasePage;
 use App\Models\Libraries\Library;
+use App\Models\Libraries\LibStack;
 
 class ItemTableComponent extends BasePage
 {
@@ -20,15 +21,6 @@ class ItemTableComponent extends BasePage
         $this->columnHeaders = $this->getColumnHeaders();
     }
 
-    private function getColumnHeaders(): array
-    {
-        return [
-            ['label' => '###', 'sortBy' => ''],
-            ['label' => 'title', 'sortBy' => 'title'],
-//            ['label' => 'school', 'sortBy' => 'school'],
-        ];
-    }
-
     public function render()
     {
         return view('livewire..libraries.items.item-table-component',
@@ -38,9 +30,24 @@ class ItemTableComponent extends BasePage
         );
     }
 
+    private function getColumnHeaders(): array
+    {
+        return [
+            ['label' => '###', 'sortBy' => ''],
+            ['label' => 'type', 'sortBy' => 'type'],
+            ['label' => 'title', 'sortBy' => 'title'],
+        ];
+    }
+
     private function getRows(): array
     {
-        return [];
+        return LibStack::query()
+            ->join('lib_items', 'lib_stacks.lib_item_id', '=', 'lib_items.id')
+            ->join('lib_titles', 'lib_items.lib_title_id', '=', 'lib_titles.id')
+            ->where('lib_stacks.library_id', $this->library->id)
+            ->select('lib_stacks.id', 'lib_titles.title', 'lib_items.item_type')
+            ->get()
+            ->toArray();
     }
 
     /**

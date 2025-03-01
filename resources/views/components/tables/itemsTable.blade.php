@@ -35,23 +35,24 @@
 
         @forelse($rows AS $row)
 
-            <tr class="odd:bg-green-50">
+            <tr class="odd:bg-green-50 hover:bg-green-100">
                 <td class="border border-gray-200 px-1 text-center">
                     {{ $loop->iteration }}
                 </td>
-                <td class="border border-gray-200 px-1 text-center cursor-help" title="">
-                    {{--                    <a href="{{ route('library.items', ['library' => $row->id]) }}" class="text-blue-600 font-bold hover:underline">--}}
-                    {{ $row->title }}
-                    {{--                    </a>--}}
+                <td class="border border-gray-200 px-1 text-center cursor-help">
+                    {{ $row['item_type'] }}
+                </td>
+                <td class="border border-gray-200 px-1 text-center cursor-help">
+                    {{ $row['title'] }}
                 </td>
                 {{--                <td class="border border-gray-200 px-1">--}}
                 {{--                    {{ $row->schoolName ?? $row->name}}--}}
                 {{--                </td>--}}
-                <td @class(["text-center border border-gray-200", "border-transparent" => ($row->name === 'Home Library')])>
-                    <x-buttons.edit id="{{ $row->id }}" :livewire="true" id="{{ $row->id }}"/>
+                <td class="text-center border border-gray-200 px-1">
+                    <x-buttons.edit id="{{ $row['id'] }}" :livewire="true" id="{{ $row['id'] }}"/>
                 </td>
-                <td @class(["text-center border border-gray-200", "border-transparent" => ($row->name === 'Home Library')])>
-                    <x-buttons.remove id="{{ $row->id }}" livewire="1"
+                <td class="text-center border border-gray-200 px-1">
+                    <x-buttons.remove id="{{ $row['id'] }}" livewire="1"
                                       message="Are you sure you want to remove this library item?"/>
                 </td>
             </tr>

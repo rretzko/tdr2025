@@ -10,8 +10,9 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('items', function (Blueprint $table) {
+        Schema::create('lib_items', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(\App\Models\Libraries\Items\Components\LibTitle::class)->constrained();
             $table->timestamps();
         });
     }
@@ -21,6 +22,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('items');
+        Schema::dropIfExists('lib_items');
     }
 };

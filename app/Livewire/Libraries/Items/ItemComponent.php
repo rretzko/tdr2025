@@ -3,16 +3,23 @@
 namespace App\Livewire\Libraries\Items;
 
 use App\Models\Libraries\Items\Components\LibTitle;
+use App\Models\Libraries\LibStack;
+use App\Services\Libraries\CreateLibItemService;
+use App\Services\Libraries\LibraryStackSearchService;
+use JetBrains\PhpStorm\NoReturn;
 
 class ItemComponent extends BaseLibraryItemPage
 {
     public string $errorMessage = '';
     public array $itemTypes = [];
+    public int $libraryId = 0;
     public string $searchResults = 'Search Results';
 
     public function mount(): void
     {
         parent::mount();
+
+        $this->libraryId = $this->dto['id'];
 
         $this->itemTypes = self::ITEMTYPES;
 
@@ -22,8 +29,13 @@ class ItemComponent extends BaseLibraryItemPage
     {
         return view('livewire..libraries.items.item-component',
             [
-                'bladeForm' => 'components.forms.libraries.itemTypes.' . $this->form->itemType . 'Form',
+                'bladeForm' => 'components.forms.libraries.itemTypes.' . $this->form->itemTypeBlade() . 'Form',
             ]);
+    }
+
+    #[NoReturn] public function findItem(int $itemId): void
+    {
+        dd($itemId);
     }
 
     public function save(): void
@@ -37,7 +49,10 @@ class ItemComponent extends BaseLibraryItemPage
     {
         $this->reset('errorMessage', 'successMessage');
 
-        if ($this->form->save()) {
+        $service = new CreateLibItemService($this->form, self::ITEMTYPES);
+
+        if ($service->saved) {
+            $this->addItemToLibrary($service->libItemId);
             $this->successMessage = 'Item Saved.';
         } else {
             $this->errorMessage = 'Unable to save item.';
@@ -47,30 +62,25 @@ class ItemComponent extends BaseLibraryItemPage
 
     public function updatedFormTitle()
     {
-        $this->search('title', $this->form->title);
+        $this->search();
     }
 
-    private function search(string $property, string $value): void
+    private function addItemToLibrary(int $libItemId): void
     {
-        $searchString = '%' . $value . '%';
+        LibStack::updateOrCreate(
+            [
+                'library_id' => $this->libraryId,
+                'lib_item_id' => $libItemId
+            ],
+            []
+        );
+    }
 
-        $this->searchResults = '<div><h3>SearchResults</h3>';
+    private function search(): void
+    {
+        $search = new LibraryStackSearchService($this->form);
 
-        $titles = LibTitle::where('title', 'LIKE', $searchString)->pluck('title', 'id')->toArray();
-
-        if (count($titles)) {
-
-            $this->searchResults .= '<ul>';
-
-            foreach ($titles as $id => $title) {
-
-                $this->searchResults .= "<li><a href='findItem: $id'>$title</a></li>";
-            }
-
-            $this->searchResults .= '</ul>';
-        }
-
-        $this->searchResults .= '</div>';
+        $this->searchResults = $search->getResults();
     }
 
 }

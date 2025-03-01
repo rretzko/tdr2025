@@ -27,7 +27,9 @@
                 @include('components.forms.elements.livewire.libraryItem.saveSaveAndStay')
             </div>
 
+            {{-- SUCCESS/ERROR MESSAGES AND SEARCH RESULTS --}}
             <div class="flex flex-col w-full sm:w-1/4 sm:ml-1 sm:mb-0">
+
                 {{-- SUCCESS MESSAGE --}}
                 <div class="bg-green-200 text-green-900 rounded-lg mb-1 px-2 ">
                     {{ $successMessage }}

@@ -9,7 +9,7 @@ use App\Models\Libraries\Library;
 class BaseLibraryItemPage extends BasePage
 {
     public const ITEMTYPES = [
-        'sheet music' => 'sheetMusic',
+        'sheet music' => 'sheet music',
         'medley' => 'medley',
         'book' => 'book',
         'digital' => 'digital',
