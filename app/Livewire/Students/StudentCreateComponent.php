@@ -40,6 +40,8 @@ class StudentCreateComponent extends BasePageStudent
     #[NoReturn] public function formContinue(): void
     {
         $this->form->updateWithoutDuplicateStudentCheck();
+
+        redirect()->route('students');
     }
 
     public function updatedFormClassOf(): void
