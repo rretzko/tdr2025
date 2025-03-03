@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\PhoneNumber;
+use App\Models\Students\Student;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
@@ -22,7 +23,6 @@ class FindMatchingStudentService
         $nameMatch = $this->nameMatch($this->comparator['first'], $this->comparator['last']); //collection
         $phoneMobileMatch = $this->phoneMobileMatch($this->comparator['phoneMobile']); //collection
         $classOfMatch = $this->classOfMatch($emailMatch, $nameMatch, $phoneMobileMatch, $this->comparator['classOf']);
-
         $this->buildMatches($classOfMatch);
     }
 
@@ -113,10 +113,12 @@ class FindMatchingStudentService
         if ($matches->count()) {
 
             foreach ($matches as $user) {
-
+                $student = Student::where('user_id', $user->id)->first();
                 $this->matches[] = [
                     'name' => $user->name,
                     'email' => $user->email,
+                    'classOf' => $student->class_of,
+                    'schoolName' => $student->schools->first()->name,
                 ];
             }
         }

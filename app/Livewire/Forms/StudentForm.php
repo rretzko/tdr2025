@@ -207,6 +207,16 @@ class StudentForm extends Form
             $this->duplicateStudentAdvisory = 'At least '.count($matches).' student(s) were
             found with matching name and grades.
             <b>Please avoid creating duplicate student records.</b>
+            The following similar student records were found:
+            <ul>';
+            foreach ($matches as $match) {
+                $this->duplicateStudentAdvisory .= "
+                    <li>
+                        {$match['name']} @ {$match['schoolName']}, class of: {$match['classOf']} ({$match['email']})
+                    </li>";
+            }
+
+            $this->duplicateStudentAdvisory .= '</ul>
             Do you want to continue?
             <div class="mt-2 flex space-x-2">
             <button type="button" wire:click="formContinue" class="bg-green-600 text-white text-xs rounded-full px-2">Continue</button>
