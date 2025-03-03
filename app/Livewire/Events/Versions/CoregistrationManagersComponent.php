@@ -3,9 +3,8 @@
 namespace App\Livewire\Events\Versions;
 
 use App\Livewire\BasePage;
-use App\Livewire\Forms\coregistrationManagerForm;
+use App\Livewire\Forms\CoregistrationManagerForm;
 use App\Models\County;
-use App\Models\Events\Versions\CoregistrationManager;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionCountyAssignment;
 use Illuminate\Support\Facades\DB;
