@@ -7,6 +7,7 @@ use App\Models\Events\EventEnsemble;
 use App\Models\Events\Versions\Room;
 use App\Models\Events\Versions\Scoring\ScoreCategory;
 use App\Models\Events\Versions\Scoring\ScoreFactor;
+use App\Models\Schools\School;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -70,6 +71,29 @@ class Version extends Model
             ->get();
     }
 
+    public function getCoregistrationManagerAddressBySchoolCounty(int $schoolId): bool|string
+    {
+        if (!$this->hasCoregistrationManager()) {
+            return false;
+        }
+
+        $school = School::find($schoolId);
+        $countyId = $school->county_id;
+        $versionParticipantId = VersionCountyAssignment::query()
+            ->where('version_id', $this->id)
+            ->where('county_id', $countyId)
+            ->value('version_participant_id');
+
+        if (is_null($versionParticipantId)) {
+            return "$school->name has an 'Unknown' county assignment.";
+        }
+
+        $versionParticipant = VersionParticipant::fine($versionParticipantId);
+        $user = User::find($versionParticipant->user_id);
+
+        return $user->name . ', ' . $school->name . ', ' . $school->addressCsv;
+    }
+
     public function getVersionManager(): User
     {
         $versionRole = VersionRole::query()
@@ -81,6 +105,14 @@ class Version extends Model
         $versionParticipant = VersionParticipant::find($versionRole->version_participant_id);
 
         return User::find($versionParticipant->user_id);
+    }
+
+    public function hasCoregistrationManager(): bool
+    {
+        return VersionRole::query()
+            ->where('version_id', $this->id)
+            ->where('role', 'coregistration manager')
+            ->exists();
     }
 
     /**

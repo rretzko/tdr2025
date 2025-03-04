@@ -30,6 +30,20 @@
             @enderror
         </div>
 
+        {{-- MAILING ADDRESS --}}
+        <div class="flex flex-col w-full">
+            <label>Mailing Address</label>
+            <input type="text" wire:model.blur="form.mailingAddressString"/>
+            <div class="text-sm italic ml-2">Use commas to separate sections (ex. 123 Main Street, Apartment 6A, Anytown
+                NJ 99999)
+            </div>
+            <div class="mt-2 border border-gray-500 p-2 w-fit text-gray-500">
+                @foreach($mailingAddress AS $component)
+                    <div>{{ $component }}</div>
+                @endforeach
+            </div>
+        </div>
+
         {{-- COUNTIES --}}
         <div class="flex flex-col w-full">
             <label style="">Assigned to the following counties</label>

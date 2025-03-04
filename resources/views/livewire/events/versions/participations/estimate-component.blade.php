@@ -22,6 +22,7 @@
                 <div class="w-11/12 mx-auto">
                     <x-tables.estimateTableForRegistrants
                         :columnHeaders="$columnHeaders"
+                        :coregistrationManagerAddress="$coregistrationManagerAddress"
                         :header="$dto['header']"
                         registrationFee="{{  $registrationFee }}"
                         :rows="$registrants"

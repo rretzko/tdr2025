@@ -1,5 +1,6 @@
 @props([
     'columnHeaders',
+    'coregistrationManagerAddress',
     'header',
     'recordsPerPage',
     'registrationFee',
@@ -9,12 +10,22 @@
     'sortColLabel',
     'versionId',
 ])
-<div class="relative w-11/12">
+<div class="relative w-11/12 mt-2">
 
     <div class="py-2 w-full flex justify-end">
+
+        {{-- Coregistration mail-to address --}}
+        @if($coregistrationManagerAddress)
+            <div class="flex text-sm items-center">
+                Send estimate form to: {{ $coregistrationManagerAddress }}
+            </div>
+        @endif
+
+        {{-- pdf link --}}
         <a href="{{ route('pdf.estimate', $versionId) }}" class="text-blue-500" title="Download estimate form">
             <x-heroicons.document/>
         </a>
+
     </div>
 
     <table class="px-4 shadow-lg w-full">

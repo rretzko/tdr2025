@@ -3,6 +3,7 @@
 namespace App\Livewire\Forms;
 
 use App\Models\Events\Versions\CoregistrationManager;
+use App\Models\Events\Versions\CoregistrationManagerMailingAddress;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionCountyAssignment;
 use App\Models\Events\Versions\VersionParticipant;
@@ -14,6 +15,9 @@ class CoregistrationManagerForm extends Form
 {
     #[Validate('array | min:1')]
     public array $countyIds = [];
+    public array $mailingAddress = [];
+    #[Validate('string', 'nullable')]
+    public string $mailingAddressString = '';
     #[Validate('int | min:0')]
     public int $sysId = 0;
     public int $versionParticipantId = 0;
@@ -32,6 +36,8 @@ class CoregistrationManagerForm extends Form
         $this->validate();
 
         $versionRoleId = $this->setVersionRole($versionId);
+
+        $this->setMailingAddress($versionId);
 
         return (bool)$this->assignCounties($versionId);
 
@@ -66,15 +72,28 @@ class CoregistrationManagerForm extends Form
         $this->sysId = 0;
         $this->versionParticipantId = 0;
         $this->countyIds = [];
+        $this->mailingAddress = [];
+        $this->mailingAddressString = '';
     }
 
     public function setEdit(int $versionParticipantId, $versionId): bool
     {
         $coregistrationManager = CoregistrationManager::getCoregistrationManager($versionId, $versionParticipantId);
+        $versionParticipant = VersionParticipant::find($versionParticipantId);
+        $userName = $versionParticipant->user->name;
+        $mailingAddress = CoregistrationManagerMailingAddress::query()
+            ->where('version_participant_id', $versionParticipantId)
+            ->where('version_id', $versionId)
+            ->first()
+            ->mailing_address ?? '';
 
         if ($coregistrationManager) {
             $this->sysId = $coregistrationManager->id;
             $this->countyIds = explode(',', $coregistrationManager->countyIds);
+            $this->mailingAddressString = $mailingAddress;
+            $this->mailingAddress[0] = $userName;
+            $this->mailingAddress = array_merge($this->mailingAddress, explode(',', $this->mailingAddressString));
+
             return true;
         }
 
@@ -87,8 +106,34 @@ class CoregistrationManagerForm extends Form
 
         $this->assignCounties($versionId);
 
+        $this->setMailingAddress($versionId);
+
         return (bool)$this->assignCounties($versionId);
 
+    }
+
+    private function setMailingAddress(int $versionId)
+    {
+        $versionParticipantId = ($this->sysId) ?: $this->versionParticipantId;
+
+//        if(! $this->mailingAddressString){
+//            if(CoregistrationManagerMailingAddress::query()
+//                ->where('version_id', $versionId)
+//                ->where('version_participant_id', $versionParticipantId)
+//                ->exists())
+//            {
+        CoregistrationManagerMailingAddress::updateOrCreate(
+            [
+                'version_id' => $versionId,
+                'version_participant_id' => $versionParticipantId,
+            ],
+            [
+                'mailing_address' => $this->mailingAddressString,
+            ]
+        );
+
+//            }
+//        }
     }
 
     private function setVersionRole(int $versionId): int

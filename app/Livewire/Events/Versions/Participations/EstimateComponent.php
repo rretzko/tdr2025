@@ -26,6 +26,7 @@ class EstimateComponent extends BasePage
     public bool $addNewPayment = false;
     public float $amountDue = 0;
     public array $columnHeaders = [];
+    public string|bool $coregistrationManagerAddress = false;
     public string $customProperties = '';
     public string $email = 'realEpayment@email.com';
     public string $ePaymentId = 'ePaymentId';
@@ -67,6 +68,7 @@ class EstimateComponent extends BasePage
         $this->sortColLabel = 'users.name';
         $this->studentPaymentColumnHeaders = $this->getStudentPaymentColumnHeaders();
         $this->tabs = $this->getTabs();
+        $this->coregistrationManagerAddress = $this->getCoregistrationManagerAddress();
 
         //ePayments
         $teacher = Teacher::where('user_id', auth()->id())->first();
@@ -223,6 +225,20 @@ class EstimateComponent extends BasePage
             ['label' => 'payment', 'sortBy' => null],
             ['label' => 'fee', 'sortBy' => null],
         ];
+    }
+
+    private function getCoregistrationManagerAddress(): string|bool
+    {
+        $version = Version::find($this->versionId);
+
+        if (!$version->hasCoregistrationManager()) {
+            return false;
+        }
+
+        $schoolId = UserConfig::getValue('schoolId');
+
+        return $version->getCoregistrationManagerAddressBySchoolCounty($schoolId);
+//        return 'Carol Beadle, Ridge High School, South Finley Avenue, Basking Ridge, NJ, 07920';
     }
 
     /**

@@ -7,13 +7,14 @@ use App\Livewire\Forms\CoregistrationManagerForm;
 use App\Models\County;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionCountyAssignment;
+use App\Models\Events\Versions\VersionParticipant;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class CoregistrationManagersComponent extends BasePage
 {
     public CoregistrationManagerForm $form;
     public array $counties = [];
-//    public array $participants = [];
     public bool $showForm = false;
     public int $versionId = 0;
 
@@ -23,7 +24,6 @@ class CoregistrationManagersComponent extends BasePage
 
         $this->counties = $this->getCounties([]);
         $this->versionId = $this->dto['id'];
-//        $this->participants = $this->getParticipants();
     }
 
     public function render()
@@ -33,6 +33,7 @@ class CoregistrationManagersComponent extends BasePage
                 'availableCounties' => $this->getAvailableCounties(),
                 'rows' => $this->getRows(),
                 'participants' => $this->getParticipants(),
+                'mailingAddress' => $this->getMailingAddress(),
             ]);
     }
 
@@ -50,6 +51,21 @@ class CoregistrationManagersComponent extends BasePage
 //            $this->participants = $this->getParticipants();
             $this->showForm = !$this->showForm;
         }
+    }
+
+    public function getAvailableCounties(): array
+    {
+        $query = VersionCountyAssignment::query()
+            ->where('version_id', $this->versionId);
+
+        if ($this->form && $this->form->sysId) {
+            $query->whereNotIn('version_participant_id', [$this->form->sysId]);
+        }
+
+        $assignedCountyIds = $query->pluck('county_id')
+            ->toArray();
+
+        return $this->getCounties($assignedCountyIds);
     }
 
     public function remove(int $versionParticipantId): void
@@ -80,19 +96,31 @@ class CoregistrationManagersComponent extends BasePage
         return $this->redirect('/version/coregistrationManagers');
     }
 
-    public function getAvailableCounties(): array
+    public function updatedFormVersionParticipantId(): void
     {
-        $query = VersionCountyAssignment::query()
-            ->where('version_id', $this->versionId);
+        $versionParticipant = VersionParticipant::find($this->form->versionParticipantId);
+        $user = $versionParticipant->user;
+        $this->form->mailingAddress[0] = $user->name;
+    }
 
-        if ($this->form && $this->form->sysId) {
-            $query->whereNotIn('version_participant_id', [$this->form->sysId]);
+    public function updatedFormMailingAddressString(): void
+    {
+        $versionParticipant = ($this->form->sysId)
+            ? VersionParticipant::find($this->form->sysId)
+            : VersionParticipant::find($this->form->versionParticipantId);
+
+        //early exit
+        if (!$versionParticipant) {
+            $this->form->mailingAddress = [];
+            return;
         }
 
-        $assignedCountyIds = $query->pluck('county_id')
-            ->toArray();
+        //prefix $this->form->mailingAddressString with the user's name
+        $userName = User::find($versionParticipant->user_id)->name;
+        $str = $userName . ',' . $this->form->mailingAddressString;
 
-        return $this->getCounties($assignedCountyIds);
+        $this->form->mailingAddress = explode(',', $str);
+
     }
 
     private function getCounties(array $assignedCountyIds): array
@@ -102,6 +130,16 @@ class CoregistrationManagersComponent extends BasePage
             ->orderBy('name')
             ->pluck('name', 'id')
             ->toArray();
+    }
+
+    private function getMailingAddress(): array
+    {
+        $default = 'Mailing address sample...';
+        $defaultMailingAddress = [$default];
+
+        return ($this->form->mailingAddress)
+            ? $this->form->mailingAddress
+            : $defaultMailingAddress;
     }
 
     /**
