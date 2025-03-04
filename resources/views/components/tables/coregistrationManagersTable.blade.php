@@ -23,7 +23,7 @@
                     {{ $loop->iteration }}
                 </td>
                 <td class="border border-gray-200 px-1">
-                    {{ $row->name }}
+                    {{ $row->alphaName }}
                 </td>
                 <td class="border border-gray-200 px-1">
                     {{ $row->countyNames }}

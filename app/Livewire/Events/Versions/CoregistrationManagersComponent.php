@@ -136,8 +136,12 @@ class CoregistrationManagersComponent extends BasePage
             ->join('counties', 'version_county_assignments.county_id', '=', 'counties.id')
             ->where('version_county_assignments.version_id', $this->versionId)
             ->select('version_participants.id as versionParticipantId', 'users.name as name',
-                DB::raw('GROUP_CONCAT(counties.name ORDER BY counties.name ASC SEPARATOR ", ") as countyNames'))
-            ->groupBy('version_participants.id', 'users.name')
+                DB::raw('GROUP_CONCAT(counties.name ORDER BY counties.name ASC SEPARATOR ", ") as countyNames'),
+                DB::raw("CONCAT(users.last_name, ', ', users.first_name, ' ' , users.middle_name) as alphaName"),
+            )
+            ->groupBy('version_participants.id', 'users.name', 'users.last_name', 'users.first_name', 'users.middle_name')
+            ->orderBy('users.last_name')
+            ->orderBy('users.first_name')
             ->get()
             ->toArray();
     }
