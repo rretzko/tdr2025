@@ -14,7 +14,7 @@ class CoregistrationManagerForm extends Form
 {
     #[Validate('array | min:1')]
     public array $countyIds = [];
-    #[Validate('int | min:1')]
+    #[Validate('int | min:0')]
     public int $sysId = 0;
     public int $versionParticipantId = 0;
 
@@ -39,10 +39,12 @@ class CoregistrationManagerForm extends Form
 
     public function assignCounties(int $versionId): bool
     {
+        $versionParticipantId = $this->sysId ?: $this->versionParticipantId;
+
         //remove any current counties
         VersionCountyAssignment::query()
             ->where('version_id', $versionId)
-            ->where('version_participant_id', $this->sysId)
+            ->where('version_participant_id', $versionParticipantId)
             ->delete();
 
         //add new counties
@@ -50,7 +52,7 @@ class CoregistrationManagerForm extends Form
             VersionCountyAssignment::create(
                 [
                     'version_id' => $versionId,
-                    'version_participant_id' => $this->sysId,
+                    'version_participant_id' => $versionParticipantId,
                     'county_id' => $countyId,
                 ]
             );
