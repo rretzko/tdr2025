@@ -4,10 +4,13 @@ namespace App\Data\Pdfs;
 
 use App\Models\Epayment;
 use App\Models\Events\Event;
+use App\Models\Events\Versions\CoregistrationManagerMailingAddress;
 use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Participations\Registrant;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionConfigDate;
+use App\Models\Events\Versions\VersionCountyAssignment;
+use App\Models\Events\Versions\VersionParticipant;
 use App\Models\Pronoun;
 use App\Models\Schools\School;
 use App\Models\Schools\Teacher;
@@ -76,6 +79,26 @@ class PdfEstimateDataFactory
         $this->dto['versionName'] = $this->version->name;
         $this->dto['versionShortName'] = $this->version->short_name;
         $this->dto['voiceParts'] = $this->getVoiceParts();
+        $this->dto['coregistrationManagerAddressArray'] = $this->getCoregistrationManagerAddressArray();
+    }
+
+    private function getCoregistrationManagerAddressArray(): array
+    {
+        $schoolName = $this->school->name;
+        $countyId = $this->school->county_id;
+        $versionId = $this->version->id;
+        $versionParticipantId = VersionCountyAssignment::query()
+            ->where('county_id', $countyId)
+            ->where('version_id', $versionId)
+            ->value('version_participant_id');
+        $userId = VersionParticipant::find($versionParticipantId)->user_id;
+        $user = User::find($userId);
+        $mailingAddressCsv = CoregistrationManagerMailingAddress::query()
+            ->where('version_participant_id', $versionParticipantId)
+            ->where('version_id', $versionId)
+            ->value('mailing_address');
+
+        return array_merge([$user->name], explode(',', $mailingAddressCsv));
     }
 
 //    private function getAuditionFee(): string

@@ -27,6 +27,7 @@ class EstimateComponent extends BasePage
     public float $amountDue = 0;
     public array $columnHeaders = [];
     public string|bool $coregistrationManagerAddress = false;
+    public array $coregistrationManagerAddressArray = [];
     public string $customProperties = '';
     public string $email = 'realEpayment@email.com';
     public string $ePaymentId = 'ePaymentId';
@@ -69,6 +70,7 @@ class EstimateComponent extends BasePage
         $this->studentPaymentColumnHeaders = $this->getStudentPaymentColumnHeaders();
         $this->tabs = $this->getTabs();
         $this->coregistrationManagerAddress = $this->getCoregistrationManagerAddress();
+        $this->coregistrationManagerAddressArray = explode(',', $this->coregistrationManagerAddress);
 
         //ePayments
         $teacher = Teacher::where('user_id', auth()->id())->first();

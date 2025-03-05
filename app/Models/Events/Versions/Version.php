@@ -79,6 +79,7 @@ class Version extends Model
 
         $school = School::find($schoolId);
         $countyId = $school->county_id;
+        //get versionParticipantId of coregistration manager assigned to county_id for $this->id
         $versionParticipantId = VersionCountyAssignment::query()
             ->where('version_id', $this->id)
             ->where('county_id', $countyId)
@@ -90,8 +91,12 @@ class Version extends Model
 
         $versionParticipant = VersionParticipant::find($versionParticipantId);
         $user = User::find($versionParticipant->user_id);
+        $mailingAddressCsv = CoregistrationManagerMailingAddress::query()
+            ->where('version_id', $this->id)
+            ->where('version_participant_id', $versionParticipantId)
+            ->value('mailing_address');
 
-        return $user->name . ', ' . $school->name . ', ' . $school->addressCsv;
+        return $user->name . ', ' . $mailingAddressCsv;
     }
 
     public function getVersionManager(): User

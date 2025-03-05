@@ -172,6 +172,17 @@
                 </div>
 
             </div>
+
+            {{-- MAILING INSTRUCTIONS --}}
+            <div style="page-break-before: always;">
+                <div style="border: 1px solid black; padding: 0.25px; text-align: center; width: 66%; margin: auto;">
+                    <div style="border-bottom:1px solid darkgray; margin-bottom: 0.5rem;">Mail to:</div>
+                    @foreach($dto['coregistrationManagerAddressArray'] AS $component)
+                        <div>{{ $component }}</div>
+                    @endforeach
+                </div>
+
+            </div>
         </div>
     </div>
 </div>
