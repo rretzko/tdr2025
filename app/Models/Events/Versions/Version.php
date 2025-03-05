@@ -88,7 +88,7 @@ class Version extends Model
             return "$school->name has an 'Unknown' county assignment.";
         }
 
-        $versionParticipant = VersionParticipant::fine($versionParticipantId);
+        $versionParticipant = VersionParticipant::find($versionParticipantId);
         $user = User::find($versionParticipant->user_id);
 
         return $user->name . ', ' . $school->name . ', ' . $school->addressCsv;

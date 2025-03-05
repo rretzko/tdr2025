@@ -14,9 +14,10 @@ class StudentsController extends Controller
     {
         //abort if user should not have access to the module
         //i.e. grades or gradesITeach is missing from the UserConfig::getValue('schoolId') school profile
-        if (MissingGradesService::missingGrades()) {
-            abort(404);
-        }
+        /** @deprecated and resplaced with disabled add/edit student buttons and an advisory notice. */
+//        if (MissingGradesService::missingGrades()) {
+//            abort(404);
+//        }
 
         $data = new ViewDataFactory(__METHOD__);
 
