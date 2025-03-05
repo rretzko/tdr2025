@@ -6,6 +6,7 @@
             <th>###</th>
             <th>Name</th>
             <th>Counties</th>
+            <th>Mailing Address</th>
             <th class="border border-transparent px-1 sr-only">
                 edit
             </th>
@@ -27,6 +28,20 @@
                 </td>
                 <td class="border border-gray-200 px-1">
                     {{ $row->countyNames }}
+                </td>
+                <td class="border border-gray-200 px-1 text-center">
+                    <div @class([
+                            "flex items-center justify-center",
+                             "text-green-500" => $row->mailingAddress,
+                            "text-red-500" => !$row->mailingAddress,
+                    ])
+                    >
+                        @if($row->mailingAddress)
+                            <x-heroicons.checkBadge/>
+                        @else
+                            <x-heroicons.xInCircle/>
+                        @endif
+                    </div>
                 </td>
                 <td class="border border-gray-200 px-1 text-center">
                     <button wire:click="edit({{ $row->versionParticipantId }})"

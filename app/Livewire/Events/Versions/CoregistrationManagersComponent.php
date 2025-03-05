@@ -172,12 +172,15 @@ class CoregistrationManagersComponent extends BasePage
             ->join('version_participants', 'version_county_assignments.version_participant_id', '=', 'version_participants.id')
             ->join('users', 'version_participants.user_id', '=', 'users.id')
             ->join('counties', 'version_county_assignments.county_id', '=', 'counties.id')
+            ->join('coregistration_manager_mailing_addresses', 'version_participants.id', '=', 'coregistration_manager_mailing_addresses.version_participant_id')
             ->where('version_county_assignments.version_id', $this->versionId)
+            ->where('coregistration_manager_mailing_addresses.version_id', $this->versionId)
             ->select('version_participants.id as versionParticipantId', 'users.name as name',
                 DB::raw('GROUP_CONCAT(counties.name ORDER BY counties.name ASC SEPARATOR ", ") as countyNames'),
                 DB::raw("CONCAT(users.last_name, ', ', users.first_name, ' ' , users.middle_name) as alphaName"),
+                'coregistration_manager_mailing_addresses.mailing_address as mailingAddress',
             )
-            ->groupBy('version_participants.id', 'users.name', 'users.last_name', 'users.first_name', 'users.middle_name')
+            ->groupBy('version_participants.id', 'users.name', 'users.last_name', 'users.first_name', 'users.middle_name', 'coregistration_manager_mailing_addresses.mailing_address')
             ->orderBy('users.last_name')
             ->orderBy('users.first_name')
             ->get()
