@@ -4,6 +4,7 @@ namespace App\Livewire\Libraries\Items;
 
 use App\Models\Libraries\Items\Components\LibTitle;
 use App\Models\Libraries\LibStack;
+use App\Models\Libraries\Items\LibItem;
 use App\Services\Libraries\CreateLibItemService;
 use App\Services\Libraries\LibraryStackSearchService;
 use JetBrains\PhpStorm\NoReturn;
@@ -13,6 +14,7 @@ class ItemComponent extends BaseLibraryItemPage
     public string $errorMessage = '';
     public array $itemTypes = [];
     public int $libraryId = 0;
+    public LibItem $libItem;
     public string $searchResults = 'Search Results';
 
     public function mount(): void
@@ -22,6 +24,10 @@ class ItemComponent extends BaseLibraryItemPage
         $this->libraryId = $this->dto['id'];
 
         $this->itemTypes = self::ITEMTYPES;
+
+        if (isset($this->dto['libItem'])) {
+            $this->libItem = $this->dto['libItem'];
+        }
 
     }
 

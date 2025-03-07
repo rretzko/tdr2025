@@ -5,6 +5,7 @@ namespace App\Livewire\Libraries\Items;
 use App\Livewire\BasePage;
 use App\Models\Libraries\Library;
 use App\Models\Libraries\LibStack;
+use JetBrains\PhpStorm\NoReturn;
 
 class ItemTableComponent extends BasePage
 {
@@ -28,6 +29,14 @@ class ItemTableComponent extends BasePage
                 'rows' => $this->getRows(),
             ]
         );
+    }
+
+    public function edit(int $itemId)
+    {
+        //ex. "library\1\edit\1"
+        $url = '/library' . DIRECTORY_SEPARATOR . $this->library->id . DIRECTORY_SEPARATOR . 'edit' . DIRECTORY_SEPARATOR . $itemId;
+
+        return $this->redirect($url);
     }
 
     private function getColumnHeaders(): array

@@ -416,6 +416,11 @@ Breadcrumbs::for('participating teachers', function (BreadcrumbTrail $trail, int
     $trail->parent('version reports', $id);
     $trail->push('Participating Teachers', route('version.reports.participatingTeachers'));
 });
+//Version.Reports.Participation Counts
+Breadcrumbs::for('participation counts', function (BreadcrumbTrail $trail, $id) {
+    $trail->parent('version reports', $id);
+    $trail->push('Participation Counts', route('version.reports.participationCounts', $id));
+});
 //Version.Reports.Student Counts
 Breadcrumbs::for('student counts', function (BreadcrumbTrail $trail, int $id) {
     $trail->parent('version reports', $id);

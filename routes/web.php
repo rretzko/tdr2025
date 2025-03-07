@@ -104,6 +104,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('library.items');
     Route::get('library/{library}/item/new', \App\Http\Controllers\Libraries\Items\ItemController::class)
         ->name('library.item.new');
+    Route::get('library/{library}/edit/{libItem}', \App\Http\Controllers\Libraries\Items\ItemController::class)
+        ->name('library.item.edit');
 
     //OBLIGATIONS
     Route::get('obligations', \App\Http\Controllers\Events\Versions\Participations\ObligationController::class)
@@ -234,6 +236,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('version/reports/obligatedTeachers',
         \App\Http\Controllers\Tdr\LivewireController::class)
         ->name('version.reports.obligatedTeachers');
+    Route::get('version/reports/participationCounts', \App\Http\Controllers\Tdr\LivewireController::class)
+        ->name('version.reports.participationCounts');
     Route::get('version/reports/participatingTeachers',
         \App\Http\Controllers\Tdr\LivewireController::class)
         ->name('version.reports.participatingTeachers');
