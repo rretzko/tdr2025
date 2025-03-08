@@ -9,5 +9,5 @@ class LibTitle extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['teacher_id', 'title'];
+    protected $fillable = ['alpha', 'teacher_id', 'title'];
 }

@@ -1,5 +1,12 @@
 <div class="relative overflow-x-auto">
 
+    {{-- Success Message --}}
+    @if(session()->has('successMessage'))
+        <div class="bg-green-100 text-sm text-green-800 mb-2 px-2 rounded-lg w-fit">
+            {{ session('successMessage') }}
+        </div>
+    @endif
+
     <table class="px-4 shadow-lg w-full">
         <thead>
         <tr>

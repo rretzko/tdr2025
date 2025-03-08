@@ -27,6 +27,7 @@ class ItemComponent extends BaseLibraryItemPage
 
         if (isset($this->dto['libItem'])) {
             $this->libItem = $this->dto['libItem'];
+            $this->form->setLibItem($this->libItem);
         }
 
     }
@@ -44,11 +45,23 @@ class ItemComponent extends BaseLibraryItemPage
         dd($itemId);
     }
 
-    public function save(): void
+    public function save()
     {
+        //determine if save = updating or adding
+        $updating = (bool)$this->form->sysId;
+
         $this->reset('errorMessage', 'successMessage');
 
-        dd(__METHOD__);
+        $saved = $this->form->save();
+
+        if ($saved) {
+            $message = '"' . $this->form->title . ($updating ? '" updated.' : '" saved.');
+            session()->flash('successMessage', $message);
+        } else {
+            $this->errorMessage = "Unable to save library item at this time.";
+        }
+
+        return $this->redirect("/library/$this->libraryId/items");
     }
 
     public function saveAndStay(): void

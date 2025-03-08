@@ -49,7 +49,7 @@ class CreateLibItemService
 
         //else create a new row in the lib_titles table and return that id
         $title = Str::title($this->form->title);
-        $alpha = $this->makeAlpha($title);
+        $alpha = MakeAlphaService::alphabetize($title);
 
         return LibTitle::create(
             [
@@ -58,26 +58,6 @@ class CreateLibItemService
                 'alpha' => $alpha,
             ],
         )->id;
-    }
-
-    /**
-     * Apply alphabetization rules to $string
-     * @param string $string
-     * @return string
-     */
-    private function makeAlpha(string $string): string
-    {
-        $articles = ['A', 'An', 'And', 'The'];
-        $parts = array_map('trim', explode(' ', $string));
-
-        while (in_array($parts[0], $articles)) {
-            $article = $parts[0];
-            array_shift($parts);
-            $string = implode(' ', $parts) . ', ' . $article;
-            return $this->makeAlpha($string); //recursion
-        }
-
-        return $string;
     }
 
     private function errorCheck(): void
