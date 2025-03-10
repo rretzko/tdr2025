@@ -4,6 +4,7 @@ namespace App\Livewire\Forms;
 
 use App\Models\Libraries\Items\Components\LibTitle;
 use App\Models\Libraries\Items\LibItem;
+use App\Models\Libraries\LibStack;
 use App\Services\Libraries\CreateLibItemService;
 use App\Services\Libraries\MakeAlphaService;
 use Illuminate\Database\Eloquent\Model;
@@ -41,11 +42,27 @@ class LibraryItemForm extends Form
             : $this->itemType;
     }
 
-    public function save(): bool
+    public function save(int $libraryId): bool
     {
-        return ($this->sysId)
-            ? $this->update()
-            : $this->add();
+        $libItemId = ($this->sysId)
+            ? $this->update($libraryId)
+            : $this->add($libraryId);
+
+        return (bool)LibStack::updateOrCreate(
+            [
+                'library_id' => $libraryId,
+                'lib_item_id' => $libItemId,
+            ],
+            []
+        );
+    }
+
+    public function resetVars(): void
+    {
+        $this->itemType = 'sheet music';
+        $this->policies = [];
+        $this->sysId = 0;
+        $this->title = '';
     }
 
     public function setLibItem(LibItem $libItem): void
@@ -62,11 +79,45 @@ class LibraryItemForm extends Form
         $this->policies['canEdit']['title'] = $this->getPolicy('canEdit', $libTitle);
     }
 
-    private function add(): bool
+    private function add(int $libraryId): int
     {
-        dd(__METHOD__);
+        $libTitleId = $this->getLibTitleId();
+        return $this->getLibItemId($libTitleId);
+    }
 
-        return false;
+    private function getLibItemId(int $libTitleId): int
+    {
+        if (LibItem::where('lib_title_id', $libTitleId)->exists()) {
+            return LibItem::where('lib_title_id', $libTitleId)
+                ->first()
+                ->id;
+        }
+
+        return LibItem::create(
+            [
+                'item_type' => $this->itemType,
+                'lib_title_id' => $libTitleId,
+            ]
+        )->id;
+
+    }
+
+    private function getLibTitleId(): int
+    {
+        if (LibTitle::where('title', $this->title)->exists()) {
+            return LibTitle::where('title', $this->title)->first()->id;
+        }
+
+        //format title
+        $fTitle = Str::title(trim($this->title));
+
+        return LibTitle::create(
+            [
+                'teacher_id' => auth()->id(),
+                'title' => $fTitle,
+                'alpha' => MakeAlphaService::alphabetize($fTitle)
+            ]
+        )->id;
     }
 
     /**
@@ -92,12 +143,12 @@ class LibraryItemForm extends Form
         return ($userCreatedObject && $userIsSoleDependent);
     }
 
-    private function update(): bool
+    private function update(int $libraryId): int
     {
         $libItem = LibItem::find($this->sysId);
         $updatedLibTitle = $this->updateLibTitle($libItem, LibTitle::find($libItem->lib_title_id));
 
-        return $updatedLibTitle;
+        return $libItem->id;
     }
 
     private function updateLibTitle(LibItem $libItem, LibTitle $libTitle): bool

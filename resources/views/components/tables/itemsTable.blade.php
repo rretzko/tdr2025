@@ -49,12 +49,9 @@
                 <td class="border border-gray-200 px-1 text-center cursor-help">
                     {{ $row['item_type'] }}
                 </td>
-                <td class="border border-gray-200 px-1 text-center cursor-help">
-                    {{ $row['title'] }}
+                <td class="border border-gray-200 px-1 text-left cursor-help">
+                    {{ $row['alpha'] }}
                 </td>
-                {{--                <td class="border border-gray-200 px-1">--}}
-                {{--                    {{ $row->schoolName ?? $row->name}}--}}
-                {{--                </td>--}}
                 <td class="text-center border border-gray-200 px-1">
                     <x-buttons.edit id="{{ $row['id'] }}" :livewire="true" id="{{ $row['id'] }}"/>
                 </td>

@@ -28,6 +28,8 @@ class ItemComponent extends BaseLibraryItemPage
         if (isset($this->dto['libItem'])) {
             $this->libItem = $this->dto['libItem'];
             $this->form->setLibItem($this->libItem);
+        } else {
+            $this->form->resetVars();
         }
 
     }
@@ -40,9 +42,9 @@ class ItemComponent extends BaseLibraryItemPage
             ]);
     }
 
-    #[NoReturn] public function findItem(int $itemId): void
+    #[NoReturn] public function findItem(int $libItemId): void
     {
-        dd($itemId);
+        $this->form->setLibItem(LibItem::find($libItemId));
     }
 
     public function save()
@@ -52,7 +54,7 @@ class ItemComponent extends BaseLibraryItemPage
 
         $this->reset('errorMessage', 'successMessage');
 
-        $saved = $this->form->save();
+        $saved = $this->form->save($this->libraryId);
 
         if ($saved) {
             $message = '"' . $this->form->title . ($updating ? '" updated.' : '" saved.');

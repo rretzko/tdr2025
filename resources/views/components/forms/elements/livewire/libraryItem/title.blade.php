@@ -1,7 +1,7 @@
 <div class="">
     <label for="form.title">
         <div>Title</div>
-        @if($form->policies['canEdit']['title'])
+        @if((! isset($form->policies['canEdit']['title'])) || $form->policies['canEdit']['title'])
             <input
                 type="text"
                 wire:model.live.debounce="form.title"

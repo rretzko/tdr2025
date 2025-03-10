@@ -58,8 +58,8 @@ class LibraryStackSearchService
                 $title = LibTitle::find($libItem->lib_title_id)->title;
 
                 $str .= "
-                    <li>
-                        <button wire:click='findItem($libItem->id)' class='hover:underline'>
+                    <li class='text-left'>
+                        <button wire:click='findItem($libItem->id)' class='px-1 cursor-pointer hover:underline hover:bg-gray-200 '>
                             $title
                         </button>
                     </li>";

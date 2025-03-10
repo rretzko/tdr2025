@@ -13,7 +13,7 @@ class ItemController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request, Library $library, LibItem $libItem = new LibItem())
+    public function __invoke(Request $request, Library $library, LibItem|null $libItem = new LibItem())
     {
         //access policy
         if (!policy($library)->view($request->user(), $library)) {

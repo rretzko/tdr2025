@@ -13,7 +13,7 @@
                                 type="radio"
                                 value="{{ $value }}"
                                 wire:model.live="form.itemType"
-                                @disabled(! $form->policies['canEdit']['itemType'])
+                                @disabled(isset($form->policies['canEdit']['itemType']) && (! $form->policies['canEdit']['itemType']))
                             >
                             <label>{{ ucwords($key) }}</label>
                         </div>
