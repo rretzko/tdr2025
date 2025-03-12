@@ -7,6 +7,7 @@ use App\Models\Libraries\LibStack;
 use App\Models\Libraries\Items\LibItem;
 use App\Services\Libraries\CreateLibItemService;
 use App\Services\Libraries\LibraryStackSearchService;
+use Illuminate\Support\Str;
 use JetBrains\PhpStorm\NoReturn;
 
 class ItemComponent extends BaseLibraryItemPage
@@ -55,12 +56,13 @@ class ItemComponent extends BaseLibraryItemPage
         $this->reset('errorMessage', 'successMessage');
 
         $saved = $this->form->save($this->libraryId);
+        $fTitle = Str::title($this->form->title);
 
         if ($saved) {
-            $message = '"' . $this->form->title . ($updating ? '" updated.' : '" saved.');
+            $message = '"' . $fTitle . ($updating ? '" updated.' : '" saved.');
             session()->flash('successMessage', $message);
         } else {
-            $this->errorMessage = "Unable to save library item at this time.";
+            $this->errorMessage = 'Unable to save "' . $fTitle . '" at this time.';
         }
 
         return $this->redirect("/library/$this->libraryId/items");
