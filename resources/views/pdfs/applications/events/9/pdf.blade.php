@@ -293,7 +293,10 @@
                         SIGNATURE OF {{ strtoupper($dto['emergencyContactName']) }}: ________________________ <br/>
                         <span
                             style="font-size: 0.8rem;">{{ strtoupper($dto['emergencyContactName']) }} CELL PHONE: <span
-                                style="@if(strstr($dto['emergencyContactMobile'], 'Emergency')) color: red @endif "{!! $dto['emergencyContactMobile'] !!}</span>
+                                style="@if(strstr($dto['emergencyContactMobile'], "(")) color: red @endif "
+                            >
+                                {!! $dto['emergencyContactMobile'] !!}
+                            </span>
 
                     </td>
                     <td style="text-align: right; width: 25%;">

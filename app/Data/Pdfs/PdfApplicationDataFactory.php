@@ -152,6 +152,11 @@ class PdfApplicationDataFactory
         $emergencyContacts = $this->student->emergencyContacts ?? collect();
 
         if ($emergencyContacts->count()) {
+//            $properties = ['name'];
+//            if(! in_array($property, $properties)){
+//                {echo $property;}
+//                dd($emergencyContacts->first());
+//            }
             return $emergencyContacts->first()->$property;
         }
 
