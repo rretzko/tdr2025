@@ -155,10 +155,23 @@
                                                          required
                                                          type="email"
                 />
+
+                {{-- EMAIL VERIFICATION ADVISORY --}}
                 @if($emailVerified)
                     <div class="mt-2 text-sm text-green-600">Verified</div>
                 @else
                     <div class="mt-2 text-sm text-red-600">Unverified</div>
+                @endif
+
+                {{-- COMMERCIAL EMAIL DOMAIN FOUND --}}
+                @if($form->commercialWorkAddressDomain)
+                    <div
+                        class="mt-2 text-sm bg-red-100 text-red-600 px-2 rounded-sm"
+                    >
+                        Commercial emails (gmail, hotmail, etc.) are automatically unverified for school validation
+                        purposes.
+                        An unverified work email will preclude you from viewing any student-entered information.
+                    </div>
                 @endif
             </div>
 

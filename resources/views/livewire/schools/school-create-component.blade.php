@@ -133,6 +133,14 @@
                 @else
                     <div class="mt-2 text-sm text-red-600">Unverified</div>
                 @endif
+
+                @if($form->commercialWorkAddressDomain)
+                    <div
+                        class="mt-2 text-sm bg-red-100 text-red-600 px-2 rounded-sm"
+                    >
+                        Commercial Email
+                    </div>
+                @endif
             </div>
 
         </div>

@@ -14,6 +14,7 @@ use App\Models\Schools\Teachers\TeacherSubject;
 use App\Models\UserConfig;
 use App\Services\FormatPhoneService;
 use App\ValueObjects\SchoolResultsValueObject;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
@@ -25,6 +26,7 @@ class SchoolForm extends Form
     public string $advisoryCountyId = '';
     #[Validate('required', message: "A city is required.")]
     public string $city = '';
+    public bool $commercialWorkAddressDomain = false;
     #[Validate('required')]
     #[Validate('integer')]
     #[Validate('min:1', message: "You must select a county.")]
@@ -101,6 +103,10 @@ class SchoolForm extends Form
                     'subject' => 'chorus',
                 ]
             );
+
+            //verify school email address
+            $this->sendVerificationEmailIfNeeded();
+
         } else {
 
             $this->school->update(
@@ -179,6 +185,13 @@ class SchoolForm extends Form
         $this->advisoryCountyId = (County::find($this->countyId)->name === 'Unknown')
             ? 'An "unknown" county may preclude your engagement in and knowledge of some events.'
             : '';
+    }
+
+    public function updatedEmail(): void
+    {
+        Log::info(__METHOD__);
+        $this->commercialWorkAddressDomain = $this->emailIsACommercialEmail();
+        Log::info('commercialWorkAddressDomain: ' . $this->commercialWorkAddressDomain);
     }
 
     public function updatedName(): void
@@ -336,6 +349,8 @@ class SchoolForm extends Form
         if (!$this->emailIsACommercialEmail()) {
 
             event(new WorkEmailChangedEvent($this->schoolTeacher, $this->email));
+        } else {
+            $this->commercialWorkAddressDomain;
         }
     }
 

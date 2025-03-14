@@ -59,6 +59,12 @@ class SchoolCreateComponent extends BasePage
         $this->form->updatedCountyId();
     }
 
+    public function updatedFormEmail(): void
+    {
+        dd(__LINE__);
+        $this->form->updatedEmail();
+    }
+
     public function updatedFormName(): void
     {
         $this->form->updatedName();

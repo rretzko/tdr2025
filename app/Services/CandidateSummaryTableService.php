@@ -98,6 +98,7 @@ class CandidateSummaryTableService
 
             if ($candidate['emergencyContactId']) {
                 $ec = EmergencyContact::find($candidate['emergencyContactId']);
+
                 $this->candidates[$key]['emergencyContactId'] = $candidate['emergencyContactId'];
                 $this->candidates[$key]['emergencyContactName'] = $ec->name;
                 $this->candidates[$key]['emergencyContactEmail'] = $ec->email;

@@ -111,4 +111,9 @@ class SchoolEditComponent extends BasePage
 
         return redirect()->route('schools')->with($this->successMessage);
     }
+
+    #[NoReturn] public function updatedFormEmail(): void
+    {
+        $this->form->updatedEmail();
+    }
 }
