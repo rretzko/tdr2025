@@ -6,6 +6,7 @@
                 type="text"
                 wire:model.live.debounce="form.title"
                 class="w-11/12 sm:w-10/12"
+                autofocus
             />
         @else
             <div class="border border-gray-600 w-11/12 sm:w-10/12 px-2">

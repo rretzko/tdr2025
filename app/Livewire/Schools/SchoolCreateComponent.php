@@ -61,7 +61,6 @@ class SchoolCreateComponent extends BasePage
 
     public function updatedFormEmail(): void
     {
-        dd(__LINE__);
         $this->form->updatedEmail();
     }
 

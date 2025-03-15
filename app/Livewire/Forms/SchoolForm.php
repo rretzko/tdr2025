@@ -189,9 +189,7 @@ class SchoolForm extends Form
 
     public function updatedEmail(): void
     {
-        Log::info(__METHOD__);
         $this->commercialWorkAddressDomain = $this->emailIsACommercialEmail();
-        Log::info('commercialWorkAddressDomain: ' . $this->commercialWorkAddressDomain);
     }
 
     public function updatedName(): void

@@ -88,6 +88,7 @@
                     @endif
 
                     <div>
+                        {{-- PAYPAL BUTTON --}}
                         @if(($ePaymentVendor === 'paypal') && ($amountDue > 0))
                             <x-forms.partials.teacherEpaymentForm
                                 amountDue="{{ $amountDue }}"
@@ -105,13 +106,15 @@
                                 versionShortName="{{ $versionShortName }}"
                             />
                         @endif
+
+                        {{-- SQUARE BUTTON --}}
                         @if(($ePaymentVendor === 'square') && ($amountDue > 0))
                             <div class="flex flex-row justify-center w-full my-4">
                                 <div class="flex flex-col w-1/2">
                                     <div>
-                                        Please note: You will be asked to add your <b>School Name</b> when paying
-                                        through
-                                        Square.
+                                        Please note: You will be asked to add your <b>School Name</b>
+                                        (<span class="text-xl text-red-600">{{ $schoolName }}</span>)
+                                        when paying through Square.
                                     </div>
                                     <div class="text-left">
                                         Amount Due: <b>${{number_format($amountDue, 2) }}</b>
@@ -123,9 +126,7 @@
                                     </div>
                                 </div>
                             </div>
-                            {{--                        <div class="">--}}
-                            {{--                            @include('square.squareInApp')--}}
-                            {{--                        </div>--}}
+
                         @endif
 
                     </div>

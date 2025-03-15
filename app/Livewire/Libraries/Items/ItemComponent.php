@@ -2,9 +2,11 @@
 
 namespace App\Livewire\Libraries\Items;
 
+use App\Models\Libraries\Items\Components\Artist;
 use App\Models\Libraries\Items\Components\LibTitle;
 use App\Models\Libraries\LibStack;
 use App\Models\Libraries\Items\LibItem;
+use App\Services\ArtistSearchService;
 use App\Services\Libraries\CreateLibItemService;
 use App\Services\Libraries\LibraryStackSearchService;
 use Illuminate\Support\Str;
@@ -17,6 +19,11 @@ class ItemComponent extends BaseLibraryItemPage
     public int $libraryId = 0;
     public LibItem $libItem;
     public string $searchResults = 'Search Results';
+    public array $searchResultsArtists = [
+        'arranger' => '',
+        'composer' => '',
+        'words' => '',
+    ];
 
     public function mount(): void
     {
@@ -76,14 +83,30 @@ class ItemComponent extends BaseLibraryItemPage
 
         if ($service->saved) {
             $this->addItemToLibrary($service->libItemId);
-            $this->successMessage = 'Item Saved.';
+            $libItemTitle = LibItem::find($service->libItemId)->title;
+            $this->successMessage = 'Item "' . $libItemTitle . '" Saved.';
+            $this->form->resetVars();
         } else {
             $this->errorMessage = 'Unable to save item.';
         }
 
     }
 
-    public function updatedFormTitle()
+    public function setArtist(string $artistType, int $artistId): void
+    {
+        $artist = Artist::find($artistId);
+        //setForm->artists['artistType'] => $artist->name;
+        //set form->artistIds[$artistType] = $artistId
+        //remove the search results
+        $this->searchResultsArtists[$artistType] = [];
+    }
+
+    public function updatedFormArtistsArranger($value): void
+    {
+        $this->searchResultsArtists['arranger'] = ArtistSearchService::getResults($value, 'arranger');
+    }
+
+    public function updatedFormTitle(): void
     {
         $this->search();
     }

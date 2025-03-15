@@ -14,6 +14,17 @@ use Livewire\Form;
 
 class LibraryItemForm extends Form
 {
+    public array $artists = [
+        'arranger' => '',
+        'composer' => '',
+        'words' => '',
+    ];
+
+    public array $artistIds = [
+        'arranger' => 0,
+        'composer' => 0,
+        'words' => 0,
+    ];
     public string $itemType = 'sheet music';
 
     /**

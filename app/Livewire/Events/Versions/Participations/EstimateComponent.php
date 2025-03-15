@@ -11,6 +11,7 @@ use App\Models\EpaymentCredentials;
 use App\Models\Events\Versions\Participations\Registrant;
 use App\Models\Events\Versions\Participations\StudentPayment;
 use App\Models\Events\Versions\Version;
+use App\Models\Schools\School;
 use App\Models\Schools\Teacher;
 use App\Models\UserConfig;
 use App\Services\ConvertToUsdService;
@@ -37,6 +38,7 @@ class EstimateComponent extends BasePage
     public bool $sandbox = false;
     public string $sandboxId = 'sandboxId';
     public string $sandboxPersonalEmail = '';
+    public string $schoolName = '';
     public string $selectedTab = 'estimate';
     public int $showEditForm = 0;
     public array $studentPaymentColumnHeaders = [];
@@ -65,6 +67,7 @@ class EstimateComponent extends BasePage
         $this->versionId = UserConfig::getValue('versionId');
         $this->columnHeaders = $this->getColumnHeaders();
         $this->registrationFee = $this->getRegistrationFee();
+        $this->schoolName = School::find(UserConfig::getValue('schoolId'))->name;
         $this->sortCol = 'users.last_name';
         $this->sortColLabel = 'users.name';
         $this->studentPaymentColumnHeaders = $this->getStudentPaymentColumnHeaders();
