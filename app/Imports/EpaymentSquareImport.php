@@ -24,6 +24,7 @@ class EpaymentSquareImport implements WithHeadings, ToModel
         $ePaymentDetails = $this->parseRow($row, $rowCounter);
 
         if (count($ePaymentDetails)) {
+
             $exists = Epayment::query()
                 ->where('version_id', $ePaymentDetails['versionId'])
                 ->where('school_id', $ePaymentDetails['schoolId'])
@@ -179,7 +180,7 @@ class EpaymentSquareImport implements WithHeadings, ToModel
         //row exists and contains actionable data
         if (array_key_exists(49, $row) &&
             strlen($row[49]) &&
-            (str_starts_with($row[49], 'ID:') || str_starts_with($row[49], 'Student id:'))
+            (str_starts_with($row[49], 'ID:') || str_starts_with($row[49], 'Student Id:'))
         ) {
             //expected: $row[49] == 'ID: ####'
             $candidateSuffix = substr($row[49], -4);
