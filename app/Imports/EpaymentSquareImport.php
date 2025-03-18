@@ -111,8 +111,8 @@ class EpaymentSquareImport implements WithHeadings, ToModel
 
     private function getCandidate(int $candidateSuffix, string $payer, int $rowCounter): Candidate|null
     {
-        //hardcoded for CJMEA 2024-25 event
-        $eventId = 83;
+        //hardcoded for NJMEA 2025-26 event
+        $eventId = 84;
         $candidateId = (int) $eventId.$candidateSuffix;
 
         $candidate = Candidate::find($candidateId);
@@ -179,7 +179,7 @@ class EpaymentSquareImport implements WithHeadings, ToModel
         //row exists and contains actionable data
         if (array_key_exists(49, $row) &&
             strlen($row[49]) &&
-            (str_starts_with($row[49], 'ID:'))
+            (str_starts_with($row[49], 'ID:') || str_starts_with($row[49], 'Student id:'))
         ) {
             //expected: $row[49] == 'ID: ####'
             $candidateSuffix = substr($row[49], -4);
