@@ -27,6 +27,7 @@
                 <img src="{{ Storage::disk('s3')->url($dto['logoPdf']) }}"
                      alt="{{ $dto['organizationName'] }} logo {{ $dto['logo'] }}" height="60" width="60"/>
             </td>
+            <td>Logo: {{ $dto['logoPdf'] }}</td>
             <td style="">
                 <div style="text-align: center;">
 
@@ -298,7 +299,7 @@
                             >
                                 {!! $dto['emergencyContactMobile'] !!}
                             </span>
-
+                        </span>
                     </td>
                     <td style="text-align: right; width: 25%;">
                         DATE: _________

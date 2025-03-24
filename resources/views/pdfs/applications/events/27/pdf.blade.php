@@ -200,7 +200,7 @@
                         member in
                         good standing with the school ensemble that corresponds to my {{ $dto['versionShortName'] }}
                         ensemble throughout
-                        my entire All-State experience.
+                        my entire All-State experience
                     </li>
                 </ul>
 

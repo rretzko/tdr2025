@@ -169,6 +169,7 @@ class StudentsTableComponent extends BasePage
     private function getRows(): Builder
     {
         $coteacherIds = CoTeachersService::getCoTeachersIds();
+//        $this->logSql($coteacherIds);
 //        $this->troubleShooting($coteacherIds);
 
         return Student::query()
@@ -208,7 +209,7 @@ class StudentsTableComponent extends BasePage
     /**
      * for troubleshooting
      */
-    private function logSql(): void
+    private function logSql(array $coteacherIds): void
     {
         $sql = Student::query()
             ->join('school_student', 'students.id', '=', 'school_student.student_id')
@@ -224,17 +225,19 @@ class StudentsTableComponent extends BasePage
                 $join->on('users.id', '=', 'home.user_id')
                     ->where('home.phone_type', '=', 'home');
             })
-            ->where('student_teacher.teacher_id', auth()->user()->teacher->id)
-//            ->where('users.name', 'LIKE', '%'.$this->search.'%')
-//            ->orWhere('students.class_of', '=', $this->search)
-//            ->orWhere('voice_parts.descr', 'LIKE', '%'.$this->search.'%')
+//            ->where('student_teacher.teacher_id', auth()->user()->teacher->id)
+            ->whereIn('student_teacher.teacher_id', $coteacherIds)
+            ->where('users.name', 'LIKE', '%'.$this->search.'%')
             ->tap(function ($query) {
                 $this->filters->filterStudentsBySchools($query);
-                $this->filters->filterStudentsByClassOfs($query);
-                $this->filters->filterStudentsByVoicePartIds($query);
+                $this->filters->filterStudentsByClassOfs($query, $this->search);
+                $this->filters->filterStudentsByVoicePartIds($query, $this->search);
             })
-            ->select('users.name', 'schools.name AS schoolName', 'students.class_of AS classOf',
-                'students.height', 'students.birthday', 'students.shirt_size AS shirtSize', 'students.id AS studentId',
+            ->select('users.name', 'users.id AS userId',
+                'schools.name AS schoolName', 'schools.id AS schoolId',
+                'school_student.id AS schoolStudentId', 'school_student.active',
+                'students.class_of AS classOf', 'students.height', 'students.birthday',
+                'students.shirt_size AS shirtSize', 'students.id AS studentId',
                 'voice_parts.descr AS voicePart', 'users.email', 'mobile.phone_number AS phoneMobile',
                 'home.phone_number AS phoneHome', 'users.last_name', 'users.first_name', 'users.middle_name',
                 'users.prefix_name', 'users.suffix_name'
@@ -242,6 +245,6 @@ class StudentsTableComponent extends BasePage
             ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
             ->toRawSql();
 
-        //Log::info($sql);
+        Log::info($sql);
     }
 }
