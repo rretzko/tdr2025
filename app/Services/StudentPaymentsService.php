@@ -67,13 +67,13 @@ class StudentPaymentsService
     private function getEPayments(): array
     {
         return Epayment::query()
-            ->join('students', 'students.id', '=', 'epayments.user_id')
-            ->join('users', 'users.id', '=', 'students.user_id')
-            ->join('candidates', 'candidates.student_id', '=', 'students.id')
+            ->join('candidates', 'epayments.candidate_id', '=', 'candidates.id')
+            ->join('students', 'candidates.student_id', '=', 'students.id')
+            ->join('users', 'students.user_id', '=', 'users.id')
             ->where('epayments.version_id', $this->versionId)
             ->whereIn('epayments.school_id', $this->schoolIds)
             ->where('candidates.version_id', $this->versionId)
-            ->where('candidates.teacher_id', auth()->id())
+            ->whereIn('candidates.teacher_id', $this->coteacherIds)
             ->select('epayments.id', 'epayments.candidate_id',
                 'epayments.amount', 'epayments.transaction_id',
                 'epayments.comments',
