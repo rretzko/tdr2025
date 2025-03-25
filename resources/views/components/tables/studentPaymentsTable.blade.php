@@ -86,7 +86,7 @@
                 <td class="text-center border border-gray-200">
                     @if($row['payment_type'] !== 'ePayment')
                         {{-- ePayments are not removable --}}
-                        <x-buttons.remove id="{{ $row['id'] }}"/>
+                        <x-buttons.remove id="{{ $row['id'] }}" :livewire="true"/>
                     @endif
                 </td>
 

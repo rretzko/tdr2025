@@ -131,7 +131,7 @@ class EstimateComponent extends BasePage
 
     public function remove(int $studentPaymentId): void
     {
-        dd('studentPaymentId: '.$studentPaymentId);
+        StudentPayment::find($studentPaymentId)->delete();
     }
 
     public function sortBy(string $key): void
