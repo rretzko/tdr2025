@@ -49,7 +49,7 @@ class EmergencyContactForm extends Form
         $this->student = $student;
     }
 
-    public function update(): void
+    public function update(): EmergencyContact
     {
         $this->validate();
 
@@ -57,7 +57,7 @@ class EmergencyContactForm extends Form
 
         if ($this->sysId === 'new') {
 
-            $this->add($service);
+            return $this->add($service);
 
         } else {
 
@@ -76,12 +76,14 @@ class EmergencyContactForm extends Form
             );
 
             $this->resetEmergencyContact();
+
+            return $emergencyContact;
         }
     }
 
-    private function add(FormatPhoneService $service): void
+    private function add(FormatPhoneService $service): EmergencyContact
     {
-        EmergencyContact::create(
+        return EmergencyContact::create(
             [
                 'student_id' => $this->student->id,
                 'emergency_contact_type_id' => $this->emergencyContactTypeId,

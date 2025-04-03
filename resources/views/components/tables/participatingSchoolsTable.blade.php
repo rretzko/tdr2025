@@ -49,7 +49,7 @@
 
                 {{-- SCHOOL --}}
                 <td class="border border-gray-200 px-1">
-                    {{ $row->schoolName }}
+                    {{ $row->schoolName }} ({{ $row->schoolId }})
                 </td>
 
                 {{-- TEACHER --}}
@@ -57,20 +57,30 @@
                     <div>
                         {{ $row->last_name . ($row->suffix_name ? ' ' . $row->suffix_name : '') . ', ' . $row->first_name . ' ' . $row->middle_name . ($row->prefix_name ? ' (' . $row->prefix_name . ')' : '') }}
                     </div>
-                    <div class="ml-2 text-sm">
-                        {{ $row->email }}
+                    <div class="ml-2 text-sm text-blue-500 hover:underline ">
+                        <a href="mailto:{{$row->email}}?subject=2025 NJ All-State Chorus">
+                            {{ $row->email }}
+                        </a>
                     </div>
                     <div class="ml-2 text-sm">
                         {{ $row->phoneMobile }} (c)
                     </div>
                     <div class="ml-2 text-sm">
-                        {{ $row->phoneWork }} (w)
+                        {{--                        {{ $row->phoneWork }} (w)--}}
                     </div>
+                </td>
+
+                {{-- PACKAGE RECEIVED --}}
+                <td class="border border-gray-200 px-1 text-center">
+                    <input type="checkbox"
+                           wire:click="packageReceived({{ $row->schoolId }})"
+                        @checked($row->received === 1)
+                    />
                 </td>
 
                 {{-- REGISTRANT COUNT --}}
                 <td class="border border-gray-200 px-1 text-center">
-                    {{ $row->candidateCount }}
+                    {{ number_format($row->candidateCount,0) }}
                 </td>
 
                 {{-- PAYMENT DUE --}}

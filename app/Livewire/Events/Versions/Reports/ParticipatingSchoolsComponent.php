@@ -10,6 +10,7 @@ use App\Models\Epayment;
 use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\TeacherPayment;
 use App\Models\Events\Versions\Version;
+use App\Models\Events\Versions\VersionPackageReceived;
 use App\Services\ConvertToUsdService;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
@@ -22,6 +23,7 @@ class ParticipatingSchoolsComponent extends BasePageReports
     public array $columnHeaders = [];
     public array $schoolIds = [];
     public bool $showPaymentForm = false;
+    public int $versionId = 0;
 
     public function mount(): void
     {
@@ -33,6 +35,9 @@ class ParticipatingSchoolsComponent extends BasePageReports
         $this->sortColLabel = $this->userSort ? $this->userSort->label : 'school';
 
         $this->columnHeaders = $this->getColumnHeaders();
+
+        $this->versionId = \App\Models\UserConfig::getValue('versionId');
+
     }
 
     private function getColumnHeaders(): array
@@ -41,6 +46,7 @@ class ParticipatingSchoolsComponent extends BasePageReports
             ['label' => '###', 'sortBy' => null],
             ['label' => 'school', 'sortBy' => 'school'],
             ['label' => 'teacher', 'sortBy' => 'name'], //users.last_name
+            ['label' => 'pckt recd', 'sortBy' => 'recd'],
             ['label' => 'registrant#', 'sortBy' => 'count'],
             ['label' => 'due', 'sortBy' => null],
             ['label' => 'paid', 'sortBy' => null],
@@ -50,7 +56,6 @@ class ParticipatingSchoolsComponent extends BasePageReports
 
     public function render()
     {
-
         //refresh schoolIds
         $this->schoolIds = $this->getSchoolIds();
         $payments = $this->getPayments();
@@ -65,7 +70,25 @@ class ParticipatingSchoolsComponent extends BasePageReports
                 'payments' => $payments,
                 'paymentsDue' => $paymentsDue,
                 'paymentsStatus' => $paymentsStatus,
+            ]);
+    }
 
+    public function packageReceived(int $schoolId): void
+    {
+        $versionPackage = VersionPackageReceived::query()
+            ->where('school_id', $schoolId)
+            ->where('version_id', $this->versionId)
+            ->first();
+
+        $received = $versionPackage ? $versionPackage->received : false;
+
+        VersionPackageReceived::updateOrCreate([
+            'school_id' => $schoolId,
+            'version_id' => $this->versionId,
+        ],
+            [
+                'received' => !$received,
+                'user_id' => auth()->id(),
             ]);
     }
 
@@ -174,7 +197,8 @@ class ParticipatingSchoolsComponent extends BasePageReports
                     ->where('work.phone_type', '=',
                         'work'); // Assuming there's a type column to distinguish phone types
             })
-            ->where('version_id', $this->versionId)
+            ->leftJoin('version_package_receiveds', 'schools.id', '=', 'version_package_receiveds.school_id')
+            ->where('candidates.version_id', $this->versionId)
             ->where('status', 'registered')
             ->where(function ($query) use ($search) {
                 return $query
@@ -188,6 +212,7 @@ class ParticipatingSchoolsComponent extends BasePageReports
                 DB::raw('COUNT(candidates.id) AS candidateCount'),
                 'mobile.phone_number AS phoneMobile',
                 'work.phone_number AS phoneWork',
+                'version_package_receiveds.received',
             )
             ->groupBy(
                 'candidates.school_id',
@@ -202,7 +227,8 @@ class ParticipatingSchoolsComponent extends BasePageReports
                 'schoolId',
                 'users.email',
                 'phoneMobile',
-                'phoneWork'
+                'phoneWork',
+                'version_package_receiveds.received',
             )
             ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
             ->orderBy('users.last_name')

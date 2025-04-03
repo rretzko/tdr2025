@@ -5,6 +5,7 @@ namespace App\Livewire\Students;
 use App\Livewire\Forms\EmergencyContactForm;
 use App\Models\EmergencyContact;
 use App\Models\Students\EmergencyContactType;
+use Illuminate\Support\Facades\DB;
 
 class StudentECEditComponent extends BasePageStudent
 {
@@ -44,7 +45,9 @@ class StudentECEditComponent extends BasePageStudent
 
     public function save(): void
     {
-        $this->ecForm->update();
+        $ec = $this->ecForm->update();
+
+        $this->updateCandidateRecords($ec);
 
         $this->successMessage = 'Emergency Contacts updated.';
     }
@@ -68,5 +71,13 @@ class StudentECEditComponent extends BasePageStudent
             ->orderBy('order_by')
             ->pluck('relationship', 'id')
             ->toArray();
+    }
+
+    private function updateCandidateRecords(EmergencyContact $ec): void
+    {
+        DB::table('candidates')
+            ->where('student_id', $this->student->id)
+            ->where('emergency_contact_id', 0)
+            ->update(['emergency_contact_id' => $ec->id]);
     }
 }

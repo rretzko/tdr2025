@@ -288,17 +288,17 @@
                             {{ ucwords($uploadType) }} Recording
                         </h4>
                         @if(array_key_exists($uploadType, $form->recordings) && count($form->recordings[$uploadType]))
-                            <div wire:key="div-{{ $form->recordings[$uploadType]['url'] }}">
+                            <div wire:key="div-{{ $uploadType }}">
                                 <audio id="audioPlayer-{{ $uploadType }}" class="mx-auto" controls
                                        style="display: block"
-                                       wire:key="player-{{ $form->recordings[$uploadType]['url'] }}"
+                                       wire:key="player-{{ $uploadType }}"
                                 >
                                     <source id="audioSource-{{ $uploadType }}"
                                             src="https://auditionsuite-production.s3.amazonaws.com/{{ $form->recordings[$uploadType]['url'] }}"
                                             type="audio/mpeg"
-                                            wire:key="src-{{ $form->recordings[$uploadType]['url'] }}"
+                                            wire:key="src-{{ $uploadType }}"
                                     >
-                                    " Your browser does not support the audio element. "
+                                    Your browser does not support the audio element.
                                 </audio>
                             <div class="flex flex-row w-full mt-2 space-x-4 justify-center">
                                 @if(array_key_exists('approved', $form->recordings[$uploadType]) &&

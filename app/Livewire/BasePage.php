@@ -236,7 +236,8 @@ class BasePage extends Component
             ->where('version_id', UserConfig::getValue('versionId'))
             ->where('status', 'registered')
             ->distinct('school_id')
-            ->select(DB::raw('LEFT(schools.name,10) AS shortName'), 'schools.id')
+            ->select(DB::raw('LEFT(schools.name,10) AS shortName'), 'schools.id', 'schools.name')
+//            ->orderBy('schools.name')
             ->pluck('shortName', 'schools.id')
             ->toArray();
     }

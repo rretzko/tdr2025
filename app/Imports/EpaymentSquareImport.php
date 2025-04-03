@@ -5,6 +5,7 @@ namespace App\Imports;
 use App\Models\EmergencyContact;
 use App\Models\Epayment;
 use App\Models\Events\Versions\Participations\Candidate;
+use App\Models\Schools\School;
 use App\Models\Students\Student;
 use App\Models\User;
 use App\Services\ConvertToPenniesService;
@@ -24,6 +25,7 @@ class EpaymentSquareImport implements WithHeadings, ToModel
         $ePaymentDetails = $this->parseRow($row, $rowCounter);
 
         if (count($ePaymentDetails)) {
+
             $exists = Epayment::query()
                 ->where('version_id', $ePaymentDetails['versionId'])
                 ->where('school_id', $ePaymentDetails['schoolId'])
@@ -176,7 +178,7 @@ class EpaymentSquareImport implements WithHeadings, ToModel
             return [];
         }
 
-        //row exists and contains actionable data
+        //row exists and contains actionable data for a candidate payer
         if (array_key_exists(49, $row) &&
             strlen($row[49]) &&
             (str_starts_with($row[49], 'PIN Number:'))
@@ -187,6 +189,27 @@ class EpaymentSquareImport implements WithHeadings, ToModel
             $amount = ConvertToPenniesService::usdToPennies(substr($row[3], 1));
             $payer = $row[35];
 
+            $candidate = $this->getCandidate($candidateSuffix, $payer, $rowCounter);
+
+            if (is_null($candidate)) {
+                return [];
+            }
+
+            return $this->getCandidateDetails($candidate, $transactionId, $amount, $payer);
+        }
+
+        //row exists and contains actionable data for a teacher payer
+        if (array_key_exists(49, $row) &&
+            strlen($row[49]) &&
+            (str_starts_with($row[49], 'School Name:'))
+        ) {
+            $schoolName = trim(substr($row[49], 13));
+            $transactionId = $row[22];
+            $amount = ConvertToPenniesService::usdToPennies(substr($row[3], 1));
+            $payer = $row[35];
+
+            $school = School::where('name', $schoolName)->first();
+            dd($school);
             $candidate = $this->getCandidate($candidateSuffix, $payer, $rowCounter);
 
             if (is_null($candidate)) {

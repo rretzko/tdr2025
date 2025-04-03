@@ -41,6 +41,7 @@ class BasePageReports extends BasePage
             'count' => 'candidateCount',
             'name' => 'users.last_name',
             'registrant' => 'studentLastName',
+            'recd' => 'version_package_receiveds.received',
             'school' => 'schools.name',
             'teacher' => 'teacher.last_name',
             'total' => 'schools.name', //use default and re-sort array in StudentCountsComponent
