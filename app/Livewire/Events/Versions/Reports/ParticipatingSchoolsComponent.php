@@ -183,6 +183,14 @@ class ParticipatingSchoolsComponent extends BasePageReports
     {
         $search = $this->search;
 
+        $secondarySortOrder = (auth()->id() === 246) //kristen markowski
+            ? 'schools.name'
+            : 'users.last_name';
+
+        $tertiarySortOrder = (auth()->id() === 246)
+            ? 'users.last_name'
+            : 'users.first_name';
+
         return DB::table('candidates')
             ->join('schools', 'schools.id', '=', 'candidates.school_id')
             ->join('teachers', 'teachers.id', '=', 'candidates.teacher_id')
@@ -231,8 +239,8 @@ class ParticipatingSchoolsComponent extends BasePageReports
                 'version_package_receiveds.received',
             )
             ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
-            ->orderBy('users.last_name')
-            ->orderBy('users.first_name');
+            ->orderBy($secondarySortOrder)
+            ->orderBy($tertiarySortOrder);
     }
 
     public function createPayment(int $schoolId): void

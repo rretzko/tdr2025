@@ -146,6 +146,7 @@
                                         :height="$height"
                                         :heights="$heights"
                                         :form="$form"
+                                        :pastPostmarkDeadline="$pastPostmarkDeadline"
                                         :pathToRegistration="$pathToRegistration"
                                         :shirtSize="$shirtSize"
                                         :shirtSizes="$shirtSizes"

@@ -7,6 +7,7 @@
     'heights',
     'missingApplicationRequirements',
     'pathToRegistration',
+    'pastPostmarkDeadline',
     'shirtSize',
     'shirtSizes',
     'showRegistrationPath',
@@ -310,6 +311,7 @@
                                     <button class="px-2 rounded-full text-sm bg-green-600 text-green-100"
                                             wire:click="recordingApprove('{{  $uploadType }}')"
                                             type="button"
+                                        @disabled($pastPostmarkDeadline)
                                     >
                                         Approve
                                     </button>
@@ -318,6 +320,7 @@
                                         wire:click="recordingReject('{{  $uploadType }}')"
                                         wire:confirm="This will PERMANENTLY delete the uploaded {{ $uploadType }} file.\nPlease notify your student of their need to re-record this file.\nClick OK to proceed or Cancel to stop this action."
                                         type="button"
+                                    @disabled($pastPostmarkDeadline)
                                 >
                                     Reject
                                 </button>

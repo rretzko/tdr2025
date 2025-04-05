@@ -12,6 +12,7 @@ use App\Models\Events\Event;
 use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Participations\Obligation;
 use App\Models\Events\Versions\Version;
+use App\Models\Events\Versions\VersionConfigDate;
 use App\Models\Events\Versions\VersionTeacherConfig;
 use App\Models\Schools\Teachers\Supervisor;
 use App\Models\Schools\Teacher;
@@ -55,6 +56,7 @@ class CandidatesTableComponent extends BasePage
     public array $heights = [];
     public bool $obligationAccepted = false;
     public string $pathToRegistration = '';
+    public bool $pastPostmarkDeadline = false;
     public int $schoolId = 0;
     public int $seniorYear = 0;
     public bool $shirtSize = false;
@@ -145,6 +147,14 @@ class CandidatesTableComponent extends BasePage
 
         //check ePaymentId
         $this->setEpaymentCredentials();
+
+        //check if postmark deadline has passed
+        $postmarkDeadline = VersionConfigDate::query()
+            ->where('version_id', $this->versionId)
+            ->where('date_type', 'postmark_deadline')
+            ->first()
+            ->postmark_deadline;
+        $this->pastPostmarkDeadline = Carbon::parse($postmarkDeadline) < Carbon::now();
 
     }
 
