@@ -53,6 +53,23 @@
 
                 <x-links.linkTop :recordsPerPage="$recordsPerPage" :rows="$rows"/>
 
+                {{-- REGISTRATION MANAGER SELECTORS --}}
+                @if($multipleRegistrationManagers)
+                    <div id="registrationManagerSelectors"
+                         class="my-2 border border-gray-300 border-r-white border-l-white w-full px-2 flex flex-row justify-around shadow-lg">
+                        @foreach($registrationManagers AS $manager)
+                            <button wire:click="updateActiveRegistrationManager('{{$manager['id']}}')"
+                                @class([
+                                    'text-gray-400'=> ($manager['id'] != $activeRegistrationManager),
+                                    'text-blue-500 font-bold' => ($manager['id'] == $activeRegistrationManager),
+                                ])
+                            >
+                                {{ $manager['name'] }}
+                            </button>
+                        @endforeach
+                    </div>
+                @endif
+
                 {{-- TABLE--}}
                 <x-tables.participatingSchoolsTable
                     :columnHeaders="$columnHeaders"

@@ -10,7 +10,10 @@ use App\Models\Epayment;
 use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\TeacherPayment;
 use App\Models\Events\Versions\Version;
+use App\Models\Events\Versions\VersionCountyAssignment;
 use App\Models\Events\Versions\VersionPackageReceived;
+use App\Models\Events\Versions\VersionParticipant;
+use App\Models\Events\Versions\VersionRole;
 use App\Services\ConvertToUsdService;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
@@ -21,9 +24,15 @@ class ParticipatingSchoolsComponent extends BasePageReports
 {
     public TeacherPaymentForm $form;
     public array $columnHeaders = [];
+
     public array $schoolIds = [];
     public bool $showPaymentForm = false;
     public int $versionId = 0;
+
+    //registration managers
+    public int|string $activeRegistrationManager = 0;
+    public bool $multipleRegistrationManagers = false;
+    public array $registrationManagers = [];
 
     public function mount(): void
     {
@@ -37,6 +46,10 @@ class ParticipatingSchoolsComponent extends BasePageReports
         $this->columnHeaders = $this->getColumnHeaders();
 
         $this->versionId = \App\Models\UserConfig::getValue('versionId');
+
+        $this->multipleRegistrationManagers = $this->hasMultipleRegistrationManagers();
+        $this->registrationManagers = $this->getRegistrationManagers();
+        $this->activeRegistrationManager = auth()->id();
 
     }
 
@@ -52,6 +65,40 @@ class ParticipatingSchoolsComponent extends BasePageReports
             ['label' => 'paid', 'sortBy' => null],
             ['label' => 'payment', 'sortBy' => null],
         ];
+    }
+
+    private function getRegistrationManagers(): array
+    {
+        //early exit
+        if (!$this->multipleRegistrationManagers) {
+            return [];
+        }
+
+        $registrationManagers = VersionCountyAssignment::query()
+            ->join('version_participants', 'version_participants.id', '=',
+                'version_county_assignments.version_participant_id')
+            ->join('users', 'users.id', '=', 'version_participants.user_id')
+            ->where('version_county_assignments.version_id', $this->versionId)
+            ->select('users.id', 'users.name', 'users.last_name')
+            ->distinct()
+            ->orderBy('users.last_name', 'asc')
+            ->get()
+            ->toArray();
+
+        //add an "all" variant to array
+        $registrationManagers[] = ['name' => 'All', 'last_name' => 'All', 'id' => 'all'];
+
+        return $registrationManagers;
+    }
+
+    private function hasMultipleRegistrationManagers(): bool
+    {
+        $registrationManagerCount = VersionRole::query()
+            ->where('version_id', $this->versionId)
+            ->whereIn('role', ['registration manager', 'coregistration manager'])
+            ->count();
+
+        return $registrationManagerCount > 1;
     }
 
     public function render()
@@ -179,6 +226,27 @@ class ParticipatingSchoolsComponent extends BasePageReports
         return $paymentStatuses;
     }
 
+    private function getRegistrationManagerCounties(): array
+    {
+        //base query
+        $query = VersionCountyAssignment::query()
+            ->where('version_id', $this->versionId);
+
+        //add activeRegistrationManager restriction if not 'all'
+        if (is_numeric($this->activeRegistrationManager)) {
+            $versionParticipantId = VersionParticipant::query()
+                ->where('version_id', $this->versionId)
+                ->where('user_id', $this->activeRegistrationManager)
+                ->value('id');
+
+            $query->where('version_participant_id', $versionParticipantId);
+        }
+
+        //finish query
+        return $query->pluck('county_id')
+            ->toArray();
+    }
+
     private function getRows(): Builder
     {
         $search = $this->search;
@@ -190,6 +258,8 @@ class ParticipatingSchoolsComponent extends BasePageReports
         $tertiarySortOrder = (auth()->id() === 246)
             ? 'users.last_name'
             : 'users.first_name';
+
+        $registrationManagerCounties = $this->getRegistrationManagerCounties();
 
         return DB::table('candidates')
             ->join('schools', 'schools.id', '=', 'candidates.school_id')
@@ -208,6 +278,7 @@ class ParticipatingSchoolsComponent extends BasePageReports
             ->leftJoin('version_package_receiveds', 'schools.id', '=', 'version_package_receiveds.school_id')
             ->where('candidates.version_id', $this->versionId)
             ->where('status', 'registered')
+            ->whereIn('schools.county_id', $registrationManagerCounties)
             ->where(function ($query) use ($search) {
                 return $query
                     ->where('users.name', 'LIKE', '%'.$search.'%')
@@ -274,5 +345,10 @@ class ParticipatingSchoolsComponent extends BasePageReports
             $this->showSuccessIndicator = true;
             $this->successMessage = 'Payment saved';
         }
+    }
+
+    public function updateActiveRegistrationManager(int|string $userId): void
+    {
+        $this->activeRegistrationManager = $userId;
     }
 }
