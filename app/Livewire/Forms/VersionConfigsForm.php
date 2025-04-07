@@ -144,6 +144,8 @@ scores may contain multiple individuals.';
                     'show_all_scores' => $this->showAllScores,
                 ]
             );
+
+        $this->updateVersionEventEnsembleOrders($versionId);
     }
 
     public function updateMembership(int $versionId)
@@ -232,5 +234,22 @@ scores may contain multiple individuals.';
             ->where('order_by', 1)
             ->first()
             ->event_ensemble_id ?? $defaultEventEnsemblesId;
+    }
+
+    private function updateVersionEventEnsembleOrders(int $versionId): void
+    {
+        if ($this->alternatingScores) {
+
+            $veeos = VersionEventEnsembleOrder::where('version_id', $versionId)->get();
+
+            if ($veeos) {
+
+                foreach ($veeos as $veeo) {
+                    $veeo->order_by = ($veeo->event_ensemble_id === $this->firstEnsembleId)
+                        ? 1 : 2;
+                    $veeo->save();
+                }
+            }
+        }
     }
 }

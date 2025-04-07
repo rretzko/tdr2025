@@ -66,6 +66,7 @@ class Version extends Model
             ->join('version_event_ensemble_orders', 'event_ensembles.id', '=',
                 'version_event_ensemble_orders.event_ensemble_id')
             ->where('event_ensembles.event_id', $this->event_id)
+            ->where('version_event_ensemble_orders.version_id', $this->id)
             ->orderBy('version_event_ensemble_orders.order_by')
             ->select('event_ensembles.*', 'version_event_ensemble_orders.order_by')
             ->get();
