@@ -7,6 +7,7 @@ use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionConfigAdjudication;
 use App\Models\Events\Versions\VersionConfigMembership;
 use App\Models\Events\Versions\VersionConfigRegistrant;
+use App\Models\Events\Versions\VersionEventEnsembleOrder;
 use Carbon\Carbon;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
@@ -18,6 +19,7 @@ class VersionConfigsForm extends Form
     public bool $averagedScores = false;
     public string $fileTypes;
     public int $fileUploadCount = 1;
+    public int $firstEnsembleId = 7;
     public int $judgeCount = 1;
     public bool $roomMonitor = false;
     public int $scoresAscending = 0;
@@ -69,6 +71,7 @@ class VersionConfigsForm extends Form
         $this->scoresAscending = $vca->scores_ascending ?? 0;
         $this->showAllScores = $vca->show_all_scores ?? 1;
         $this->sysId = $vca->id;
+        $this->firstEnsembleId = $this->getFirstEnsembleId($versionId);
     }
 
     public function setRowAdvisory(int $versionId): void
@@ -213,5 +216,21 @@ scores may contain multiple individuals.';
         $trimmedParts = array_map('trim', $parts);
 
         return implode(',', $trimmedParts);
+    }
+
+    private function getFirstEnsembleId(int $versionId): int
+    {
+        //early exit
+        if (!$this->alternatingScores) {
+            return 0;
+        }
+
+        $defaultEventEnsemblesId = Version::find($versionId)->event->eventEnsembles->first()->id;
+
+        return VersionEventEnsembleOrder::query()
+            ->where('version_id', $versionId)
+            ->where('order_by', 1)
+            ->first()
+            ->event_ensemble_id ?? $defaultEventEnsemblesId;
     }
 }

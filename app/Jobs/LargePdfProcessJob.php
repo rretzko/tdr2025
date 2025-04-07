@@ -46,10 +46,8 @@ class LargePdfProcessJob implements ShouldQueue
         // Save PDF to storage
         $filePath = 'scoring_rosters/' . $this->fileName;
         Storage::disk('local')->put($filePath, $pdf->output());
-
         // Send email with the PDF attachment
-        dd(auth()->user());
-        $emailAddress = auth()->user()->email;
+        $emailAddress = 'rick@mfrholdings.com'; //auth()->user()->email;
         $user = User::find(368);
         $email = 'rick@mfrholdings.com';
         Mail::to($email)->send(new SendScoringRosterMail($user, storage_path("app/$filePath")));

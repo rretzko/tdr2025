@@ -35,7 +35,7 @@ class ScoringRosterController extends Controller
         set_time_limit(120);
         $rows = $dto['rows'];
         $rowsScores = $dto['rowsScores'];
-        Log::info(count($rows[0]) . ' | ' . count($rowsScores));
+        Log::info(count($rows[0]).' | '.count($rowsScores));
         $fileNameRoot = '_ScoringRoster_' . Carbon::now()->format('Ymd_His') . '.pdf';
         $fileName = $voicePart->abbr . $fileNameRoot;
 
@@ -44,15 +44,19 @@ class ScoringRosterController extends Controller
             $fileName = $eventEnsemble->abbr . $fileNameRoot;
         }
 
-        if (count($rows[0]) < 401) { //return pdf directly to user
-
+        /**
+         * @todo Reprogram process for sending report via email when processing exceed time-out limits
+         */
+        if (count($rows[0]) < 1001) { //return pdf directly to user
+            Log::info('*** count($rows[0] < 4401');
+            Log::info('*** rows = '.count($rows[0]).' | rowsScores = '.count($rowsScores));
             $pdf = PDF::loadView($path, compact('dto', 'rows', 'rowsScores'))
                 ->setPaper('letter', 'landscape');
 
             return $pdf->download($fileName);
 
         } else { //process pdf in queue and return to user via email
-
+            Log::info('*** count($rows[0] >= 4401');
             LargePdfProcessJob::dispatch($rows, $rowsScores, $fileName, $dto);
 
             $emailAddress = auth()->user()->email;

@@ -92,10 +92,30 @@
                         {{-- ALTERNATING SCORES --}}
                         @if($event->ensemble_count > 1)
                             <x-forms.elements.livewire.inputCheckbox
+                                blur="false"
                                 label="Score assignment should alternate between event ensembles."
+                                live="true"
                                 name="form.alternatingScores"
                                 value="1"
                             />
+
+                            @if($form->alternatingScores)
+                                <div class="ml-8 mt-1">
+                                    <label>Choose which ensemble is assigned first:</label>
+                                    <div class="flex flex-row ml-2">
+                                        <label class="flex flex-row items-center space-x-2">
+                                            <input type="radio" wire:model="form.firstEnsembleId" value="6"/>
+                                            <div>Mixed Chorus</div>
+                                        </label>
+                                    </div>
+                                    <div class="flex flex-row ml-2">
+                                        <label class="flex flex-row items-center space-x-2">
+                                            <input type="radio" wire:model="form.firstEnsembleId" value="7"/>
+                                            <div>Treble Chorus</div>
+                                        </label>
+                                    </div>
+                                </div>
+                            @endif
                         @endif
 
                         {{-- SHOW ALL SCORES PDF OPTION --}}

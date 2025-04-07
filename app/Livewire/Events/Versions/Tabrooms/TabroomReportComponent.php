@@ -97,6 +97,7 @@ class TabroomReportComponent extends BasePage
         }
 
         $this->displayReport = !$this->displayReport;
+
         $this->displayReportData = $type;
     }
 
@@ -119,7 +120,7 @@ class TabroomReportComponent extends BasePage
             : '/0'; //0=public
 
         //add eventEnsembleId
-        $uri .= '/'.$this->showEventEnsembleId;
+        $uri .= '/'.$this->showEventEnsembleId; //ex: /versions/tabroom/reports/byVoicePart/74/0/0
 
         return $this->redirect($uri);
     }
