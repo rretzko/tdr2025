@@ -76,7 +76,7 @@
 
                 @if(str_contains($nextRef, '-'))
                     <button type="button" wire:click="clickNextAudition({{ $form->candidate->id }})"
-                            class="bg-green-700 text-white rounded-lg px-2 w-fit shadow-lg cursor-pointer hover:bg-green-900 hover:text-white focus:bg-green-900 focus:text-white"
+                            class="bg-white text-green-600 px-2 w-fit shadow-lg cursor-pointer hover:text-green-900 hover:bg-gray-100"
                     >
                         Next Audition ({{ $nextRef }})
                     </button>

@@ -6,10 +6,13 @@
         >
             <label class="text-center">{{ $type }} ({{ substr($url,-3) }})</label>
             <audio id="audioPlayer-{{ $type }}" class="mx-auto" controls
-                   style="display: block; justify-self: start; margin-bottom: 0.50rem;">
+                   style="display: block; justify-self: start; margin-bottom: 0.50rem;"
+                   wire:key="{{ substr($url,11) }}"
+            >
                 <source id="audioSource-{{ $type }}"
                         src="https://auditionsuite-production.s3.amazonaws.com/{{ $url }}"
                         type="audio/mpeg"
+                        wire:key="{{ substr($url,11,-4) }}"
                 >
                 " Your browser does not support the audio element. "
             </audio>

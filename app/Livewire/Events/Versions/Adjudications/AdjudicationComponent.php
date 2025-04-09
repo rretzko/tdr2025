@@ -28,6 +28,7 @@ class AdjudicationComponent extends BasePage
 {
     public AdjudicationForm $form;
     public string $auditionDeadline = '';
+    public string $auditionDeadlineDate = ''; //used for javascript timer
     public int $countCompleted = 0;
     public int $countError = 0;
     public int $countPending = 0;
@@ -57,6 +58,7 @@ class AdjudicationComponent extends BasePage
             ->first()
             ->version_date;
         $this->auditionDeadline = Carbon::parse($adjudicationClose)->format('D, M d, Y @ g:i:s a');
+        $this->auditionDeadlineDate = Carbon::parse($adjudicationClose)->format('Y-m-d H:i:s');
 
         $this->room = $this->getRoom();
         $this->staff = $this->getStaff();
@@ -86,6 +88,9 @@ class AdjudicationComponent extends BasePage
 
     #[NoReturn] public function clickNextAudition(int $prevCandidateId): void
     {
+        //clear success message
+        $this->reset('scoreUpdatedMssg');
+
         $buttons = $this->getRows();
         foreach ($buttons as $key => $button) {
             if ($button->id == $prevCandidateId) {

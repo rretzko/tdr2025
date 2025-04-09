@@ -72,7 +72,7 @@ class RoomForm extends Form
     public function updateJudge(string $judgeType): bool
     {
         $var = Str::camel($judgeType);
-
+//dd($this->versionId . ' | ' . $this->sysId . ' | ' . $judgeType . ' | ' . $this->$var . ' | ' );
         return (bool) Judge::updateOrCreate(
             [
                 'version_id' => $this->versionId,
