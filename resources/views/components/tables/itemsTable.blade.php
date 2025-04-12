@@ -52,6 +52,17 @@
                 <td class="border border-gray-200 px-1 text-left cursor-help">
                     {{ $row['alpha'] }}
                 </td>
+                <td class="border border-gray-200 px-1 text-left cursor-help">
+                    @if($row['composerName'])
+                        <div class="font-bold">{{ $row['composerName'] }}</div>
+                    @endif
+                    @if($row['arrangerName'])
+                        <div>{{ $row['arrangerName'] }} <span class="text-xs">(arr)</span></div>
+                    @endif
+                    @if($row['wordsName'])
+                        <div>{{ $row['wordsName'] }} <span class="text-xs">(words)</span></div>
+                    @endif
+                </td>
                 <td class="text-center border border-gray-200 px-1">
                     <x-buttons.edit id="{{ $row['id'] }}" :livewire="true" id="{{ $row['id'] }}"/>
                 </td>

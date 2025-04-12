@@ -62,7 +62,9 @@ class ItemComponent extends BaseLibraryItemPage
 
         $this->reset('errorMessage', 'successMessage');
 
-        $saved = $this->form->save($this->libraryId);
+        $saved = $this->form->save($this->libraryId, self::ITEMTYPES);
+
+        //format title for use in success/error messages
         $fTitle = Str::title($this->form->title);
 
         if ($saved) {
@@ -95,15 +97,25 @@ class ItemComponent extends BaseLibraryItemPage
     public function setArtist(string $artistType, int $artistId): void
     {
         $artist = Artist::find($artistId);
-        //setForm->artists['artistType'] => $artist->name;
-        //set form->artistIds[$artistType] = $artistId
-        //remove the search results
+        $this->form->artists[$artistType] = $artist->artist_name;
+        $this->form->artistIds[$artistType] = $artistId;
         $this->searchResultsArtists[$artistType] = [];
     }
 
     public function updatedFormArtistsArranger($value): void
     {
-        $this->searchResultsArtists['arranger'] = ArtistSearchService::getResults($value, 'arranger');
+        if (strlen($value)) {
+
+            $this->searchResultsArtists['arranger'] = ArtistSearchService::getResults($value, 'arranger');
+
+        } else {//user has removed the current value
+
+            $this->form->artists['arranger'] = '';
+            $this->form->artistIds['arranger'] = 0;
+            $this->libItem->update(['arranger_id' => 0]);
+        }
+
+
     }
 
     public function updatedFormTitle(): void

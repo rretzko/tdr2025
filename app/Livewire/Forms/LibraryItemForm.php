@@ -2,9 +2,12 @@
 
 namespace App\Livewire\Forms;
 
+use App\Models\Libraries\Items\Components\Artist;
 use App\Models\Libraries\Items\Components\LibTitle;
 use App\Models\Libraries\Items\LibItem;
 use App\Models\Libraries\LibStack;
+use App\Services\ArtistIdService;
+use App\Services\ArtistSearchService;
 use App\Services\Libraries\CreateLibItemService;
 use App\Services\Libraries\MakeAlphaService;
 use Illuminate\Database\Eloquent\Model;
@@ -53,11 +56,11 @@ class LibraryItemForm extends Form
             : $this->itemType;
     }
 
-    public function save(int $libraryId): bool
+    public function save(int $libraryId, array $itemTypes): bool
     {
         $libItemId = ($this->sysId)
             ? $this->update($libraryId)
-            : $this->add($libraryId);
+            : $this->add($libraryId, $itemTypes);
 
         return (bool)LibStack::updateOrCreate(
             [
@@ -70,6 +73,8 @@ class LibraryItemForm extends Form
 
     public function resetVars(): void
     {
+        $this->artists = [];
+        $this->artistIds = [];
         $this->itemType = 'sheet music';
         $this->policies = [];
         $this->sysId = 0;
@@ -88,47 +93,18 @@ class LibraryItemForm extends Form
         $libTitle = LibTitle::find($libItem->lib_title_id);
         $this->title = $libTitle->title;
         $this->policies['canEdit']['title'] = $this->getPolicy('canEdit', $libTitle);
+
+        //artists
+        $this->setArtists($libItem);
     }
 
-    private function add(int $libraryId): int
+    private function add(int $libraryId, array $itemTypes): int
     {
-        $libTitleId = $this->getLibTitleId();
-        return $this->getLibItemId($libTitleId);
-    }
+        $service = new CreateLibItemService($this, $itemTypes);
 
-    private function getLibItemId(int $libTitleId): int
-    {
-        if (LibItem::where('lib_title_id', $libTitleId)->exists()) {
-            return LibItem::where('lib_title_id', $libTitleId)
-                ->first()
-                ->id;
-        }
-
-        return LibItem::create(
-            [
-                'item_type' => $this->itemType,
-                'lib_title_id' => $libTitleId,
-            ]
-        )->id;
-
-    }
-
-    private function getLibTitleId(): int
-    {
-        if (LibTitle::where('title', $this->title)->exists()) {
-            return LibTitle::where('title', $this->title)->first()->id;
-        }
-
-        //format title
-        $fTitle = Str::title(trim($this->title));
-
-        return LibTitle::create(
-            [
-                'teacher_id' => auth()->id(),
-                'title' => $fTitle,
-                'alpha' => MakeAlphaService::alphabetize($fTitle)
-            ]
-        )->id;
+        return ($service)
+            ? $service->libItemId
+            : 0;
     }
 
     /**
@@ -154,12 +130,65 @@ class LibraryItemForm extends Form
         return ($userCreatedObject && $userIsSoleDependent);
     }
 
+    private function setArtists(LibItem $libItem): void
+    {
+        if ($libItem->composer_id) {
+            $composer = Artist::find($libItem->composer_id);
+            $this->artists['composer'] = $composer->artist_name;
+            $this->artistIds['composer'] = $composer->id;
+        }
+
+        if ($libItem->arranger_id) {
+            $arranger = Artist::find($libItem->arranger_id);
+            $this->artists['arranger'] = $arranger->artist_name;
+            $this->artistIds['arranger'] = $arranger->id;
+        }
+
+    }
+
     private function update(int $libraryId): int
     {
         $libItem = LibItem::find($this->sysId);
         $updatedLibTitle = $this->updateLibTitle($libItem, LibTitle::find($libItem->lib_title_id));
+        $updatedLibArtists = $this->updateLibArtists($libItem);
 
         return $libItem->id;
+    }
+
+    private function updateLibArtists(LibItem $libItem): bool
+    {
+        $this->makeArtistIds();
+
+        foreach ($this->artistIds as $type => $id) {
+
+            if ($id) {
+                $column = $type.'_id';
+                $libItem->$column = $id;
+            }
+        }
+
+        return $libItem->save();
+
+        //early exit
+//        if ($libTitle->title === $this->title) {
+//            return true;
+//        }
+//
+//        $newLibTitleId = (LibTitle::where('title', $this->title)->exists())
+//            ? LibTitle::where('title', $this->title)->first()->id
+//            : LibTitle::create(
+//                [
+//                    'teacher_id' => auth()->id(),
+//                    'title' => $this->title,
+//                    'alpha' => MakeAlphaService::alphabetize($this->title),
+//                ]
+//            )->id;
+//
+//        return $libItem->update(
+//            [
+//                'lib_title_id' => $newLibTitleId,
+//            ]
+//        );
     }
 
     private function updateLibTitle(LibItem $libItem, LibTitle $libTitle): bool
@@ -184,6 +213,39 @@ class LibraryItemForm extends Form
                 'lib_title_id' => $newLibTitleId,
             ]
         );
+    }
+
+    private function makeArtistIds(): void
+    {
+        if (empty($this->artists)) {
+            return;
+        }
+
+        $this->artistIds = $this->artistIds ?? [];
+
+        foreach ($this->artists as $type => $value) {
+
+            //ensure:
+            //  1. $value is not an empty string
+            //  2. The user hasn't selected an existing artist from search results
+            if (strlen($value) && (!$this->artistIds[$type])) {
+
+                $service = new ArtistIdService($value);
+                $this->artistIds[$type] = $service->getId();
+            }
+
+            //if use is correcting the artist's name:
+            //  1. check can-edit
+            //  2. update name fields
+            if (strlen($value) && $this->artistIds[$type]) {
+
+                //check can-edit
+                /** @todo build policy */
+                //update name fields
+                /**************** PICK UP DEVELOPMENT HERE ****************************/
+//                new ArtistNameService(Artist::find($this->artisIds[$type], $value));
+            }
+        }
     }
 
 

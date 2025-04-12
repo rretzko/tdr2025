@@ -92,16 +92,25 @@ class ItemTableComponent extends BasePage
             ['label' => '###', 'sortBy' => ''],
             ['label' => 'type', 'sortBy' => 'type'],
             ['label' => 'title', 'sortBy' => 'title'],
+            ['label' => 'artists', 'sortBy' => ''],
         ];
     }
 
     private function getRows(): array
     {
+
         return LibStack::query()
             ->join('lib_items', 'lib_stacks.lib_item_id', '=', 'lib_items.id')
             ->join('lib_titles', 'lib_items.lib_title_id', '=', 'lib_titles.id')
+            ->leftJoin('artists AS composer', 'lib_items.composer_id', '=', 'composer.id')
+            ->leftJoin('artists AS arranger', 'lib_items.arranger_id', '=', 'arranger.id')
+            ->leftJoin('artists AS words', 'lib_items.words_id', '=', 'words.id')
             ->where('lib_stacks.library_id', $this->library->id)
-            ->select('lib_stacks.id', 'lib_titles.title', 'lib_titles.alpha', 'lib_items.item_type')
+            ->select('lib_stacks.id', 'lib_titles.title', 'lib_titles.alpha', 'lib_items.item_type',
+                'composer.alpha_name AS composerName',
+                'arranger.alpha_name AS arrangerName',
+                'words.alpha_name AS wordsName'
+            )
             ->orderBy($this->sortCol, $this->sortAsc ? 'asc' : 'desc')
             ->orderBy('lib_titles.alpha', 'asc')
             ->get()

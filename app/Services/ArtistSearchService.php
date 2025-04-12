@@ -2,11 +2,13 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\DB;
+
 class ArtistSearchService
 {
     private static bool|array $results = false;
 
-    public static function getResults(string $searchFor, string $artistType): array
+    public static function getResults(string $searchFor, string $artistType): array|bool
     {
         self::init($searchFor, $artistType);
 
@@ -15,23 +17,21 @@ class ArtistSearchService
 
     private static function init(string $searchFor, string $artistType): void
     {
-        self::$results = [
-            [
-                'name' => 'Artist 1',
-                'type' => $artistType,
-                'id' => 1,
-            ],
-            [
-                'name' => 'Artist 2',
-                'type' => $artistType,
-                'id' => 2,
-            ],
-            [
-                'name' => 'Artist 3',
-                'type' => $artistType,
-                'id' => 3,
-            ],
+        $search = '%'.$searchFor.'%';
 
-        ];
+        $artists = DB::table('artists')
+            ->where('artist_name', 'LIKE', $search)
+            ->orderBy('last_name', 'asc')
+            ->orderBy('first_name', 'asc')
+            ->get();
+
+        foreach ($artists as $artist) {
+
+            self::$results[] = [
+                'name' => $artist->alpha_name,
+                'type' => $artistType,
+                'id' => $artist->id,
+            ];
+        }
     }
 }

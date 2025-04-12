@@ -6,7 +6,9 @@ use App\Livewire\Forms\LibraryItemForm;
 use App\Models\Libraries\Items\Components\LibTitle;
 use App\Models\Libraries\Items\LibItem;
 use App\Models\Schools\Teacher;
+use App\Services\ArtistIdService;
 use Illuminate\Support\Str;
+use JetBrains\PhpStorm\NoReturn;
 
 class CreateLibItemService
 {
@@ -29,6 +31,30 @@ class CreateLibItemService
             $this->add();
         }
 
+    }
+
+    private function addArtistIds(): void
+    {
+        foreach ($this->form->artists as $type => $artistName) {
+
+            $service = new ArtistIdService($artistName);
+            $this->form->artistIds[$type] = $service->getId();
+        }
+    }
+
+    private function addArtists(): array
+    {
+        $a = [];
+        $this->addArtistIds();
+
+        foreach ($this->form->artistIds as $type => $artistId) {
+
+            $column = $type.'_id';
+
+            $a[$column] = $artistId;
+        }
+
+        return $a;
     }
 
     private function setTeacherId(): int
@@ -78,12 +104,13 @@ class CreateLibItemService
             $this->libItemId = $this->existingLibItemId();
         } else {
             //or create a new item
-            $this->libItemId = LibItem::create(
-                [
-                    'item_type' => $this->itemType,
-                    'lib_title_id' => $this->libTitleId,
-                ]
-            )->id;
+            $baseItems = [
+                'item_type' => $this->itemType,
+                'lib_title_id' => $this->libTitleId,
+            ];
+            $artistItems = $this->addArtists();
+            $items = array_merge($baseItems, $artistItems);
+            $this->libItemId = LibItem::create($items)->id;
         }
 
         $this->saved = (bool)$this->libItemId;
