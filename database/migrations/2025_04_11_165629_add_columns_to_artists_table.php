@@ -16,7 +16,12 @@ return new class extends Migration {
             $table->string('first_name')->after('alpha_name');
             $table->string('last_name')->after('first_name');
             $table->string('middle_name')->after('last_name');
-            $table->foreignIdFor(\App\Models\User::class, 'created_by')->after('middle_name')->constrained();
+//            $table->foreignIdFor(\App\Models\User::class, 'created_by')->after('middle_name')->constrained();
+            //for some reason, the above command generates the following error:
+            //SQLSTATE[HY000]: General error: 1824 Failed to open the referenced table 'created_bies' (Connection: mysql, SQL: alter table `artists` add constraint `artists_created_by_foreign` foreign key (`created_by`) references `created_bies` (`id`))
+            $table->unsignedBigInteger('created_by')->after('middle_name');
+            $table->foreign('created_by')->references('id')->on('users');
+
         });
     }
 
