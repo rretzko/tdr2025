@@ -13,6 +13,9 @@ class ItemTableComponent extends BasePage
     public array $columnHeaders;
     public Library $library;
     public bool $displayForm = false;
+    public string $globalSearch = '';
+    public string $likeValue = ''; //wrap $globalSearch in %%
+    public bool $hasSearch = true;
 
     public function mount(): void
     {
@@ -23,6 +26,8 @@ class ItemTableComponent extends BasePage
         $this->columnHeaders = $this->getColumnHeaders();
 
         $this->sortCol = 'lib_titles.alpha';
+
+        $this->updatedGlobalSearch(); //set initial $this->likeValue to "%%"
     }
 
     public function render()
@@ -86,6 +91,11 @@ class ItemTableComponent extends BasePage
 
     }
 
+    public function updatedGlobalSearch(): void
+    {
+        $this->likeValue = '%'.$this->globalSearch.'%';
+    }
+
     private function getColumnHeaders(): array
     {
         return [
@@ -98,7 +108,6 @@ class ItemTableComponent extends BasePage
 
     private function getRows(): array
     {
-
         return LibStack::query()
             ->join('lib_items', 'lib_stacks.lib_item_id', '=', 'lib_items.id')
             ->join('lib_titles', 'lib_items.lib_title_id', '=', 'lib_titles.id')
@@ -106,6 +115,12 @@ class ItemTableComponent extends BasePage
             ->leftJoin('artists AS arranger', 'lib_items.arranger_id', '=', 'arranger.id')
             ->leftJoin('artists AS words', 'lib_items.words_id', '=', 'words.id')
             ->where('lib_stacks.library_id', $this->library->id)
+            ->where(function ($query) {
+                $query->where('lib_titles.title', 'LIKE', $this->likeValue)
+                    ->orWhere('composer.artist_name', 'LIKE', $this->likeValue)
+                    ->orWhere('arranger.artist_name', 'LIKE', $this->likeValue)
+                    ->orWhere('words.artist_name', 'LIKE', $this->likeValue);
+            })
             ->select('lib_stacks.id', 'lib_titles.title', 'lib_titles.alpha', 'lib_items.item_type',
                 'composer.alpha_name AS composerName',
                 'arranger.alpha_name AS arrangerName',

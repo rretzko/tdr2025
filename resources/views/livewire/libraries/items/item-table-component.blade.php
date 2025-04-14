@@ -6,7 +6,12 @@
     {{-- SEARCH --}}
     @if($hasSearch)
         <div class="px-4 w-11/12">
-            <input class="w-3/4" type="text" placeholder="Search"/>
+            <input
+                wire:model.live.debounce="globalSearch"
+                class="w-3/4"
+                type="text"
+                placeholder="Search title or artist name"
+            />
         </div>
     @endif
 
