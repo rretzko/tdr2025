@@ -7,6 +7,7 @@ use App\Models\Libraries\Items\Components\LibTitle;
 use App\Models\Libraries\Items\LibItem;
 use App\Models\Libraries\LibStack;
 use App\Services\ArtistIdService;
+use App\Services\ArtistNameService;
 use App\Services\ArtistSearchService;
 use App\Services\Libraries\CreateLibItemService;
 use App\Services\Libraries\MakeAlphaService;
@@ -28,6 +29,7 @@ class LibraryItemForm extends Form
         'composer' => 0,
         'words' => 0,
     ];
+
     public string $itemType = 'sheet music';
 
     /**
@@ -93,6 +95,9 @@ class LibraryItemForm extends Form
         $libTitle = LibTitle::find($libItem->lib_title_id);
         $this->title = $libTitle->title;
         $this->policies['canEdit']['title'] = $this->getPolicy('canEdit', $libTitle);
+        $this->policies['canEdit']['arranger'] = $this->getPolicy('arranger', $libItem);
+        $this->policies['canEdit']['composer'] = $this->getPolicy('composer', $libItem);
+        $this->policies['canEdit']['words'] = $this->getPolicy('words', $libItem);
 
         //artists
         $this->setArtists($libItem);
@@ -130,18 +135,78 @@ class LibraryItemForm extends Form
         return ($userCreatedObject && $userIsSoleDependent);
     }
 
+    /**
+     * The ability to edit an artist's information is based on two criteria:
+     *  1. The user created the Artist, and
+     *  2. No other LibItem is dependent on the artist's information.
+     * This policy is designed to restrict editing such that a single user cannot
+     * impact information that is used by multiple users or across multiple objects.
+     *
+     * @param  LibItem  $libItem
+     * @return bool
+     */
+    private function getPolicyArtist(string $type, LibItem $libItem): bool
+    {
+        $column = $type.'_id';
+        $artist = Artist::find($libItem->$column);
+
+        //early exit
+        //if $artist, user can add an artist to the $libItem
+        if (!$artist) {
+            return true;
+        }
+
+        $artistId = $artist->id;
+
+        $userCreatedObject = $artist->created_by == auth()->id();
+
+        $occurrenceCount = LibItem::selectRaw("
+                SUM(CASE WHEN composer_id = ? THEN 1 ELSE 0 END) +
+                SUM(CASE WHEN arranger_id = ? THEN 1 ELSE 0 END) +
+                SUM(CASE WHEN words_id = ? THEN 1 ELSE 0 END) as total_count
+            ", [$artistId, $artistId, $artistId])->value('total_count');
+
+        $userIsSoleDependent = ($occurrenceCount < 2);
+
+        return ($userCreatedObject && $userIsSoleDependent);
+    }
+
+    private function getPolicyArranger(LibItem $libItem): bool
+    {
+        return $this->getPolicyArtist('arranger', $libItem);
+    }
+
+    private function getPolicyComposer(LibItem $libItem): bool
+    {
+        return $this->getPolicyArtist('composer', $libItem);
+    }
+
+    private function getPolicyWords(LibItem $libItem): bool
+    {
+        return $this->getPolicyArtist('words', $libItem);
+    }
+
     private function setArtists(LibItem $libItem): void
     {
         if ($libItem->composer_id) {
             $composer = Artist::find($libItem->composer_id);
             $this->artists['composer'] = $composer->artist_name;
             $this->artistIds['composer'] = $composer->id;
+            $this->policies['canEdit']['composer'] = $this->getPolicy('composer', $libItem);
         }
 
         if ($libItem->arranger_id) {
             $arranger = Artist::find($libItem->arranger_id);
             $this->artists['arranger'] = $arranger->artist_name;
             $this->artistIds['arranger'] = $arranger->id;
+            $this->policies['canEdit']['arranger'] = $this->getPolicy('arranger', $libItem);
+        }
+
+        if ($libItem->words_id) {
+            $words = Artist::find($libItem->words_id);
+            $this->artists['words'] = $words->artist_name;
+            $this->artistIds['words'] = $words->id;
+            $this->policies['canEdit']['words'] = $this->getPolicy('words', $libItem);
         }
 
     }
@@ -149,25 +214,25 @@ class LibraryItemForm extends Form
     private function update(int $libraryId): int
     {
         $libItem = LibItem::find($this->sysId);
-        $updatedLibTitle = $this->updateLibTitle($libItem, LibTitle::find($libItem->lib_title_id));
-        $updatedLibArtists = $this->updateLibArtists($libItem);
+        $this->updateLibTitle($libItem, LibTitle::find($libItem->lib_title_id));
+        $this->updateLibArtists($libItem);
 
         return $libItem->id;
     }
 
-    private function updateLibArtists(LibItem $libItem): bool
+    private function updateLibArtists(LibItem $libItem): void
     {
         $this->makeArtistIds();
 
         foreach ($this->artistIds as $type => $id) {
 
             if ($id) {
-                $column = $type.'_id';
+                $column = $type.'_id'; //ex. composer_id
                 $libItem->$column = $id;
             }
         }
 
-        return $libItem->save();
+        $libItem->save();
 
         //early exit
 //        if ($libTitle->title === $this->title) {
@@ -240,10 +305,21 @@ class LibraryItemForm extends Form
             if (strlen($value) && $this->artistIds[$type]) {
 
                 //check can-edit
-                /** @todo build policy */
-                //update name fields
-                /**************** PICK UP DEVELOPMENT HERE ****************************/
-//                new ArtistNameService(Artist::find($this->artisIds[$type], $value));
+                if ($this->policies['canEdit'][$type]) {
+
+                    $artist = Artist::find($this->artistIds[$type]);
+
+                    //update name fields
+                    $service = new ArtistNameService($value);
+                    $artist->update([
+                        'artist_name' => $service->artistName,
+                        'first_name' => $service->firstName,
+                        'last_name' => $service->lastName,
+                        'middle_name' => $service->middleName,
+                        'alpha_name' => $service->alphaName,
+                    ]);
+                }
+
             }
         }
     }

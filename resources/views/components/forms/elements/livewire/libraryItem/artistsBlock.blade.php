@@ -8,20 +8,26 @@
 
             {{-- COMPOSER --}}
             <x-forms.elements.livewire.libraryItem.artistsBlockItem
+                :artistName="$form->artists['composer']"
                 for="composer"
                 :searchResults="$searchResultsArtists['composer']"
+                :canEdit="$form->policies['canEdit']['composer']"
             />
 
             {{-- ARRANGER --}}
             <x-forms.elements.livewire.libraryItem.artistsBlockItem
+                :artistName="$form->artists['arranger']"
                 for="arranger"
                 :searchResults="$searchResultsArtists['arranger']"
+                :canEdit="$form->policies['canEdit']['arranger']"
             />
 
             {{-- WORDS --}}
             <x-forms.elements.livewire.libraryItem.artistsBlockItem
+                :artistName="$form->artists['words']"
                 for="words"
                 :searchResults="$searchResultsArtists['words']"
+                :canEdit="$form->policies['canEdit']['words']"
             />
 
         </div>
