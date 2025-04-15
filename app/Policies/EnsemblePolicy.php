@@ -35,9 +35,7 @@ class EnsemblePolicy
 //     */
     public function create(User $user, Ensemble $ensemble): bool
     {
-        Log::info(__METHOD__);
-
-        return false;
+        return $user->isTeacher();
     }
 //
 //    /**

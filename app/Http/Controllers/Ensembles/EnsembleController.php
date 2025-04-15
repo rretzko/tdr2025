@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Ensembles;
 use App\Data\ViewDataFactory;
 use App\Http\Controllers\Controller;
 use App\Models\Ensembles\Ensemble;
+use App\Services\CoTeachersService;
 use App\Services\MissingGradesService;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -31,9 +32,16 @@ class EnsembleController extends Controller
     public function edit(Request $request, Ensemble $ensemble)
     {
         //only Ensemble originator (teacher_id can edit the Ensemble model
-        if ($request->user()->cannot('edit', $ensemble)) {
-            abort(403);
+//        if ($request->user()->cannot('edit', $ensemble)) {
+//            abort(403);
+//        }
+        $coteachers = CoTeachersService::getCoTeachersIds();
+        if ((!$request->user()->isTeacher()) ||
+            (!in_array($ensemble->teacher_id, $coteachers))
+        ) {
+            abort(401);
         }
+
 
         $data = new ViewDataFactory(__METHOD__, $ensemble->id);
 
@@ -59,7 +67,10 @@ class EnsembleController extends Controller
 
     public function create()
     {
-        $this->authorize('create', Ensemble::class);
+        if (!auth()->user()->isTeacher()) {
+            abort(401);
+        }
+//        $this->authorize('create', Ensemble::class);
 
         $data = new ViewDataFactory(__METHOD__);
 
