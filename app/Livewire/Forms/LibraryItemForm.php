@@ -40,7 +40,14 @@ class LibraryItemForm extends Form
      * ]
      * ]
      */
-    public array $policies = [];
+    public array $policies = [
+        'canEdit' => [
+            'arranger' => true,
+            'composer' => true,
+            'words' => true,
+        ],
+    ];
+
     public int $sysId = 0;
     public string $title = '';
 
@@ -75,10 +82,26 @@ class LibraryItemForm extends Form
 
     public function resetVars(): void
     {
-        $this->artists = [];
-        $this->artistIds = [];
+        $this->artists = [
+            'arranger' => '',
+            'composer' => '',
+            'words' => '',
+        ];
+
+        $this->artistIds = [
+            'arranger' => 0,
+            'composer' => 0,
+            'words' => 0,
+        ];
+
         $this->itemType = 'sheet music';
-        $this->policies = [];
+        $this->policies = [
+            'canEdit' => [
+                'arranger' => true,
+                'composer' => true,
+                'words' => true,
+            ],
+        ];
         $this->sysId = 0;
         $this->title = '';
     }
