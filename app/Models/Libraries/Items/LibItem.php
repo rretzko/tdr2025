@@ -2,10 +2,12 @@
 
 namespace App\Models\Libraries\Items;
 
+use App\Models\Libraries\Items\Components\Artist;
 use App\Models\Libraries\Items\Components\LibTitle;
 use App\Models\Libraries\LibStack;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class LibItem extends Model
 {
@@ -25,5 +27,14 @@ class LibItem extends Model
     public function getTitleAttribute(): string
     {
         return LibTitle::find($this->lib_title_id)->title;
+    }
+
+    public function composer(): Artist|null
+    {
+        if ($this->composer_id) {
+            return Artist::where('id', $this->composer_id)->first();
+        }
+
+        return null;
     }
 }

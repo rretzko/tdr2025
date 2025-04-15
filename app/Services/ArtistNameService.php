@@ -16,9 +16,11 @@ class ArtistNameService
 
     public function __construct(string $artistName)
     {
-        $this->parseName($artistName);
-        $this->artistName = $this->setArtistName();
-        $this->alphaName = $this->setAlphaName();
+        if (strlen($artistName)) {
+            $this->parseName($artistName);
+            $this->artistName = $this->setArtistName();
+            $this->alphaName = $this->setAlphaName();
+        }
     }
 
     private function parseName(string $artistName): void

@@ -37,8 +37,10 @@ class CreateLibItemService
     {
         foreach ($this->form->artists as $type => $artistName) {
 
-            $service = new ArtistIdService($artistName);
-            $this->form->artistIds[$type] = $service->getId();
+            if (strlen($artistName)) {
+                $service = new ArtistIdService($artistName);
+                $this->form->artistIds[$type] = $service->getId();
+            }
         }
     }
 
@@ -49,9 +51,11 @@ class CreateLibItemService
 
         foreach ($this->form->artistIds as $type => $artistId) {
 
-            $column = $type.'_id';
+            if ($artistId) {
+                $column = $type.'_id';
 
-            $a[$column] = $artistId;
+                $a[$column] = $artistId;
+            }
         }
 
         return $a;
@@ -101,8 +105,10 @@ class CreateLibItemService
     {
         //use an existing item
         if ($this->libItemExists()) {
+
             $this->libItemId = $this->existingLibItemId();
         } else {
+
             //or create a new item
             $baseItems = [
                 'item_type' => $this->itemType,
@@ -110,6 +116,7 @@ class CreateLibItemService
             ];
             $artistItems = $this->addArtists();
             $items = array_merge($baseItems, $artistItems);
+
             $this->libItemId = LibItem::create($items)->id;
         }
 
