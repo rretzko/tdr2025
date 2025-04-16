@@ -109,6 +109,12 @@ Breadcrumbs::for('assign assets', function (BreadcrumbTrail $trail) {
     $trail->push('Assign Assets', route('inventory.assignAssets'));
 });
 
+// Ensembles.Library
+Breadcrumbs::for('ensemble library', function (BreadcrumbTrail $trail) {
+    $trail->parent('ensembles');
+    $trail->push('Library', route('ensembles.library'));
+});
+
 // Ensembles.Members
 Breadcrumbs::for('members', function (BreadcrumbTrail $trail) {
     $trail->parent('ensembles');

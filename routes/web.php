@@ -57,6 +57,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('ensemble/members/massAdd', \App\Http\Controllers\Ensembles\Members\MemberMassAddController::class)
         ->name('schoolEnsembleMember.massAdd');
 
+    //ENSEMBLES:LIBRARY
+    Route::get('ensembles/library', \App\Http\Controllers\Ensembles\Libraries\EnsembleLibraryController::class)
+        ->name('ensembles.library');
+
     //EVENT
     Route::get('event/new', \App\Http\Controllers\Events\EventManageCreateController::class)
         ->name('event.create');

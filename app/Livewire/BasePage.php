@@ -53,7 +53,7 @@ class BasePage extends Component
         'wip' => 'bg-yellow-400 text-black',
     ];
 
-    public const ENSEMBLETABS = ['ensembles', 'members', 'assets', 'inventory'];
+    public const ENSEMBLETABS = ['ensembles', 'members', 'assets', 'inventory', 'library'];
 
     protected const SHIRTSIZES = [
         '2xs' => '2xs',

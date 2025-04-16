@@ -333,6 +333,8 @@ class ViewDataFactory extends aViewData
             'ensemble create' => 'ensembles.ensemble-create-component',
             'ensemble edit' => 'ensembles.ensemble-edit-component',
 
+            'ensemble library' => 'ensembles.libraries.ensemble-library-component',
+
             'events participation' => 'events.event-participation-table-component',
 
             'participation counts' => 'events.versions.reports.participation-counts-component',
