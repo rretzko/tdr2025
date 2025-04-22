@@ -284,7 +284,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('versions/tabroom/reports/allPrivate/{voicePart}/{private}/{eventEnsembleId}',
         \App\Http\Controllers\Pdfs\ScoringRosterController::class)
         ->name('versions.tabroom.reports.allPrivate');
-
+    //VERSIONS.TABROOM.SANBOX
+    Route::get('versions/tabroom/sandbox', \App\Http\Controllers\Events\Versions\Tabrooms\SandboxController::class)
+        ->name('versions.tabroom.sandbox');
     //VERSIONS.TABROOM.SCORING
     Route::get('version/tabroom/scoring',
         \App\Http\Controllers\Events\Versions\Tabrooms\TabroomScoringController::class)
