@@ -9,6 +9,7 @@ use App\Models\Events\Versions\Room;
 use App\Models\Events\Versions\Scoring\Judge;
 use App\Models\Events\Versions\Scoring\Score;
 use App\Models\Events\Versions\Version;
+use App\Services\Sandbox\GenerateScoreResultsService;
 use App\Services\Sandbox\GenerateScoresService;
 use JetBrains\PhpStorm\NoReturn;
 
@@ -23,6 +24,7 @@ class TabroomSandboxComponent extends BasePage
     public int $resultsCount = 0;
     public int $roomCount = 0;
     public int $scoreCount = 0;
+    public int $registrantResultsCount = 0;
     public int $registrantsScoredCount = 0;
     public int $versionId = 0;
 
@@ -112,6 +114,8 @@ class TabroomSandboxComponent extends BasePage
 
     #[NoReturn] public function generateResults(): void
     {
-        dd('placeholder function: '.__METHOD__);
+        $service = new GenerateScoreResultsService($this->versionId);
+
+        $this->registrantResultsCount = $service->getCounter();
     }
 }
