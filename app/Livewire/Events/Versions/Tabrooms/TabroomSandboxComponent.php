@@ -16,11 +16,14 @@ class TabroomSandboxComponent extends BasePage
 {
     public int $candidateCount = 0;
     public int $eventId = 0;
+    public string $fScoreCount = '0';
     public int $judgeCount = 0;
     public int $participantCount = 0;
     public int $registrantCount = 0;
+    public int $resultsCount = 0;
     public int $roomCount = 0;
     public int $scoreCount = 0;
+    public int $registrantsScoredCount = 0;
     public int $versionId = 0;
 
     public function mount(): void
@@ -48,7 +51,7 @@ class TabroomSandboxComponent extends BasePage
                 $this->judgeCount = $this->getJudgeCount();
 
                 if ($this->judgeCount) {
-                    $this->scoreCount = $this->getScoreCount();
+                    $this->getScoreCount();
                 }
             }
         }
@@ -82,9 +85,10 @@ class TabroomSandboxComponent extends BasePage
         return Judge::where('version_id', $this->versionId)->count();
     }
 
-    private function getScoreCount(): int
+    private function getScoreCount(): void
     {
-        return Score::where('version_id', $this->versionId)->count();
+        $this->scoreCount = Score::where('version_id', $this->versionId)->count();
+        $this->fScoreCount = number_format($this->scoreCount, 0);
     }
 
     public function render()
@@ -99,6 +103,15 @@ class TabroomSandboxComponent extends BasePage
 
     #[NoReturn] public function generateScores(): void
     {
-        new GenerateScoresService($this->versionId);
+        $service = new GenerateScoresService($this->versionId);
+
+        $this->registrantsScoredCount = $service->getCounter();
+
+        $this->getScoreCount();
+    }
+
+    #[NoReturn] public function generateResults(): void
+    {
+        dd('placeholder function: '.__METHOD__);
     }
 }

@@ -34,12 +34,14 @@
             <x-buttons.generateSandboxRows :testFactor="$judgeCount" buttonLabel="Generate Judges"
                                            legendLabel="judge count"/>
 
-            <x-buttons.generateSandboxRows :testFactor="$scoreCount" buttonLabel="Generate Scores"
+            <x-buttons.generateSandboxRows :testFactor="$fScoreCount" buttonLabel="Generate Scores"
                                            legendLabel="score count" click="generateScores"/>
+            @if($registrantsScoredCount)
+                <div class="text-xs italic">Scores created for: {{ $registrantsScoredCount }} registrants</div>
+            @endif
 
-            <button class="flex w-fit min-w-1/4 px-2 rounded-lg shadow-lg bg-yellow-300">
-                Generate Results
-            </button>
+            <x-buttons.generateSandboxRows :testFactor="$resultsCount" buttonLabel="Generate Results"
+                                           legendLabel="results count" click="generateResults"/>
 
             <button class="flex w-fit min-w-1/4 px-2 rounded-lg shadow-lg bg-yellow-300">
                 Generate Cut-Offs
