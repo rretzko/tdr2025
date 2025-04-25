@@ -29,19 +29,22 @@
                         <div class="flex flex-row w-full border border-black ">
                             @if($judge['pending']['count'])
                                 <div title="pending"
-                                     class="{{ $barFormats['pending'] }} w-[ {{$judge['pending']['pct'] }} text-center border border-black">
+                                     class="{{ $barFormats['pending'] }} text-center border border-black"
+                                     style="width: {{ $judge['pending']['pct'] }}">
                                     {{ $judge['pending']['count'] }}
                                 </div>
                             @endif
                             @if($judge['wip']['count'])
                                 <div title="wip"
-                                     class="{{ $barFormats['wip'] }}  w-[{{ $judge['wip']['pct'] }}] text-center border border-black">
+                                     class="{{ $barFormats['wip'] }} text-center border border-black"
+                                     style="width: {{ $judge['wip']['pct'] }}">
                                     {{ $judge['wip']['count'] }}
                                 </div>
                             @endif
                             @if($judge['completed']['count'])
                                 <div title="completed"
-                                     class="{{ $barFormats['completed'] }} w-[{{ $judge['completed']['pct'] }}] text-center border border-black">
+                                     class="{{ $barFormats['completed'] }} text-center border border-black"
+                                     style="width: {{ $judge['completed']['pct'] }}">
                                     {{ $judge['completed']['count'] }}
                                 </div>
                             @endif
