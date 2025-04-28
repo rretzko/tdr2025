@@ -27,6 +27,8 @@ class ScoringRosterDataRowsService
         private readonly int $rowLimit,
     )
     {
+        set_time_limit(300);
+        ini_set('memory_limit', '4096M');
         $this->init();
     }
 
@@ -87,6 +89,10 @@ class ScoringRosterDataRowsService
         $this->rows = DB::table('candidates')
             ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
             ->join('schools', 'schools.id', '=', 'candidates.school_id')
+            ->join('students', 'students.id', '=', 'candidates.student_id')
+            ->join('users as studentUser', 'studentUser.id', '=', 'students.user_id')
+            ->join('teachers', 'teachers.id', '=', 'candidates.teacher_id')
+            ->join('users as teacherUser', 'teacherUser.id', '=', 'teachers.user_id')
             ->leftJoin('audition_results', 'audition_results.candidate_id', '=', 'candidates.id')
             ->whereIn('candidates.id', $candidateIds)
             ->distinct()
@@ -99,13 +105,16 @@ class ScoringRosterDataRowsService
                 'audition_results.total',
                 'audition_results.accepted',
                 'audition_results.acceptance_abbr',
-                'audition_results.total AS total_score'
+                'audition_results.total AS total_score',
+                'studentUser.email AS studentEmail',
+                'teacherUser.name AS teacherName', 'teacherUser.email AS teacherEmail',
             )
             ->orderBy('voicePartOrderBy')
             ->orderBy('audition_results.total', ($this->scoresAscending ? 'asc' : 'desc'))
             ->orderBy('candidates.id')
             ->get()
             ->toArray();
+
     }
 //    private function oldSetRows(): void
 //    {

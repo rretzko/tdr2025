@@ -32,7 +32,7 @@ class ScoringRosterController extends Controller
         $data = new PdfScoringRosterDataFactory($versionId, $voicePartTest, $eventEnsembleId);
         $dto = $data->getDto();
 
-        set_time_limit(120);
+        set_time_limit(300);
         $rows = $dto['rows'];
         $rowsScores = $dto['rowsScores'];
         Log::info(count($rows[0]).' | '.count($rowsScores));

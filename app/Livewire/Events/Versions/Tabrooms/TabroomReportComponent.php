@@ -38,6 +38,7 @@ class TabroomReportComponent extends BasePage
     public bool $scoresAscending = true;
     public array $seniorityParticipation = [];
     public int $showEventEnsembleId = 0;
+    public bool $showPrinterIcon = false;
     public int $versionId = 0;
     public array $versionSeniorYears = [];
     public int $voicePartId = 0;
@@ -65,6 +66,8 @@ class TabroomReportComponent extends BasePage
         if ($this->eventEnsembleId) {
             $this->eventEnsembleAbbr = EventEnsemble::find($this->eventEnsembleId)->abbr;
         }
+
+        $this->showPrinterIcon = config('app.env') === 'local';
 
     }
 

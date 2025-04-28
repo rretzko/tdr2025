@@ -12,6 +12,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use JetBrains\PhpStorm\NoReturn;
 
+/**
+ * This model generates 213,600 queries for a population of 881 registrants (2025 NJ All-State Chorus)
+ * using 212,601 models
+ * High likelihood that refactoring can reduce this load
+ * @todo Deep dive refactoring opportunity
+ */
 class GenerateScoresService
 {
     private int $counter;
@@ -20,7 +26,7 @@ class GenerateScoresService
 
     #[NoReturn] public function __construct(private readonly int $versionId)
     {
-        set_time_limit(240);
+        set_time_limit(180);
         $this->eventId = Version::find($this->versionId)->event_id;
         $this->scoreFactorMinMaxs = [];
 
@@ -69,71 +75,87 @@ class GenerateScoresService
             'judge 4' => 4,
         ];
 
-        foreach ($registrants as $registrant) {
+        //do not execute in production
+        if (app('env') === 'local') {
 
-            $regCntr++;
+            //clear current records
+            DB::table('scores')
+                ->where('version_id', $this->versionId)
+                ->delete();
 
-            foreach ($rooms as $room) {
+            //iterate through regisrants and rooms
+            foreach ($registrants as $registrant) {
 
-                $this->setScoreFactorMinMaxs($room);
+                $regCntr++;
 
-                $scoreFactorId = $room['scoreFactorId'];
+                //filter rooms by voice_part_id
+                $registrantRooms = $this->selectRooms($rooms, $registrant);
 
-                $max = $this->scoreFactorMinMaxs[$scoreFactorId]['max'];
-                $min = $this->scoreFactorMinMaxs[$scoreFactorId]['min'];
+                foreach ($registrantRooms as $room) {
 
-                $data[] = [
-                    'version_id' => $this->versionId,
-                    'candidate_id' => $registrant['id'],
-                    'student_id' => $registrant['student_id'],
-                    'school_id' => $registrant['school_id'],
-                    'score_category_id' => $room['scoreCategoryId'],
-                    'score_category_order_by' => $room['roomScoreCategoryOrderBy'],
-                    'score_factor_id' => $scoreFactorId,
-                    'score_factor_order_by' => $room['scoreFactorOrderBy'],
-                    'judge_id' => $room['judgeId'],
-                    'judge_order_by' => $judgeOrderBys[$room['judgeType']],
-                    'voice_part_id' => $registrant['voicePartId'],
-                    'voice_part_order_by' => $registrant['voicePartOrderBy'],
-                    'score' => rand($min, $max),
-                    'created_at' => now(),  // if your table uses timestamps
-                    'updated_at' => now(),
-                ];
-            }
+                    $this->setScoreFactorMinMaxs($room);
 
-            //insert $data if count is multiple of 500 to manage memory
-            if ((!($regCntr % 200)) || ($regCntr == count($registrants))) {
-                $batchSize = 100;
-                $chunks = array_chunk($data, $batchSize);
+                    $scoreFactorId = $room['scoreFactorId'];
 
-                DB::transaction(function () use ($chunks) {
-                    foreach ($chunks as $chunk) {
-                        Score::insert($chunk);
-                    }
-                });
+                    $max = $this->scoreFactorMinMaxs[$scoreFactorId]['max'];
+                    $min = $this->scoreFactorMinMaxs[$scoreFactorId]['min'];
 
-                //reset $data storage
-                $data = [];
+                    $roomJudgeIds = Room::find($room['roomId'])->judges->pluck('id')->toArray();
+
+
+                    $data[] = [
+                        'version_id' => $this->versionId,
+                        'candidate_id' => $registrant['id'],
+                        'student_id' => $registrant['student_id'],
+                        'school_id' => $registrant['school_id'],
+                        'score_category_id' => $room['scoreCategoryId'],
+                        'score_category_order_by' => $room['roomScoreCategoryOrderBy'],
+                        'score_factor_id' => $scoreFactorId,
+                        'score_factor_order_by' => $room['scoreFactorOrderBy'],
+                        'judge_id' => $room['judgeId'],
+                        'judge_order_by' => $judgeOrderBys[$room['judgeType']],
+                        'voice_part_id' => $registrant['voicePartId'],
+                        'voice_part_order_by' => $registrant['voicePartOrderBy'],
+                        'score' => rand($min, $max),
+                        'created_at' => now(),  // if your table uses timestamps
+                        'updated_at' => now(),
+                    ];
+                }
+
+                //insert $data if count is multiple of 200 to manage memory
+                if ((!($regCntr % 200)) || ($regCntr == count($registrants))) {
+                    $batchSize = 200;
+                    $chunks = array_chunk($data, $batchSize);
+
+                    DB::transaction(function () use ($chunks) {
+                        foreach ($chunks as $chunk) {
+                            Score::insert($chunk);
+                        }
+                    });
+
+                    //reset $data storage
+                    $data = [];
+                }
             }
         }
 
         return $regCntr;
     }
 
-    private function generateScores(array $registrants, array $rooms): int
-    {
-        $cntr = 0;
-
-        foreach ($registrants as $registrant) {
-
-            foreach ($rooms as $room) {
-
-                $cntr = $this->generateScore($registrant, $room);
-            }
-        }
-
-        return $cntr;
-    }
+//    private function generateScores(array $registrants, array $rooms): int
+//    {
+//        $cntr = 0;
+//
+//        foreach ($registrants as $registrant) {
+//
+//            foreach ($rooms as $room) {
+//
+//                $cntr = $this->generateScore($registrant, $room);
+//            }
+//        }
+//
+//        return $cntr;
+//    }
 
     /**
      * array:13 [▼ // app\Services\Sandbox\GenerateScoresService.php:52
@@ -165,47 +187,47 @@ class GenerateScoresService
      * @param  array  $room
      * @return int
      */
-    private function generateScore(array $registrant, array $room): int
-    {
-        static $cntr = 0;
-
-        $judgeOrderBys = [
-            'head judge' => 1,
-            'judge 2' => 2,
-            'judge 3' => 3,
-            'judge 4' => 4,
-        ];
-
-        if (!$this->scoreExists($registrant, $room, $judgeOrderBys)) {
-
-            $cntr++;
-
-            $this->setScoreFactorMinMaxs($room);
-
-            $scoreFactorId = $room['scoreFactorId'];
-
-            $max = $this->scoreFactorMinMaxs[$scoreFactorId]['max'];
-            $min = $this->scoreFactorMinMaxs[$scoreFactorId]['min'];
-
-            Score::create([
-                'version_id' => $this->versionId,
-                'candidate_id' => $registrant['id'],
-                'student_id' => $registrant['student_id'],
-                'school_id' => $registrant['school_id'],
-                'score_category_id' => $room['scoreCategoryId'],
-                'score_category_order_by' => $room['roomScoreCategoryOrderBy'],
-                'score_factor_id' => $scoreFactorId,
-                'score_factor_order_by' => $room['scoreFactorOrderBy'],
-                'judge_id' => $room['judgeId'],
-                'judge_order_by' => $judgeOrderBys[$room['judgeType']],
-                'voice_part_id' => $registrant['voicePartId'],
-                'voice_part_order_by' => $registrant['voicePartOrderBy'],
-                'score' => rand($min, $max),
-            ]);
-        }
-
-        return $cntr;
-    }
+//    private function generateScore(array $registrant, array $room): int
+//    {
+//        static $cntr = 0;
+//
+//        $judgeOrderBys = [
+//            'head judge' => 1,
+//            'judge 2' => 2,
+//            'judge 3' => 3,
+//            'judge 4' => 4,
+//        ];
+//
+//        if (!$this->scoreExists($registrant, $room, $judgeOrderBys)) {
+//
+//            $cntr++;
+//
+//            $this->setScoreFactorMinMaxs($room);
+//
+//            $scoreFactorId = $room['scoreFactorId'];
+//
+//            $max = $this->scoreFactorMinMaxs[$scoreFactorId]['max'];
+//            $min = $this->scoreFactorMinMaxs[$scoreFactorId]['min'];
+//
+//            Score::create([
+//                'version_id' => $this->versionId,
+//                'candidate_id' => $registrant['id'],
+//                'student_id' => $registrant['student_id'],
+//                'school_id' => $registrant['school_id'],
+//                'score_category_id' => $room['scoreCategoryId'],
+//                'score_category_order_by' => $room['roomScoreCategoryOrderBy'],
+//                'score_factor_id' => $scoreFactorId,
+//                'score_factor_order_by' => $room['scoreFactorOrderBy'],
+//                'judge_id' => $room['judgeId'],
+//                'judge_order_by' => $judgeOrderBys[$room['judgeType']],
+//                'voice_part_id' => $registrant['voicePartId'],
+//                'voice_part_order_by' => $registrant['voicePartOrderBy'],
+//                'score' => rand($min, $max),
+//            ]);
+//        }
+//
+//        return $cntr;
+//    }
 
     private function scoreExists(array $registrant, array $room, array $judgeOrderBys): bool
     {
@@ -223,6 +245,13 @@ class GenerateScoresService
             ->where('voice_part_id', $registrant['voicePartId'])
             ->where('voice_part_order_by', $registrant['voicePartOrderBy'])
             ->exists();
+    }
+
+    private function selectRooms(array $rooms, array $registrant): array
+    {
+        return array_values(array_filter($rooms, function ($room) use ($registrant) {
+            return $room['voice_part_id'] === $registrant['voicePartId'];
+        }));
     }
 
     private function setRegistrants(): array
@@ -252,6 +281,7 @@ class GenerateScoresService
             ->join('score_categories', 'score_categories.id', '=', 'room_score_categories.score_category_id')
             ->join('score_factors', 'score_factors.score_category_id', '=', 'room_score_categories.score_category_id')
             ->join('judges', 'judges.room_id', '=', 'rooms.id')
+            ->join('room_voice_parts', 'room_voice_parts.room_id', '=', 'rooms.id')
             ->where('rooms.version_id', $this->versionId)
             ->where('score_factors.event_id', $this->eventId)
             ->where('judges.status_type', 'assigned')
@@ -261,6 +291,7 @@ class GenerateScoresService
                 'room_score_categories.score_category_id AS scoreCategoryId',
                 'score_categories.order_by as roomScoreCategoryOrderBy',
                 'score_factors.id as scoreFactorId', 'score_factors.order_by as scoreFactorOrderBy',
+                'room_voice_parts.voice_part_id'
             )
             ->orderBy('rooms.order_by')
             ->orderBy('judgeType')

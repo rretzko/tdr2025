@@ -28,7 +28,6 @@ class CandidateScorePdfController extends Controller
         $data = new PdfCandidateScoreDataFactory($candidate);
         $dto = $data->getDto();
 
-
         $pdf = PDF::loadView($path, compact('dto'))
             ->setPaper('letter', 'landscape');
 

@@ -307,10 +307,11 @@ class TabroomScoringComponent extends BasePage
             return;
         }
 
-        $this->updateRooms(Candidate::find($this->candidateId));
+        $this->updateRooms(Candidate::find($this->candidateId), true);
 
         //set switch to alwasy display judges scores
         $this->form->hasMyScores = true;
+
     }
 
     private function getEventVoiceParts(): Collection
@@ -320,11 +321,12 @@ class TabroomScoringComponent extends BasePage
         return $event->getVoicePartsAttribute();
     }
 
-    private function setForm(): void
+    private function setForm(bool $updated = false): void
     {
         if (isset($this->room) && $this->judge && $this->candidateId) {
+
             $candidate = Candidate::find($this->candidateId);
-            $this->form->setRoom($this->room, $this->judge);
+            $this->form->setRoom($this->room, $this->judge, $updated);
             $this->form->setCandidate($candidate, $this->room, $this->judge);
             $this->form->hasMyScores = true;
         }
@@ -339,7 +341,7 @@ class TabroomScoringComponent extends BasePage
         $this->candidateVoicePartDescr = $candidate['voicePart']->descr;
     }
 
-    private function updateRooms(Candidate $candidate): void
+    private function updateRooms(Candidate $candidate, $updated = false): void
     {
         //set defaults
         $candidate = Candidate::find($this->candidateId);
@@ -349,7 +351,9 @@ class TabroomScoringComponent extends BasePage
 
         $this->judgeId = $this->judgeId ?: $this->judges->first()->id;
         $this->judge = Judge::find($this->judgeId);
-
+        if ($updated) {
+            dd($this->judge);
+        }
         $this->form->setCandidate($candidate, $this->room, $this->judges->first());
         $this->form->setRoom($this->room, $this->judge);
     }

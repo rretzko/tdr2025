@@ -7,10 +7,12 @@
     <div class="flex justify-end mr-8 p-2 text-blue-500">
 
         <button type="button" wire:click="clickPrinter" class="flex flex-row space-x-2">
-            <div class="{{ count($rows) < 401 ? 'hidden' : 'block' }}">
-                Large pdf reports will be sent to your email address.
-            </div>
-            @include('components.heroicons.printer')
+            {{--            <div class="{{ count($rows) < 401 ? 'hidden' : 'block' }}">--}}
+            {{--                Large pdf reports will be sent to your email address.--}}
+            {{--            </div>--}}
+            @if($showPrinterIcon)
+                @include('components.heroicons.printer')
+            @endif
         </button>
     </div>
 

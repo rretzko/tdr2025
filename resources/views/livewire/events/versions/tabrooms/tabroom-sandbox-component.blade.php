@@ -43,9 +43,8 @@
             <x-buttons.generateSandboxRows :testFactor="$resultsCount" buttonLabel="Generate Results"
                                            legendLabel="results count" click="generateResults"/>
 
-            <button class="flex w-fit min-w-1/4 px-2 rounded-lg shadow-lg bg-yellow-300">
-                Generate Cut-Offs
-            </button>
+            <x-buttons.generateSandboxRows :testFactor="$cutOffsCount" buttonLabel="Generate Cut-Offs"
+                                           legendLabel="cut-offs count" click="generateCutOffs"/>
 
             <button class="flex w-fit min-w-1/4 px-2 rounded-lg shadow-lg bg-yellow-300">
                 Generate Results PDFs

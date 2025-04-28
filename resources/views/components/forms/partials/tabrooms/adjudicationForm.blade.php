@@ -17,7 +17,9 @@
     <div>
         <div id="one" class="w-full space-y-2 p-2 rounded-lg shadow-lg">
             @php $categoryDescr = ''; @endphp
+
             @foreach($form->factors AS $factor)
+
                 {{--                @php--}}
                 {{--                    $start = $factor->best;--}}
                 {{--                    $end = $factor->worst;--}}
@@ -95,3 +97,5 @@
                     </form>
 
         </div>
+    </div>
+</div>

@@ -167,7 +167,7 @@ class ResultsTableComponent extends BasePage
         $fileName = "combinedConfidentialPdfs/combinedConfidential_{$this->versionId}.pdf";
         $disk = Storage::disk('s3');
 
-        if ($this->separatedResults) {
+        if ($this->separatedResults) { //ex. Morris County Choral Directors Association
             $eventEnsemble = EventEnsemble::find($eventEnsembleId);
             $abbr = $eventEnsemble->abbr;
             //$fileName = "combinedConfidentialPdfs/{$abbr}_{$versionId}.pdf";
@@ -186,6 +186,7 @@ class ResultsTableComponent extends BasePage
             ]);
         }
 
+        //default to printing the school's results
         return redirect()->to('pdf/candidateScoresSchool/');
     }
 }

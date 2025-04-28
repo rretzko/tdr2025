@@ -107,7 +107,7 @@ class AdjudicationForm extends Form
      * @param  Judge  $judge
      * @return void
      */
-    public function setRoom(Room $room, Judge $judge): void
+    public function setRoom(Room $room, Judge $judge, $updated = false): void
     {
         $this->room = $room;
 

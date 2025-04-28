@@ -3,12 +3,14 @@
 namespace App\Livewire\Events\Versions\Tabrooms;
 
 use App\Livewire\BasePage;
+use App\Models\Events\Versions\Participations\AuditionResult;
 use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Participations\Obligation;
 use App\Models\Events\Versions\Room;
 use App\Models\Events\Versions\Scoring\Judge;
 use App\Models\Events\Versions\Scoring\Score;
 use App\Models\Events\Versions\Version;
+use App\Services\Sandbox\GenerateCutOffsService;
 use App\Services\Sandbox\GenerateScoreResultsService;
 use App\Services\Sandbox\GenerateScoresService;
 use JetBrains\PhpStorm\NoReturn;
@@ -16,6 +18,7 @@ use JetBrains\PhpStorm\NoReturn;
 class TabroomSandboxComponent extends BasePage
 {
     public int $candidateCount = 0;
+    public int $cutOffsCount = 0;
     public int $eventId = 0;
     public string $fScoreCount = '0';
     public int $judgeCount = 0;
@@ -54,14 +57,13 @@ class TabroomSandboxComponent extends BasePage
 
                 if ($this->judgeCount) {
                     $this->getScoreCount();
+
+                    if ($this->scoreCount) {
+                        $this->resultsCount = $this->getResultsCount();
+                    }
                 }
             }
         }
-    }
-
-    private function getParticipantCount(): int
-    {
-        return Obligation::where('version_id', $this->versionId)->count();
     }
 
     private function getCandidateCount(): int
@@ -69,11 +71,23 @@ class TabroomSandboxComponent extends BasePage
         return Candidate::where('version_id', $this->versionId)->count();
     }
 
+    private function getParticipantCount(): int
+    {
+        return Obligation::where('version_id', $this->versionId)->count();
+    }
+
     private function getRegistrantCount(): int
     {
         return Candidate::query()
             ->where('version_id', $this->versionId)
             ->where('status', 'registered')
+            ->count();
+    }
+
+    private function getResultsCount(): int
+    {
+        return AuditionResult::query()
+            ->where('version_id', $this->versionId)
             ->count();
     }
 
@@ -103,6 +117,13 @@ class TabroomSandboxComponent extends BasePage
         dd('placeholder function: '.__METHOD__);
     }
 
+    #[NoReturn] public function generateCutOffs(): void
+    {
+        $service = new GenerateCutOffsService($this->versionId);
+
+        $this->cutOffsCount = $service->getCounter();
+    }
+
     #[NoReturn] public function generateScores(): void
     {
         $service = new GenerateScoresService($this->versionId);
@@ -116,6 +137,6 @@ class TabroomSandboxComponent extends BasePage
     {
         $service = new GenerateScoreResultsService($this->versionId);
 
-        $this->registrantResultsCount = $service->getCounter();
+        $this->resultsCount = $service->getCounter();
     }
 }

@@ -1,11 +1,14 @@
-<div class=" w-full">
+<div class="">
     <style>
         #scores {
+            /*background-color: rosybrown;*/
             border-collapse: collapse;
             font-size: 0.7rem;
             margin: auto;
             margin-top: 0.5rem;
-            width: fit-content;
+            table-layout: fixed;
+            width: 90%;
+            max-width: 98%;
         }
 
         #scores td, th {
@@ -14,20 +17,30 @@
             text-align: center;
         }
 
+        #scores td.fixedWidth, th.fixedWidth {
+            width: 10rem;
+            min-width: 10rem;
+            max-width: 10rem;
+        }
+
         #scores th.clearBorder {
             border: transparent;
         }
     </style>
-    <table id="scores" class="text-xs">
+    <table id="scores" class="text-xs ">
         <thead>
         <tr>
-            <th colspan="4" class="clearBorder"></th>
+            <th class="clearBorder" style="width: 3rem;"></th>
+            <th class="clearBorder fixedWidth"></th>
+            <th class="clearBorder fixedWidth"></th>
+            <th class="clearBorder" style="width: 2rem;"></th>
             @for($i=1; $i<=$judgeCount; $i++)
                 <th colspan="{{ $factors->count() }}">
                     Judge {{ $i }}
                 </th>
             @endfor
-            <th colspan="2" class="clearBorder"></th>
+            <th class="clearBorder" style="width: 2rem;"></th>
+            <th class="clearBorder" style="width: 3rem;"></th>
         </tr>
         <tr>
             <th colspan="4" class="text-center">{{ count($rows) }} candidates</th>
@@ -44,9 +57,13 @@
         </tr>
         <tr>
             <th>Id</th>
+            <th class="fixedWidth">
+                Student
+            </th>
+            <th class="fixedWidth;">
+                School
+            </th>
             <th>VP</th>
-            <th>Student</th>
-            <th>School</th>
             @for($i=0; $i<$judgeCount; $i++)
                 @forelse($factors AS $factor)
                     <th>{{ $factor->abbr }}</th>
@@ -70,8 +87,23 @@
 
             <tr class="hover:bg-green-100 hover:font-semibold">
                 <td style="text-align: left;">{{ $row->id }}</td>
-                <td style="text-align: left;">{{ $row->programName }}</td>
-                <td style="text-align: left;">{{ substr($schoolName, 0, 12) }}</td>
+                <td class="fixedWidth" style="text-align: left;">
+                    <div>{{ $row->programName }}</div>
+                    <div
+                        style="margin-left: 0.25rem; font-style: italic;  white-space: normal; overflow-wrap: break-word; ">
+                        {{ $row->studentEmail }}
+                    </div>
+                </td>
+                <td class="fixedWidth" style="text-align: left;">
+                    <div>{{ substr($schoolName, 0, 12) }}</div>
+                    <div style="margin-left: 0.25rem; font-style: italic;">
+                        {{ $row->teacherName }}
+                    </div>
+                    <div
+                        style="margin-left: 0.25rem; font-style: italic;  white-space: normal; overflow-wrap: break-word;">
+                        {{ $row->teacherEmail }}
+                    </div>
+                </td>
                 <td>{{ $row->voicePartAbbr }}</td>
                 @if(isset($rowsScores[$row->id]))
                     @forelse($rowsScores[$row->id] AS $score)
