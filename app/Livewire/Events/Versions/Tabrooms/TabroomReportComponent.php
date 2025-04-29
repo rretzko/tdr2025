@@ -123,7 +123,9 @@ class TabroomReportComponent extends BasePage
             : '/0'; //0=public
 
         //add eventEnsembleId
-        $uri .= '/'.$this->showEventEnsembleId; //ex: /versions/tabroom/reports/byVoicePart/74/0/0
+        $uri .= '/'.$this->showEventEnsembleId;
+        //ex: /versions/tabroom/reports/allPrivate/74/1/7
+        //ex: /versions/tabroom/reports/byVoicePart/74/0/0
 
         return $this->redirect($uri);
     }
