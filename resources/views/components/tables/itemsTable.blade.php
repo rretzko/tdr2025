@@ -59,9 +59,18 @@
                     @if($row['arrangerName'])
                         <div>{{ $row['arrangerName'] }} <span class="text-xs">(arr)</span></div>
                     @endif
+                        @if($row['wamName'])
+                            <div>{{ $row['wamName'] }} <span class="text-xs">(wam)</span></div>
+                        @endif
                     @if($row['wordsName'])
                         <div>{{ $row['wordsName'] }} <span class="text-xs">(words)</span></div>
                     @endif
+                        @if($row['musicName'])
+                            <div>{{ $row['musicName'] }} <span class="text-xs">(music)</span></div>
+                        @endif
+                        @if($row['choreographerName'])
+                            <div>{{ $row['choreographerName'] }} <span class="text-xs">(choreo)</span></div>
+                        @endif
                 </td>
                 <td class="text-center border border-gray-200 px-1">
                     <x-buttons.edit id="{{ $row['id'] }}" :livewire="true" id="{{ $row['id'] }}"/>

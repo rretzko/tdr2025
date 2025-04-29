@@ -18,6 +18,16 @@ class BaseLibraryItemPage extends BasePage
         'cassette' => 'cassette',
         'vinyl' => 'vinyl',
     ];
+
+    public const ARTISTTYPES = [
+        'composer',
+        'arranger',
+        'wam',
+        'words',
+        'music',
+        'choreographer',
+    ];
+
     public Library $library;
     public LibraryItemForm $form;
 

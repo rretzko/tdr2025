@@ -20,13 +20,19 @@ class LibraryItemForm extends Form
 {
     public array $artists = [
         'arranger' => '',
+        'choreographer' => '',
         'composer' => '',
+        'music' => '',
+        'wam' => '',
         'words' => '',
     ];
 
     public array $artistIds = [
         'arranger' => 0,
+        'choreographer' => 0,
         'composer' => 0,
+        'music' => 0,
+        'wam' => 0,
         'words' => 0,
     ];
 
@@ -43,7 +49,10 @@ class LibraryItemForm extends Form
     public array $policies = [
         'canEdit' => [
             'arranger' => true,
+            'choreographer' => true,
             'composer' => true,
+            'music' => true,
+            'wam' => true,
             'words' => true,
         ],
     ];
@@ -186,8 +195,11 @@ class LibraryItemForm extends Form
         $occurrenceCount = LibItem::selectRaw("
                 SUM(CASE WHEN composer_id = ? THEN 1 ELSE 0 END) +
                 SUM(CASE WHEN arranger_id = ? THEN 1 ELSE 0 END) +
-                SUM(CASE WHEN words_id = ? THEN 1 ELSE 0 END) as total_count
-            ", [$artistId, $artistId, $artistId])->value('total_count');
+                SUM(CASE WHEN wam_id = ? THEN 1 ELSE 0 END) +
+                SUM(CASE WHEN words_id = ? THEN 1 ELSE 0 END) +
+                SUM(CASE WHEN music_id = ? THEN 1 ELSE 0 END) +
+                SUM(CASE WHEN choreographer_id = ? THEN 1 ELSE 0 END) as total_count
+            ", [$artistId, $artistId, $artistId, $artistId, $artistId, $artistId])->value('total_count');
 
         $userIsSoleDependent = ($occurrenceCount < 2);
 
@@ -199,9 +211,24 @@ class LibraryItemForm extends Form
         return $this->getPolicyArtist('arranger', $libItem);
     }
 
+    private function getPolicyChoreographer(LibItem $libItem): bool
+    {
+        return $this->getPolicyArtist('choreographer', $libItem);
+    }
+
     private function getPolicyComposer(LibItem $libItem): bool
     {
         return $this->getPolicyArtist('composer', $libItem);
+    }
+
+    private function getPolicyMusic(LibItem $libItem): bool
+    {
+        return $this->getPolicyArtist('music', $libItem);
+    }
+
+    private function getPolicyWam(LibItem $libItem): bool
+    {
+        return $this->getPolicyArtist('wam', $libItem);
     }
 
     private function getPolicyWords(LibItem $libItem): bool
@@ -211,26 +238,37 @@ class LibraryItemForm extends Form
 
     private function setArtists(LibItem $libItem): void
     {
-        if ($libItem->composer_id) {
-            $composer = Artist::find($libItem->composer_id);
-            $this->artists['composer'] = $composer->artist_name;
-            $this->artistIds['composer'] = $composer->id;
-            $this->policies['canEdit']['composer'] = $this->getPolicy('composer', $libItem);
-        }
+        foreach ($this->artists as $artistType => $value) {
 
-        if ($libItem->arranger_id) {
-            $arranger = Artist::find($libItem->arranger_id);
-            $this->artists['arranger'] = $arranger->artist_name;
-            $this->artistIds['arranger'] = $arranger->id;
-            $this->policies['canEdit']['arranger'] = $this->getPolicy('arranger', $libItem);
-        }
+            $column = $artistType.'_id';
 
-        if ($libItem->words_id) {
-            $words = Artist::find($libItem->words_id);
-            $this->artists['words'] = $words->artist_name;
-            $this->artistIds['words'] = $words->id;
-            $this->policies['canEdit']['words'] = $this->getPolicy('words', $libItem);
+            if ($libItem->$column) {
+                $artist = Artist::find($libItem->$column);
+                $this->artists[$artistType] = $artist->artist_name;
+                $this->artistIds[$artistType] = $artist->id;
+                $this->policies['canEdit'][$artistType] = $this->getPolicy($artistType, $libItem);
+            }
         }
+//        if ($libItem->composer_id) {
+//            $composer = Artist::find($libItem->composer_id);
+//            $this->artists['composer'] = $composer->artist_name;
+//            $this->artistIds['composer'] = $composer->id;
+//            $this->policies['canEdit']['composer'] = $this->getPolicy('composer', $libItem);
+//        }
+//
+//        if ($libItem->arranger_id) {
+//            $arranger = Artist::find($libItem->arranger_id);
+//            $this->artists['arranger'] = $arranger->artist_name;
+//            $this->artistIds['arranger'] = $arranger->id;
+//            $this->policies['canEdit']['arranger'] = $this->getPolicy('arranger', $libItem);
+//        }
+//
+//        if ($libItem->words_id) {
+//            $words = Artist::find($libItem->words_id);
+//            $this->artists['words'] = $words->artist_name;
+//            $this->artistIds['words'] = $words->id;
+//            $this->policies['canEdit']['words'] = $this->getPolicy('words', $libItem);
+//        }
 
     }
 

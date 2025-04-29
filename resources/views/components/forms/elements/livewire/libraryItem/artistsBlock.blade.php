@@ -6,29 +6,15 @@
     @if((! isset($form->policies['canEdit']['artists'])) || $form->policies['canEdit']['artists'])
         <div class="flex flex-col space-y-2">
 
-            {{-- COMPOSER --}}
-            <x-forms.elements.livewire.libraryItem.artistsBlockItem
-                :artistName="$form->artists['composer']"
-                for="composer"
-                :searchResults="$searchResultsArtists['composer']"
-                :canEdit="$form->policies['canEdit']['composer']"
-            />
-
-            {{-- ARRANGER --}}
-            <x-forms.elements.livewire.libraryItem.artistsBlockItem
-                :artistName="$form->artists['arranger']"
-                for="arranger"
-                :searchResults="$searchResultsArtists['arranger']"
-                :canEdit="$form->policies['canEdit']['arranger']"
-            />
-
-            {{-- WORDS --}}
-            <x-forms.elements.livewire.libraryItem.artistsBlockItem
-                :artistName="$form->artists['words']"
-                for="words"
-                :searchResults="$searchResultsArtists['words']"
-                :canEdit="$form->policies['canEdit']['words']"
-            />
+            {{-- COMPOSER, ARRANGER, WAM, WORDS, MUSIC, LYRICIST, CHOREOGRAPHER --}}
+            @foreach($artistTypes AS $artistType)
+                <x-forms.elements.livewire.libraryItem.artistsBlockItem
+                    :artistName="$form->artists[$artistType]"
+                    for="{{  $artistType }}"
+                    :searchResults="$searchResultsArtists[$artistType]"
+                    :canEdit="$form->policies['canEdit'][$artistType]"
+                />
+            @endforeach
 
         </div>
 

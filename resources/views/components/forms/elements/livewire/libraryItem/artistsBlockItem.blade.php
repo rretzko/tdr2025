@@ -27,6 +27,13 @@
                 </hint>
             @endif
 
+            {{-- hint --}}
+            @if($for === 'wam')
+                <hint class="text-sm italic">
+                    Words and Music
+                </hint>
+            @endif
+
             {{-- search results --}}
             @if($searchResults)
                 <div class='flex flex-col items-start ml-4 text-sm list-none cursor-pointer'>

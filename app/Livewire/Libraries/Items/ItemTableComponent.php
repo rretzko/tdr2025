@@ -113,18 +113,27 @@ class ItemTableComponent extends BasePage
             ->join('lib_titles', 'lib_items.lib_title_id', '=', 'lib_titles.id')
             ->leftJoin('artists AS composer', 'lib_items.composer_id', '=', 'composer.id')
             ->leftJoin('artists AS arranger', 'lib_items.arranger_id', '=', 'arranger.id')
+            ->leftJoin('artists AS wam', 'lib_items.wam_id', '=', 'wam.id')
             ->leftJoin('artists AS words', 'lib_items.words_id', '=', 'words.id')
+            ->leftJoin('artists AS music', 'lib_items.music_id', '=', 'music.id')
+            ->leftJoin('artists AS choreographer', 'lib_items.choreographer_id', '=', 'choreographer.id')
             ->where('lib_stacks.library_id', $this->library->id)
             ->where(function ($query) {
                 $query->where('lib_titles.title', 'LIKE', $this->likeValue)
                     ->orWhere('composer.artist_name', 'LIKE', $this->likeValue)
                     ->orWhere('arranger.artist_name', 'LIKE', $this->likeValue)
-                    ->orWhere('words.artist_name', 'LIKE', $this->likeValue);
+                    ->orWhere('wam.artist_name', 'LIKE', $this->likeValue)
+                    ->orWhere('words.artist_name', 'LIKE', $this->likeValue)
+                    ->orWhere('music.artist_name', 'LIKE', $this->likeValue)
+                    ->orWhere('choreographer.artist_name', 'LIKE', $this->likeValue);
             })
             ->select('lib_stacks.id', 'lib_titles.title', 'lib_titles.alpha', 'lib_items.item_type',
                 'composer.alpha_name AS composerName',
                 'arranger.alpha_name AS arrangerName',
-                'words.alpha_name AS wordsName'
+                'wam.alpha_name AS wamName',
+                'words.alpha_name AS wordsName',
+                'music.alpha_name AS musicName',
+                'choreographer.alpha_name AS choreographerName',
             )
             ->orderBy($this->sortCol, $this->sortAsc ? 'asc' : 'desc')
             ->orderBy('lib_titles.alpha', 'asc')

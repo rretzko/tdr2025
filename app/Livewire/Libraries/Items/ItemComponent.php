@@ -14,6 +14,7 @@ use JetBrains\PhpStorm\NoReturn;
 
 class ItemComponent extends BaseLibraryItemPage
 {
+    public array $artistTypes = [];
     public string $errorMessage = '';
     public array $itemTypes = [];
     public int $libraryId = 0;
@@ -21,7 +22,10 @@ class ItemComponent extends BaseLibraryItemPage
     public string $searchResults = 'Search Results';
     public array $searchResultsArtists = [
         'arranger' => '',
+        'choreographer' => '',
         'composer' => '',
+        'music' => '',
+        'wam' => '',
         'words' => '',
     ];
 
@@ -31,6 +35,7 @@ class ItemComponent extends BaseLibraryItemPage
 
         $this->libraryId = $this->dto['id'];
 
+        $this->artistTypes = self::ARTISTTYPES;
         $this->itemTypes = self::ITEMTYPES;
 
         if (isset($this->dto['libItem'])) {
