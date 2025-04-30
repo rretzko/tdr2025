@@ -4,6 +4,7 @@ namespace App\Livewire\Libraries\Items;
 
 use App\Models\Libraries\Items\Components\Artist;
 use App\Models\Libraries\Items\Components\LibTitle;
+use App\Models\Libraries\Items\Components\Voicing;
 use App\Models\Libraries\LibStack;
 use App\Models\Libraries\Items\LibItem;
 use App\Services\ArtistSearchService;
@@ -20,6 +21,7 @@ class ItemComponent extends BaseLibraryItemPage
     public int $libraryId = 0;
     public LibItem $libItem;
     public string $searchResults = 'Search Results';
+    public array $searchVoicings = [];
     public array $searchResultsArtists = [
         'arranger' => '',
         'choreographer' => '',
@@ -35,8 +37,8 @@ class ItemComponent extends BaseLibraryItemPage
 
         $this->libraryId = $this->dto['id'];
 
-        $this->artistTypes = self::ARTISTTYPES;
-        $this->itemTypes = self::ITEMTYPES;
+        $this->artistTypes = parent::ARTISTTYPES;
+        $this->itemTypes = parent::ITEMTYPES;
 
         if (isset($this->dto['libItem'])) {
             $this->libItem = $this->dto['libItem'];
@@ -55,6 +57,14 @@ class ItemComponent extends BaseLibraryItemPage
             ]);
     }
 
+    #[NoReturn] public function clickVoicing(int $voicingId): void
+    {
+        $voicing = Voicing::find($voicingId);
+        $this->form->voicingId = $voicing->id;
+        $this->form->voicingDescr = $voicing->descr;
+        $this->reset('searchVoicings');
+    }
+
     #[NoReturn] public function findItem(int $libItemId): void
     {
         $this->form->setLibItem(LibItem::find($libItemId));
@@ -67,7 +77,7 @@ class ItemComponent extends BaseLibraryItemPage
 
         $this->reset('errorMessage', 'successMessage');
 
-        $saved = $this->form->save($this->libraryId, self::ITEMTYPES);
+        $saved = $this->form->save($this->libraryId, parent::ITEMTYPES);
 
         //format title for use in success/error messages
         $fTitle = Str::title($this->form->title);
@@ -119,13 +129,16 @@ class ItemComponent extends BaseLibraryItemPage
             $this->form->artistIds['arranger'] = 0;
             $this->libItem->update(['arranger_id' => 0]);
         }
-
-
     }
 
     public function updatedFormTitle(): void
     {
         $this->search();
+    }
+
+    public function updatedFormVoicingDescr(): void
+    {
+        $this->searchVoicing();
     }
 
     private function addItemToLibrary(int $libItemId): void
@@ -144,6 +157,21 @@ class ItemComponent extends BaseLibraryItemPage
         $search = new LibraryStackSearchService($this->form);
 
         $this->searchResults = $search->getResults();
+    }
+
+    private function searchVoicing(): void
+    {
+        $searchValue = '%'.strtolower($this->form->voicingDescr).'%';
+
+        $found = Voicing::where('descr', 'LIKE', $searchValue)->get();
+
+        foreach ($found as $voicing) {
+            $this->searchVoicings[] = [
+                'id' => $voicing->id,
+                'descr' => $voicing->descr,
+            ];
+        }
+
     }
 
 }

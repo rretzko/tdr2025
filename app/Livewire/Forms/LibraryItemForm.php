@@ -54,11 +54,14 @@ class LibraryItemForm extends Form
             'music' => true,
             'wam' => true,
             'words' => true,
+            'voicing' => true,
         ],
     ];
 
     public int $sysId = 0;
     public string $title = '';
+    public string $voicingDescr = '';
+    public int $voicingId = 0;
 
     /**
      * Translate $this->itemType into blade file name counterpart
@@ -93,24 +96,44 @@ class LibraryItemForm extends Form
     {
         $this->artists = [
             'arranger' => '',
+            'choreographer' => '',
             'composer' => '',
+            'music' => '',
+            'wam' => '',
             'words' => '',
         ];
 
         $this->artistIds = [
             'arranger' => 0,
+            'choreographer' => 0,
             'composer' => 0,
+            'music' => 0,
+            'wam' => 0,
             'words' => 0,
         ];
 
-        $this->itemType = 'sheet music';
+        /**
+         * ex: array:1 [▼ // app\Livewire\Forms\LibraryItemForm.php:53
+         * "canEdit" => array:2 [▼
+         * "itemType" => false
+         * "title" => true
+         * ]
+         * ]
+         */
         $this->policies = [
             'canEdit' => [
                 'arranger' => true,
+                'choreographer' => true,
                 'composer' => true,
+                'music' => true,
+                'wam' => true,
                 'words' => true,
+                'voicing' => true,
             ],
         ];
+
+        $this->itemType = 'sheet music';
+
         $this->sysId = 0;
         $this->title = '';
     }

@@ -20,6 +20,7 @@ class LibItem extends Model
         'lib_subtitle_id',
         'lib_title_id',
         'music_id',
+        'voicing_id',
         'wam_id', //words-and-music
         'words_id',
     ];

@@ -4,6 +4,7 @@ namespace App\Services\Libraries;
 
 use App\Livewire\Forms\LibraryItemForm;
 use App\Models\Libraries\Items\Components\LibTitle;
+use App\Models\Libraries\Items\Components\Voicing;
 use App\Models\Libraries\Items\LibItem;
 use App\Models\Schools\Teacher;
 use App\Services\ArtistIdService;
@@ -18,12 +19,14 @@ class CreateLibItemService
     private array $errors = [];
     private string $libTitleId = '';
     private int $teacherId = 0;
+    private int $voicingId = 0;
 
     public function __construct(private readonly LibraryItemForm $form, private readonly array $itemTypes)
     {
         $this->teacherId = $this->setTeacherId();
         $this->itemType = $this->form->itemType;
         $this->libTitleId = $this->getLibTitleId();
+        $this->voicingId = $this->getVoicingId();
 
         $this->errorCheck();
 
@@ -31,6 +34,28 @@ class CreateLibItemService
             $this->add();
         }
 
+    }
+
+    private function add(): void
+    {
+        //use an existing item
+        if ($this->libItemExists()) {
+            $this->libItemId = $this->existingLibItemId();
+        } else {
+
+            //or create a new item
+            $baseItems = [
+                'item_type' => $this->itemType,
+                'lib_title_id' => $this->libTitleId,
+                'voicing_id' => $this->voicingId,
+            ];
+            $artistItems = $this->addArtists();
+            $items = array_merge($baseItems, $artistItems);
+
+            $this->libItemId = LibItem::create($items)->id;
+        }
+
+        $this->saved = (bool) $this->libItemId;
     }
 
     private function addArtistIds(): void
@@ -61,9 +86,28 @@ class CreateLibItemService
         return $a;
     }
 
-    private function setTeacherId(): int
+    private function errorCheck(): void
     {
-        return Teacher::where('user_id', auth()->id())->first()->id;
+        if (!in_array($this->itemType, $this->itemTypes)) {
+            $this->errors[] = 'Invalid item type.';
+        }
+
+        if (!strlen($this->form->title)) {
+            $this->errors[] = 'No title found.';
+        }
+
+        if (!$this->voicingId) {
+            $this->errors[] = 'No voicing found.';
+        }
+    }
+
+    private function existingLibItemId(): int
+    {
+        return LibItem::query()
+            ->where('lib_title_id', $this->libTitleId)
+            ->where('item_type', $this->itemType)
+            ->first()
+            ->id;
     }
 
     private function getLibTitleId(): int
@@ -90,37 +134,34 @@ class CreateLibItemService
         )->id;
     }
 
-    private function errorCheck(): void
+    private function getVoicingId(): int
     {
-        if (!in_array($this->itemType, $this->itemTypes)) {
-            $this->errors[] = 'Invalid item type.';
+        //early exit
+        if ($this->form->voicingId) {
+            return $this->form->voicingId;
         }
 
-        if (!strlen($this->form->title)) {
-            $this->errors[] = 'No title found.';
-        }
-    }
+        $descr = strtolower($this->form->voicingDescr) ?? '';
 
-    private function add(): void
-    {
-        //use an existing item
-        if ($this->libItemExists()) {
-
-            $this->libItemId = $this->existingLibItemId();
-        } else {
-
-            //or create a new item
-            $baseItems = [
-                'item_type' => $this->itemType,
-                'lib_title_id' => $this->libTitleId,
-            ];
-            $artistItems = $this->addArtists();
-            $items = array_merge($baseItems, $artistItems);
-
-            $this->libItemId = LibItem::create($items)->id;
+        if ($descr === '') {
+            return 0;
         }
 
-        $this->saved = (bool)$this->libItemId;
+        $voicing = Voicing::where('descr', $descr)->first();
+
+        //search for existing voicing object
+        if ($voicing) {
+            return $voicing->id;
+        }
+
+        //else create new voicing object
+        return Voicing::create(
+            [
+                'category' => 'choral',
+                'descr' => $descr,
+                'created_by' => auth()->id(),
+            ]
+        )->id;
     }
 
     private function libItemExists(): bool
@@ -131,12 +172,10 @@ class CreateLibItemService
             ->exists();
     }
 
-    private function existingLibItemId(): int
+    private function setTeacherId(): int
     {
-        return LibItem::query()
-            ->where('lib_title_id', $this->libTitleId)
-            ->where('item_type', $this->itemType)
-            ->first()
-            ->id;
+        return Teacher::where('user_id', auth()->id())->first()->id;
     }
+
+
 }
