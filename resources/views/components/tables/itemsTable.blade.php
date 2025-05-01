@@ -72,8 +72,11 @@
                             <div>{{ $row['choreographerName'] }} <span class="text-xs">(choreo)</span></div>
                         @endif
                 </td>
+                <td class="border border-gray-200 px-1 text-center cursor-help">
+                    {{ $row['voicingDescr'] }}
+                </td>
                 <td class="text-center border border-gray-200 px-1">
-                    <x-buttons.edit id="{{ $row['id'] }}" :livewire="true" id="{{ $row['id'] }}"/>
+                    <x-buttons.edit id="{{ $row['libItemId'] }}" :livewire="true" id="{{ $row['libItemId'] }}"/>
                 </td>
                 <td class="text-center border border-gray-200 px-1">
                     <x-buttons.remove id="{{ $row['id'] }}" livewire="1"

@@ -47,10 +47,10 @@ class ItemTableComponent extends BasePage
         return $this->redirect("/library/{$this->dto['id']}/item/new");
     }
 
-    public function edit(int $itemId)
+    public function edit(int $libItemId)
     {
         //ex. "library\1\edit\1"
-        $url = '/library' . DIRECTORY_SEPARATOR . $this->library->id . DIRECTORY_SEPARATOR . 'edit' . DIRECTORY_SEPARATOR . $itemId;
+        $url = DIRECTORY_SEPARATOR.'library'.DIRECTORY_SEPARATOR.$this->library->id.DIRECTORY_SEPARATOR.'edit'.DIRECTORY_SEPARATOR.$libItemId;
 
         return $this->redirect($url);
     }
@@ -77,6 +77,8 @@ class ItemTableComponent extends BasePage
         $properties = [
             'title' => 'lib_titles.alpha',
             'type' => 'lib_items.item_type',
+            'voicing' => 'voicings.descr',
+            'artists' => 'artists.last_name',
         ];
 
         $requestedSort = $properties[$key];
@@ -99,10 +101,11 @@ class ItemTableComponent extends BasePage
     private function getColumnHeaders(): array
     {
         return [
-            ['label' => '###', 'sortBy' => ''],
+            ['label' => '###', 'sortBy' => null],
             ['label' => 'type', 'sortBy' => 'type'],
             ['label' => 'title', 'sortBy' => 'title'],
-            ['label' => 'artists', 'sortBy' => ''],
+            ['label' => 'artists', 'sortBy' => null],
+            ['label' => 'voicing', 'sortBy' => 'voicing'],
         ];
     }
 
@@ -117,6 +120,7 @@ class ItemTableComponent extends BasePage
             ->leftJoin('artists AS words', 'lib_items.words_id', '=', 'words.id')
             ->leftJoin('artists AS music', 'lib_items.music_id', '=', 'music.id')
             ->leftJoin('artists AS choreographer', 'lib_items.choreographer_id', '=', 'choreographer.id')
+            ->leftJoin('voicings', 'lib_items.voicing_id', '=', 'voicings.id')
             ->where('lib_stacks.library_id', $this->library->id)
             ->where(function ($query) {
                 $query->where('lib_titles.title', 'LIKE', $this->likeValue)
@@ -127,13 +131,16 @@ class ItemTableComponent extends BasePage
                     ->orWhere('music.artist_name', 'LIKE', $this->likeValue)
                     ->orWhere('choreographer.artist_name', 'LIKE', $this->likeValue);
             })
-            ->select('lib_stacks.id', 'lib_titles.title', 'lib_titles.alpha', 'lib_items.item_type',
+            ->select('lib_stacks.id',
+                'lib_items.id AS libItemId',
+                'lib_titles.title', 'lib_titles.alpha', 'lib_items.item_type',
                 'composer.alpha_name AS composerName',
                 'arranger.alpha_name AS arrangerName',
                 'wam.alpha_name AS wamName',
                 'words.alpha_name AS wordsName',
                 'music.alpha_name AS musicName',
                 'choreographer.alpha_name AS choreographerName',
+                'voicings.descr AS voicingDescr',
             )
             ->orderBy($this->sortCol, $this->sortAsc ? 'asc' : 'desc')
             ->orderBy('lib_titles.alpha', 'asc')

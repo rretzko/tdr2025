@@ -7,19 +7,28 @@ use App\Models\Libraries\Items\Components\LibTitle;
 use App\Models\Libraries\Items\Components\Voicing;
 use App\Models\Libraries\Items\LibItem;
 use App\Models\Schools\Teacher;
+use App\Models\Libraries\Items\Components\Artist;
 use App\Services\ArtistIdService;
 use Illuminate\Support\Str;
 use JetBrains\PhpStorm\NoReturn;
 
+
 class CreateLibItemService
 {
-    public bool $saved = false;
+    public int|null $arrangerId = null;
+    public int|null $choreographerId = null;
+    public int|null $composerId = null;
+
     public string $itemType = 'sheet music';
     public int $libItemId = 0;
     private array $errors = [];
     private string $libTitleId = '';
+    public int|null $musicId = null;
+    public bool $saved = false;
     private int $teacherId = 0;
     private int $voicingId = 0;
+    public int|null $wamId = null;
+    public int|null $wordsId = null;
 
     public function __construct(private readonly LibraryItemForm $form, private readonly array $itemTypes)
     {
@@ -27,6 +36,12 @@ class CreateLibItemService
         $this->itemType = $this->form->itemType;
         $this->libTitleId = $this->getLibTitleId();
         $this->voicingId = $this->getVoicingId();
+        $this->composerId = $this->getArtistId('composer');
+        $this->arrangerId = $this->getArtistId('arranger');
+        $this->wamId = $this->getArtistId('wam');
+        $this->wordsId = $this->getArtistId('words');
+        $this->musicId = $this->getArtistId('music');
+        $this->choreographerId = $this->getArtistId('choreographer');
 
         $this->errorCheck();
 
@@ -49,7 +64,8 @@ class CreateLibItemService
                 'lib_title_id' => $this->libTitleId,
                 'voicing_id' => $this->voicingId,
             ];
-            $artistItems = $this->addArtists();
+            $artistItems = $this->addArtistIds();
+
             $items = array_merge($baseItems, $artistItems);
 
             $this->libItemId = LibItem::create($items)->id;
@@ -58,33 +74,35 @@ class CreateLibItemService
         $this->saved = (bool) $this->libItemId;
     }
 
-    private function addArtistIds(): void
+    private function addArtistIds(): array
     {
-        foreach ($this->form->artists as $type => $artistName) {
+        return [
+            'composer_id' => $this->composerId,
+            'arranger_id' => $this->arrangerId,
+            'wam_id' => $this->wamId,
+            'words_id' => $this->wordsId,
+            'music_id' => $this->musicId,
+            'choreographer_id' => $this->choreographerId,
+        ];
 
-            if (strlen($artistName)) {
-                $service = new ArtistIdService($artistName);
-                $this->form->artistIds[$type] = $service->getId();
-            }
-        }
     }
 
-    private function addArtists(): array
-    {
-        $a = [];
-        $this->addArtistIds();
-
-        foreach ($this->form->artistIds as $type => $artistId) {
-
-            if ($artistId) {
-                $column = $type.'_id';
-
-                $a[$column] = $artistId;
-            }
-        }
-
-        return $a;
-    }
+//    private function addArtists(): array
+//    {
+//        $a = [];
+//        $this->addArtistIds();
+//
+//        foreach ($this->form->artistIds as $type => $artistId) {
+//
+//            if ($artistId) {
+//                $column = $type.'_id';
+//
+//                $a[$column] = $artistId;
+//            }
+//        }
+//
+//        return $a;
+//    }
 
     private function errorCheck(): void
     {
@@ -106,8 +124,37 @@ class CreateLibItemService
         return LibItem::query()
             ->where('lib_title_id', $this->libTitleId)
             ->where('item_type', $this->itemType)
+            ->where('voicing_id', $this->voicingId)
+            ->where('composer_id', $this->choreographerId)
+            ->where('arranger_id', $this->arrangerId)
+            ->where('wam_id', $this->wamId)
+            ->where('words_id', $this->wordsId)
+            ->where('music_id', $this->musicId)
+            ->where('choreographer_id', $this->choreographerId)
             ->first()
             ->id;
+    }
+
+    private function getArtistId(string $artistType): int|null
+    {
+        $artistName = $this->form->artists[$artistType];
+
+        if (strlen($artistName)) {
+
+            $artist = Artist::where('artist_name', $artistName)->first();
+
+            if ($artist) {
+                return $artist->id;
+            }
+
+            $service = new ArtistIdService($artistName);
+
+            return $service->getId();
+
+        }
+
+        return null;
+
     }
 
     private function getLibTitleId(): int
@@ -169,6 +216,13 @@ class CreateLibItemService
         return LibItem::query()
             ->where('lib_title_id', $this->libTitleId)
             ->where('item_type', $this->itemType)
+            ->where('voicing_id', $this->voicingId)
+            ->where('composer_id', $this->composerId)
+            ->where('arranger_id', $this->arrangerId)
+            ->where('wam_id', $this->wamId)
+            ->where('words_id', $this->wordsId)
+            ->where('music_id', $this->musicId)
+            ->where('choreographer_id', $this->choreographerId)
             ->exists();
     }
 

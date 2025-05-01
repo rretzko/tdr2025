@@ -4,6 +4,7 @@ namespace App\Livewire\Forms;
 
 use App\Models\Libraries\Items\Components\Artist;
 use App\Models\Libraries\Items\Components\LibTitle;
+use App\Models\Libraries\Items\Components\Voicing;
 use App\Models\Libraries\Items\LibItem;
 use App\Models\Libraries\LibStack;
 use App\Services\ArtistIdService;
@@ -154,6 +155,10 @@ class LibraryItemForm extends Form
         $this->policies['canEdit']['composer'] = $this->getPolicy('composer', $libItem);
         $this->policies['canEdit']['words'] = $this->getPolicy('words', $libItem);
 
+        //voicing
+        $this->voicingId = $libItem->voicing_id;
+        $this->voicingDescr = $libItem->voicingDescr;
+
         //artists
         $this->setArtists($libItem);
     }
@@ -272,27 +277,6 @@ class LibraryItemForm extends Form
                 $this->policies['canEdit'][$artistType] = $this->getPolicy($artistType, $libItem);
             }
         }
-//        if ($libItem->composer_id) {
-//            $composer = Artist::find($libItem->composer_id);
-//            $this->artists['composer'] = $composer->artist_name;
-//            $this->artistIds['composer'] = $composer->id;
-//            $this->policies['canEdit']['composer'] = $this->getPolicy('composer', $libItem);
-//        }
-//
-//        if ($libItem->arranger_id) {
-//            $arranger = Artist::find($libItem->arranger_id);
-//            $this->artists['arranger'] = $arranger->artist_name;
-//            $this->artistIds['arranger'] = $arranger->id;
-//            $this->policies['canEdit']['arranger'] = $this->getPolicy('arranger', $libItem);
-//        }
-//
-//        if ($libItem->words_id) {
-//            $words = Artist::find($libItem->words_id);
-//            $this->artists['words'] = $words->artist_name;
-//            $this->artistIds['words'] = $words->id;
-//            $this->policies['canEdit']['words'] = $this->getPolicy('words', $libItem);
-//        }
-
     }
 
     private function update(int $libraryId): int
@@ -300,6 +284,7 @@ class LibraryItemForm extends Form
         $libItem = LibItem::find($this->sysId);
         $this->updateLibTitle($libItem, LibTitle::find($libItem->lib_title_id));
         $this->updateLibArtists($libItem);
+        $this->updateVoicing($libItem);
 
         return $libItem->id;
     }
@@ -318,26 +303,6 @@ class LibraryItemForm extends Form
 
         $libItem->save();
 
-        //early exit
-//        if ($libTitle->title === $this->title) {
-//            return true;
-//        }
-//
-//        $newLibTitleId = (LibTitle::where('title', $this->title)->exists())
-//            ? LibTitle::where('title', $this->title)->first()->id
-//            : LibTitle::create(
-//                [
-//                    'teacher_id' => auth()->id(),
-//                    'title' => $this->title,
-//                    'alpha' => MakeAlphaService::alphabetize($this->title),
-//                ]
-//            )->id;
-//
-//        return $libItem->update(
-//            [
-//                'lib_title_id' => $newLibTitleId,
-//            ]
-//        );
     }
 
     private function updateLibTitle(LibItem $libItem, LibTitle $libTitle): bool
@@ -362,6 +327,25 @@ class LibraryItemForm extends Form
                 'lib_title_id' => $newLibTitleId,
             ]
         );
+    }
+
+    private function updateVoicing(LibItem $libItem): void
+    {
+        $voicingDescr = strtolower($this->voicingDescr);
+        $voicing = Voicing::where('descr', $voicingDescr)->first();
+
+        if (!$voicing) {
+            $voicing = Voicing::create([
+                'category' => 'choral',
+                'descr' => $voicingDescr,
+                'created_by' => auth()->id(),
+            ]);
+        }
+
+        if ($voicing) {
+            $libItem->voicing_id = $voicing->id;
+            $libItem->save();
+        }
     }
 
     private function makeArtistIds(): void
