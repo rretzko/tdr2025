@@ -161,6 +161,7 @@ class LibraryItemForm extends Form
 
         //artists
         $this->setArtists($libItem);
+
     }
 
     private function add(int $libraryId, array $itemTypes): int
