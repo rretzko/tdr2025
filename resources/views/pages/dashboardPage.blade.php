@@ -22,7 +22,7 @@
 
                     @forelse($dto['cards'] AS $card)
                         {{-- temporarily suppress display of ensemble and library cards except for founder --}}
-                        @if(in_array($card['label'], ['ensembles', 'libraries']) && (! auth()->user()->hasLibrary()))
+                        @if(in_array($card['label'], ['ensembles', 'libraries', 'programs']) && (! auth()->user()->hasLibrary()))
                             {{--                        @if(1 == 2)--}}
                             {{-- suppress display --}}
                         @else

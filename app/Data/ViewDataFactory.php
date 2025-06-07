@@ -239,7 +239,7 @@ class ViewDataFactory extends aViewData
         //bool
         $hasAllGrades = count($grades) && $gradesITeach->count();
 
-        $suppressedCards = ['ensembles', 'events', 'libraries', 'students',];
+        $suppressedCards = ['ensembles', 'events', 'libraries', 'students', 'programs'];
         if (!$hasAllGrades) {
             foreach ($cards as $key => $card) {
                 if (in_array($card['label'], $suppressedCards)) {
