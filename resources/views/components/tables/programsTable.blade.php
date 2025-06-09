@@ -42,11 +42,18 @@
                 <td class="border border-gray-200 px-1 text-center cursor-help" title="">
                     <a href="{{ route('library.items', ['library' => $row->id]) }}"
                        class="text-blue-600 font-bold hover:underline">
-                        {{ $row->name }}
+                        {{ $row->school_year }}
                     </a>
                 </td>
                 <td class="border border-gray-200 px-1">
-                    {{ $row->schoolName ?? $row->name}}
+                    <div>{{ $row->title }}</div>
+                    <div class="ml-2 text-sm">{{ $row->subtitle }}</div>
+                </td>
+                <td class="border border-gray-200 px-1 text-sm text-right min-w-24 ">
+                    {{ $row->humanPerformanceDate }}
+                </td>
+                <td class="border border-gray-200 px-1 text-sm">
+                    {{ implode(', ', $row->tags->sortBy('name')->pluck('name')->toArray()) }}
                 </td>
                 <td @class(["text-center border border-gray-200", "border-transparent" => ($row->name === 'Home Library')])>
                     @if($row->name !== "Home Library")

@@ -164,6 +164,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //PROGRAMS
     Route::get('programs', \App\Http\Controllers\Programs\ProgramController::class)
         ->name('programs');
+    Route::get('program/new', \App\Http\Controllers\Programs\ProgramNewController::class)
+        ->name('programs.new');
 
     //REHEARSALMANAGER.PARTICIPATION_FEES
     Route::get('rehearsalManager/participationFees',

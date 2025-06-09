@@ -6,9 +6,11 @@ use App\Models\Libraries\Items\Components\Artist;
 use App\Models\Libraries\Items\Components\LibTitle;
 use App\Models\Libraries\Items\Components\Voicing;
 use App\Models\Libraries\LibStack;
+use App\Models\Tag;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class LibItem extends Model
 {
@@ -43,5 +45,10 @@ class LibItem extends Model
     public function getVoicingDescrAttribute(): string
     {
         return Voicing::find($this->voicing_id)->descr ?? '';
+    }
+
+    public function tags(): MorphToMany
+    {
+        return $this->morphToMany(Tag::class, 'taggable');
     }
 }

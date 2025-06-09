@@ -235,6 +235,11 @@ Breadcrumbs::for('programs', function (BreadcrumbTrail $trail) {
     $trail->push('Programs', route('programs'));
 });
 
+Breadcrumbs::for('program new', function (BreadcrumbTrail $trail) {
+    $trail->parent('programs');
+    $trail->push('Program New', route('programs.new'));
+});
+
 // Founder
 Breadcrumbs::for('founder page', function (BreadcrumbTrail $trail) {
     $trail->parent('home');

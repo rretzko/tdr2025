@@ -18,7 +18,7 @@
             <div>{{ ucwords($dto['header']) }}</div>
             <button
                 type="button"
-                wire:click="clickForm"
+                wire:click="addNew"
                 class="bg-green-500 text-white text-3xl px-2 rounded-lg"
                 title="Add New"
                 tabindex="-1"
