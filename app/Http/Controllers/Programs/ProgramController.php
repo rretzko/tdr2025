@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Libraries;
+namespace App\Http\Controllers\Programs;
 
 use App\Data\ViewDataFactory;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class LibraryController extends Controller
+class ProgramController extends Controller
 {
     public function __invoke(Request $request)
     {

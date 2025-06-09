@@ -31,7 +31,7 @@ class LibrariesTableComponent extends BasePage
     private function getColumnHeaders(): array
     {
         return [
-            ['label' => '###', 'sortBy' => ''],
+            ['label' => '###', 'sortBy' => null],
             ['label' => 'name', 'sortBy' => 'name'],
             ['label' => 'school', 'sortBy' => 'school'],
         ];

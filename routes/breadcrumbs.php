@@ -229,6 +229,12 @@ Breadcrumbs::for('profile', function (BreadcrumbTrail $trail) {
     $trail->push('Profile', route('profile.edit'));
 });
 
+// Programs
+Breadcrumbs::for('programs', function (BreadcrumbTrail $trail) {
+    $trail->parent('home');
+    $trail->push('Programs', route('programs'));
+});
+
 // Founder
 Breadcrumbs::for('founder page', function (BreadcrumbTrail $trail) {
     $trail->parent('home');

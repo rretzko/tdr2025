@@ -161,6 +161,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('pitchFiles', \App\Http\Controllers\Events\Versions\Participations\PitchFileController::class)
         ->name('pitchFiles');
 
+    //PROGRAMS
+    Route::get('programs', \App\Http\Controllers\Programs\ProgramController::class)
+        ->name('programs');
+
     //REHEARSALMANAGER.PARTICIPATION_FEES
     Route::get('rehearsalManager/participationFees',
         \App\Http\Controllers\Events\Versions\RehearsalManagers\ParticipationFeeController::class)
