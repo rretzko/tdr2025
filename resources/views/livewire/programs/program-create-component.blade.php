@@ -38,6 +38,7 @@
                         name="form.schoolYear"
                         :options="$schoolYears"
                         required="required"
+                        autofocus="true"
                     />
 
                     {{-- PROGRAM TITLE --}}
@@ -75,12 +76,31 @@
 
             </div>
 
+            @if($successMessage)
+                <div class="px-2 text-sm italic bg-green-100 text-green-800 w-fit rounded-lg">
+                    {{ $successMessage }}
+                </div>
+            @endif
+
+            @if($programExistsMessage)
+                <div class="px-2 text-sm italic bg-red-100 text-red-800 w-fit rounded-lg">
+                    {!! $programExistsMessage !!}
+                </div>
+            @endif
+
             {{-- SUBMIT --}}
-            <div class="flex flex-col mt-2 max-w-xs">
+            <div class="flex flex-row mt-2 space-x-4 max-w-xs">
                 <button type="submit"
                         class="bg-gray-800 text-white px-2 rounded-full disabled:cursor-not-allowed disabled:opacity-50"
                 >
                     Submit
+                </button>
+
+                <button type="button"
+                        class="bg-gray-800 text-white px-2 rounded-full disabled:cursor-not-allowed disabled:opacity-50"
+                        wire:click="saveAndStay()"
+                >
+                    Submit and Stay on Page
                 </button>
             </div>
 

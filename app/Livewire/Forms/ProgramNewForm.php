@@ -4,6 +4,7 @@ namespace App\Livewire\Forms;
 
 use App\Models\Programs\Program;
 use App\Models\Tag;
+use App\Models\UserConfig;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
 use phpDocumentor\Reflection\Types\Integer;
@@ -18,6 +19,18 @@ class ProgramNewForm extends Form
     public string|int $sysId = '';
     public string $tags = '';
 
+    public function resetVars(): void
+    {
+        $this->performanceDate = "";
+        $this->programSubtitle = "";
+        $this->programTitle = "";
+        $this->schoolId = UserConfig::getValue('schoolId');
+        //persist the selected school year
+//        $this->schoolYear = 0;
+        $this->sysId = 'new';
+        $this->tags = '';
+    }
+
     public function save(): bool
     {
         $this->validate([
@@ -26,6 +39,10 @@ class ProgramNewForm extends Form
             'schoolId' => 'required|integer|exists:schools,id',
             'schoolYear' => 'required|integer|min:1960|max:2099',
         ]);
+
+        if ($this->programExists()) {
+            return false;
+        }
 
         $tags = $this->parseTagIds();
 
@@ -61,6 +78,15 @@ class ProgramNewForm extends Form
         }
 
         return $tags->pluck('id')->toArray();
+    }
+
+    private function programExists(): bool
+    {
+        return Program::query()
+            ->where('title', $this->programTitle)
+            ->where('school_id', $this->schoolId)
+            ->where('school_year', $this->schoolYear)
+            ->exists();
     }
 
 }

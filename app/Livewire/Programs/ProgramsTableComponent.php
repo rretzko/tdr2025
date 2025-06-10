@@ -27,6 +27,11 @@ class ProgramsTableComponent extends BasePage
         $this->redirect(route('programs.new'));
     }
 
+    public function edit(int $programId): void
+    {
+        $this->redirect(route('program.edit', $programId));
+    }
+
     private function getColumnHeaders(): array
     {
         return [

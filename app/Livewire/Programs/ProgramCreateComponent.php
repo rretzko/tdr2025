@@ -12,6 +12,7 @@ class ProgramCreateComponent extends BasePage
 {
     public ProgramNewForm $form;
     public int $curSeniorYear = 0;
+    public string $programExistsMessage = '';
     public array $schools = [];
     public array $schoolYears = [];
 
@@ -60,7 +61,30 @@ class ProgramCreateComponent extends BasePage
 
         if ($saved) {
             $this->redirect(route('programs'));
+        } else {
+            $this->programExistsMessage = '<b>'.$this->form->programTitle.'</b> program already exists.';
         }
     }
 
+    public function saveAndStay(): void
+    {
+        $saved = $this->form->save();
+
+        if ($saved) {
+            $this->form->resetVars();
+            $this->successMessage = 'Program successfully created.';
+        } else {
+            $this->programExistsMessage = '<b>'.$this->form->programTitle.'</b> program already exists.';
+        }
+    }
+
+    /**
+     * Reset successMessage and programExistsMessage to blanks
+     * whenever a form property is updated
+     * @return void
+     */
+    public function updatedForm(): void
+    {
+        $this->reset(['successMessage', 'programExistsMessage']);
+    }
 }
