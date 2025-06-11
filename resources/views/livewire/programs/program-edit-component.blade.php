@@ -1,5 +1,5 @@
 <div class="px-4">
-    <h2>Add New Program</h2>
+    <h2>Edit Existing Program</h2>
 
     <x-pageInstructions.instructions instructions="{!! $pageInstructions !!}" firstTimer="{{ $firstTimer }}"/>
 
@@ -85,14 +85,14 @@
                 <button type="submit"
                         class="bg-gray-800 text-white px-2 rounded-full disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                    Submit
+                    Update
                 </button>
 
                 <button type="button"
                         class="bg-gray-800 text-white px-2 rounded-full disabled:cursor-not-allowed disabled:opacity-50"
                         wire:click="saveAndStay()"
                 >
-                    Submit and Stay on Page
+                    Update and Stay on Page
                 </button>
             </div>
 
@@ -103,3 +103,4 @@
         </div>
     </form>
 </div>
+

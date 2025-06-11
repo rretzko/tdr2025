@@ -11,6 +11,7 @@ use phpDocumentor\Reflection\Types\Integer;
 
 class ProgramNewForm extends Form
 {
+    public Program $program;
     public string $performanceDate = "";
     public string $programSubtitle = "";
     public string $programTitle = "";
@@ -33,12 +34,7 @@ class ProgramNewForm extends Form
 
     public function save(): bool
     {
-        $this->validate([
-            'performanceDate' => 'required',
-            'programTitle' => 'required',
-            'schoolId' => 'required|integer|exists:schools,id',
-            'schoolYear' => 'required|integer|min:1960|max:2099',
-        ]);
+        $this->validateVars();
 
         if ($this->programExists()) {
             return false;
@@ -60,6 +56,29 @@ class ProgramNewForm extends Form
         }
 
         return false;
+    }
+
+    public function update(): bool
+    {
+        $this->validateVars();
+
+        $tags = $this->parseTagIds();
+
+        //if school year is unchanged, update properties OR
+        //if the school year HAS changed and no identical program exists for the changed school year, update properties
+        //else return false
+        if (
+            $this->schoolYear == $this->program->school_year ||
+            !$this->programExists()
+        ) {
+            $this->updateProgramObject();
+            $this->program->tags()->sync($tags);
+        } else {
+            return false;
+        }
+
+
+        return true;
     }
 
     private function parseTagIds(): array
@@ -87,6 +106,27 @@ class ProgramNewForm extends Form
             ->where('school_id', $this->schoolId)
             ->where('school_year', $this->schoolYear)
             ->exists();
+    }
+
+    private function updateProgramObject(): void
+    {
+        $this->program->update([
+            'title' => $this->programTitle,
+            'subtitle' => $this->programSubtitle,
+            'school_id' => $this->schoolId,
+            'school_year' => $this->schoolYear,
+            'performance_date' => $this->performanceDate,
+        ]);
+    }
+
+    private function validateVars(): void
+    {
+        $this->validate([
+            'performanceDate' => 'required',
+            'programTitle' => 'required',
+            'schoolId' => 'required|integer|exists:schools,id',
+            'schoolYear' => 'required|integer|min:1960|max:2099',
+        ]);
     }
 
 }

@@ -235,6 +235,11 @@ Breadcrumbs::for('programs', function (BreadcrumbTrail $trail) {
     $trail->push('Programs', route('programs'));
 });
 
+Breadcrumbs::for('program edit', function (BreadcrumbTrail $trail, $id) {
+    $trail->parent('programs');
+    $trail->push('Program Edit', route('programs.edit', $id));
+});
+
 Breadcrumbs::for('program new', function (BreadcrumbTrail $trail) {
     $trail->parent('programs');
     $trail->push('Program New', route('programs.new'));

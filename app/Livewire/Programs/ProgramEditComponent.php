@@ -2,27 +2,23 @@
 
 namespace App\Livewire\Programs;
 
-use App\Livewire\Forms\ProgramNewForm;
-use App\Models\UserConfig;
-
-
-class ProgramCreateComponent extends ProgramsBasePage
+class ProgramEditComponent extends ProgramsBasePage
 {
     public function mount(): void
     {
         parent::mount();
 
-        //set form defaults
-        $this->form->sysId = 'new';
+        $this->form->sysId = $this->dto['programId'];
     }
+
     public function render()
     {
-        return view('livewire..programs.program-create-component');
+        return view('livewire..programs.program-edit-component');
     }
 
     public function save(): void
     {
-        $saved = $this->form->save();
+        $saved = $this->form->update();
 
         if ($saved) {
             $this->redirect(route('programs'));
@@ -33,11 +29,11 @@ class ProgramCreateComponent extends ProgramsBasePage
 
     public function saveAndStay(): void
     {
-        $saved = $this->form->save();
+        $saved = $this->form->update();
 
         if ($saved) {
             $this->form->resetVars();
-            $this->successMessage = 'Program successfully created.';
+            $this->successMessage = 'Program successfully updated.';
         } else {
             $this->updateProgramExistsMessage();
         }
