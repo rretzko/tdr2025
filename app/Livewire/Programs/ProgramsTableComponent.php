@@ -34,6 +34,19 @@ class ProgramsTableComponent extends BasePage
         $this->sortColLabel = 'schoolYear';
         $this->primarySort = 'school_year';
         $this->sortAsc = false;
+
+        //search
+        $this->hasSearch = true;
+    }
+
+    public function render()
+    {
+        Log::info('searchValue: '.$this->search);
+        return view('livewire..programs.programs-table-component',
+            [
+                'rows' => $this->getRows(),
+            ]
+        );
     }
 
     public function addNew(): void
@@ -65,7 +78,11 @@ class ProgramsTableComponent extends BasePage
 
         $this->primarySort = $map[$sortBy];
         $this->sortAsc = !$this->sortAsc;
+    }
 
+    public function updateSearchCriteria(): void
+    {
+        $this->getRows();
     }
 
     public function view(int $programId): void
@@ -84,19 +101,12 @@ class ProgramsTableComponent extends BasePage
         ];
     }
 
-    public function render()
-    {
-        return view('livewire..programs.programs-table-component',
-            [
-                'rows' => $this->getRows(),
-            ]
-        );
-    }
-
     private function getRows(): Collection
     {
+        //primary sort direction
         $direction = $this->sortAsc ? 'asc' : 'desc';
 
+        //secondary sort & secondary sort direction
         //performance_date descending is the standard secondary sort EXCEPT
         //when $this->primarySort === 'performance_date'.
         //If $this->primarySort === 'performnace_date', the secondary sort will
@@ -108,11 +118,83 @@ class ProgramsTableComponent extends BasePage
             $secondarySortOrder = $direction;
         }
 
+        //search
+        $search = $this->search
+            ? "%{$this->search}%"
+            : "%%";
+
+        $songTitle = $this->parseSearchForSongTitle();
+        $search = (strlen($songTitle))
+            ? $this->removeSongTitleFromSearch()
+            : $this->search;
+        $years = $this->parseSearchForSchoolYears($search);
+        $tags = $this->parseSearchForTags($search);
+
         return Program::query()
             ->where('school_id', $this->schoolId)
             ->whereIn('school_id', $this->filters->schoolsSelectedIds)
+            ->where(function ($query) use ($search, $tags, $years) {
+                $query->whereIn('school_year', $years)
+                    ->orWhere('title', 'like', $search)
+                    ->orWhereHas('tags', function ($q) use ($tags) {
+                        $q->whereIn('name', $tags);
+                    });
+            })
             ->orderBy($this->primarySort, $direction)
             ->orderBy($secondarySort, $secondarySortOrder)
             ->get();
+    }
+
+    private function parseSearchForSongTitle(): string
+    {
+        // Extract the value between quotes
+        preg_match('/"([^"]*)"/', $this->search, $matches);
+
+        if (isset($matches[1])) {
+            return $matches[1];
+        }
+
+        return '';
+
+    }
+
+    private function parseSearchForSchoolYears(): array
+    {
+        $parts = $this->parseSearchForTags();
+        $years = [];
+        foreach ($parts as $part) {
+
+            if ((strlen($part) === 4) &&
+                is_numeric($part[0]) &&
+                ($part >= 1960) &&
+                ($part <= 2099)
+            ) {
+                $years[] = $part;
+            }
+
+        }
+
+        return $years;
+    }
+
+    private function parseSearchForTags(): array
+    {
+        return explode(' ', $this->search);
+    }
+
+    private function removeSongTitleFromSearch(): string
+    {
+        // Extract the value between quotes
+        preg_match('/"([^"]*)"/', $this->search, $matches);
+
+        if (isset($matches[1])) {
+
+            // Remove the quoted part (including quotes) from the original string
+            $strWithoutQuotes = preg_replace('/"[^"]*"/', '', $this->search);
+
+            return trim($strWithoutQuotes);
+        }
+
+        return '';
     }
 }

@@ -5,8 +5,21 @@
 
     {{-- SEARCH --}}
     @if($hasSearch)
-        <div class="px-4 w-11/12">
-            <input class="w-3/4" type="text" placeholder="Search"/>
+        <div class="px-4 w-11/12 space-x-2">
+            <input wire:model="search"
+                   class="w-3/4"
+                   type="text"
+                   placeholder="Search by program title, school year, tag, and song title"
+                   aria-label="Search"
+            />
+            <button
+                wire:click="updateSearchCriteria"
+                type="button"
+                class="bg-black text-white px-2 rounded-lg"
+            >
+                Search
+            </button>
+
         </div>
     @endif
 
