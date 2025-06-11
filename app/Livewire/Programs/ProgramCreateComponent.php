@@ -2,10 +2,6 @@
 
 namespace App\Livewire\Programs;
 
-use App\Livewire\Forms\ProgramNewForm;
-use App\Models\UserConfig;
-
-
 class ProgramCreateComponent extends ProgramsBasePage
 {
     public function mount(): void

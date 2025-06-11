@@ -9,7 +9,7 @@ use Livewire\Attributes\Validate;
 use Livewire\Form;
 use phpDocumentor\Reflection\Types\Integer;
 
-class ProgramNewForm extends Form
+class ProgramForm extends Form
 {
     public Program $program;
     public string $performanceDate = "";

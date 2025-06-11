@@ -3,14 +3,14 @@
 namespace App\Livewire\Programs;
 
 use App\Livewire\BasePage;
-use App\Livewire\Forms\ProgramNewForm;
+use App\Livewire\Forms\ProgramForm;
 use App\Models\Programs\Program;
 use App\Models\UserConfig;
 use App\Services\CalcSeniorYearService;
 
 class ProgramsBasePage extends BasePage
 {
-    public ProgramNewForm $form;
+    public ProgramForm $form;
     public int $curSeniorYear;
     public Program $program;
     public string $programExistsMessage = '';
@@ -23,14 +23,19 @@ class ProgramsBasePage extends BasePage
         $this->schoolYears = $this->getSchoolYears();
 
         //set $form defaults
-        $this->program = Program::find($this->dto['programId']);
-        $this->form->program = $this->program;
-        $this->form->programTitle = $this->program->title;
-        $this->form->programSubtitle = $this->program->subtitle;
-        $this->form->schoolYear = $this->program->school_year;
-        $this->form->schoolId = $this->program->school_id;
-        $this->form->tags = implode(',', $this->program->tags->pluck('name')->toArray());
-        $this->form->performanceDate = $this->program->performance_date;
+        if (array_key_exists('programId', $this->dto)) {
+            $this->program = Program::find($this->dto['programId']);
+            $this->form->program = $this->program;
+            $this->form->programTitle = $this->program->title;
+            $this->form->programSubtitle = $this->program->subtitle;
+            $this->form->schoolYear = $this->program->school_year;
+            $this->form->schoolId = $this->program->school_id;
+            $this->form->tags = implode(',', $this->program->tags->pluck('name')->toArray());
+            $this->form->performanceDate = $this->program->performance_date;
+        } else {
+            $this->form->schoolId = UserConfig::getValue('schoolId');
+        }
+
 
     }
 

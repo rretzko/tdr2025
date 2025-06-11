@@ -55,6 +55,14 @@
                 <td class="border border-gray-200 px-1 text-sm">
                     {{ implode(', ', $row->tags->sortBy('name')->pluck('name')->toArray()) }}
                 </td>
+                <td class="text-center border border-gray-200">
+                    <button wire:click="view({{ $row->id }})"
+                            type="button"
+                            class="bg-green-600 text-white text-xs px-2 rounded-full hover:bg-green-700"
+                    >
+                        View
+                    </button>
+                </td>
                 <td @class(["text-center border border-gray-200", "border-transparent" => ($row->name === 'Home Library')])>
                     @if($row->name !== "Home Library")
                         <x-buttons.edit id="{{ $row->id }}" :livewire="true" id="{{ $row->id }}"/>
@@ -63,7 +71,7 @@
                 <td @class(["text-center border border-gray-200", "border-transparent" => ($row->name === 'Home Library')])>
                     @if($row->name !== "Home Library")
                         <x-buttons.remove id="{{ $row->id }}" livewire="1"
-                                          message="Removing this library will unlink ALL associated items (music, books, cds, etc). Are you sure you want to remove this?"/>
+                                          message="Removing this program will unlink ALL associated items (ensembles, students, songs, etc) while leaving those items intact. Are you sure you want to remove this?"/>
                     @endif
                 </td>
             </tr>

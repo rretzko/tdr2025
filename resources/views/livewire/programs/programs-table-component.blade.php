@@ -40,11 +40,6 @@
             {{-- FORMS AND TABLE--}}
             <div class="flex flex-col">
 
-                {{-- FORMS --}}
-                @if($displayForm)
-                    @include('components.forms.libraries.libraryForm')
-                @endif
-
                 {{-- TABLE --}}
                 <div>
                     @include('components.tables.programsTable')
