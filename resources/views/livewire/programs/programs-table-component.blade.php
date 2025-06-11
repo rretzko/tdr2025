@@ -5,20 +5,28 @@
 
     {{-- SEARCH --}}
     @if($hasSearch)
-        <div class="px-4 w-11/12 space-x-2">
-            <input wire:model="search"
-                   class="w-3/4"
-                   type="text"
-                   placeholder="Search by program title, school year, tag, and song title"
-                   aria-label="Search"
-            />
-            <button
-                wire:click="updateSearchCriteria"
-                type="button"
-                class="bg-black text-white px-2 rounded-lg"
-            >
-                Search
-            </button>
+        <div class="px-4 w-11/12 ">
+            <div class="flex flex-col">
+                <div class="flex flex-row w-full space-x-2 ">
+                    <input wire:model="search"
+                           class="w-3/4"
+                           type="text"
+                           placeholder="Search by program title, school year, tag, and song title"
+                           aria-label="Search"
+                    />
+                    <button
+                        wire:click="updateSearchCriteria"
+                        type="button"
+                        class="bg-black text-white px-2 rounded-lg"
+                    >
+                        Search
+                    </button>
+                </div>
+                <div id="hint" class="text-xs italic">
+                    Place multi-word song title between double-quotes (ex: "Battle Hymn of the Republic")
+                </div>
+            </div>
+
 
         </div>
     @endif

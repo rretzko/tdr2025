@@ -118,24 +118,25 @@ class ProgramsTableComponent extends BasePage
             $secondarySortOrder = $direction;
         }
 
-        //search
-        $search = $this->search
-            ? "%{$this->search}%"
-            : "%%";
-
+        //isolate song title (value between quotes)
         $songTitle = $this->parseSearchForSongTitle();
+
+        //remove song title (if any) from $this->search string
         $search = (strlen($songTitle))
             ? $this->removeSongTitleFromSearch()
             : $this->search;
+
+        //isolate school_years from remaining $search string
         $years = $this->parseSearchForSchoolYears($search);
+
+        //isolate tags from individual words in remaining $search string
         $tags = $this->parseSearchForTags($search);
 
         return Program::query()
-            ->where('school_id', $this->schoolId)
             ->whereIn('school_id', $this->filters->schoolsSelectedIds)
             ->where(function ($query) use ($search, $tags, $years) {
                 $query->whereIn('school_year', $years)
-                    ->orWhere('title', 'like', $search)
+                    ->orWhere('title', 'like', "%$search%")
                     ->orWhereHas('tags', function ($q) use ($tags) {
                         $q->whereIn('name', $tags);
                     });
@@ -158,9 +159,9 @@ class ProgramsTableComponent extends BasePage
 
     }
 
-    private function parseSearchForSchoolYears(): array
+    private function parseSearchForSchoolYears(string $search): array
     {
-        $parts = $this->parseSearchForTags();
+        $parts = $this->parseSearchForTags($search);
         $years = [];
         foreach ($parts as $part) {
 
@@ -177,9 +178,13 @@ class ProgramsTableComponent extends BasePage
         return $years;
     }
 
-    private function parseSearchForTags(): array
+    private function parseSearchForTags(string $search): array
     {
-        return explode(' ', $this->search);
+        if (strlen($search)) {
+            return explode(' ', $search);
+        }
+
+        return [];
     }
 
     private function removeSongTitleFromSearch(): string
