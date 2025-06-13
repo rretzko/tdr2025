@@ -166,9 +166,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('programs');
     Route::get('program/new', \App\Http\Controllers\Programs\ProgramNewController::class)
         ->name('programs.new');
-    Route::get('program/edit/{program}', \App\Http\Controllers\Programs\ProgramShowController::class)
+    Route::get('program/edit/{program}', \App\Http\Controllers\Programs\ProgramEditController::class)
         ->name('programs.edit');
-    Route::get('program/show/{program}', \App\Http\Controllers\Programs\ProgramEditController::class)
+    Route::get('program/view/{program}', \App\Http\Controllers\Programs\ProgramShowController::class)
         ->name('programs.show');
 
     //REHEARSALMANAGER.PARTICIPATION_FEES

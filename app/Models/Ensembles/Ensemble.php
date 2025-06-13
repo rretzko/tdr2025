@@ -96,4 +96,17 @@ class Ensemble extends Model
             ->pluck('student_id')
             ->toArray();
     }
+
+    public static function makeEnsembleNameAbbreviation(string $ensembleName): string
+    {
+        $abbr = '';
+        $words = explode(' ', $ensembleName);
+        foreach ($words as $word) {
+            if (!empty($word)) {
+                $abbr .= strtoupper($word[0]);
+            }
+        }
+
+        return $abbr;
+    }
 }

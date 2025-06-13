@@ -29,6 +29,12 @@ class Program extends Model
             ->format('M j, Y');
     }
 
+    public function getHumanPerformanceDateLongAttribute(): string
+    {
+        return Carbon::parse($this->performance_date)
+            ->format('F j, Y');
+    }
+
     public function school(): BelongsTo
     {
         return $this->belongsTo(School::class);

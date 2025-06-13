@@ -368,6 +368,7 @@ class ViewDataFactory extends aViewData
 
             'program edit' => 'programs.program-edit-component',
             'program new' => 'programs.program-create-component',
+            'program view' => 'programs.program-view-component',
             'programs' => 'programs.programs-table-component',
 
             'event edit' => 'events.event-edit-component',
