@@ -9,6 +9,7 @@ use App\Models\Libraries\Items\Components\Artist;
 use App\Models\Libraries\Items\Components\LibTitle;
 use App\Models\Libraries\Items\LibItem;
 use App\Models\Programs\Program;
+use App\Models\Programs\ProgramSelection;
 use App\Models\Schools\GradesITeach;
 use App\Models\Schools\Teacher;
 use Illuminate\Database\Eloquent\Collection;
@@ -56,15 +57,6 @@ class ProgramViewComponent extends BasePage
 //        $this->resultsSelectionTitle = collect();
     }
 
-    private function getEnsembles(): array
-    {
-        return Ensemble::query()
-            ->where('school_id', $this->program->school_id)
-            ->orderBy('name')
-            ->pluck('name', 'id')
-            ->toArray();
-    }
-
     public function render()
     {
         return view('livewire..programs.program-view-component');
@@ -75,12 +67,18 @@ class ProgramViewComponent extends BasePage
         $artist = Artist::find($artistId);
     }
 
-    public function clickTitle(int $libTitleId): void
+    public function clickTitle(int $libItemId): void
     {
-        $libTitle = LibTitle::find($libTitleId);
-        $this->selectionTitle = $libTitle->title;
-        $this->reset('selectionTitleResults');
-        $this->form->libTitleId = $libTitleId;
+        ProgramSelection::create(
+            [
+                'program_id' => $this->dto['programId'],
+                'lib_item_id' => $libItemId,
+                'ensemble_id' => $this->form->ensembleId,
+                'order_by' => $this->form->performanceOrderBy,
+            ]
+        );
+
+        $this->redirect('/programs');
     }
 
     /**
@@ -144,11 +142,21 @@ class ProgramViewComponent extends BasePage
             ->value('id');
     }
 
+    private function getEnsembles(): array
+    {
+        return Ensemble::query()
+            ->where('school_id', $this->program->school_id)
+            ->orderBy('name')
+            ->pluck('name', 'id')
+            ->toArray();
+    }
+
     public function updatedSelectionTitle(): void
     {
         $this->resultsSelectionTitle = LibItem::query()
             ->join('lib_titles', 'lib_items.lib_title_id', '=', 'lib_titles.id')
             ->where('lib_titles.title', 'LIKE', '%'.$this->selectionTitle.'%')
+            ->select('lib_items.*', 'lib_titles.title')
             ->orderBy('lib_titles.title')
             ->get();
     }

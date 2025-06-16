@@ -157,19 +157,6 @@
                                 >
                                     <div>
                                         {!! $libItem->longLink() !!}
-                                        {{--                                        <div>--}}
-                                        {{--                                        {{ $libItem->title }} ({{ $libItem->voicingDescr }})--}}
-                                        {{--                                        </div>--}}
-                                        {{--                                        @if($libItem->composer())--}}
-                                        {{--                                            <div class="ml-2">--}}
-                                        {{--                                                <b>{{ $libItem->composer()->alpha_name }}</b>--}}
-                                        {{--                                            </div>--}}
-                                        {{--                                        @endif--}}
-                                        {{--                                        @if($libItem->arranger())--}}
-                                        {{--                                            <div class="ml-2">--}}
-                                        {{--                                                {{ $libItem->arranger()->alpha_name }} (arr)--}}
-                                        {{--                                            </div>--}}
-                                        {{--                                        @endif--}}
                                     </div>
                                 </button>
                             @endforeach
