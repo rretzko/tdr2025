@@ -142,18 +142,39 @@
                 <div>
                     <label>Selection Title</label>
                     <x-forms.elements.livewire.programComponents.selectionTitle/>
-                    <div id="selectionTitleResults" class="flex flex-col ml-2 mt-1 text-xs">
-                        @foreach($resultsSelectionTitle AS $key=>$title)
-                            <button
-                                type="button"
-                                wire:click="clickTitle({{ $key }})"
-                                class="text-left text-blue-500 border-gray-200"
-                                wire:key="selectionTitleId_{{ $key }}"
-                            >
-                                <div>{{ $title }}</div>
-                            </button>
-                        @endforeach
-                    </div>
+                    @if($resultsSelectionTitle)
+                        <div id="selectionTitleResults" class="flex flex-col ml-2 mt-1 text-xs">
+                            @foreach($resultsSelectionTitle AS $libItem)
+                                <button
+                                    type="button"
+                                    wire:click="clickTitle({{ $libItem->id }})"
+                                    @class([
+                                        "text-left text-blue-500 p-1 rounded-lg mb-0.5",
+                                        'bg-gray-200 border border-gray-300' => $loop->even,
+                                        'border border-gray-300' => $loop->odd
+                                        ])
+                                    wire:key="libItemId_{{ $libItem->id }}"
+                                >
+                                    <div>
+                                        {!! $libItem->longLink() !!}
+                                        {{--                                        <div>--}}
+                                        {{--                                        {{ $libItem->title }} ({{ $libItem->voicingDescr }})--}}
+                                        {{--                                        </div>--}}
+                                        {{--                                        @if($libItem->composer())--}}
+                                        {{--                                            <div class="ml-2">--}}
+                                        {{--                                                <b>{{ $libItem->composer()->alpha_name }}</b>--}}
+                                        {{--                                            </div>--}}
+                                        {{--                                        @endif--}}
+                                        {{--                                        @if($libItem->arranger())--}}
+                                        {{--                                            <div class="ml-2">--}}
+                                        {{--                                                {{ $libItem->arranger()->alpha_name }} (arr)--}}
+                                        {{--                                            </div>--}}
+                                        {{--                                        @endif--}}
+                                    </div>
+                                </button>
+                            @endforeach
+                        </div>
+                    @endif
 
                 </div>
 

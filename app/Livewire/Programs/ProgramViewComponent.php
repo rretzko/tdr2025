@@ -7,9 +7,11 @@ use App\Livewire\Forms\ProgramSelectionForm;
 use App\Models\Ensembles\Ensemble;
 use App\Models\Libraries\Items\Components\Artist;
 use App\Models\Libraries\Items\Components\LibTitle;
+use App\Models\Libraries\Items\LibItem;
 use App\Models\Programs\Program;
 use App\Models\Schools\GradesITeach;
 use App\Models\Schools\Teacher;
+use Illuminate\Database\Eloquent\Collection;
 
 
 class ProgramViewComponent extends BasePage
@@ -26,7 +28,7 @@ class ProgramViewComponent extends BasePage
     public array $resultsMusic = [];
     public array $resultsWam = [];
     public array $resultsWords = [];
-    public array $resultsSelectionTitle = [];
+    public Collection $resultsSelectionTitle;
     public int $schoolId = 0;
     public string $selectionTitle = '';
 
@@ -51,6 +53,7 @@ class ProgramViewComponent extends BasePage
             $this->form->ensembleId = array_key_first($this->ensembles);
         }
 
+//        $this->resultsSelectionTitle = collect();
     }
 
     private function getEnsembles(): array
@@ -143,9 +146,10 @@ class ProgramViewComponent extends BasePage
 
     public function updatedSelectionTitle(): void
     {
-        $this->resultsSelectionTitle = LibTitle::query()
-            ->where('title', 'LIKE', '%'.$this->selectionTitle.'%')
-            ->pluck('title', 'id')
-            ->toArray();
+        $this->resultsSelectionTitle = LibItem::query()
+            ->join('lib_titles', 'lib_items.lib_title_id', '=', 'lib_titles.id')
+            ->where('lib_titles.title', 'LIKE', '%'.$this->selectionTitle.'%')
+            ->orderBy('lib_titles.title')
+            ->get();
     }
 }
