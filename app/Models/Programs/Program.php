@@ -2,6 +2,7 @@
 
 namespace App\Models\Programs;
 
+use App\Models\Ensembles\Ensemble;
 use App\Models\Schools\School;
 use App\Models\Tag;
 use Carbon\Carbon;

@@ -2,6 +2,7 @@
 
 namespace App\Models\Libraries\Items;
 
+use App\Models\Ensembles\Ensemble;
 use App\Models\Libraries\Items\Components\Artist;
 use App\Models\Libraries\Items\Components\LibTitle;
 use App\Models\Libraries\Items\Components\Voicing;
@@ -29,14 +30,6 @@ class LibItem extends Model
         'words_id',
     ];
 
-//    public function arranger(): Artist|null
-//    {
-//        if ($this->arranger_id) {
-//            return Artist::where('id', $this->arranger_id)->first();
-//        }
-//
-//        return null;
-//    }
     public function arranger(): HasOne
     {
         return $this->hasOne(Artist::class, 'id', 'arranger_id');
@@ -51,15 +44,6 @@ class LibItem extends Model
     {
         return $this->hasOne(Artist::class, 'id', 'composer_id');
     }
-
-//    public function composer(): Artist|null
-//    {
-//        if ($this->composer_id) {
-//            return Artist::where('id', $this->composer_id)->first();
-//        }
-//
-//        return null;
-//    }
 
     public function longLink(): string
     {

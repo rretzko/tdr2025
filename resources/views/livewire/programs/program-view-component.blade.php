@@ -98,13 +98,19 @@
                 <div class="text-center italic text-xs">
                     {{ $program->humanPerformanceDateLong }}
                 </div>
+
+                {{-- PROGRAM TABLE --}}
+                <div id="programSelectionsTable">
+                    {!! $selections !!}
+                </div>
+
             </div>{{-- end of displayPage --}}
 
             {{-- DATA ENTRY FORM --}}
-            <div id="dataEntryForm" class="w-full md:w-1/2 p-2 bg-gray-100 border border-gray-200 rounded-lg">
+            <div id="dataEntryForm" class="w-full md:w-1/2 p-2 border border-gray-200 rounded-lg {{ $form->bgColor }}">
 
                 <div>
-                    Add New Concert Selection
+                    {!! $form->headerText !!}
                 </div>
 
                 {{-- ENSEMBLE SELECTION --}}
@@ -138,35 +144,56 @@
                     >
                 </div>
 
-                {{-- SELECTION TITLE --}}
-                <div>
-                    <label>Selection Title</label>
-                    <x-forms.elements.livewire.programComponents.selectionTitle/>
-                    @if($resultsSelectionTitle)
-                        <div id="selectionTitleResults" class="flex flex-col ml-2 mt-1 text-xs">
-                            @foreach($resultsSelectionTitle AS $libItem)
-                                <button
-                                    type="button"
-                                    wire:click="clickTitle({{ $libItem->id }})"
-                                    @class([
-                                        "text-left text-blue-500 p-1 rounded-lg mb-0.5",
-                                        'bg-gray-200 border border-gray-300' => $loop->even,
-                                        'border border-gray-300' => $loop->odd
-                                        ])
-                                    wire:key="libItemId_{{ $libItem->id }}"
-                                >
-                                    <div>
-                                        {!! $libItem->longLink() !!}
-                                    </div>
-                                </button>
-                            @endforeach
-                        </div>
-                    @endif
+                @if($form->programSelectionId)
+                    {{-- DISPLAY FORM IN EDIT MODE --}}
 
-                </div>
+                    <x-programs.programSelectionProfile
+                        artistBlock="{!! $form->programSelection->artistBlock !!}"
+                        title="{{ $form->programSelection->title }}"
+                        voicing="{{ $form->voicing }}"
+                    />
 
-                {{-- ARTISTS --}}
-                @foreach($artistTypes AS $type)
+                    @include('components.forms.elements.livewire.programComponents.addendums')
+
+                    <x-buttons.submit
+                        type="button"
+                        :livewire=true
+                        wireClick="updateProgramSelection"
+                        value="update concert Selection"
+                    />
+
+                @else
+                    {{-- DISPLAY FORM IN ADD MODE --}}
+
+                    {{-- SELECTION TITLE --}}
+                    <div>
+                        <label>Selection Title</label>
+                        <x-forms.elements.livewire.programComponents.selectionTitle/>
+                        @if($resultsSelectionTitle)
+                            <div id="selectionTitleResults" class="flex flex-col ml-2 mt-1 text-xs">
+                                @foreach($resultsSelectionTitle AS $libItem)
+                                    <button
+                                        type="button"
+                                        wire:click="clickTitle({{ $libItem->id }})"
+                                        @class([
+                                            "text-left text-blue-500 p-1 rounded-lg mb-0.5",
+                                            'bg-gray-200 border border-gray-300' => $loop->even,
+                                            'border border-gray-300' => $loop->odd
+                                            ])
+                                        wire:key="libItemId_{{ $libItem->id }}"
+                                    >
+                                        <div>
+                                            {!! $libItem->longLink() !!}
+                                        </div>
+                                    </button>
+                                @endforeach
+                            </div>
+                        @endif
+
+                    </div>
+
+                    {{-- ARTISTS --}}
+                    @foreach($artistTypes AS $type)
                     <div wire:key="{{ $type }}">
                         <x-forms.elements.livewire.programComponents.artist
                             type="{{ $type }}"
@@ -175,6 +202,14 @@
                         />
                     </div>
                 @endforeach
+
+                    {{-- ADDENDUM --}}
+
+                    <div id="addendums" class="flex flex-col mt-2 border border-gray-100 border-t-gray-300">
+                        @include('components.forms.elements.livewire.programComponents.addendums')
+                    </div>
+
+                @endif
 
                 {{-- SUCCESS INDICATOR --}}
                 <x-forms.indicators.successIndicator :showSuccessIndicator="$showSuccessIndicator"

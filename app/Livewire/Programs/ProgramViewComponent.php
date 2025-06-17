@@ -12,6 +12,7 @@ use App\Models\Programs\Program;
 use App\Models\Programs\ProgramSelection;
 use App\Models\Schools\GradesITeach;
 use App\Models\Schools\Teacher;
+use App\Services\Programs\ProgramSelectionService;
 use Illuminate\Database\Eloquent\Collection;
 
 
@@ -59,12 +60,20 @@ class ProgramViewComponent extends BasePage
 
     public function render()
     {
-        return view('livewire..programs.program-view-component');
+        return view('livewire..programs.program-view-component',
+            [
+                'selections' => $this->getSelectionsTable(),
+            ]);
     }
 
     public function clickArtist(string $type, int $artistId)
     {
         $artist = Artist::find($artistId);
+    }
+
+    public function clickSelection(int $selectionId): void
+    {
+        $this->form->setVars($selectionId);
     }
 
     public function clickTitle(int $libItemId): void
@@ -126,6 +135,25 @@ class ProgramViewComponent extends BasePage
         }
     }
 
+    public function updatedSelectionTitle(): void
+    {
+        $this->resultsSelectionTitle = LibItem::query()
+            ->join('lib_titles', 'lib_items.lib_title_id', '=', 'lib_titles.id')
+            ->where('lib_titles.title', 'LIKE', '%'.$this->selectionTitle.'%')
+            ->select('lib_items.*', 'lib_titles.title')
+            ->orderBy('lib_titles.title')
+            ->get();
+    }
+
+    public function updateProgramSelection(): void
+    {
+        $updated = $this->form->update();
+
+        if ($updated) {
+            $this->form->resetVars();
+        }
+    }
+
     private function ensembleNameUnique(): bool
     {
         return !Ensemble::query()
@@ -151,13 +179,10 @@ class ProgramViewComponent extends BasePage
             ->toArray();
     }
 
-    public function updatedSelectionTitle(): void
+    private function getSelectionsTable(): string
     {
-        $this->resultsSelectionTitle = LibItem::query()
-            ->join('lib_titles', 'lib_items.lib_title_id', '=', 'lib_titles.id')
-            ->where('lib_titles.title', 'LIKE', '%'.$this->selectionTitle.'%')
-            ->select('lib_items.*', 'lib_titles.title')
-            ->orderBy('lib_titles.title')
-            ->get();
+        $service = new ProgramSelectionService($this->dto['programId'], 'default');
+
+        return $service->getTable();
     }
 }
