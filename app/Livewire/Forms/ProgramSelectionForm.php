@@ -2,8 +2,13 @@
 
 namespace App\Livewire\Forms;
 
+use App\Models\Libraries\Library;
+use App\Models\Libraries\LibStack;
+use App\Models\Libraries\Items\LibItem;
 use App\Models\Programs\ProgramAddendum;
 use App\Models\Programs\ProgramSelection;
+use App\Models\Schools\Teacher;
+use App\Services\Libraries\CreateLibItemService;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
 
@@ -12,22 +17,54 @@ class ProgramSelectionForm extends Form
     public string $addendum1 = '';
     public string $addendum2 = '';
     public string $addendum3 = '';
+    public string $arranger = '';
     public int $arrangerId = 0;
     public string $artistBlock = '';
+    public array $artists = [];
     public string $bgColor = 'bg-gray-100';
+    public string $choreographer = '';
     public int $choreographerId = 0;
+    public string $composer = '';
     public int $composerId = 0;
     public int $ensembleId = 0;
     public string $headerText = 'Add New Concert Selection';
     public string $itemType = 'sheet music';
     public int $libTitleId = 0;
+    public string $music = '';
     public int $performanceOrderBy = 1;
+    public int $programId = 0;
     public ProgramSelection $programSelection;
     public int $programSelectionId = 0;
     public int $schoolId = 0;
+    public int $teacherId = 0;
+    public string $title = '';
     public string $voicing = '';
+    public int $voicingId = 2;
+    public string $wam = '';
     public int $wamId = 0;
+    public string $words = '';
     public int $wordsId = 0;
+
+    public function add(): bool
+    {
+        $libItemId = $this->addLibItem();
+        $this->addLibItemToLibStack($libItemId);
+
+        $this->programSelection = ProgramSelection::create(
+            [
+                'program_id' => $this->programId,
+                'lib_item_id' => $libItemId,
+                'ensemble_id' => $this->ensembleId,
+                'order_by' => $this->performanceOrderBy,
+            ]
+        );
+
+        $this->programSelectionId = $this->programSelection->id;
+
+        $this->updateProgramAddendums();
+
+        return (bool) $this->programSelection;
+    }
 
     public function resetVars(): void
     {
@@ -35,11 +72,18 @@ class ProgramSelectionForm extends Form
 
         $this->artistBlock = '';
         $this->bgColor = 'bg-gray-100';
-        $this->ensembleId = 0;
+//        $this->ensembleId = 0;  //persist the currently selected ensembleId
         $this->headerText = 'Add Concert Selection';
-        $this->performanceOrderBy = 0;
+        $this->performanceOrderBy = ProgramSelection::where('program_id', $this->programId)->max('order_by') + 1;
         $this->programSelectionId = 0;
         $this->voicing = '';
+
+        $this->arranger = '';
+        $this->choreographer = '';
+        $this->composer = '';
+        $this->music = '';
+        $this->wam = '';
+        $this->words = '';
 
         $this->addendum1 = '';
         $this->addendum2 = '';
@@ -48,6 +92,7 @@ class ProgramSelectionForm extends Form
 
     public function setVars(int $programSelectionId): void
     {
+        $this->teacherId = Teacher::where('user_id', auth()->id())->first()->id;
         $this->programSelection = ProgramSelection::find($programSelectionId);
 
         $this->artistBlock = $this->programSelection->artistBlock;
@@ -74,6 +119,29 @@ class ProgramSelectionForm extends Form
         );
     }
 
+    private function addLibItem(): int
+    {
+        $this->setArtistsArray(); //required by CreateLitItemService
+
+        $service = new CreateLibItemService($this, ['sheet music', 'medley']);
+
+        return $service->libItemId;
+    }
+
+    private function addLibItemToLibStack(int $libItemId): void
+    {
+        $library = Library::where('school_id', $this->schoolId)
+            ->where('teacher_id', $this->teacherId)
+            ->first();
+
+        if ($library) {
+            LibStack::create([
+                'library_id' => $library->id,
+                'lib_item_id' => $libItemId,
+            ]);
+        }
+    }
+
     private function setAddendumVars(int $programSelectionId): void
     {
         $addendums = ProgramAddendum::where('program_selection_id', $programSelectionId)->get();
@@ -82,6 +150,18 @@ class ProgramSelectionForm extends Form
             $var = 'addendum'.$index;
             $this->$var = $addendum->addendum;
         }
+    }
+
+    private function setArtistsArray(): void
+    {
+        $this->artists['arranger'] = $this->arranger;
+        $this->artists['choreographer'] = $this->choreographer;
+        $this->artists['composer'] = $this->composer;
+        $this->artists['music'] = $this->music;
+        $this->artists['wam'] = $this->wam;
+        $this->artists['words'] = $this->words;
+
+
     }
 
     private function updateProgramAddendums(): void

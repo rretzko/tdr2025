@@ -11,7 +11,7 @@
                     <input wire:model="search"
                            class="w-3/4"
                            type="text"
-                           placeholder="Search by program title, school year, tag, and song title"
+                           placeholder="Search by program title, school year, tag, or song title"
                            aria-label="Search"
                     />
                     <button
@@ -23,7 +23,7 @@
                     </button>
                 </div>
                 <div id="hint" class="text-xs italic">
-                    Place multi-word song title between double-quotes (ex: "Battle Hymn of the Republic")
+                    Place song title between double-quotes (ex: "Battle Hymn of the Republic")
                 </div>
             </div>
 

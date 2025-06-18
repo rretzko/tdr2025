@@ -37,6 +37,25 @@
         {{-- HEADER and ADD-NEW BUTTON --}}
         <div class="flex justify-between mb-1">
             <div>{{ $program->school->name . ' ' . ucwords($dto['header']) }}</div>
+            <div class="flex flex-row justify-end space-x-2 text-sm">
+                @if($previousProgramId)
+                    <button
+                        wire:click="changeProgramId({{ $previousProgramId}})"
+                        class="px-2 bg-blue-300 border border-black rounded-lg shadow-lg hover:bg-blue-400"
+                    >
+                        Prev
+                    </button>
+                @endif
+
+                @if($nextProgramId)
+                    <button
+                        wire:click="changeProgramId({{ $nextProgramId }})"
+                        class="px-2 bg-green-300 border border-black rounded-lg shadow-lg hover:bg-green-400"
+                    >
+                        Next
+                    </button>
+                @endif
+            </div>
         </div>
 
         {{-- PROGRAM HEADER --}}
@@ -144,12 +163,33 @@
 
                     @include('components.forms.elements.livewire.programComponents.addendums')
 
-                    <x-buttons.submit
-                        type="button"
-                        :livewire=true
-                        wireClick="updateProgramSelection"
-                        value="update concert Selection"
-                    />
+                    {{-- BUTTONS --}}
+                    <div class="flex flex-col space-y-1">
+
+                        {{-- SUBMIT --}}
+                        <x-buttons.submit
+                            type="button"
+                            :livewire=true
+                            wireClick="updateProgramSelection"
+                            value="update concert Selection"
+                        />
+
+                        {{-- REMOVE CURRENT CONCERT SELECTION --}}
+                        <div class="w-32">
+                            <x-buttons.remove
+                                id="{{$form->programSelectionId}}"
+                                :livewire=true
+                                message='Are you sure you want to remove this concert selection?'
+                            />
+                        </div>
+
+                        {{-- CLEAR FORM --}}
+                        <button wire:click="resetFormToAdd()" class="text-left text-blue-500 ml-4">
+                            Clear Form
+                        </button>
+
+
+                    </div>{{-- end of buttons --}}
 
                 @else
                     {{-- DISPLAY FORM IN ADD MODE --}}
@@ -193,10 +233,16 @@
                 @endforeach
 
                     {{-- ADDENDUM --}}
-
                     <div id="addendums" class="flex flex-col mt-2 border border-gray-100 border-t-gray-300">
                         @include('components.forms.elements.livewire.programComponents.addendums')
                     </div>
+
+                    <x-buttons.submit
+                        type="button"
+                        :livewire=true
+                        wireClick="addConcertSelection"
+                        value="add concert Selection"
+                    />
 
                 @endif
 

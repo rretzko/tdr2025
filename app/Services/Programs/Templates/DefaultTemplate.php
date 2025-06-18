@@ -34,13 +34,14 @@ class DefaultTemplate
         }
 
         $str = '<tr>';
-
+        $str .= '<td colspan="2" class="text-center text-xs italic">';
+        $str .= '<div class="flex flex-col">';
         foreach ($addendums as $addendum) {
-            $str .= '<td colspan="2" class="text-center text-xs italic">';
-            $str .= $addendum->addendum;
-            $str .= '</td>';
-        }
+            $str .= '<div>'.$addendum->addendum.'</div>';
 
+        }
+        $str .= '</div>';
+        $str .= '</td>';
         $str .= '</tr>';
 
         return $str;
@@ -104,7 +105,7 @@ class DefaultTemplate
     {
         $str = '<tr class="">';
 
-        $str .= '<td class="w-1/2 text-sm text-left pl-1">'
+        $str .= '<td class="w-1/2 text-sm text-left pl-1 align-top">'
             ."<button wire:click='clickSelection($selection->id)' class='text-blue-500'>"
             .$selection->title
             .'</button>'

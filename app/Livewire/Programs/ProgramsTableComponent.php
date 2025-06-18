@@ -3,7 +3,10 @@
 namespace App\Livewire\Programs;
 
 use App\Livewire\BasePage;
+use App\Models\Libraries\Items\Components\LibTitle;
+use App\Models\Libraries\Items\LibItem;
 use App\Models\Programs\Program;
+use App\Models\Programs\ProgramSelection;
 use App\Models\UserConfig;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -101,6 +104,15 @@ class ProgramsTableComponent extends BasePage
         ];
     }
 
+    private function getProgramIdsFromLibItemIds($libItemIds): array
+    {
+        return ProgramSelection::query()
+            ->whereIn('lib_item_id', $libItemIds)
+            ->distinct()
+            ->pluck('program_id')
+            ->toArray();
+    }
+
     private function getRows(): Collection
     {
         //primary sort direction
@@ -121,6 +133,13 @@ class ProgramsTableComponent extends BasePage
         //isolate song title (value between quotes)
         $songTitle = $this->parseSearchForSongTitle();
 
+        //find the libItem->id for the requested song title
+        $libItemIds = (strlen($songTitle))
+            ? $this->parseSearchForLibItemIds($songTitle)
+            : [];
+
+        $songTitleProgramIds = $this->getProgramIdsFromLibItemIds($libItemIds);
+
         //remove song title (if any) from $this->search string
         $search = (strlen($songTitle))
             ? $this->removeSongTitleFromSearch()
@@ -134,7 +153,10 @@ class ProgramsTableComponent extends BasePage
 
         return Program::query()
             ->whereIn('school_id', $this->filters->schoolsSelectedIds)
-            ->where(function ($query) use ($search, $tags, $years) {
+            ->when(count($songTitleProgramIds), function ($query) use ($songTitleProgramIds) {
+                $query->whereIn('id', $songTitleProgramIds);
+            })
+            ->where(function ($query) use ($search, $tags, $years, $songTitleProgramIds) {
                 $query->whereIn('school_year', $years)
                     ->orWhere('title', 'like', "%$search%")
                     ->orWhereHas('tags', function ($q) use ($tags) {
@@ -144,6 +166,21 @@ class ProgramsTableComponent extends BasePage
             ->orderBy($this->primarySort, $direction)
             ->orderBy($secondarySort, $secondarySortOrder)
             ->get();
+    }
+
+    private function parseSearchForLibItemIds(string $songTitle): array
+    {
+//        $libTitleIds = LibTitle::query()
+//        ->where('title', 'like', "%$songTitle%")
+//        ->pluck('id')
+//        ->toArray();
+
+        return LibItem::query()
+            ->join('lib_titles', 'lib_items.lib_title_id', '=', 'lib_titles.id')
+            ->where('lib_titles.title', 'like', "%$songTitle%")
+//            ->whereIn('lib_title_id', $libTitleIds)
+            ->pluck('lib_items.id')
+            ->toArray();
     }
 
     private function parseSearchForSongTitle(): string
@@ -156,7 +193,6 @@ class ProgramsTableComponent extends BasePage
         }
 
         return '';
-
     }
 
     private function parseSearchForSchoolYears(string $search): array

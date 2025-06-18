@@ -3,6 +3,7 @@
 namespace App\Services\Libraries;
 
 use App\Livewire\Forms\LibraryItemForm;
+use App\Livewire\Forms\ProgramSelectionForm;
 use App\Models\Libraries\Items\Components\LibTitle;
 use App\Models\Libraries\Items\Components\Voicing;
 use App\Models\Libraries\Items\LibItem;
@@ -10,7 +11,6 @@ use App\Models\Schools\Teacher;
 use App\Models\Libraries\Items\Components\Artist;
 use App\Services\ArtistIdService;
 use Illuminate\Support\Str;
-use JetBrains\PhpStorm\NoReturn;
 
 
 class CreateLibItemService
@@ -30,7 +30,10 @@ class CreateLibItemService
     public int|null $wamId = null;
     public int|null $wordsId = null;
 
-    public function __construct(private readonly LibraryItemForm $form, private readonly array $itemTypes)
+    public function __construct(
+        private readonly LibraryItemForm|ProgramSelectionForm $form,
+        private readonly array $itemTypes
+    )
     {
         $this->teacherId = $this->setTeacherId();
         $this->itemType = $this->form->itemType;

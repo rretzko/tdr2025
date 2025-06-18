@@ -14,6 +14,7 @@ use App\Models\Schools\GradesITeach;
 use App\Models\Schools\Teacher;
 use App\Services\Programs\ProgramSelectionService;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 
 
 class ProgramViewComponent extends BasePage
@@ -24,6 +25,8 @@ class ProgramViewComponent extends BasePage
     public string $ensembleName = '';
     public string $ensembleNameError = '';
     public array $ensembles = [];
+    public int|null $nextProgramId = 0;
+    public int|null $previousProgramId = 0;
     public array $resultsArranger = [];
     public array $resultsChoreographer = [];
     public array $resultsComposer = [];
@@ -51,11 +54,16 @@ class ProgramViewComponent extends BasePage
         $this->schoolId = $this->program->school_id;
         $this->form->schoolId = $this->schoolId;
 
+        //prev/next buttons
+        $this->nextProgramId = $this->calcNextPrevProgramId(true);
+        $this->previousProgramId = $this->calcNextPrevProgramId(false);
+
+        //form defaults
         if (count($this->ensembles)) {
             $this->form->ensembleId = array_key_first($this->ensembles);
+            $this->form->programId = $this->dto['programId'];
         }
-
-//        $this->resultsSelectionTitle = collect();
+        $this->calcNextPerformanceOrderBy();
     }
 
     public function render()
@@ -64,6 +72,20 @@ class ProgramViewComponent extends BasePage
             [
                 'selections' => $this->getSelectionsTable(),
             ]);
+    }
+
+    public function addConcertSelection(): void
+    {
+        $added = $this->form->add();
+
+        if ($added) {
+            $this->resetFormToAdd();
+        }
+    }
+
+    public function changeProgramId(int $programId): void
+    {
+        $this->redirect('/program/view/'.$programId);
     }
 
     public function clickArtist(string $type, int $artistId)
@@ -78,7 +100,7 @@ class ProgramViewComponent extends BasePage
 
     public function clickTitle(int $libItemId): void
     {
-        ProgramSelection::create(
+        $programSelection = ProgramSelection::create(
             [
                 'program_id' => $this->dto['programId'],
                 'lib_item_id' => $libItemId,
@@ -87,7 +109,21 @@ class ProgramViewComponent extends BasePage
             ]
         );
 
-        $this->redirect('/programs');
+        $this->clickSelection($programSelection->id);
+    }
+
+    public function remove(int $programSelectionId): void
+    {
+        $programSelection = ProgramSelection::find($programSelectionId)->delete();
+
+        $this->form->resetVars();
+    }
+
+    public function resetFormToAdd(): void
+    {
+        $this->form->resetVars();
+        $this->reset('selectionTitle', 'resultsSelectionTitle', 'ensembleName');
+        $this->calcNextPerformanceOrderBy();
     }
 
     /**
@@ -143,6 +179,15 @@ class ProgramViewComponent extends BasePage
             ->select('lib_items.*', 'lib_titles.title')
             ->orderBy('lib_titles.title')
             ->get();
+
+//        Log::info(LibItem::query()
+//            ->join('lib_titles', 'lib_items.lib_title_id', '=', 'lib_titles.id')
+//            ->where('lib_titles.title', 'LIKE', '%'.$this->selectionTitle.'%')
+//            ->select('lib_items.*', 'lib_titles.title')
+//            ->orderBy('lib_titles.title')
+//            ->toRawSql());
+
+        $this->form->title = $this->selectionTitle;
     }
 
     public function updateProgramSelection(): void
@@ -150,8 +195,33 @@ class ProgramViewComponent extends BasePage
         $updated = $this->form->update();
 
         if ($updated) {
-            $this->form->resetVars();
+            $this->resetFormToAdd();
         }
+    }
+
+    private function calcNextPerformanceOrderBy(): void
+    {
+        $this->form->performanceOrderBy = ProgramSelection::where('program_id',
+                $this->dto['programId'])->max('order_by') + 1;
+    }
+
+    private function calcNextPrevProgramId(bool $next): int|null
+    {
+        $dt = $this->program->performance_date;
+        $operator = ($next) ? '>' : '<';
+
+        $query = Program::query()
+            ->where('performance_date', $operator, $dt);
+
+        if ($next) {
+            // Next program: earliest date greater than $dt
+            $query->orderBy('performance_date', 'asc');
+        } else {
+            // Previous program: latest date less than $dt
+            $query->orderBy('performance_date', 'desc');
+        }
+
+        return $query->value('id');
     }
 
     private function ensembleNameUnique(): bool

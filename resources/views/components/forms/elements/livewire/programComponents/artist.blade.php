@@ -15,7 +15,7 @@
         <div class="flex flex-col">
             <input
                 type="text"
-                wire:model.live.debounce.500ms="{{ $type }}"
+                wire:model.live.debounce.500ms="form.{{ $type }}"
                 class="w-fit"
             />
             <x-forms.elements.livewire.programComponents.artistResults

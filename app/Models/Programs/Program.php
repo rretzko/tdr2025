@@ -36,6 +36,11 @@ class Program extends Model
             ->format('F j, Y');
     }
 
+    public function programSelection(): HasMany
+    {
+        return $this->hasMany(ProgramSelection::class);
+    }
+
     public function school(): BelongsTo
     {
         return $this->belongsTo(School::class);
