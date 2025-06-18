@@ -2,6 +2,7 @@
 
 namespace App\Services\Programs\Templates;
 
+use App\Models\Programs\ProgramAddendum;
 use App\Models\Programs\ProgramSelection;
 use Illuminate\Support\Collection;
 
@@ -16,6 +17,33 @@ class DefaultTemplate
     {
         $this->selections = $this->getSelections();
         $this->table = $this->makeTable();
+    }
+
+    public function getTable(): string
+    {
+        return $this->table;
+    }
+
+    private function addendums(int $programSelectionId): string
+    {
+        $addendums = ProgramAddendum::where('program_selection_id', $programSelectionId)->get();
+
+        //early exit
+        if (is_null($addendums)) {
+            return '';
+        }
+
+        $str = '<tr>';
+
+        foreach ($addendums as $addendum) {
+            $str .= '<td colspan="2" class="text-center text-xs italic">';
+            $str .= $addendum->addendum;
+            $str .= '</td>';
+        }
+
+        $str .= '</tr>';
+
+        return $str;
     }
 
     private function getSelections(): Collection
@@ -83,11 +111,9 @@ class DefaultTemplate
             .'</td>';
         $str .= '<td class="w-1/2 text-sm text-right">'.$selection->artistBlock.'</td>';
         $str .= '</tr>';
+        $str .= $this->addendums($selection->id);
         return $str;
     }
 
-    public function getTable(): string
-    {
-        return $this->table;
-    }
+
 }

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Forms;
 
+use App\Models\Programs\ProgramAddendum;
 use App\Models\Programs\ProgramSelection;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
@@ -39,6 +40,10 @@ class ProgramSelectionForm extends Form
         $this->performanceOrderBy = 0;
         $this->programSelectionId = 0;
         $this->voicing = '';
+
+        $this->addendum1 = '';
+        $this->addendum2 = '';
+        $this->addendum3 = '';
     }
 
     public function setVars(int $programSelectionId): void
@@ -53,15 +58,55 @@ class ProgramSelectionForm extends Form
         $this->programSelectionId = $programSelectionId;
         $this->voicing = $this->programSelection->voicing;
 
+        $this->setAddendumVars($programSelectionId);
+
     }
 
     public function update(): bool
     {
+        $this->updateProgramAddendums();
+
         return $this->programSelection->update(
             [
                 'ensemble_id' => $this->ensembleId,
                 'order_by' => $this->performanceOrderBy,
             ]
         );
+    }
+
+    private function setAddendumVars(int $programSelectionId): void
+    {
+        $addendums = ProgramAddendum::where('program_selection_id', $programSelectionId)->get();
+        foreach ($addendums as $key => $addendum) {
+            $index = $key + 1;
+            $var = 'addendum'.$index;
+            $this->$var = $addendum->addendum;
+        }
+    }
+
+    private function updateProgramAddendums(): void
+    {
+        //remove all current addendums
+        ProgramAddendum::where('program_selection_id', $this->programSelectionId)->delete();
+
+        // Collect non-empty addendums
+        $addendums = array_filter([
+            $this->addendum1,
+            $this->addendum2,
+            $this->addendum3,
+        ], fn($addendum) => strlen($addendum) > 0);
+
+        if (empty($addendums)) {
+            return;
+        }
+
+        // Prepare data for batch insert
+        $insertData = array_map(fn($addendum) => [
+            'program_selection_id' => $this->programSelectionId,
+            'addendum' => $addendum,
+        ], $addendums);
+
+        // Insert all addendums in one query
+        ProgramAddendum::insert($insertData);
     }
 }

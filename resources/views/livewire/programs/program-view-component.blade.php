@@ -37,17 +37,6 @@
         {{-- HEADER and ADD-NEW BUTTON --}}
         <div class="flex justify-between mb-1">
             <div>{{ $program->school->name . ' ' . ucwords($dto['header']) }}</div>
-
-            {{-- ADD-NEW BUTTON --}}
-            <button
-                type="button"
-                wire:click="addNew"
-                class="bg-green-500 text-white text-3xl px-2 rounded-lg"
-                title="Add New"
-                tabindex="-1"
-            >
-                +
-            </button>
         </div>
 
         {{-- PROGRAM HEADER --}}
