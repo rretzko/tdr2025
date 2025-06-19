@@ -6,16 +6,15 @@ use App\Livewire\BasePage;
 use App\Livewire\Forms\ProgramSelectionForm;
 use App\Models\Ensembles\Ensemble;
 use App\Models\Libraries\Items\Components\Artist;
-use App\Models\Libraries\Items\Components\LibTitle;
 use App\Models\Libraries\Items\LibItem;
 use App\Models\Programs\Program;
 use App\Models\Programs\ProgramSelection;
 use App\Models\Schools\GradesITeach;
 use App\Models\Schools\Teacher;
+use App\Services\Programs\EnsembleMemberRosterService;
 use App\Services\Programs\ProgramSelectionService;
 use App\Services\ReorderConcertSelectionsService;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Log;
 
 
 class ProgramViewComponent extends BasePage
@@ -23,9 +22,11 @@ class ProgramViewComponent extends BasePage
     public Program $program;
     public ProgramSelectionForm $form;
     public array $artistTypes = [];
+    public bool $displayEnsembleStudentRoster = false;
     public string $ensembleName = '';
     public string $ensembleNameError = '';
     public array $ensembles = [];
+    public array $ensembleStudentRosters = [];
     public int|null $nextProgramId = 0;
     public int|null $previousProgramId = 0;
     public array $resultsArranger = [];
@@ -129,6 +130,14 @@ class ProgramViewComponent extends BasePage
         $this->form->resetVars();
         $this->reset('selectionTitle', 'resultsSelectionTitle', 'ensembleName');
         $this->calcNextPerformanceOrderBy();
+    }
+
+    public function setDisplayEnsembleStudentRoster(int $ensembleId): void
+    {
+        $service = new EnsembleMemberRosterService($ensembleId, $this->program->school_year);
+        $this->ensembleStudentRoster = $service->getStudents();
+
+        $this->displayEnsembleStudentRoster = true;
     }
 
     /**

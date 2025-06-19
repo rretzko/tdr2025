@@ -26,257 +26,130 @@
                     Place multi-word song title between double-quotes (ex: "Battle Hymn of the Republic")
                 </div>
             </div>
-
-
         </div>
-    @endif
+    @endif {{-- end of if(hasSearch) --}}
 
     {{-- PAGE CONTENT --}}
     <div class="w-11/12">
 
-        {{-- HEADER and ADD-NEW BUTTON --}}
-        <div class="flex justify-between mb-1">
-            <div>{{ $program->school->name . ' ' . ucwords($dto['header']) }}</div>
-            <div class="flex flex-row justify-end space-x-2 text-sm">
-                @if($previousProgramId)
-                    <button
-                        wire:click="changeProgramId({{ $previousProgramId}})"
-                        class="px-2 bg-blue-300 border border-black rounded-lg shadow-lg hover:bg-blue-400"
-                    >
-                        Prev
-                    </button>
-                @endif
-
-                @if($nextProgramId)
-                    <button
-                        wire:click="changeProgramId({{ $nextProgramId }})"
-                        class="px-2 bg-green-300 border border-black rounded-lg shadow-lg hover:bg-green-400"
-                    >
-                        Next
-                    </button>
-                @endif
-            </div>
-        </div>
-
-        {{-- PROGRAM HEADER --}}
-        <div id="header" class="flex flex-col border border-white border-t-gray-500 border-b-gray-500 mb-2">
-
-            {{-- TITLE --}}
-            <div class="flex flex-row space-x-2">
-                <label class="w-20">Title</label>
-                <div class="data font-semibold">{{ $program->title }}</div>
-            </div>
-
-            {{-- SUBTITLE --}}
-            @if($program->subtitle)
-                <div class="flex flex-row space-x-2">
-                    <label class="w-20">Subtitle</label>
-                    <div class="data font-semibold">{{ $program->subtitle }}</div>
-                </div>
-            @endif
-
-            {{-- PERFORMANCE DATE --}}
-            <div class="flex flex-row space-x-2">
-                <label class="w-20">Perf.Date</label>
-                <div class="data font-semibold">{{ $program->humanPerformanceDate }}</div>
-            </div>
-
-        </div>{{-- end of program header --}}
+        @include('components.forms.elements.livewire.programComponents.programViewHeader')
 
         {{-- ADD SELECTION FORM & DISPLAY PAGES --}}
         <div id="splitPage" class="flex flex-col space-y-4 md:flex-row md:space-y-0">
 
-            {{-- DISPLAY PAGE --}}
-            <div id="displayPage"
-                 class="w-full md:w-1/2 mr-4 shadow-lg p-2 border border-gray-200 border-r-gray-100 border-b-gray-100 rounded-lg">
+            @include('components.forms.elements.livewire.programComponents.programDefaultDisplay')
 
-                {{-- PROGRAM TITLE --}}
-                <div class="text-center italic ">
-                    {{ $program->title }}
-                </div>
+            @if($displayEnsembleStudentRoster)
 
-                {{-- PROGRAM SUBTITLE --}}
-                @if(strlen($program->subtitle))
-                    <div class="text-center italic text-sm">
-                        {{ $program->subtitle }}
-                    </div>
-                @endif
+                @include('components.forms.elements.livewire.programComponents.displayEnsembleStudentRoster')
 
-                {{-- PERFORMANCE DATE --}}
-                <div class="text-center italic text-xs">
-                    {{ $program->humanPerformanceDateLong }}
-                </div>
+            @else
 
-                {{-- PROGRAM TABLE --}}
-                <div id="programSelectionsTable">
-                    {!! $selections !!}
-                </div>
+                {{-- DATA ENTRY FORM --}}
+                <div id="dataEntryForm"
+                     class="w-full md:w-1/2 p-2 border border-gray-200 rounded-lg {{ $form->bgColor }}">
 
-            </div>{{-- end of displayPage --}}
-
-            {{-- DATA ENTRY FORM --}}
-            <div id="dataEntryForm" class="w-full md:w-1/2 p-2 border border-gray-200 rounded-lg {{ $form->bgColor }}">
-
-                <div>
-                    {!! $form->headerText !!}
-                </div>
-
-                {{-- ENSEMBLE SELECTION --}}
-                <div>
-                    <label>Select an ensemble</label>
-                    @if(count($ensembles))
-                        <div class="flex flex-col">
-                            <select wire:model="form.ensembleId" autofocus>
-                                @foreach($ensembles AS $key => $ensembleName)
-                                    <option value="{{ $key }}">
-                                        {{ $ensembleName }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <label class="">or add a new ensemble.</label>
-                        </div>
-                    @endif
-                    <x-forms.elements.livewire.programComponents.ensembleName/>
-                    <div class="bg-red-100 text-red-900 w-fit px-2 text-sm italic mt-1 rounded-lg">
-                        {!! $this->ensembleNameError !!}
+                    <div>
+                        {!! $form->headerText !!}
                     </div>
 
-                </div>
-
-                {{-- PROGRAM ORDER --}}
-                <div class="flex flex-col">
-                    <label>Performance Order</label>
-                    <input type="text"
-                           wire:model="form.performanceOrderBy"
-                           class="w-12"
-                    >
-                </div>
-
-                @if($form->programSelectionId)
-
-                    {{-- DISPLAY FORM IN EDIT MODE --}}
-                    <x-programs.programSelectionProfile
-                        artistBlock="{!! $form->programSelection->artistBlock !!}"
-                        title="{{ $form->programSelection->title }}"
-                        voicing="{{ $form->voicing }}"
-                    />
-
-                    {{-- OPENER/CLOSER SWITCHES --}}
-                    <div class="border border-transparent border-b-gray-300 mb-2">
-                        <label>
-                            Please use the checkboxes below to indicate that this selection
-                            opens or closes the ensemble segment.
-                        </label>
-                        <div class="flex flex-row align-middle justify-left space-x-4 ml-2">
-
-                            {{-- OPENER --}}
-                            <div>
-                                <label class="space-x-2 align-middle">
-                                    <input type="checkbox" wire:model="form.opener">
-                                    Opener
-                                </label>
+                    {{-- ENSEMBLE SELECTION --}}
+                    <div>
+                        <label>Select an ensemble</label>
+                        @if(count($ensembles))
+                            <div class="flex flex-col">
+                                <select wire:model="form.ensembleId" autofocus>
+                                    @foreach($ensembles AS $key => $ensembleName)
+                                        <option value="{{ $key }}">
+                                            {{ $ensembleName }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <label class="">or add a new ensemble.</label>
                             </div>
-
-                            {{-- CLOSER --}}
-                            <div>
-                                <label class="space-x-2 align-middle">
-                                    <input type="checkbox" wire:model="form.closer">
-                                    Closer
-                                </label>
-                            </div>
+                        @endif
+                        <x-forms.elements.livewire.programComponents.ensembleName/>
+                        <div class="bg-red-100 text-red-900 w-fit px-2 text-sm italic mt-1 rounded-lg">
+                            {!! $this->ensembleNameError !!}
                         </div>
+
                     </div>
 
-                    @include('components.forms.elements.livewire.programComponents.addendums')
+                    {{-- PROGRAM ORDER --}}
+                    <div class="flex flex-col">
+                        <label>Performance Order</label>
+                        <input type="text"
+                               wire:model="form.performanceOrderBy"
+                               class="w-12"
+                        >
+                    </div>
 
-                    {{-- BUTTONS --}}
-                    <div class="flex flex-col space-y-1">
+                    @if($form->programSelectionId)
 
-                        {{-- SUBMIT --}}
+                        @include('components.forms.elements.livewire.programComponents.editProgramSelection')
+
+                    @else
+                        {{-- DISPLAY FORM IN ADD MODE --}}
+
+                        {{-- SELECTION TITLE --}}
+                        <div>
+                            <label>Selection Title</label>
+                            <x-forms.elements.livewire.programComponents.selectionTitle/>
+                            @if($resultsSelectionTitle)
+                                <div id="selectionTitleResults" class="flex flex-col ml-2 mt-1 text-xs">
+                                    @foreach($resultsSelectionTitle AS $libItem)
+                                        <button
+                                            type="button"
+                                            wire:click="clickTitle({{ $libItem->id }})"
+                                            @class([
+                                                "text-left text-blue-500 p-1 rounded-lg mb-0.5",
+                                                'bg-gray-200 border border-gray-300' => $loop->even,
+                                                'border border-gray-300' => $loop->odd
+                                                ])
+                                            wire:key="libItemId_{{ $libItem->id }}"
+                                        >
+                                            <div>
+                                                {!! $libItem->longLink() !!}
+                                            </div>
+                                        </button>
+                                    @endforeach
+                                </div>
+                            @endif
+
+                        </div>
+
+                        {{-- ARTISTS --}}
+                        @foreach($artistTypes AS $type)
+                            <div wire:key="{{ $type }}">
+                                <x-forms.elements.livewire.programComponents.artist
+                                    type="{{ $type }}"
+                                    resultsName="results{{ ucwords($type) }}"
+                                    :results="$resultsComposer"
+                                />
+                            </div>
+                        @endforeach
+
+                        {{-- ADDENDUM --}}
+                        <div id="addendums" class="flex flex-col mt-2 border border-gray-100 border-t-gray-300">
+                            @include('components.forms.elements.livewire.programComponents.addendums')
+                        </div>
+
                         <x-buttons.submit
                             type="button"
                             :livewire=true
-                            wireClick="updateProgramSelection"
-                            value="update concert Selection"
+                            wireClick="addConcertSelection"
+                            value="add concert Selection"
                         />
 
-                        {{-- REMOVE CURRENT CONCERT SELECTION --}}
-                        <div class="w-32">
-                            <x-buttons.remove
-                                id="{{$form->programSelectionId}}"
-                                :livewire=true
-                                message='Are you sure you want to remove this concert selection?'
-                            />
-                        </div>
+                    @endif
 
-                        {{-- CLEAR FORM --}}
-                        <button wire:click="resetFormToAdd()" class="text-left text-blue-500 ml-4">
-                            Clear Form
-                        </button>
+                    {{-- SUCCESS INDICATOR --}}
+                    <x-forms.indicators.successIndicator :showSuccessIndicator="$showSuccessIndicator"
+                                                         message="{{  $successMessage }}"/>
 
+                </div>{{-- end of dataEntryForm --}}
 
-                    </div>{{-- end of buttons --}}
-
-                @else
-                    {{-- DISPLAY FORM IN ADD MODE --}}
-
-                    {{-- SELECTION TITLE --}}
-                    <div>
-                        <label>Selection Title</label>
-                        <x-forms.elements.livewire.programComponents.selectionTitle/>
-                        @if($resultsSelectionTitle)
-                            <div id="selectionTitleResults" class="flex flex-col ml-2 mt-1 text-xs">
-                                @foreach($resultsSelectionTitle AS $libItem)
-                                    <button
-                                        type="button"
-                                        wire:click="clickTitle({{ $libItem->id }})"
-                                        @class([
-                                            "text-left text-blue-500 p-1 rounded-lg mb-0.5",
-                                            'bg-gray-200 border border-gray-300' => $loop->even,
-                                            'border border-gray-300' => $loop->odd
-                                            ])
-                                        wire:key="libItemId_{{ $libItem->id }}"
-                                    >
-                                        <div>
-                                            {!! $libItem->longLink() !!}
-                                        </div>
-                                    </button>
-                                @endforeach
-                            </div>
-                        @endif
-
-                    </div>
-
-                    {{-- ARTISTS --}}
-                    @foreach($artistTypes AS $type)
-                    <div wire:key="{{ $type }}">
-                        <x-forms.elements.livewire.programComponents.artist
-                            type="{{ $type }}"
-                            resultsName="results{{ ucwords($type) }}"
-                            :results="$resultsComposer"
-                        />
-                    </div>
-                @endforeach
-
-                    {{-- ADDENDUM --}}
-                    <div id="addendums" class="flex flex-col mt-2 border border-gray-100 border-t-gray-300">
-                        @include('components.forms.elements.livewire.programComponents.addendums')
-                    </div>
-
-                    <x-buttons.submit
-                        type="button"
-                        :livewire=true
-                        wireClick="addConcertSelection"
-                        value="add concert Selection"
-                    />
-
-                @endif
-
-                {{-- SUCCESS INDICATOR --}}
-                <x-forms.indicators.successIndicator :showSuccessIndicator="$showSuccessIndicator"
-                                                     message="{{  $successMessage }}"/>
-
-            </div>{{-- end of dataEntryForm --}}
+            @endif {{-- end of if(displayEnsembleStudentRoster) }}
 
         </div>{{-- end of splitPage --}}
 

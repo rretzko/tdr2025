@@ -59,15 +59,6 @@ class DefaultTemplate
     {
         $str = '<table class="w-full">';
 
-//        $str .= '<thead>';
-//
-//        $str .= '<tr>';
-//
-//        $str .= '<th>#</th>';
-//
-//        $str .=  '</tr>';
-//
-//        $str .= '</thead>';
         $str .= '<tbody>';
         foreach ($this->selections as $selection) {
 
@@ -84,6 +75,9 @@ class DefaultTemplate
 
     private function setEnsembleHeader($selection): string
     {
+        //switch
+        $firstHeader = true;
+
         //early exit
         if ($selection->ensemble_id == $this->ensembleId) {
             return '';
@@ -94,7 +88,11 @@ class DefaultTemplate
         //create the header row
         $str = '<tr>';
 
-        $str .= '<th colspan="2" class=" w-full text-left">'.$selection->ensembleName.'</th>';
+        $str .= '<th colspan="2" class=" w-full text-left">'
+            .'<button wire:click="setDisplayEnsembleStudentRoster('.$this->ensembleId.')">'
+            .$selection->ensembleName
+            .'</button>'
+            .'</th>';
 
         $str .= '</tr>';
 
