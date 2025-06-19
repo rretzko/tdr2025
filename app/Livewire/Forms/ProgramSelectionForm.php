@@ -9,6 +9,7 @@ use App\Models\Programs\ProgramAddendum;
 use App\Models\Programs\ProgramSelection;
 use App\Models\Schools\Teacher;
 use App\Services\Libraries\CreateLibItemService;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
 
@@ -23,6 +24,7 @@ class ProgramSelectionForm extends Form
     public array $artists = [];
     public string $bgColor = 'bg-gray-100';
     public string $choreographer = '';
+    public bool $closer = false;
     public int $choreographerId = 0;
     public string $composer = '';
     public int $composerId = 0;
@@ -31,6 +33,7 @@ class ProgramSelectionForm extends Form
     public string $itemType = 'sheet music';
     public int $libTitleId = 0;
     public string $music = '';
+    public bool $opener = false;
     public int $performanceOrderBy = 1;
     public int $programId = 0;
     public ProgramSelection $programSelection;
@@ -88,6 +91,9 @@ class ProgramSelectionForm extends Form
         $this->addendum1 = '';
         $this->addendum2 = '';
         $this->addendum3 = '';
+
+        $this->opener = false;
+        $this->closer = false;
     }
 
     public function setVars(int $programSelectionId): void
@@ -102,9 +108,10 @@ class ProgramSelectionForm extends Form
         $this->performanceOrderBy = $this->programSelection->order_by;
         $this->programSelectionId = $programSelectionId;
         $this->voicing = $this->programSelection->voicing;
+        $this->opener = $this->programSelection->opener;
+        $this->closer = $this->programSelection->closer;
 
         $this->setAddendumVars($programSelectionId);
-
     }
 
     public function update(): bool
@@ -115,6 +122,8 @@ class ProgramSelectionForm extends Form
             [
                 'ensemble_id' => $this->ensembleId,
                 'order_by' => $this->performanceOrderBy,
+                'opener' => $this->opener,
+                'closer' => $this->closer,
             ]
         );
     }

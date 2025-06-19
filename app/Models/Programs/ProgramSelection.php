@@ -15,10 +15,12 @@ class ProgramSelection extends Model
     use HasFactory;
 
     protected $fillable = [
-        'program_id',
+        'closer',
         'lib_item_id',
         'ensemble_id',
-        'order_by'
+        'opener',
+        'order_by',
+        'program_id',
     ];
 
     public function ensemble(): BelongsTo

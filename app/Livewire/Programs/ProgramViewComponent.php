@@ -13,6 +13,7 @@ use App\Models\Programs\ProgramSelection;
 use App\Models\Schools\GradesITeach;
 use App\Models\Schools\Teacher;
 use App\Services\Programs\ProgramSelectionService;
+use App\Services\ReorderConcertSelectionsService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 
@@ -114,8 +115,12 @@ class ProgramViewComponent extends BasePage
 
     public function remove(int $programSelectionId): void
     {
-        $programSelection = ProgramSelection::find($programSelectionId)->delete();
+        ProgramSelection::find($programSelectionId)->delete();
 
+        //reset program_selection->order_by to be in sequential order
+        new ReorderConcertSelectionsService($this->program->id);
+
+        //reset form variables for the next new selection
         $this->form->resetVars();
     }
 
