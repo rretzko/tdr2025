@@ -24,6 +24,8 @@ class ProgramViewComponent extends BasePage
     public ProgramSelectionForm $form;
     public array $artistTypes = [];
     public bool $displayEnsembleStudentRoster = false;
+    public bool $displayNewStudentMemberForm = false;
+    public bool $displayUploadStudentMembersForm = false;
     public string $ensembleName = '';
     public string $ensembleNameError = '';
     public array $ensembles = [];
@@ -87,6 +89,12 @@ class ProgramViewComponent extends BasePage
         if ($added) {
             $this->resetFormToAdd();
         }
+    }
+
+    public function addOneStudent(): void
+    {
+        $this->reset('displayEnsembleStudentRoster', 'displayUploadStudentMembersForm');
+        $this->displayNewStudentMemberForm = true;
     }
 
     public function changeProgramId(int $programId): void
@@ -213,6 +221,12 @@ class ProgramViewComponent extends BasePage
         if ($updated) {
             $this->resetFormToAdd();
         }
+    }
+
+    public function uploadStudents(): void
+    {
+        $this->reset('displayEnsembleStudentRoster', 'displayNewStudentMemberForm');
+        $this->displayUploadStudentMembersForm = true;
     }
 
     private function calcNextPerformanceOrderBy(): void

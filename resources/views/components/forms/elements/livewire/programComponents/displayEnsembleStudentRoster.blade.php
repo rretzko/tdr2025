@@ -9,13 +9,28 @@
     </div>
 
     {{-- MEMBERSHIP ROSTER --}}
-    <div class="text-sm">
+    <div class="text-sm mb-2">
         @if(count($ensembleStudentMembers))
             iterate through ensembleStudentMembers array
         @else
             <div>No ensemble student members found.</div>
-            <div>Student Members can be added from the <a href="/ensembles" class="text-blue-500">Ensembles</a> module.
-            </div>
         @endif
     </div>
+
+    {{-- ADD NEW MEMBER OPTIONS --}}
+    <div class="bg-gray-100 border border-gray-300 rounded-lg p-2 shadow-lg">
+        <div>Individual student members can be added by clicking
+            <button wire:click="addOneStudent()"
+                    class="text-blue-500">
+                here,
+            </button>
+        </div>
+        <div>or you can upload multiple students by clicking
+            <button wire:click="uploadStudents"
+                    class="text-blue-500">
+                here.
+            </button>
+        </div>
+    </div>
+
 </div>

@@ -126,7 +126,7 @@ class MembersTableComponent extends BasePageMember
 
     private function getFirstEnsembleId(): int
     {
-
+        return 1;
     }
 
     private function getMembers(): array

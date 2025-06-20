@@ -43,6 +43,14 @@
 
                 @include('components.forms.elements.livewire.programComponents.displayEnsembleStudentRoster')
 
+            @elseif($displayNewStudentMemberForm)
+
+                <div>Display New Student Member Form</div>
+
+            @elseif($displayUploadStudentMembersForm)
+
+                <div>Display Upload StudentMembers Form</div>
+
             @else
 
                 {{-- DATA ENTRY FORM --}}
