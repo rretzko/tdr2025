@@ -15,6 +15,7 @@ use App\Services\Programs\EnsembleMemberRosterService;
 use App\Services\Programs\ProgramSelectionService;
 use App\Services\ReorderConcertSelectionsService;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 
 
 class ProgramViewComponent extends BasePage
@@ -37,6 +38,7 @@ class ProgramViewComponent extends BasePage
     public array $resultsWords = [];
     public Collection $resultsSelectionTitle;
     public int $schoolId = 0;
+    public array $ensembleStudentMembers = [];
     public string $selectionTitle = '';
 
     public function mount(): void
@@ -65,7 +67,9 @@ class ProgramViewComponent extends BasePage
             $this->form->ensembleId = array_key_first($this->ensembles);
             $this->form->programId = $this->dto['programId'];
         }
+
         $this->calcNextPerformanceOrderBy();
+        $this->ensembleStudentMembers = $this->getEnsembleStudentMembers();
     }
 
     public function render()
@@ -112,6 +116,11 @@ class ProgramViewComponent extends BasePage
         );
 
         $this->clickSelection($programSelection->id);
+    }
+
+    public function hideEnsembleStudentRoster(): void
+    {
+        $this->reset('displayEnsembleStudentRoster');
     }
 
     public function remove(int $programSelectionId): void
@@ -194,13 +203,6 @@ class ProgramViewComponent extends BasePage
             ->orderBy('lib_titles.title')
             ->get();
 
-//        Log::info(LibItem::query()
-//            ->join('lib_titles', 'lib_items.lib_title_id', '=', 'lib_titles.id')
-//            ->where('lib_titles.title', 'LIKE', '%'.$this->selectionTitle.'%')
-//            ->select('lib_items.*', 'lib_titles.title')
-//            ->orderBy('lib_titles.title')
-//            ->toRawSql());
-
         $this->form->title = $this->selectionTitle;
     }
 
@@ -261,6 +263,11 @@ class ProgramViewComponent extends BasePage
             ->orderBy('name')
             ->pluck('name', 'id')
             ->toArray();
+    }
+
+    private function getEnsembleStudentMembers(): array
+    {
+        return [];
     }
 
     private function getSelectionsTable(): string

@@ -76,7 +76,7 @@ class DefaultTemplate
     private function setEnsembleHeader($selection): string
     {
         //switch
-        $firstHeader = true;
+        static $firstHeader = true;
 
         //early exit
         if ($selection->ensemble_id == $this->ensembleId) {
@@ -88,11 +88,17 @@ class DefaultTemplate
         //create the header row
         $str = '<tr>';
 
-        $str .= '<th colspan="2" class=" w-full text-left">'
+        $str .= '<td colspan="2" class=" w-full text-left font-semibold">'
             .'<button wire:click="setDisplayEnsembleStudentRoster('.$this->ensembleId.')">'
             .$selection->ensembleName
-            .'</button>'
-            .'</th>';
+            .'</button>';
+
+        if ($firstHeader) {
+            $str .= '<hint class="ml-2 text-xs italic">(Click Ensemble name to display student members.)</hint>';
+            $firstHeader = false;
+        }
+
+        $str .= '</td>';
 
         $str .= '</tr>';
 
