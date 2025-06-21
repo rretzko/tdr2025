@@ -28,7 +28,9 @@
                @else
                    wire:model
                @endif ="{{ $name }}"
-               placeholder="{{ $placeholder }}"
+               @if($placeholder)
+                   placeholder="{{ $placeholder }}"
+               @endif
                @required($required)
                @if($autofocus) autofocus @endif
                aria-label="{{ $label }}"

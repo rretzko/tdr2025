@@ -13,6 +13,7 @@ use App\Models\Schools\GradesITeach;
 use App\Models\Schools\School;
 use App\Models\Schools\Teacher;
 use App\Models\Students\VoicePart;
+use App\Models\User;
 use App\Services\Programs\EnsembleMemberRosterService;
 use App\Services\Programs\ProgramSelectionService;
 use App\Services\ReorderConcertSelectionsService;
@@ -77,7 +78,8 @@ class ProgramViewComponent extends BasePage
             $this->form->programId = $this->dto['programId'];
             $this->ensembleVoicings = $this->getEnsembleVoicings();
             $this->form->voicePartId = array_key_first($this->ensembleVoicings);
-            $this->form->gradeClassOf = $this->program->school_year;
+            $this->form->gradeClassOf = $this->program->school_year; //default value
+            $this->form->schoolYear = $this->program->school_year;
         }
 
         $this->calcNextPerformanceOrderBy();
@@ -117,15 +119,12 @@ class ProgramViewComponent extends BasePage
     public function clickAddNewMember(): void
     {
         $added = $this->form->addNewEnsembleMember();
-        /*
-         * validate input
-         * search for existing student
-         *  if not found, create
-         *  if found, insert
-         * clear variables on $this and $this->form
-         * reset defaults if needed
-         * return to roster display
-         */
+
+        if ($added) {
+            $this->form->resetStudentMemberVars();
+            $this->reset('displayNewStudentMemberForm');
+            $this->displayEnsembleStudentRoster = true;
+        }
     }
 
     public function clickAddNewMemberStay(): void
@@ -248,6 +247,20 @@ class ProgramViewComponent extends BasePage
         }
     }
 
+    public function updatedFormFirstName(): void
+    {
+        if ((!$this->form->email) && ($this->form->lastName)) {
+            $this->form->email = $this->makeUniqueEmail();
+        }
+    }
+
+    public function updatedFormLastName(): void
+    {
+        if ((!$this->form->email) && ($this->form->firstName)) {
+            $this->form->email = $this->makeUniqueEmail();
+        }
+    }
+
     public function updatedSelectionTitle(): void
     {
         $this->resultsSelectionTitle = LibItem::query()
@@ -352,5 +365,25 @@ class ProgramViewComponent extends BasePage
         $service = new ProgramSelectionService($this->dto['programId'], 'default');
 
         return $service->getTable();
+    }
+
+    private function makeUniqueEmail(): string
+    {
+        $domain = '@studentFolder.info';
+        $firstInitial = strtolower($this->form->firstName[0]);
+        $lastName = strtolower($this->form->lastName);
+        $suffix = 0;
+
+        do {
+            $email = $firstInitial.$lastName;
+            if ($suffix > 0) {
+                $email .= $suffix;
+            }
+            $email .= $domain;
+            $exists = User::query()->where('email', $email)->exists();
+            $suffix++;
+        } while ($exists);
+
+        return $email;
     }
 }

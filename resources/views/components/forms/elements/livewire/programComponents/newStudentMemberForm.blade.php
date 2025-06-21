@@ -26,6 +26,7 @@
                 label="first name"
                 name="form.firstName"
                 :required=true
+                :autofocus=true
             />
             <x-forms.elements.livewire.inputTextCompressedRow
                 label="middle name"
@@ -43,7 +44,7 @@
     <x-forms.elements.livewire.inputTextWide
         label="email"
         name="form.email"
-        hint="a proxy email address will be created in case the email is unknown"
+        hint="A proxy email address will be created by default.  Overwrite this if the email is known."
         :required=true
     />
 
@@ -51,7 +52,7 @@
     <x-forms.elements.livewire.inputTextWide
         label="grade or class of"
         name="form.gradeClassOf"
-        hint="ex. 9 or {{ $form->gradeClassOf }}, defaults to program school year"
+        hint="ex. 9 or {{ $form->schoolYear }}, defaults to program school year"
         :required=true
     />
 

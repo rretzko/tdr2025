@@ -46,6 +46,7 @@ class ProgramSelectionForm extends Form
     public ProgramSelection $programSelection;
     public int $programSelectionId = 0;
     public int $schoolId = 0;
+    public int $schoolYear = 0;
     public int $teacherId = 0;
     public string $title = '';
     public int $voicePartId = 0;
@@ -107,12 +108,24 @@ class ProgramSelectionForm extends Form
             $this->firstName,
             $this->middleName,
             $this->lastName,
+            $this->email,
             $this->gradeClassOf,
             $this->voicePartId,
             $this->office,
         );
 
         return $service->added;
+    }
+
+    public function resetStudentMemberVars(): void
+    {
+        $this->email = '';
+        $this->firstName = '';
+        $this->lastName = '';
+        $this->middleName = '';
+        $this->gradeClassOf = '';
+        $this->voicePartId = 0;
+        $this->office = '';
     }
 
     public function resetVars(): void
