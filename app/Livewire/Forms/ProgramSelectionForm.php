@@ -8,6 +8,7 @@ use App\Models\Libraries\Items\LibItem;
 use App\Models\Programs\ProgramAddendum;
 use App\Models\Programs\ProgramSelection;
 use App\Models\Schools\Teacher;
+use App\Services\Ensembles\AddNewEnsembleMemberService;
 use App\Services\Libraries\CreateLibItemService;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Validate;
@@ -28,11 +29,17 @@ class ProgramSelectionForm extends Form
     public int $choreographerId = 0;
     public string $composer = '';
     public int $composerId = 0;
+    public string $email = '';
     public int $ensembleId = 0;
+    public string $firstName = '';
+    public string $gradeClassOf = '';
     public string $headerText = 'Add New Concert Selection';
     public string $itemType = 'sheet music';
+    public string $lastName = '';
     public int $libTitleId = 0;
+    public string $middleName = '';
     public string $music = '';
+    public string $office = '';
     public bool $opener = false;
     public int $performanceOrderBy = 1;
     public int $programId = 0;
@@ -41,12 +48,24 @@ class ProgramSelectionForm extends Form
     public int $schoolId = 0;
     public int $teacherId = 0;
     public string $title = '';
+    public int $voicePartId = 0;
     public string $voicing = '';
     public int $voicingId = 2;
     public string $wam = '';
     public int $wamId = 0;
     public string $words = '';
     public int $wordsId = 0;
+
+    protected function rules(): array
+    {
+        return [
+            'email' => 'required|email',
+            'firstName' => 'required',
+            'gradeClassOf' => 'required',
+            'lastName' => 'required',
+            'voicePartId' => 'required',
+        ];
+    }
 
     public function add(): bool
     {
@@ -67,6 +86,33 @@ class ProgramSelectionForm extends Form
         $this->updateProgramAddendums();
 
         return (bool) $this->programSelection;
+    }
+
+    /**
+     * validate input
+     * search for existing student
+     *  if not found, create
+     *  if found, insert
+     * clear variables on $this and $this->form
+     * reset defaults if needed
+     * return to roster display
+     */
+    public function addNewEnsembleMember(): bool
+    {
+        $this->validate();
+        $service = new AddNewEnsembleMemberService(
+            $this->schoolId,
+            $this->ensembleId,
+            $this->schoolYear,
+            $this->firstName,
+            $this->middleName,
+            $this->lastName,
+            $this->gradeClassOf,
+            $this->voicePartId,
+            $this->office,
+        );
+
+        return $service->added;
     }
 
     public function resetVars(): void

@@ -10,7 +10,9 @@ use App\Models\Libraries\Items\LibItem;
 use App\Models\Programs\Program;
 use App\Models\Programs\ProgramSelection;
 use App\Models\Schools\GradesITeach;
+use App\Models\Schools\School;
 use App\Models\Schools\Teacher;
+use App\Models\Students\VoicePart;
 use App\Services\Programs\EnsembleMemberRosterService;
 use App\Services\Programs\ProgramSelectionService;
 use App\Services\ReorderConcertSelectionsService;
@@ -24,10 +26,12 @@ class ProgramViewComponent extends BasePage
     public ProgramSelectionForm $form;
     public array $artistTypes = [];
     public bool $displayEnsembleStudentRoster = false;
-    public bool $displayNewStudentMemberForm = false;
+    public bool $displayNewStudentMemberForm = true; //false;
     public bool $displayUploadStudentMembersForm = false;
+    public int $ensembleId = 0;
     public string $ensembleName = '';
     public string $ensembleNameError = '';
+    public array $ensembleVoicings = [];
     public array $ensembles = [];
     public array $ensembleStudentRosters = [];
     public int|null $nextProgramId = 0;
@@ -40,6 +44,8 @@ class ProgramViewComponent extends BasePage
     public array $resultsWords = [];
     public Collection $resultsSelectionTitle;
     public int $schoolId = 0;
+    public string $schoolName = '';
+    public string $schoolYear = '';
     public array $ensembleStudentMembers = [];
     public string $selectionTitle = '';
 
@@ -58,6 +64,7 @@ class ProgramViewComponent extends BasePage
         $this->program = Program::find($this->dto['programId']);
         $this->ensembles = $this->getEnsembles();
         $this->schoolId = $this->program->school_id;
+        $this->schoolName = School::find($this->schoolId)->name;
         $this->form->schoolId = $this->schoolId;
 
         //prev/next buttons
@@ -68,10 +75,15 @@ class ProgramViewComponent extends BasePage
         if (count($this->ensembles)) {
             $this->form->ensembleId = array_key_first($this->ensembles);
             $this->form->programId = $this->dto['programId'];
+            $this->ensembleVoicings = $this->getEnsembleVoicings();
+            $this->form->voicePartId = array_key_first($this->ensembleVoicings);
+            $this->form->gradeClassOf = $this->program->school_year;
         }
 
         $this->calcNextPerformanceOrderBy();
         $this->ensembleStudentMembers = $this->getEnsembleStudentMembers();
+
+        $this->schoolYear = $this->getSchoolYearLong();
     }
 
     public function render()
@@ -102,6 +114,33 @@ class ProgramViewComponent extends BasePage
         $this->redirect('/program/view/'.$programId);
     }
 
+    public function clickAddNewMember(): void
+    {
+        $added = $this->form->addNewEnsembleMember();
+        /*
+         * validate input
+         * search for existing student
+         *  if not found, create
+         *  if found, insert
+         * clear variables on $this and $this->form
+         * reset defaults if needed
+         * return to roster display
+         */
+    }
+
+    public function clickAddNewMemberStay(): void
+    {
+        /*
+         * validate input
+         * search for existing student
+         *  if not found, create
+         *  if found, insert
+         * clear variables on $this and $this->form
+         * reset defaults if needed
+         * persist current form display
+         */
+    }
+
     public function clickArtist(string $type, int $artistId)
     {
         $artist = Artist::find($artistId);
@@ -126,9 +165,13 @@ class ProgramViewComponent extends BasePage
         $this->clickSelection($programSelection->id);
     }
 
-    public function hideEnsembleStudentRoster(): void
+    public function hideEnsembleStudentRoster(bool $addingStudent = false): void
     {
-        $this->reset('displayEnsembleStudentRoster');
+        $this->reset('displayEnsembleStudentRoster', 'displayNewStudentMemberForm', 'displayUploadStudentMembersForm');
+
+        ($addingStudent)
+            ? $this->displayEnsembleStudentRoster = true
+            : $this->reset('ensembleId', 'ensembleName');
     }
 
     public function remove(int $programSelectionId): void
@@ -151,6 +194,9 @@ class ProgramViewComponent extends BasePage
 
     public function setDisplayEnsembleStudentRoster(int $ensembleId): void
     {
+        $this->ensembleId = $ensembleId;
+        $this->ensembleName = Ensemble::find($ensembleId)->name;
+
         $service = new EnsembleMemberRosterService($ensembleId, $this->program->school_year);
         $this->ensembleStudentRoster = $service->getStudents();
 
@@ -282,6 +328,23 @@ class ProgramViewComponent extends BasePage
     private function getEnsembleStudentMembers(): array
     {
         return [];
+    }
+
+    public function getEnsembleVoicings(): array
+    {
+        return VoicePart::query()
+            ->where('order_by', '>', 0)
+            ->orderBy('order_by')
+            ->pluck('descr', 'id')
+            ->toArray();
+    }
+
+    private function getSchoolYearLong(): string
+    {
+        $end = $this->program->school_year;
+        $start = $end - 1;
+
+        return $start.' - '.$end;
     }
 
     private function getSelectionsTable(): string

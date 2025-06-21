@@ -45,11 +45,11 @@
 
             @elseif($displayNewStudentMemberForm)
 
-                <div>Display New Student Member Form</div>
+                @include('components.forms.elements.livewire.programComponents.newStudentMemberForm')
 
             @elseif($displayUploadStudentMembersForm)
 
-                <div>Display Upload StudentMembers Form</div>
+                @include('components.forms.elements.livewire.programComponents.uploadStudentMembersForm')
 
             @else
 
