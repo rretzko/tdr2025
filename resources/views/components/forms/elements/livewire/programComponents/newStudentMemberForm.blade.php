@@ -1,4 +1,4 @@
-<div class=" w-1/2 p-2 bg-gray-100 rounded-lg">
+<div class=" w-1/2 p-2 bg-green-100 rounded-lg border border-green-300">
 
     <div class="flex flex-row justify-between mr-4 mb-2">
         <header class="">
@@ -16,10 +16,22 @@
         </div>
 
         <div>
-            {{ $schoolYear }} {{ $ensembleName }}
+            School Year: {{ $schoolYearLong }}
         </div>
 
-        {{-- STUDENT NAME --}}
+        <div>
+            <label for="form.ensembleId">Ensemble
+                <select wire:model="form.ensembleId">
+                    @foreach($ensembles AS $id => $ensemble)
+                        <option value="{{ $id }}">
+                            {{ $ensemble }}
+                        </option>
+                    @endforeach
+                </select>
+                <div>EnsembleId: {{ $form->ensembleId }}</div>
+            </label>
+
+            {{-- STUDENT NAME --}}
         <div class="mb-2">
             <label>Student Name</label>
             <x-forms.elements.livewire.inputTextCompressedRow

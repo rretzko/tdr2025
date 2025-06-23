@@ -101,6 +101,7 @@ class ProgramSelectionForm extends Form
     public function addNewEnsembleMember(): bool
     {
         $this->validate();
+
         $service = new AddNewEnsembleMemberService(
             $this->schoolId,
             $this->ensembleId,

@@ -5,6 +5,7 @@ namespace App\Livewire\Programs;
 use App\Livewire\BasePage;
 use App\Livewire\Forms\ProgramSelectionForm;
 use App\Models\Ensembles\Ensemble;
+use App\Models\Ensembles\Members\Member;
 use App\Models\Libraries\Items\Components\Artist;
 use App\Models\Libraries\Items\LibItem;
 use App\Models\Programs\Program;
@@ -19,22 +20,26 @@ use App\Services\Programs\ProgramSelectionService;
 use App\Services\ReorderConcertSelectionsService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
-
+use Livewire\WithFileUploads;
+use Illuminate\Http\Request;
+use Livewire\WithPagination;
 
 class ProgramViewComponent extends BasePage
 {
+    use WithFileUploads;
+    use WithPagination;
+
     public Program $program;
     public ProgramSelectionForm $form;
     public array $artistTypes = [];
     public bool $displayEnsembleStudentRoster = false;
-    public bool $displayNewStudentMemberForm = true; //false;
-    public bool $displayUploadStudentMembersForm = false;
-    public int $ensembleId = 0;
+    public bool $displayNewStudentMemberForm = false;
+    public bool $displayUploadStudentMembersForm = true;
     public string $ensembleName = '';
     public string $ensembleNameError = '';
     public array $ensembleVoicings = [];
     public array $ensembles = [];
-    public array $ensembleStudentRosters = [];
+    public $ensembleStudentRoster; //used as container for uploaded file
     public int|null $nextProgramId = 0;
     public int|null $previousProgramId = 0;
     public array $resultsArranger = [];
@@ -46,9 +51,9 @@ class ProgramViewComponent extends BasePage
     public Collection $resultsSelectionTitle;
     public int $schoolId = 0;
     public string $schoolName = '';
-    public string $schoolYear = '';
-    public array $ensembleStudentMembers = [];
+    public string $schoolYearLong = '';
     public string $selectionTitle = '';
+    public string $uploadTemplateUrl = '';
 
     public function mount(): void
     {
@@ -80,12 +85,14 @@ class ProgramViewComponent extends BasePage
             $this->form->voicePartId = array_key_first($this->ensembleVoicings);
             $this->form->gradeClassOf = $this->program->school_year; //default value
             $this->form->schoolYear = $this->program->school_year;
+            $this->ensembleName = Ensemble::find(array_key_first($this->ensembles))->name;
         }
 
         $this->calcNextPerformanceOrderBy();
-        $this->ensembleStudentMembers = $this->getEnsembleStudentMembers();
 
-        $this->schoolYear = $this->getSchoolYearLong();
+        $this->schoolYearLong = $this->getSchoolYearLong();
+
+        $this->uploadTemplateUrl = \Storage::disk('s3')->url('templates/ensembleStudentRosterTemplate.csv');
     }
 
     public function render()
@@ -93,6 +100,7 @@ class ProgramViewComponent extends BasePage
         return view('livewire..programs.program-view-component',
             [
                 'selections' => $this->getSelectionsTable(),
+                'ensembleStudentMembers' => $this->getEnsembleStudentMembers()
             ]);
     }
 
@@ -116,8 +124,26 @@ class ProgramViewComponent extends BasePage
         $this->redirect('/program/view/'.$programId);
     }
 
+    /*
+     * validate input
+     * search for existing student
+     *  if not found, create
+     *  if found, insert
+     * clear variables on $this and $this->form
+     * reset defaults
+     * display ensemble roster
+     */
     public function clickAddNewMember(): void
     {
+        /*
+         * validate input
+         * search for existing student
+         *  if not found, create
+         *  if found, insert
+         * clear variables on $this and $this->form
+         * reset defaults
+         * persist current form display
+         */
         $added = $this->form->addNewEnsembleMember();
 
         if ($added) {
@@ -129,15 +155,19 @@ class ProgramViewComponent extends BasePage
 
     public function clickAddNewMemberStay(): void
     {
-        /*
-         * validate input
-         * search for existing student
-         *  if not found, create
-         *  if found, insert
-         * clear variables on $this and $this->form
-         * reset defaults if needed
-         * persist current form display
-         */
+        $this->clickAddNewMember();
+
+        //undo previous settings and persist current page
+        $this->reset('displayEnsembleStudentRoster');
+        $this->displayNewStudentMemberForm = true;
+
+    }
+
+    public function clickImportNewMembers(): void
+    {
+        $file = $this->ensembleStudentRoster;
+
+        dd($file);
     }
 
     public function clickArtist(string $type, int $artistId)
@@ -170,7 +200,7 @@ class ProgramViewComponent extends BasePage
 
         ($addingStudent)
             ? $this->displayEnsembleStudentRoster = true
-            : $this->reset('ensembleId', 'ensembleName');
+            : $this->reset('ensembleName');
     }
 
     public function remove(int $programSelectionId): void
@@ -193,7 +223,7 @@ class ProgramViewComponent extends BasePage
 
     public function setDisplayEnsembleStudentRoster(int $ensembleId): void
     {
-        $this->ensembleId = $ensembleId;
+        $this->form->ensembleId = $ensembleId;
         $this->ensembleName = Ensemble::find($ensembleId)->name;
 
         $service = new EnsembleMemberRosterService($ensembleId, $this->program->school_year);
@@ -340,7 +370,21 @@ class ProgramViewComponent extends BasePage
 
     private function getEnsembleStudentMembers(): array
     {
-        return [];
+        //early exit
+        if (!$this->form->ensembleId) {
+            return [];
+        }
+
+        return Member::query()
+            ->join('students', 'students.id', '=', 'ensemble_members.student_id')
+            ->join('users', 'users.id', '=', 'students.user_id')
+            ->where('ensemble_id', $this->form->ensembleId)
+            ->where('school_year', $this->program->school_year)
+            ->select('ensemble_members.*', 'users.name', 'users.last_name', 'users.first_name')
+            ->orderBy('users.last_name')
+            ->orderBy('users.first_name')
+            ->get()
+            ->toArray();
     }
 
     public function getEnsembleVoicings(): array
