@@ -22,17 +22,14 @@ class AddNewEnsembleMemberService
         private readonly int $ensembleId,
         private readonly int $schoolYear,
         private readonly string $firstName,
-        private readonly string $middleName,
+        private readonly string|null $middleName,
         private readonly string $lastName,
         private readonly string $email,
         private readonly int $gradeClassOf,
-        private readonly int $voicePartId,
+        private readonly int $voicePartId, //Soprano I
         private readonly string $office = 'member',
         private readonly string $status = 'active'
     ) {
-        Log::info('lastName: '.$this->lastName);
-        Log::info('firstName: '.$this->firstName);
-        Log::info('middleName: '.$this->middleName);
         $this->teacherId = Teacher::where('user_id', auth()->id())->first()->id;
         $this->init();
     }
@@ -87,17 +84,19 @@ class AddNewEnsembleMemberService
         }
 
         //update or create new EnsembleMember
-        $member = Member::updateOrCreate([
-            'school_id' => $this->schoolId,
-            'ensemble_id' => $this->ensembleId,
-            'school_year' => $this->schoolYear,
-            'student_id' => $student->id,
-            'voice_part_id' => $this->voicePartId,
-        ],
+        $member = Member::updateOrCreate(
             [
-            'office' => $this->office,
-            'status' => $this->status,
-        ]);
+                'school_id' => $this->schoolId,
+                'ensemble_id' => $this->ensembleId,
+                'school_year' => $this->schoolYear,
+                'student_id' => $student->id,
+            ],
+            [
+                'office' => $this->office,
+                'status' => $this->status,
+                'voice_part_id' => $this->voicePartId,
+            ]
+        );
 
         if ($member->id) {
             $this->added = true;

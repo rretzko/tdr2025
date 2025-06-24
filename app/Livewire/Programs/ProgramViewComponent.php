@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Programs;
 
+use App\Imports\EnsembleMembersImport;
 use App\Livewire\BasePage;
 use App\Livewire\Forms\ProgramSelectionForm;
 use App\Models\Ensembles\Ensemble;
@@ -19,27 +20,34 @@ use App\Services\Programs\EnsembleMemberRosterService;
 use App\Services\Programs\ProgramSelectionService;
 use App\Services\ReorderConcertSelectionsService;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 use Illuminate\Http\Request;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Traits\MakeUniqueEmailTrait;
+
 
 class ProgramViewComponent extends BasePage
 {
     use WithFileUploads;
     use WithPagination;
+    use MakeUniqueEmailTrait;
 
     public Program $program;
     public ProgramSelectionForm $form;
     public array $artistTypes = [];
     public bool $displayEnsembleStudentRoster = false;
     public bool $displayNewStudentMemberForm = false;
-    public bool $displayUploadStudentMembersForm = true;
+    public bool $displayUploadStudentMembersForm = false;
     public string $ensembleName = '';
     public string $ensembleNameError = '';
     public array $ensembleVoicings = [];
     public array $ensembles = [];
-    public $ensembleStudentRoster; //used as container for uploaded file
+    public $ensembleStudentRoster;
+    public $fileUploadMessage = '';
     public int|null $nextProgramId = 0;
     public int|null $previousProgramId = 0;
     public array $resultsArranger = [];
@@ -53,6 +61,7 @@ class ProgramViewComponent extends BasePage
     public string $schoolName = '';
     public string $schoolYearLong = '';
     public string $selectionTitle = '';
+    public $uploadedFileContainer; //used as container for uploaded file
     public string $uploadTemplateUrl = '';
 
     public function mount(): void
@@ -165,9 +174,15 @@ class ProgramViewComponent extends BasePage
 
     public function clickImportNewMembers(): void
     {
-        $file = $this->ensembleStudentRoster;
+        $this->reset('fileUploadMessage');
+        $file = $this->uploadedFileContainer;
 
-        dd($file);
+        if ($file) {
+            Excel::import(new EnsembleMembersImport, $file);
+            sleep(15);
+            $this->reset('uploadedFileContainer', 'displayUploadStudentMembersForm');
+            $this->displayEnsembleStudentRoster = true;
+        }
     }
 
     public function clickArtist(string $type, int $artistId)
@@ -212,6 +227,11 @@ class ProgramViewComponent extends BasePage
 
         //reset form variables for the next new selection
         $this->form->resetVars();
+    }
+
+    public function removeEnsembleMember(int $ensembleMemberId): void
+    {
+        Member::find($ensembleMemberId)->delete();
     }
 
     public function resetFormToAdd(): void
@@ -280,14 +300,14 @@ class ProgramViewComponent extends BasePage
     public function updatedFormFirstName(): void
     {
         if ((!$this->form->email) && ($this->form->lastName)) {
-            $this->form->email = $this->makeUniqueEmail();
+            $this->form->email = $this->makeUniqueEmail($this->form->firstName, $this->form->lastName);
         }
     }
 
     public function updatedFormLastName(): void
     {
         if ((!$this->form->email) && ($this->form->firstName)) {
-            $this->form->email = $this->makeUniqueEmail();
+            $this->form->email = $this->makeUniqueEmail($this->form->firstName, $this->form->lastName);
         }
     }
 
@@ -378,9 +398,14 @@ class ProgramViewComponent extends BasePage
         return Member::query()
             ->join('students', 'students.id', '=', 'ensemble_members.student_id')
             ->join('users', 'users.id', '=', 'students.user_id')
+            ->join('voice_parts', 'voice_parts.id', '=', 'ensemble_members.voice_part_id')
             ->where('ensemble_id', $this->form->ensembleId)
             ->where('school_year', $this->program->school_year)
-            ->select('ensemble_members.*', 'users.name', 'users.last_name', 'users.first_name')
+            ->select('ensemble_members.*',
+                'users.name', 'users.last_name', 'users.first_name as firstName',
+//                DB::raw("CONCAT(users.name, ' (', voice_parts.abbr, '), ', (12 - (ensemble_members.school_year - students.class_of))) AS studentData")
+                DB::raw("CONCAT(users.name, ' (', voice_parts.abbr, ') ', (12 - (students.class_of - ensemble_members.school_year))) AS studentData")
+            )
             ->orderBy('users.last_name')
             ->orderBy('users.first_name')
             ->get()
@@ -411,23 +436,23 @@ class ProgramViewComponent extends BasePage
         return $service->getTable();
     }
 
-    private function makeUniqueEmail(): string
-    {
-        $domain = '@studentFolder.info';
-        $firstInitial = strtolower($this->form->firstName[0]);
-        $lastName = strtolower($this->form->lastName);
-        $suffix = 0;
-
-        do {
-            $email = $firstInitial.$lastName;
-            if ($suffix > 0) {
-                $email .= $suffix;
-            }
-            $email .= $domain;
-            $exists = User::query()->where('email', $email)->exists();
-            $suffix++;
-        } while ($exists);
-
-        return $email;
-    }
+//    private function makeUniqueEmail(): string
+//    {
+//        $domain = '@studentFolder.info';
+//        $firstInitial = strtolower($this->form->firstName[0]);
+//        $lastName = strtolower($this->form->lastName);
+//        $suffix = 0;
+//
+//        do {
+//            $email = $firstInitial.$lastName;
+//            if ($suffix > 0) {
+//                $email .= $suffix;
+//            }
+//            $email .= $domain;
+//            $exists = User::query()->where('email', $email)->exists();
+//            $suffix++;
+//        } while ($exists);
+//
+//        return $email;
+//    }
 }

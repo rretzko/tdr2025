@@ -4,6 +4,7 @@ namespace App\Livewire\Students;
 
 use App\Exports\StudentsExport;
 use App\Livewire\BasePage;
+use App\Models\Ensembles\Members\Member;
 use App\Models\Schools\GradesITeach;
 use App\Models\Schools\SchoolGrade;
 use App\Models\Schools\SchoolTeacher;
@@ -96,6 +97,9 @@ class StudentsTableComponent extends BasePage
             ->first();
 
         $studentTeacher->delete();
+
+        //remove the student for all ensemble records
+        Member::where('student_id', $studentId)->delete();
 
         $this->showSuccessIndicator = true;
         $this->successMessage = $student->user->name.' has been removed from your roster.';

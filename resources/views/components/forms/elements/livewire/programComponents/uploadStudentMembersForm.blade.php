@@ -52,8 +52,8 @@
 
     <div class="flex flex-col m-4">
         <form wire:submit="clickImportNewMembers" class="border border-gray-300 p-2 rounded-lg">
-            <input type="file" id="myFile" wire:model="ensembleStudentRoster" accept=".csv">
-            @error('ensembleStudentRoster') <span class="error">{{ $message }}</span> @enderror
+            <input type="file" id="myFile" wire:model="uploadedFileContainer" accept=".csv">
+            @error('uploadedFileContainer') <span class="error">{{ $message }}</span> @enderror
             <x-buttons.submit value="upload"/>
         </form>
     </div>

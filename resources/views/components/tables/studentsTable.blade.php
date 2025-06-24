@@ -86,7 +86,11 @@
                     @endif
                 </td>
                 <td class="text-center border border-gray-200">
-                    <x-buttons.remove id="{{ $row['studentId'] }}" livewire="1"/>
+                    <x-buttons.remove
+                        id="{{ $row['studentId'] }}"
+                        livewire="1"
+                        message="Are you sure you want to remove this?  Note: The student will also be removed from your ensemble membership rosters. "
+                    />
                 </td>
             </tr>
 
