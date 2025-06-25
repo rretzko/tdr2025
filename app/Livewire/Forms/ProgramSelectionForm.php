@@ -50,7 +50,7 @@ class ProgramSelectionForm extends Form
     public int $teacherId = 0;
     public string $title = '';
     public int $voicePartId = 0;
-    public string $voicing = '';
+    public string $voicingDescr = '';
     public int $voicingId = 2;
     public string $wam = '';
     public int $wamId = 0;
@@ -139,7 +139,7 @@ class ProgramSelectionForm extends Form
         $this->headerText = 'Add Concert Selection';
         $this->performanceOrderBy = ProgramSelection::where('program_id', $this->programId)->max('order_by') + 1;
         $this->programSelectionId = 0;
-        $this->voicing = '';
+        $this->voicingDescr = '';
 
         $this->arranger = '';
         $this->choreographer = '';
@@ -204,10 +204,16 @@ class ProgramSelectionForm extends Form
             ->first();
 
         if ($library) {
+
             LibStack::create([
                 'library_id' => $library->id,
                 'lib_item_id' => $libItemId,
             ]);
+
+        } else { //troubleshooting
+            Log::info(Library::where('school_id', $this->schoolId)
+                ->where('teacher_id', $this->teacherId)
+                ->toRawSql());
         }
     }
 

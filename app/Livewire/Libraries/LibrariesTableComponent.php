@@ -4,6 +4,7 @@ namespace App\Livewire\Libraries;
 
 use App\Livewire\BasePage;
 use App\Livewire\Forms\LibraryForm;
+use App\Models\Schools\Teacher;
 use App\Services\CoTeachersService;
 use App\Services\MakeLibraryService;
 use App\Services\RemoveLibraryService;
@@ -42,7 +43,14 @@ class LibrariesTableComponent extends BasePage
 
     private function addHomeLibrary()
     {
+        $teacher = Teacher::where('user_id', auth()->id())->first();
+        $schools = $teacher->schools->sortBy('name');
+
         $this->schools[0] = 'Home Library';
+
+        foreach ($schools as $school) {
+            $this->schools[$school->id] = $school->name;
+        }
         return $this->schools;
     }
 

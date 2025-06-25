@@ -360,19 +360,11 @@ class Filters extends Form
 
     public function getPreviousFilterArray(string $filter, string $header): array
     {
-//Log::info(__METHOD__ . ': ' . __LINE__);
-//Log::info(implode(' | ', $this->classOfsSelectedIds));
         $row = UserFilter::query()
             ->where('user_id', auth()->id())
             ->where('header', $header)
             ->where('filter', $filter)
             ->first();
-//Log::info(__METHOD__ . ': ' . __LINE__);
-//Log::info( 'userFilter query: ' . UserFilter::query()
-//    ->where('user_id', auth()->id())
-//    ->where('header', $header)
-//    ->where('filter', $filter)
-//    ->toRawSql());
 
         return $row && strlen($row->values) ? explode(',', $row->values) : [];
     }

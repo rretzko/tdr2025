@@ -8,6 +8,7 @@ use App\Livewire\Forms\ProgramSelectionForm;
 use App\Models\Ensembles\Ensemble;
 use App\Models\Ensembles\Members\Member;
 use App\Models\Libraries\Items\Components\Artist;
+use App\Models\Libraries\Items\Components\Voicing;
 use App\Models\Libraries\Items\LibItem;
 use App\Models\Programs\Program;
 use App\Models\Programs\ProgramSelection;
@@ -63,6 +64,7 @@ class ProgramViewComponent extends BasePage
     public string $selectionTitle = '';
     public $uploadedFileContainer; //used as container for uploaded file
     public string $uploadTemplateUrl = '';
+    public array $voicings = [];
 
     public function mount(): void
     {
@@ -95,6 +97,8 @@ class ProgramViewComponent extends BasePage
             $this->form->gradeClassOf = $this->program->school_year; //default value
             $this->form->schoolYear = $this->program->school_year;
             $this->ensembleName = Ensemble::find(array_key_first($this->ensembles))->name;
+            $this->form->ensembleName = '';
+            $this->form->teacherId = Teacher::where('user_id', auth()->id())->first()->id;
         }
 
         $this->calcNextPerformanceOrderBy();
@@ -102,6 +106,8 @@ class ProgramViewComponent extends BasePage
         $this->schoolYearLong = $this->getSchoolYearLong();
 
         $this->uploadTemplateUrl = \Storage::disk('s3')->url('templates/ensembleStudentRosterTemplate.csv');
+
+        $this->voicings = $this->getVoicings();
     }
 
     public function render()
@@ -118,6 +124,12 @@ class ProgramViewComponent extends BasePage
         $added = $this->form->add();
 
         if ($added) {
+
+            //refresh the voicings array
+            if (strlen($this->form->voicingDescr)) {
+                $this->voicings = $this->getVoicings();
+            }
+
             $this->resetFormToAdd();
         }
     }
@@ -454,23 +466,12 @@ class ProgramViewComponent extends BasePage
         return $service->getTable();
     }
 
-//    private function makeUniqueEmail(): string
-//    {
-//        $domain = '@studentFolder.info';
-//        $firstInitial = strtolower($this->form->firstName[0]);
-//        $lastName = strtolower($this->form->lastName);
-//        $suffix = 0;
-//
-//        do {
-//            $email = $firstInitial.$lastName;
-//            if ($suffix > 0) {
-//                $email .= $suffix;
-//            }
-//            $email .= $domain;
-//            $exists = User::query()->where('email', $email)->exists();
-//            $suffix++;
-//        } while ($exists);
-//
-//        return $email;
-//    }
+    private function getVoicings(): array
+    {
+        return Voicing::query()
+            ->where('category', 'choral')
+            ->orderBy('descr')
+            ->pluck('descr', 'id')
+            ->toArray();
+    }
 }

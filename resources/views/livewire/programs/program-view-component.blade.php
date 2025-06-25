@@ -62,7 +62,7 @@
                     </div>
 
                     {{-- ENSEMBLE SELECTION --}}
-                    <div>
+                    <div class="border border-gray-100 border-b-gray-300 pb-1">
                         <label>Select an ensemble</label>
                         @if(count($ensembles))
                             <div class="flex flex-col">
@@ -78,13 +78,13 @@
                         @endif
                         <x-forms.elements.livewire.programComponents.ensembleName/>
                         <div class="bg-red-100 text-red-900 w-fit px-2 text-sm italic mt-1 rounded-lg">
-                            {!! $this->ensembleNameError !!}
+                            {!! $ensembleNameError !!}
                         </div>
 
                     </div>
 
                     {{-- PROGRAM ORDER --}}
-                    <div class="flex flex-col">
+                    <div class="flex flex-col border border-gray-100 border-b-gray-300 pb-1">
                         <label>Performance Order</label>
                         <input type="text"
                                wire:model="form.performanceOrderBy"
@@ -99,6 +99,29 @@
                     @else
                         {{-- DISPLAY FORM IN ADD MODE --}}
 
+                        {{-- SELECTION VOICING --}}
+                        <div class="border border-gray-100 border-b-gray-300 pb-1">
+                            <label>Selection Voicing</label>
+                            @if(count($voicings))
+                                <div class="flex flex-col">
+                                    <select wire:model="form.voicingId" autofocus>
+                                        @foreach($voicings AS $key => $voicing)
+                                            <option value="{{ $key }}">
+                                                {{ $voicing }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <label class="">or add a new voicing.</label>
+                                </div>
+                            @endif
+                            <div>
+                                <input type="text" wire:model="form.voicingDescr" placeholder="new voicing"/>
+                            </div>
+                            {{--                            <div class="bg-red-100 text-red-900 w-fit px-2 text-sm italic mt-1 rounded-lg">--}}
+                            {{--                                {!! $this->voicing !!}--}}
+                            {{--                            </div>--}}
+
+                        </div>
                         {{-- SELECTION TITLE --}}
                         <div>
                             <label>Selection Title</label>

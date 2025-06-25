@@ -36,10 +36,9 @@ class AddNewEnsembleMemberService
 
     private function init(): void
     {
-        Log::info(__CLASS__.' : '.__METHOD__.': '.__LINE__);
         //calc classOf from gradeClassOf
         $this->calcClassOfFromGrade();
-        Log::info('- $this->classOf: '.$this->classOf);
+
         //discover student from schoolId, email, lastName, firstName, middleName, classOf,
         if ($this->studentFound()) {
             // if gradeClassOf > $this->classOf, update student to greater value

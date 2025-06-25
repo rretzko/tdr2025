@@ -12,6 +12,7 @@ use App\Models\Schools\Teacher;
 use App\Models\Students\Student;
 use App\Models\StudentTeacher;
 use App\Models\UserConfig;
+use App\Models\UserFilter;
 use App\Models\UserSort;
 use App\Services\CoTeachersService;
 use Illuminate\Database\Eloquent\Builder;

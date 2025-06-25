@@ -186,22 +186,22 @@ class CreateLibItemService
 
     private function getVoicingId(): int
     {
+        //check for new voicing
+        $descr = strtolower($this->form->voicingDescr) ?? '';
+
         //early exit
-        if ($this->form->voicingId) {
+        if (empty($descr) && $this->form->voicingId) {
             return $this->form->voicingId;
         }
 
-        $descr = strtolower($this->form->voicingDescr) ?? '';
-
+        //error condition of no $this->form->voicingId AND no $descr
         if ($descr === '') {
             return 0;
         }
 
-        $voicing = Voicing::where('descr', $descr)->first();
-
-        //search for existing voicing object
-        if ($voicing) {
-            return $voicing->id;
+        //check for duplicate value
+        if (Voicing::where('descr', $descr)->exists()) {
+            return Voicing::where('descr', $descr)->first()->id;
         }
 
         //else create new voicing object

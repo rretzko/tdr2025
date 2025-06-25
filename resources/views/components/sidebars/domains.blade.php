@@ -10,7 +10,7 @@
             <x-heroicons.mortarBoard/>
         </a>
     </div>
-    @if( auth()->user()->isFounder())
+    @if( auth()->user()->hasLibrary())
         <div class="text-blue-600">
             <a href="{{ route('ensembles') }}" title="Ensembles">
                 <x-heroicons.userGroup/>
@@ -21,6 +21,12 @@
                 <x-heroicons.bookOpen/>
             </a>
         </div>
+        <div class="text-black">
+            <a href="{{ route('programs') }}" title="Programs">
+                <x-heroicons.ticket/>
+            </a>
+        </div>
+
     @endif
     <div class="text-red-600">
         <a href="{{ route('events.dashboard') }}" title="Events">
