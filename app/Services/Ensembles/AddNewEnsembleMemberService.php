@@ -36,9 +36,10 @@ class AddNewEnsembleMemberService
 
     private function init(): void
     {
+        Log::info(__CLASS__.' : '.__METHOD__.': '.__LINE__);
         //calc classOf from gradeClassOf
         $this->calcClassOfFromGrade();
-
+        Log::info('- $this->classOf: '.$this->classOf);
         //discover student from schoolId, email, lastName, firstName, middleName, classOf,
         if ($this->studentFound()) {
             // if gradeClassOf > $this->classOf, update student to greater value
@@ -49,6 +50,9 @@ class AddNewEnsembleMemberService
                 $this->student->update(['class_of' => $this->classOf]);
             }
             $student = $this->student;
+
+            //if student is currently deleted, restore to active
+            $this->restoreEnsembleMemberRecord($student->id);
 
         } else {
             //   if student is not found:
@@ -137,6 +141,20 @@ class AddNewEnsembleMemberService
     private function isGrade(): bool
     {
         return (($this->gradeClassOf >= 1) && ($this->gradeClassOf <= 12));
+    }
+
+    private function restoreEnsembleMemberRecord(int $studentId): void
+    {
+        $ensembleMember = Member::withTrashed()
+            ->where('student_id', $studentId)
+            ->where('school_year', $this->schoolYear)
+            ->where('ensemble_id', $this->ensembleId)
+            ->first();
+
+        if ($ensembleMember && $ensembleMember->trashed()) {
+            $ensembleMember->restore();
+            Log::info('!!! isRestored: '.$this->student->user->name ? 'true' : 'false');
+        }
     }
 
     private function studentEmailFound(): bool

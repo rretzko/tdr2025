@@ -178,10 +178,18 @@ class ProgramViewComponent extends BasePage
         $file = $this->uploadedFileContainer;
 
         if ($file) {
-            Excel::import(new EnsembleMembersImport, $file);
-            sleep(15);
-            $this->reset('uploadedFileContainer', 'displayUploadStudentMembersForm');
-            $this->displayEnsembleStudentRoster = true;
+//            Log::info('baseName: ' . $file->baseName());
+            try {
+                Excel::import(new EnsembleMembersImport, $file);
+                Log::info('Import completed successfully, continuing...');
+            } catch (\Exception $e) {
+                Log::error('Excel import failed: '.$e->getMessage());
+            }
+
+            $this->reset('uploadedFileContainer');
+            $this->displayEnsembleStudentRoster();
+        } else {
+            Log::info('No file was uploaded.');
         }
     }
 
@@ -361,6 +369,16 @@ class ProgramViewComponent extends BasePage
         }
 
         return $query->value('id');
+    }
+
+    /**
+     * Set vars to display the ensemble student roster
+     */
+    private function displayEnsembleStudentRoster(): void
+    {
+        $this->displayEnsembleStudentRoster = true;
+        $this->displayUploadStudentMembersForm = false;
+        $this->displayNewStudentMemberForm = false;
     }
 
     private function ensembleNameUnique(): bool

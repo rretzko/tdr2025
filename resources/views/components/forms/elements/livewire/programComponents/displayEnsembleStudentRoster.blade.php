@@ -1,7 +1,7 @@
 <div class=" w-1/2 p-2 bg-blue-100 rounded-lg">
     <div class="flex flex-row justify-between mr-4 mb-2">
         <header class="">
-            Ensemble Student Membership ({{ count($ensembleStudentMembers) }})
+            {{ $ensembleName }} {{ $program->school_year }} Student Membership ({{ count($ensembleStudentMembers) }})
         </header>
         <button wire:click="hideEnsembleStudentRoster()" class="text-red-500">
             Hide...
@@ -12,9 +12,9 @@
     <div class="flex flex-col  text-sm mb-2 ml-4">
         @forelse($ensembleStudentMembers AS $student)
             <button wire:click="removeEnsembleMember({{ $student['id'] }})"
+                    wire:confirm="Are you sure you want to remove {{ $student['name'] }} from {{ $ensembleName }} {{ $program->school_year }} membership?"
                     class="hover:text-red-500 text-left"
-                    title="click to remove this student from ensemble membership"
-                    onclick="Are you sure?"
+                    title="click to remove {{ $student['name'] }} from {{ $ensembleName }} {{ $program->school_year }} membership"
             >
                 {{ $student['studentData'] }}
             </button>
