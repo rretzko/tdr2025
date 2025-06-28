@@ -11,24 +11,24 @@ use App\Models\Libraries\Items\Components\Artist;
 use App\Models\Libraries\Items\Components\Voicing;
 use App\Models\Libraries\Items\LibItem;
 use App\Models\Programs\Program;
+use App\Models\Programs\ProgramAddendum;
 use App\Models\Programs\ProgramSelection;
 use App\Models\Schools\GradesITeach;
 use App\Models\Schools\School;
 use App\Models\Schools\Teacher;
 use App\Models\Students\VoicePart;
-use App\Models\User;
+use App\Models\UserFilter;
+use App\Services\Programs\AssignSectionOpenerAndClosersService;
 use App\Services\Programs\EnsembleMemberRosterService;
 use App\Services\Programs\ProgramSelectionService;
 use App\Services\ReorderConcertSelectionsService;
+use App\Traits\MakeUniqueEmailTrait;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
-use Illuminate\Http\Request;
 use Livewire\WithPagination;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Traits\MakeUniqueEmailTrait;
 
 
 class ProgramViewComponent extends BasePage
@@ -131,6 +131,7 @@ class ProgramViewComponent extends BasePage
             }
 
             $this->resetFormToAdd();
+            new AssignSectionOpenerAndClosersService($this->program->id);
         }
     }
 
@@ -171,6 +172,7 @@ class ProgramViewComponent extends BasePage
             $this->form->resetStudentMemberVars();
             $this->reset('displayNewStudentMemberForm');
             $this->displayEnsembleStudentRoster = true;
+            $this->resetStudentFilters();
         }
     }
 
@@ -199,6 +201,7 @@ class ProgramViewComponent extends BasePage
             }
 
             $this->reset('uploadedFileContainer');
+            $this->resetStudentFilters();
             $this->displayEnsembleStudentRoster();
         } else {
             Log::info('No file was uploaded.');
@@ -240,6 +243,12 @@ class ProgramViewComponent extends BasePage
 
     public function remove(int $programSelectionId): void
     {
+        //remove any dependent program addendums
+        ProgramAddendum::query()
+            ->where('program_selection_id', $programSelectionId)
+            ->delete();
+
+        //remove the program selection
         ProgramSelection::find($programSelectionId)->delete();
 
         //reset program_selection->order_by to be in sequential order
@@ -247,6 +256,9 @@ class ProgramViewComponent extends BasePage
 
         //reset form variables for the next new selection
         $this->form->resetVars();
+
+        //reset opener and closers
+        new AssignSectionOpenerAndClosersService($this->program->id);
     }
 
     public function removeEnsembleMember(int $ensembleMemberId): void
@@ -473,5 +485,21 @@ class ProgramViewComponent extends BasePage
             ->orderBy('descr')
             ->pluck('descr', 'id')
             ->toArray();
+    }
+
+    /**
+     * When adding new members, member data (ex. classOf, voicePart, SchoolId)
+     * may not match existing student filters and would not be included when the user
+     * opens the Students module.
+     * This method deletes any existing filters for the Students module which will then
+     * be refreshed completely to include the new data.
+     * @return void
+     */
+    private function resetStudentFilters(): void
+    {
+        UserFilter::query()
+            ->where('user_id', auth()->id())
+            ->where('header', 'students')
+            ->delete();
     }
 }
