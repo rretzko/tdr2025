@@ -203,13 +203,14 @@ class ProgramViewComponent extends BasePage
 
         } else {
             //store the file on a s3 disk
-            $s3Path = 'ensembles/memberships';
+            $s3Path = 'ensembles'.DIRECTORY_SEPARATOR.'memberships';
             $fileName = \Storage::disk('s3')->put($s3Path, $this->uploadedFileContainer, 'public');
-
+            Log::info('s3 file name: '.$fileName);
             if ($fileName) {
                 Log::info('baseName: '.$fileName);
                 try {
                     $tempFile = tempnam(sys_get_temp_dir(), 'excel');
+                    Log::info('tempFile: '.$tempFile);
                     file_put_contents($tempFile, \Storage::disk('s3')->get($fileName));
                     Excel::import(new EnsembleMembersImport, $tempFile);
                     Log::info('Import completed successfully, continuing...');
