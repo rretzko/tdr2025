@@ -1,4 +1,4 @@
-<div class=" w-1/2 p-2 bg-gray-100 rounded-lg">
+<div class=" w-1/2 p-2 bg-orange-100 rounded-lg">
     <div class="flex flex-row justify-between mr-4 mb-2">
         <header class="">
             Upload Student Members Form
@@ -6,17 +6,6 @@
         <button wire:click="hideEnsembleStudentRoster(true)" class="text-red-500">
             Hide...
         </button>
-    </div>
-
-    <div>
-        <ul>
-            <li>SchoolId</li>
-            <li>EnsembleId</li>
-            <li>SchoolYear</li>
-            <li>VoicePartId</li>
-            <li>Office</li>
-            <li>Status</li>
-        </ul>
     </div>
 
     {{-- INSTRUCTIONS --}}
@@ -51,10 +40,23 @@
     </div>
 
     <div class="flex flex-col m-4">
-        <form wire:submit="clickImportNewMembers" class="border border-gray-300 p-2 rounded-lg">
-            <input type="file" id="myFile" wire:model="uploadedFileContainer" accept=".csv">
+        <form wire:submit="clickImportNewMembers" class="flex flex-col border border-gray-300 p-2 rounded-lg">
+            <input type="file" id="myFile" wire:model="uploadedFileContainer" accept=".csv" class="">
+            <hint class="text-sm italic mb-2">Max file size: 4MB.</hint>
+            <div class="text-sm text-red-500 mb-2">
+                @if($uploadedMaxFileSizeExceeded)
+                    {{ $uploadedMaxFileSizeExceededMessage }}
+                @endif
+            </div>
             @error('uploadedFileContainer') <span class="error">{{ $message }}</span> @enderror
-            <x-buttons.submit value="upload"/>
+            <button type="submit" wire:loading.attr="disabled"
+                    class="bg-black text-white rounded-lg px-2 disabled:bg-gray-500"
+            >
+                Upload
+            </button>
+            <div wire:loading wire:target="uploadedFileContainer" class="text-sm italic">
+                Please wait while we prepare the file...
+            </div>
         </form>
     </div>
 

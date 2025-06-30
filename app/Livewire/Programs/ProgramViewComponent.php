@@ -63,6 +63,9 @@ class ProgramViewComponent extends BasePage
     public string $schoolYearLong = '';
     public string $selectionTitle = '';
     public $uploadedFileContainer; //used as container for uploaded file
+    public int $uploadedMaxFileSize = 400000; //4MB
+    public bool $uploadedMaxFileSizeExceeded = false;
+    public string $uploadedMaxFileSizeExceededMessage = 'This file exceeds the 4MB file size limit.';
     public string $uploadTemplateUrl = '';
     public array $voicings = [];
 
@@ -188,24 +191,40 @@ class ProgramViewComponent extends BasePage
 
     public function clickImportNewMembers(): void
     {
-        $this->reset('fileUploadMessage');
-        $file = $this->uploadedFileContainer;
+        $this->reset('fileUploadMessage', 'uploadedMaxFileSizeExceeded');
 
-        if ($file) {
-//            Log::info('baseName: ' . $file->baseName());
-            try {
-                Excel::import(new EnsembleMembersImport, $file);
-                Log::info('Import completed successfully, continuing...');
-            } catch (\Exception $e) {
-                Log::error('Excel import failed: '.$e->getMessage());
-            }
+        //check size
+        $fileSize = $this->uploadedFileContainer->getSize();
 
-            $this->reset('uploadedFileContainer');
-            $this->resetStudentFilters();
-            $this->displayEnsembleStudentRoster();
+        //early exit if fileSize exceeds maxFileSIze
+        if ($fileSize > $this->uploadedMaxFileSize) {
+
+            $this->uploadedMaxFileSizeExceeded = true;
+
         } else {
-            Log::info('No file was uploaded.');
+            //store the file on an s3 disk
+            $s3Path = 'ensembles/memberships';
+            $fileName = \Storage::disk('s3')->put($s3Path, $this->uploadedFileContainer);
+
+            if ($fileName) {
+                Log::info('baseName: '.$fileName);
+                try {
+                    $path = $s3Path.'/'.$fileName;
+                    Excel::import(new EnsembleMembersImport, \Storage::disk('s3')->path($path));
+                    Log::info('Import completed successfully, continuing...');
+                } catch (\Exception $e) {
+                    Log::error('Excel import failed: '.$e->getMessage());
+                }
+
+                $this->reset('uploadedFileContainer');
+                $this->resetStudentFilters();
+                $this->displayEnsembleStudentRoster();
+            } else {
+                Log::info('No file was uploaded.');
+            }
         }
+
+
     }
 
     public function clickArtist(string $type, int $artistId)
