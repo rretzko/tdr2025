@@ -202,15 +202,16 @@ class ProgramViewComponent extends BasePage
             $this->uploadedMaxFileSizeExceeded = true;
 
         } else {
-            //store the file on an s3 disk
+            //store the file on a s3 disk
             $s3Path = 'ensembles/memberships';
-            $fileName = \Storage::disk('s3')->put($s3Path, $this->uploadedFileContainer);
+            $fileName = \Storage::disk('s3')->put($s3Path, $this->uploadedFileContainer, 'public');
 
             if ($fileName) {
                 Log::info('baseName: '.$fileName);
                 try {
-                    $path = $s3Path.'/'.$fileName;
-                    Excel::import(new EnsembleMembersImport, \Storage::disk('s3')->path($path));
+                    $tempFile = tempnam(sys_get_temp_dir(), 'excel');
+                    file_put_contents($tempFile, \Storage::disk('s3')->get($fileName));
+                    Excel::import(new EnsembleMembersImport, $tempFile);
                     Log::info('Import completed successfully, continuing...');
                 } catch (\Exception $e) {
                     Log::error('Excel import failed: '.$e->getMessage());
