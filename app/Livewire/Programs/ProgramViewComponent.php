@@ -192,32 +192,31 @@ class ProgramViewComponent extends BasePage
     public function clickImportNewMembers(): void
     {
         $this->reset('fileUploadMessage', 'uploadedMaxFileSizeExceeded');
-
         //check size
         $fileSize = $this->uploadedFileContainer->getSize();
-
+        Log::info('fileSize: '.$fileSize);
         //early exit if fileSize exceeds maxFileSIze
         if ($fileSize > $this->uploadedMaxFileSize) {
-
             $this->uploadedMaxFileSizeExceeded = true;
-
         } else {
+            Log::info('fileSize is good.');
             //store the file on a s3 disk
-            $s3Path = 'ensembles'.DIRECTORY_SEPARATOR.'memberships';
-            $fileName = \Storage::disk('s3')->put($s3Path, $this->uploadedFileContainer, 'public');
-            Log::info('s3 file name: '.$fileName);
-            if ($fileName) {
-                Log::info('baseName: '.$fileName);
+            $s3Path = 'ensembles/memberships';
+            $fileName = 'test'.rand(1000, 3000).'.csv';
+            Log::info('fileName: '.$fileName);
+            $storedFileName = $this->uploadedFileContainer->storePubliclyAs($s3Path, $fileName, 's3');
+            Log::info('storedFileName: '.$storedFileName);
+            if ($storedFileName) {
                 try {
-                    $tempFile = tempnam(sys_get_temp_dir(), 'excel');
-                    Log::info('tempFile: '.$tempFile);
-                    file_put_contents($tempFile, \Storage::disk('s3')->get($fileName));
-                    Excel::import(new EnsembleMembersImport, $tempFile);
+                    Excel::import(
+                        new EnsembleMembersImport,
+                        $storedFileName,
+                        's3',
+                        \Maatwebsite\Excel\Excel::CSV);
                     Log::info('Import completed successfully, continuing...');
                 } catch (\Exception $e) {
                     Log::error('Excel import failed: '.$e->getMessage());
                 }
-
                 $this->reset('uploadedFileContainer');
                 $this->resetStudentFilters();
                 $this->displayEnsembleStudentRoster();

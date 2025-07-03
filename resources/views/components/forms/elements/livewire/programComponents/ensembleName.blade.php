@@ -3,7 +3,8 @@
         @if((! isset($form->policies['canEdit']['ensembleName'])) || $form->policies['canEdit']['ensembleName'])
             <input
                 type="text"
-                wire:model.blur="form.ensembleName"
+                {{-- wire:model.blur="form.ensembleName" --}}
+                wire:model.blue="ensembleName"
                 class="w-11/12 sm:w-10/12"
                 placeholder="new ensemble"
             />

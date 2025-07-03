@@ -235,8 +235,6 @@ class ProgramSelectionForm extends Form
         $this->artists['music'] = $this->music;
         $this->artists['wam'] = $this->wam;
         $this->artists['words'] = $this->words;
-
-
     }
 
     private function updateProgramAddendums(): void
