@@ -258,7 +258,9 @@ class ProgramViewComponent extends BasePage
 
         ($addingStudent)
             ? $this->displayEnsembleStudentRoster = true
-            : $this->reset('ensembleName');
+            : $this->reset('displayNewStudentMemberForm', 'displayUploadStudentMembersForm',
+            'displayEnsembleStudentRoster',
+            'ensembleName');
     }
 
     public function remove(int $programSelectionId): void
