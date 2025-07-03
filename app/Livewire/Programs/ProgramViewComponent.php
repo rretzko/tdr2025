@@ -236,6 +236,8 @@ class ProgramViewComponent extends BasePage
     public function clickSelection(int $selectionId): void
     {
         $this->form->setVars($selectionId);
+
+        new AssignSectionOpenerAndClosersService($this->program->id);
     }
 
     public function clickTitle(int $libItemId): void

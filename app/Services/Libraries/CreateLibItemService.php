@@ -26,6 +26,7 @@ class CreateLibItemService
     public int|null $musicId = null;
     public bool $saved = false;
     private int $teacherId = 0;
+    private string $title = '';
     private int $voicingId = 0;
     public int|null $wamId = null;
     public int|null $wordsId = null;
@@ -45,6 +46,7 @@ class CreateLibItemService
         $this->wordsId = $this->getArtistId('words');
         $this->musicId = $this->getArtistId('music');
         $this->choreographerId = $this->getArtistId('choreographer');
+        $this->title = $this->form->title;
 
         $this->errorCheck();
 
@@ -163,17 +165,17 @@ class CreateLibItemService
     private function getLibTitleId(): int
     {
         //ensure title is properly formatted
-        $value = Str::title(strtolower($this->form->title));
+        $title = Str::title(strtolower($this->form->title));
+        $alpha = MakeAlphaService::alphabetize($title);
 
         //use existing id if found
-        $exists = LibTitle::where('title', $value)->exists();
+        $exists = LibTitle::where('title', $title)->exists();
+
         if ($exists) {
-            return LibTitle::where('title', $value)->first()->id;
+            return LibTitle::where('title', $title)->first()->id;
         }
 
         //else create a new row in the lib_titles table and return that id
-        $title = Str::title($this->form->title);
-        $alpha = MakeAlphaService::alphabetize($title);
 
         return LibTitle::create(
             [

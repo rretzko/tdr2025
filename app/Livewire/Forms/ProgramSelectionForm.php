@@ -7,6 +7,7 @@ use App\Models\Libraries\LibStack;
 use App\Models\Libraries\Items\LibItem;
 use App\Models\Programs\ProgramAddendum;
 use App\Models\Programs\ProgramSelection;
+use App\Models\Schools\School;
 use App\Models\Schools\Teacher;
 use App\Services\Ensembles\AddNewEnsembleMemberService;
 use App\Services\Libraries\CreateLibItemService;
@@ -203,18 +204,20 @@ class ProgramSelectionForm extends Form
             ->where('teacher_id', $this->teacherId)
             ->first();
 
-        if ($library) {
-
-            LibStack::create([
-                'library_id' => $library->id,
-                'lib_item_id' => $libItemId,
+        //create a library if none exists
+        if (!$library) {
+            $school = School::find($this->schoolId);
+            $library = Library::create([
+                'school_id' => $this->schoolId,
+                'teacher_id' => $this->teacherId,
+                'name' => $school->name.' Choral Library',
             ]);
-
-        } else { //troubleshooting
-            Log::info(Library::where('school_id', $this->schoolId)
-                ->where('teacher_id', $this->teacherId)
-                ->toRawSql());
         }
+
+        LibStack::create([
+            'library_id' => $library->id,
+            'lib_item_id' => $libItemId,
+        ]);
     }
 
     private function setAddendumVars(int $programSelectionId): void
