@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Events\EventManageEditController;
+use App\Http\Controllers\Pdfs\PullSheetController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -156,6 +157,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('pdf/registrationCards/voiceParts/{voicePart}',
         [\App\Http\Controllers\Pdfs\RegistrationCardsController::class, 'voicePart'])
         ->name('pdf.registrationCards.voiceParts');
+    Route::get('pdf/pullSheet', PullSheetController::class)
+        ->name('pdf.pullSheet');
 
     //PARTICIPATION.PITCHFILES
     Route::get('pitchFiles', \App\Http\Controllers\Events\Versions\Participations\PitchFileController::class)

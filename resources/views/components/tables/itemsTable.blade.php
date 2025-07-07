@@ -30,11 +30,12 @@
                     </button>
                 </th>
             @endforeach
-            <th class="border border-transparent px-1 sr-only">
-                edit
-            </th>
-            <th class="border border-gray-200 px-1 sr-only">
-                remove
+                <th colspan="2" class="border border-transparent px-1">
+                    <button wire:click="downloadPullSheetPdf"
+                            class="text-sm text-blue-500"
+                    >
+                        Pull Sheet (<span id="itemsToPullCount"></span>)
+                    </button>
             </th>
         </tr>
         </thead>
@@ -46,13 +47,13 @@
                 <td class="border border-gray-200 px-1 text-center">
                     {{ $loop->iteration }}
                 </td>
-                <td class="border border-gray-200 px-1 text-center cursor-help">
+                <td class="border border-gray-200 px-1 text-center">
                     {{ $row['item_type'] }}
                 </td>
-                <td class="border border-gray-200 px-1 text-left cursor-help">
+                <td class="border border-gray-200 px-1 text-left">
                     {{ $row['alpha'] }}
                 </td>
-                <td class="border border-gray-200 px-1 text-left cursor-help">
+                <td class="border border-gray-200 px-1 text-left ">
                     @if($row['composerName'])
                         <div class="font-bold">{{ $row['composerName'] }}</div>
                     @endif
@@ -72,8 +73,30 @@
                             <div>{{ $row['choreographerName'] }} <span class="text-xs">(choreo)</span></div>
                         @endif
                 </td>
-                <td class="border border-gray-200 px-1 text-center cursor-help">
+                <td class="border border-gray-200 px-1 text-center">
                     {{ $row['voicingDescr'] }}
+                </td>
+                <td class="border border-gray-200 px-1 text-center text-sm cursor-help">
+                    @forelse($performances[$row['libItemId']] AS $programId => $performanceDate)
+                        <a
+                            href="{{ route('programs.show',['program' => $programId]) }}"
+                            class="text-blue-500"
+                            title="open program"
+                        >
+                            {{ $performanceDate }}
+                        </a>
+                    @empty
+                        none
+                    @endforelse
+                </td>
+                <td class="relative border border-gray-300">
+                    <div class="flex justify-center items-center h-full">
+                        <input type="checkbox"
+                               wire:model="itemsToPull"
+                               class="item-checkbox"
+                               value="{{  $row['libItemId'] }}"
+                        />
+                    </div>
                 </td>
                 <td class="text-center border border-gray-200 px-1">
                     <x-buttons.edit id="{{ $row['libItemId'] }}" :livewire="true" id="{{ $row['libItemId'] }}"/>
@@ -96,5 +119,26 @@
 
     {{-- LOADING COMPONENT AND SPINNER --}}
     <x-tables.loadingComponentAndSpinner/>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const countDisplay = document.getElementById('itemsToPullCount');
+            const checkboxes = document.querySelectorAll('input.item-checkbox');
+
+            function updateCount() {
+                // Count how many checkboxes are checked
+                const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+                countDisplay.textContent = checkedCount;
+            }
+
+            // Attach change event listeners to all checkboxes
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', updateCount);
+            });
+
+            // Initialize count on page load
+            updateCount();
+        });
+    </script>
 
 </div>

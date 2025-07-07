@@ -33,6 +33,7 @@
                 <div>No ensembles found.</div>
             @endforelse
         </div>
+
         {{-- HEADER and ADD-NEW BUTTON --}}
         <div class="flex justify-between mb-1">
             <div>{{ ucwords($dto['header']) }}</div>
@@ -69,7 +70,8 @@
 
                 {{-- TABLE --}}
                 <div>
-                    @include('components.tables.librariesTable')
+                    {{--                    @include('components.tables.librariesTable')--}}
+                    @include('components.tables.itemsTable')
                 </div>
 
             </div>

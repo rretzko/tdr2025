@@ -2,14 +2,20 @@
 
 namespace App\Livewire\Libraries\Items;
 
-use App\Livewire\BasePage;
+use App\Livewire\Libraries\LibraryBasePage;
 use App\Models\Libraries\Items\LibItem;
 use App\Models\Libraries\Library;
 use App\Models\Libraries\LibStack;
+use App\Models\Programs\Program;
+use App\Models\Programs\ProgramSelection;
+use Carbon\Carbon;
 use JetBrains\PhpStorm\NoReturn;
+use App\Traits\Libraries\LibraryTableColumnHeadersTrait;
 
-class ItemTableComponent extends BasePage
+class ItemTableComponent extends LibraryBasePage
 {
+    use LibraryTableColumnHeadersTrait;
+
     public array $columnHeaders;
     public Library $library;
     public bool $displayForm = false;
@@ -32,9 +38,13 @@ class ItemTableComponent extends BasePage
 
     public function render()
     {
+        $rows = $this->getRows();
+        $performances = $this->getPerformances($rows);
+
         return view('livewire..libraries.items.item-table-component',
             [
-                'rows' => $this->getRows(),
+                'rows' => $rows,
+                'performances' => $performances,
             ]
         );
     }
@@ -98,15 +108,22 @@ class ItemTableComponent extends BasePage
         $this->likeValue = '%'.$this->globalSearch.'%';
     }
 
-    private function getColumnHeaders(): array
+    private function getPerformances(array $rows): array
     {
-        return [
-            ['label' => '###', 'sortBy' => null],
-            ['label' => 'type', 'sortBy' => 'type'],
-            ['label' => 'title', 'sortBy' => 'title'],
-            ['label' => 'artists', 'sortBy' => null],
-            ['label' => 'voicing', 'sortBy' => 'voicing'],
-        ];
+        $performances = [];
+
+        foreach ($rows as $row) {
+            $performances[$row['libItemId']] = Program::query()
+                ->join('program_selections', 'program_selections.program_id', '=', 'programs.id')
+                ->where('program_selections.lib_item_id', $row['libItemId'])
+                ->pluck('programs.performance_date', 'programs.id')
+                ->map(function ($date) {
+                    return Carbon::parse($date)->format('M-y'); //ex. Jun-20
+                })
+                ->toArray();
+        }
+
+        return $performances;
     }
 
     private function getRows(): array
