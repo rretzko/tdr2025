@@ -40,11 +40,13 @@ class ItemTableComponent extends LibraryBasePage
     {
         $rows = $this->getRows();
         $performances = $this->getPerformances($rows);
+        $tags = $this->getTags($rows);
 
         return view('livewire..libraries.items.item-table-component',
             [
                 'rows' => $rows,
                 'performances' => $performances,
+                'tags' => $tags,
             ]
         );
     }
@@ -126,6 +128,17 @@ class ItemTableComponent extends LibraryBasePage
         return $performances;
     }
 
+    private function getTags(array $rows): array
+    {
+        $tags = [];
+
+        foreach ($rows as $row) {
+            $tags[$row['libItemId']] = LibItem::find($row['libItemId'])->tags()->pluck('name')->toArray();
+        }
+
+        return $tags;
+    }
+
     private function getRows(): array
     {
         return LibStack::query()
@@ -138,6 +151,8 @@ class ItemTableComponent extends LibraryBasePage
             ->leftJoin('artists AS music', 'lib_items.music_id', '=', 'music.id')
             ->leftJoin('artists AS choreographer', 'lib_items.choreographer_id', '=', 'choreographer.id')
             ->leftJoin('voicings', 'lib_items.voicing_id', '=', 'voicings.id')
+            ->leftJoin('taggables', 'lib_items.id', '=', 'taggables.taggable_id')
+            ->leftJoin('tags', 'taggables.tag_id', '=', 'tags.id')
             ->where('lib_stacks.library_id', $this->library->id)
             ->where(function ($query) {
                 $query->where('lib_titles.title', 'LIKE', $this->likeValue)
@@ -146,8 +161,10 @@ class ItemTableComponent extends LibraryBasePage
                     ->orWhere('wam.artist_name', 'LIKE', $this->likeValue)
                     ->orWhere('words.artist_name', 'LIKE', $this->likeValue)
                     ->orWhere('music.artist_name', 'LIKE', $this->likeValue)
-                    ->orWhere('choreographer.artist_name', 'LIKE', $this->likeValue);
+                    ->orWhere('choreographer.artist_name', 'LIKE', $this->likeValue)
+                    ->orWhere('tags.name', 'LIKE', $this->likeValue);
             })
+            ->distinct()
             ->select('lib_stacks.id',
                 'lib_items.id AS libItemId',
                 'lib_titles.title', 'lib_titles.alpha', 'lib_items.item_type',

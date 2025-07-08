@@ -10,7 +10,7 @@
                 wire:model.live.debounce="globalSearch"
                 class="w-3/4"
                 type="text"
-                placeholder="Search title or artist name"
+                placeholder="Search title, artist name, or tag"
             />
         </div>
     @endif

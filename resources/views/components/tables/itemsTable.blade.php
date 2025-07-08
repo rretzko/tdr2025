@@ -18,7 +18,7 @@
         </div>
     @endif
 
-    <table class="px-4 shadow-lg w-full">
+    <table class="text-sm px-4 shadow-lg w-full">
         <thead>
         <tr>
             @foreach($columnHeaders AS $columnHeader)
@@ -89,7 +89,10 @@
                 <td class="border border-gray-200 px-1 text-center">
                     {{ $row['voicingDescr'] }}
                 </td>
-                <td class="border border-gray-200 px-1 text-center text-sm cursor-help">
+                <td class="border border-gray-200 px-1 text-left text-sm cursor-help">
+                    {{ implode(', ', $tags[$row['libItemId']]) }}
+                </td>
+                <td class="border border-gray-200 px-1 text-center text-sm cursor-help w-20">
                     @forelse($performances[$row['libItemId']] AS $programId => $performanceDate)
                         <a
                             href="{{ route('programs.show',['program' => $programId]) }}"
