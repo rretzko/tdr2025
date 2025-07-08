@@ -73,10 +73,10 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                <label class="">or add a new ensemble.</label>
+                                {{--                                <label class="">or add a new ensemble.</label>--}}
                             </div>
                         @endif
-                        <x-forms.elements.livewire.programComponents.ensembleName/>
+                        {{--                        <x-forms.elements.livewire.programComponents.ensembleName/>--}}
                         <div class="bg-red-100 text-red-900 w-fit px-2 text-sm italic mt-1 rounded-lg">
                             {!! $ensembleNameError !!}
                         </div>
@@ -100,33 +100,39 @@
                         {{-- DISPLAY FORM IN ADD MODE --}}
 
                         {{-- SELECTION VOICING --}}
-                        <div class="border border-gray-100 border-b-gray-300 pb-1">
-                            <label>Selection Voicing</label>
-                            @if(count($voicings))
-                                <div class="flex flex-col">
-                                    <select wire:model="form.voicingId" autofocus>
-                                        @foreach($voicings AS $key => $voicing)
-                                            <option value="{{ $key }}">
-                                                {{ $voicing }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    <label class="">or add a new voicing.</label>
-                                </div>
-                            @endif
-                            <div>
-                                <input type="text" wire:model="form.voicingDescr" placeholder="new voicing"/>
-                            </div>
-                            {{--                            <div class="bg-red-100 text-red-900 w-fit px-2 text-sm italic mt-1 rounded-lg">--}}
-                            {{--                                {!! $this->voicing !!}--}}
-                            {{--                            </div>--}}
+                        {{--                        <div class="border border-gray-100 border-b-gray-300 pb-1">--}}
+                        {{--                            <label>Selection Voicing</label>--}}
+                        {{--                            @if(count($voicings))--}}
+                        {{--                                <div class="flex flex-col">--}}
+                        {{--                                    <select wire:model="form.voicingId" autofocus>--}}
+                        {{--                                        @foreach($voicings AS $key => $voicing)--}}
+                        {{--                                            <option value="{{ $key }}">--}}
+                        {{--                                                {{ $voicing }}--}}
+                        {{--                                            </option>--}}
+                        {{--                                        @endforeach--}}
+                        {{--                                    </select>--}}
+                        {{--                                    <label class="">or add a new voicing.</label>--}}
+                        {{--                                </div>--}}
+                        {{--                            @endif--}}
+                        {{--                            <div>--}}
+                        {{--                                <input type="text" wire:model="form.voicingDescr" placeholder="new voicing"/>--}}
+                        {{--                            </div>--}}
+                        {{--                            --}}{{--                            <div class="bg-red-100 text-red-900 w-fit px-2 text-sm italic mt-1 rounded-lg">--}}
+                        {{--                            --}}{{--                                {!! $this->voicing !!}--}}
+                        {{--                            --}}{{--                            </div>--}}
 
-                        </div>
+                        {{--                        </div>--}}
                         {{-- SELECTION TITLE --}}
                         <div>
                             <label>Selection Title</label>
                             <x-forms.elements.livewire.programComponents.selectionTitle/>
-                            @if($resultsSelectionTitle)
+                            @if(is_string($resultsSelectionTitle))
+                                {{-- display 'title not found' message --}}
+                                <div class="text-sm text-red-500 italic">
+                                    {!! $resultsSelectionTitle !!}
+                                </div>
+                            @elseif($resultsSelectionTitle)
+                                {{-- display selection choices --}}
                                 <div id="selectionTitleResults" class="flex flex-col ml-2 mt-1 text-xs">
                                     @foreach($resultsSelectionTitle AS $libItem)
                                         <button
@@ -145,32 +151,34 @@
                                         </button>
                                     @endforeach
                                 </div>
+                            @else
+                                {{-- do nothing --}}
                             @endif
 
                         </div>
 
                         {{-- ARTISTS --}}
-                        @foreach($artistTypes AS $type)
-                            <div wire:key="{{ $type }}">
-                                <x-forms.elements.livewire.programComponents.artist
-                                    type="{{ $type }}"
-                                    resultsName="results{{ ucwords($type) }}"
-                                    :results="$resultsComposer"
-                                />
-                            </div>
-                        @endforeach
+                        {{--                        @foreach($artistTypes AS $type)--}}
+                        {{--                            <div wire:key="{{ $type }}">--}}
+                        {{--                                <x-forms.elements.livewire.programComponents.artist--}}
+                        {{--                                    type="{{ $type }}"--}}
+                        {{--                                    resultsName="results{{ ucwords($type) }}"--}}
+                        {{--                                    :results="$resultsComposer"--}}
+                        {{--                                />--}}
+                        {{--                            </div>--}}
+                        {{--                        @endforeach--}}
 
                         {{-- ADDENDUM --}}
-                        <div id="addendums" class="flex flex-col mt-2 border border-gray-100 border-t-gray-300">
-                            @include('components.forms.elements.livewire.programComponents.addendums')
-                        </div>
+                        {{--                        <div id="addendums" class="flex flex-col mt-2 border border-gray-100 border-t-gray-300">--}}
+                        {{--                            @include('components.forms.elements.livewire.programComponents.addendums')--}}
+                        {{--                        </div>--}}
 
-                        <x-buttons.submit
-                            type="button"
-                            :livewire=true
-                            wireClick="addConcertSelection"
-                            value="add concert Selection"
-                        />
+                        {{--                        <x-buttons.submit--}}
+                        {{--                            type="button"--}}
+                        {{--                            :livewire=true--}}
+                        {{--                            wireClick="addConcertSelection"--}}
+                        {{--                            value="add concert Selection"--}}
+                        {{--                        />--}}
 
                     @endif
 
@@ -186,4 +194,5 @@
 
     </div>{{-- end of page content --}}
 
+</div>
 </div>

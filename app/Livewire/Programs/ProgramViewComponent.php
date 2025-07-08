@@ -57,7 +57,7 @@ class ProgramViewComponent extends BasePage
     public array $resultsMusic = [];
     public array $resultsWam = [];
     public array $resultsWords = [];
-    public Collection $resultsSelectionTitle;
+    public Collection|string $resultsSelectionTitle;
     public int $schoolId = 0;
     public string $schoolName = '';
     public string $schoolYearLong = '';
@@ -375,6 +375,13 @@ class ProgramViewComponent extends BasePage
             ->select('lib_items.*', 'lib_titles.title')
             ->orderBy('lib_titles.title')
             ->get();
+
+        if ($this->resultsSelectionTitle->isEmpty()) {
+            $this->resultsSelectionTitle = '<div>No selection found with a title like "'.$this->selectionTitle.'".</div>';
+            $this->resultsSelectionTitle .= '<div>You can add this selection in the ';
+            $this->resultsSelectionTitle .= '<a href="/libraries" class="text-blue-500">Libraries</a> ';
+            $this->resultsSelectionTitle .= ' module.</div>';
+        }
 
         $this->form->title = $this->selectionTitle;
     }
