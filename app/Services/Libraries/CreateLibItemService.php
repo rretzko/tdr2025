@@ -9,6 +9,7 @@ use App\Models\Libraries\Items\Components\Voicing;
 use App\Models\Libraries\Items\LibItem;
 use App\Models\Schools\Teacher;
 use App\Models\Libraries\Items\Components\Artist;
+use App\Models\Tag;
 use App\Services\ArtistIdService;
 use Illuminate\Support\Str;
 
@@ -33,7 +34,8 @@ class CreateLibItemService
 
     public function __construct(
         private readonly LibraryItemForm|ProgramSelectionForm $form,
-        private readonly array $itemTypes
+        private readonly array $itemTypes,
+        private readonly array $tags,
     )
     {
         $this->teacherId = $this->setTeacherId();
@@ -61,6 +63,7 @@ class CreateLibItemService
         //use an existing item
         if ($this->libItemExists()) {
             $this->libItemId = $this->existingLibItemId();
+            $this->updateTags();
         } else {
 
             //or create a new item
@@ -234,6 +237,28 @@ class CreateLibItemService
     private function setTeacherId(): int
     {
         return Teacher::where('user_id', auth()->id())->first()->id;
+    }
+
+    private function updateTags(): void
+    {
+        $libItem = LibItem::find($this->libItemId);
+
+        if (!$libItem) {
+            return;
+        }
+
+        $tagIds = [];
+
+        foreach ($this->tags as $tag) {
+
+            $tag = Tag::firstOrCreate([
+                'name' => $tag,
+            ]);
+
+            $tagIds[] = $tag->id;
+        }
+
+        $libItem->tags()->syncWithoutDetaching($tagIds);
     }
 
 

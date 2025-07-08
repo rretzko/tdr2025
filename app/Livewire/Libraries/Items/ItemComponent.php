@@ -30,6 +30,7 @@ class ItemComponent extends BaseLibraryItemPage
         'wam' => '',
         'words' => '',
     ];
+    public string $tagCsv = '';
 
     public function mount(): void
     {
@@ -75,6 +76,9 @@ class ItemComponent extends BaseLibraryItemPage
         //determine if save = updating or adding
         $updating = (bool)$this->form->sysId;
 
+        //parse $tagsCsv & persist in $this->form->tags array
+        $this->parseTagsCsv();
+
         $this->reset('errorMessage', 'successMessage');
 
         $saved = $this->form->save($this->libraryId, parent::ITEMTYPES);
@@ -94,9 +98,12 @@ class ItemComponent extends BaseLibraryItemPage
 
     public function saveAndStay(): void
     {
+        //parse $tagsCsv & persist in $this->form->tags array
+        $this->parseTagsCsv();
+
         $this->reset('errorMessage', 'successMessage');
 
-        $service = new CreateLibItemService($this->form, self::ITEMTYPES);
+        $service = new CreateLibItemService($this->form, self::ITEMTYPES, $this->form->tags);
 
         if ($service->saved) {
             $this->addItemToLibrary($service->libItemId);
@@ -150,6 +157,16 @@ class ItemComponent extends BaseLibraryItemPage
             ],
             []
         );
+    }
+
+    private function parseTagsCsv(): void
+    {
+        if (strlen($this->tagCsv)) {
+            $tags = explode(",", $this->tagCsv);
+            $this->form->tags = array_filter(array_map('trim', $tags), fn($tag) => $tag !== '');
+        } else {
+            $this->form->tags = [];
+        }
     }
 
     private function search(): void

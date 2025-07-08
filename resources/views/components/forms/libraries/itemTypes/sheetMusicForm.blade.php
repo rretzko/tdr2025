@@ -8,4 +8,11 @@
     {{-- ARTISTS --}}
     @include('components.forms.elements.livewire.libraryItem.artistsBlock')
 
+    {{-- TAGS --}}
+    @include('components.forms.elements.livewire.libraryItem.tags')
+
+    {{-- LOCATION --}}
+
+    {{-- COMMENTS AND RATING --}}
+
 </div>

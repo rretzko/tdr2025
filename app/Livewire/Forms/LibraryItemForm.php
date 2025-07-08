@@ -7,6 +7,7 @@ use App\Models\Libraries\Items\Components\LibTitle;
 use App\Models\Libraries\Items\Components\Voicing;
 use App\Models\Libraries\Items\LibItem;
 use App\Models\Libraries\LibStack;
+use App\Models\Tag;
 use App\Services\ArtistIdService;
 use App\Services\ArtistNameService;
 use App\Services\ArtistSearchService;
@@ -60,6 +61,7 @@ class LibraryItemForm extends Form
     ];
 
     public int $sysId = 0;
+    public array $tags = [];
     public string $title = '';
     public string $voicingDescr = '';
     public int $voicingId = 0;
@@ -83,6 +85,8 @@ class LibraryItemForm extends Form
         $libItemId = ($this->sysId)
             ? $this->update($libraryId)
             : $this->add($libraryId, $itemTypes);
+
+        $this->updateTags($libItemId);
 
         return (bool)LibStack::updateOrCreate(
             [
@@ -137,6 +141,8 @@ class LibraryItemForm extends Form
 
         $this->sysId = 0;
         $this->title = '';
+
+        $this->tags = [];
     }
 
     public function setLibItem(LibItem $libItem): void
@@ -162,11 +168,14 @@ class LibraryItemForm extends Form
         //artists
         $this->setArtists($libItem);
 
+        //tags
+        $this->setTags($libItem);
+
     }
 
     private function add(int $libraryId, array $itemTypes): int
     {
-        $service = new CreateLibItemService($this, $itemTypes);
+        $service = new CreateLibItemService($this, $itemTypes, $this->tags);
 
         return ($service)
             ? $service->libItemId
@@ -280,6 +289,13 @@ class LibraryItemForm extends Form
         }
     }
 
+    private function setTags(LibItem $libItem): void
+    {
+        foreach ($libItem->tags->sortBy('name') as $tag) {
+            $this->tags[] = $tag->name;
+        }
+    }
+
     private function update(int $libraryId): int
     {
         $libItem = LibItem::find($this->sysId);
@@ -303,7 +319,6 @@ class LibraryItemForm extends Form
         }
 
         $libItem->save();
-
     }
 
     private function updateLibTitle(LibItem $libItem, LibTitle $libTitle): bool
@@ -328,6 +343,28 @@ class LibraryItemForm extends Form
                 'lib_title_id' => $newLibTitleId,
             ]
         );
+    }
+
+    private function updateTags(int $libItemId): void
+    {
+        $libItem = LibItem::find($libItemId);
+
+        if (!$libItem) {
+            return;
+        }
+
+        $tagIds = [];
+
+        foreach ($this->tags as $tag) {
+
+            $tag = Tag::firstOrCreate([
+                'name' => $tag,
+            ]);
+
+            $tagIds[] = $tag->id;
+        }
+
+        $libItem->tags()->syncWithoutDetaching($tagIds);
     }
 
     private function updateVoicing(LibItem $libItem): void
