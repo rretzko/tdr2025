@@ -7,6 +7,17 @@
         </div>
     @endif
 
+    {{-- DISPLAY PULL SHEET BUTTON --}}
+    @if($dto['header'] === 'ensemble library')
+        <div class="text-right">
+            <button wire:click="downloadPullSheetPdf"
+                    class="text-sm text-blue-500"
+            >
+                Pull Sheet (<span id="itemsToPullCount"></span>)
+            </button>
+        </div>
+    @endif
+
     <table class="px-4 shadow-lg w-full">
         <thead>
         <tr>
@@ -30,13 +41,15 @@
                     </button>
                 </th>
             @endforeach
-                <th colspan="2" class="border border-transparent px-1">
-                    <button wire:click="downloadPullSheetPdf"
-                            class="text-sm text-blue-500"
-                    >
-                        Pull Sheet (<span id="itemsToPullCount"></span>)
-                    </button>
-            </th>
+                @if($dto['header'] != 'ensemble library')
+                    <th colspan="2" class="border border-transparent px-1">
+                        <button wire:click="downloadPullSheetPdf"
+                                class="text-sm text-blue-500"
+                        >
+                            Pull Sheet (<span id="itemsToPullCount"></span>)
+                        </button>
+                    </th>
+                @endif
         </tr>
         </thead>
         <tbody>
@@ -98,13 +111,15 @@
                         />
                     </div>
                 </td>
-                <td class="text-center border border-gray-200 px-1">
-                    <x-buttons.edit id="{{ $row['libItemId'] }}" :livewire="true" id="{{ $row['libItemId'] }}"/>
-                </td>
-                <td class="text-center border border-gray-200 px-1">
-                    <x-buttons.remove id="{{ $row['id'] }}" livewire="1"
-                                      message="Are you sure you want to remove this library item?"/>
-                </td>
+                @if($dto['header'] != 'ensemble library')
+                    <td class="text-center border border-gray-200 px-1">
+                        <x-buttons.edit id="{{ $row['libItemId'] }}" :livewire="true" id="{{ $row['libItemId'] }}"/>
+                    </td>
+                    <td class="text-center border border-gray-200 px-1">
+                        <x-buttons.remove id="{{ $row['id'] }}" livewire="1"
+                                          message="Are you sure you want to remove this library item?"/>
+                    </td>
+                @endif
             </tr>
         @empty
             <tr>

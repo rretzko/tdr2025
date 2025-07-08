@@ -37,17 +37,18 @@
         {{-- HEADER and ADD-NEW BUTTON --}}
         <div class="flex justify-between mb-1">
             <div>{{ ucwords($dto['header']) }}</div>
-            @if(! $displayForm)
-                <button
-                    type="button"
-                    wire:click="clickForm"
-                    class="bg-green-500 text-white text-3xl px-2 rounded-lg"
-                    title="Add New"
-                    tabindex="-1"
-                >
-                    +
-                </button>
-            @endif
+            {{-- SUPPRESS ADD-LIBRARY-ITEM ON ENSEMBLE LIBRARY PAGE --}}
+            {{--            @if(! $displayForm)--}}
+            {{--                <button--}}
+            {{--                    type="button"--}}
+            {{--                    wire:click="clickForm"--}}
+            {{--                    class="bg-green-500 text-white text-3xl px-2 rounded-lg"--}}
+            {{--                    title="Add New"--}}
+            {{--                    tabindex="-1"--}}
+            {{--                >--}}
+            {{--                    +--}}
+            {{--                </button>--}}
+            {{--            @endif--}}
         </div>
 
         {{-- FILTERS AND TABLE --}}
@@ -70,7 +71,6 @@
 
                 {{-- TABLE --}}
                 <div>
-                    {{--                    @include('components.tables.librariesTable')--}}
                     @include('components.tables.itemsTable')
                 </div>
 

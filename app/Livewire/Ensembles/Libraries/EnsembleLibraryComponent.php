@@ -23,7 +23,7 @@ class EnsembleLibraryComponent extends LibraryBasePage
 
     public EnsembleLibraryForm $form;
     public array $columnHeaders = [];
-    public bool $displayForm = true; //false;
+    public bool $displayForm = false;
     public int $ensembleId = 0;
     public array $ensembles = [];
     public int $libraryId = 0;
