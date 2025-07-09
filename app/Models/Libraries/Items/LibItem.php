@@ -4,6 +4,7 @@ namespace App\Models\Libraries\Items;
 
 use App\Models\Ensembles\Ensemble;
 use App\Models\Libraries\Items\Components\Artist;
+use App\Models\Libraries\Items\Components\LibItemLocation;
 use App\Models\Libraries\Items\Components\LibTitle;
 use App\Models\Libraries\Items\Components\Voicing;
 use App\Models\Libraries\LibStack;
@@ -43,6 +44,20 @@ class LibItem extends Model
     public function composer(): HasOne
     {
         return $this->hasOne(Artist::class, 'id', 'composer_id');
+    }
+
+    public function formatLocation(int $libraryId): string
+    {
+        $libItemLocation = LibItemLocation::query()
+            ->where('lib_item_id', $this->id)
+            ->where('library_id', $libraryId)
+            ->first();
+
+        if (!$libItemLocation) {
+            return $this->id;
+        }
+
+        return $libItemLocation->formatLocation;
     }
 
     public function longLink(): string

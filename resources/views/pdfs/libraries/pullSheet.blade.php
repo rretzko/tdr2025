@@ -35,7 +35,7 @@
                 <tr>
                     <td style="text-align: center">{{ $loop->iteration }}</td>
                     <td style="text-align: left">{!! $libItem->longLink()  !!}</td>
-                    <th>location</th>
+                    <th>{{ $libItem->formatLocation($libraryId) }}</th>
                     <th>
                         <input type="checkbox"/>
                     </th>

@@ -10,11 +10,11 @@ class LibraryBasePage extends BasePage
 {
     public array $itemsToPull = [];
 
-    public function downloadPullSheetPdf()
+    public function downloadPullSheetPdf(int $libraryId)
     {
         $itemIds = implode(',', $this->itemsToPull);
         $this->reset('itemsToPull');
-        $this->redirectRoute('pdf.pullSheet', ['itemIds' => $itemIds]);
+        $this->redirectRoute('pdf.pullSheet', ['itemIds' => $itemIds, 'libraryId' => $libraryId]);
     }
 
 }

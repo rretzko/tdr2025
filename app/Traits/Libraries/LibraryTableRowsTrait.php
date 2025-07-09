@@ -2,6 +2,8 @@
 
 namespace App\Traits\Libraries;
 
+use App\Models\Libraries\Items\Components\LibItemLocation;
+use App\Models\Libraries\Items\LibItem;
 use App\Models\Libraries\LibStack;
 use App\Models\Programs\Program;
 use Carbon\Carbon;
@@ -59,6 +61,33 @@ trait LibraryTableRowsTrait
             ->toArray();
     }
 
+    public static function getItemLocations(array $rows, int $libraryId): array
+    {
+        $locations = [];
+
+        foreach ($rows as $row) {
+            $libItemLocation = LibItemLocation::query()
+                ->where('lib_item_id', $row['libItemId'])
+                ->where('library_id', $libraryId)
+                ->first();
+
+            if ($libItemLocation) {
+
+                $fLocation = LibItemLocation::query()
+                    ->where('lib_item_id', $row['libItemId'])
+                    ->where('library_id', $libraryId)
+                    ->first()
+                    ->formatLocation;
+            } else {
+                $fLocation = $row['libItemId'];
+            }
+
+            $locations[$row['libItemId']] = $fLocation;
+        }
+
+        return $locations;
+    }
+
     public static function getItemPerformances(array $rows): array
     {
         $performances = [];
@@ -75,5 +104,16 @@ trait LibraryTableRowsTrait
         }
 
         return $performances;
+    }
+
+    public static function getItemTags(array $rows): array
+    {
+        $tags = [];
+
+        foreach ($rows as $row) {
+            $tags[$row['libItemId']] = LibItem::find($row['libItemId'])->tags()->pluck('name')->toArray();
+        }
+
+        return $tags;
     }
 }

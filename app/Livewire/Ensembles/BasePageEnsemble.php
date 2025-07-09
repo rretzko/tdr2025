@@ -6,6 +6,7 @@ use App\Livewire\BasePage;
 use App\Livewire\Forms\EnsembleForm;
 use App\Models\Ensembles\Asset;
 use App\Models\Ensembles\Ensemble;
+use App\Models\Libraries\Library;
 use App\Models\Schools\GradesITeach;
 use App\Models\Schools\School;
 use App\Models\Schools\Teacher;
@@ -20,7 +21,6 @@ class BasePageEnsemble extends BasePage
     public Ensemble $ensemble;
     public EnsembleForm $form;
     public array $gradesITeaches = [];
-
 
     public function mount(): void
     {
@@ -46,6 +46,7 @@ class BasePageEnsemble extends BasePage
             ->get();
 
         $this->gradesITeaches = $this->getGradesITeachArray();
+
     }
 
     private function getGradesITeachArray(): array

@@ -4,6 +4,7 @@ namespace App\Services\Libraries;
 
 use App\Livewire\Forms\LibraryItemForm;
 use App\Livewire\Forms\ProgramSelectionForm;
+use App\Models\Libraries\Items\Components\LibItemLocation;
 use App\Models\Libraries\Items\Components\LibTitle;
 use App\Models\Libraries\Items\Components\Voicing;
 use App\Models\Libraries\Items\LibItem;
@@ -11,6 +12,7 @@ use App\Models\Schools\Teacher;
 use App\Models\Libraries\Items\Components\Artist;
 use App\Models\Tag;
 use App\Services\ArtistIdService;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 
@@ -36,6 +38,8 @@ class CreateLibItemService
         private readonly LibraryItemForm|ProgramSelectionForm $form,
         private readonly array $itemTypes,
         private readonly array $tags,
+        private readonly array $locations,
+        private readonly int $libraryId,
     )
     {
         $this->teacherId = $this->setTeacherId();
@@ -79,6 +83,8 @@ class CreateLibItemService
             $this->libItemId = LibItem::create($items)->id;
         }
 
+        $this->updateLocations();
+
         $this->saved = (bool) $this->libItemId;
     }
 
@@ -94,23 +100,6 @@ class CreateLibItemService
         ];
 
     }
-
-//    private function addArtists(): array
-//    {
-//        $a = [];
-//        $this->addArtistIds();
-//
-//        foreach ($this->form->artistIds as $type => $artistId) {
-//
-//            if ($artistId) {
-//                $column = $type.'_id';
-//
-//                $a[$column] = $artistId;
-//            }
-//        }
-//
-//        return $a;
-//    }
 
     private function errorCheck(): void
     {
@@ -129,11 +118,22 @@ class CreateLibItemService
 
     private function existingLibItemId(): int
     {
-        return LibItem::query()
+        Log::info(LibItem::query()
             ->where('lib_title_id', $this->libTitleId)
             ->where('item_type', $this->itemType)
             ->where('voicing_id', $this->voicingId)
             ->where('composer_id', $this->choreographerId)
+            ->where('arranger_id', $this->arrangerId)
+            ->where('wam_id', $this->wamId)
+            ->where('words_id', $this->wordsId)
+            ->where('music_id', $this->musicId)
+            ->where('choreographer_id', $this->choreographerId)
+            ->toRawSql());
+        return LibItem::query()
+            ->where('lib_title_id', $this->libTitleId)
+            ->where('item_type', $this->itemType)
+            ->where('voicing_id', $this->voicingId)
+            ->where('composer_id', $this->composerId)
             ->where('arranger_id', $this->arrangerId)
             ->where('wam_id', $this->wamId)
             ->where('words_id', $this->wordsId)
@@ -239,6 +239,22 @@ class CreateLibItemService
         return Teacher::where('user_id', auth()->id())->first()->id;
     }
 
+    private function updateLocations(): void
+    {
+        LibItemLocation::updateOrCreate(
+            [
+                'library_id' => $this->libraryId,
+                'lib_item_id' => $this->libItemId,
+
+            ],
+            [
+                'location1' => $this->locations[0],
+                'location2' => $this->locations[1],
+                'location3' => $this->locations[2],
+            ]
+        );
+    }
+
     private function updateTags(): void
     {
         $libItem = LibItem::find($this->libItemId);
@@ -260,6 +276,5 @@ class CreateLibItemService
 
         $libItem->tags()->syncWithoutDetaching($tagIds);
     }
-
 
 }

@@ -5,6 +5,8 @@ namespace App\Livewire\Ensembles\Libraries;
 use App\Livewire\Forms\EnsembleLibraryForm;
 use App\Livewire\Libraries\LibraryBasePage;
 use App\Models\Ensembles\Ensemble;
+use App\Models\Libraries\Items\Components\LibItemLocation;
+use App\Models\Libraries\Items\LibItem;
 use App\Models\Libraries\Library;
 use App\Models\Programs\Program;
 use App\Models\Schools\Teacher;
@@ -26,6 +28,7 @@ class EnsembleLibraryComponent extends LibraryBasePage
     public bool $displayForm = false;
     public int $ensembleId = 0;
     public array $ensembles = [];
+    public Library $library;
     public int $libraryId = 0;
     public array $programs = [];
     public string $searchTitle = '';
@@ -44,13 +47,14 @@ class EnsembleLibraryComponent extends LibraryBasePage
             ->get()
             ->toArray();
 
-        $this->ensembleId = 3;// $this->ensembles[0]['id'];
+        $this->ensembleId = $this->ensembles[0]['id'];
 
         $teacherId = Teacher::where('user_id', auth()->id())->first()->id;
-        $this->libraryId = Library::query()
+        $this->library = Library::query()
             ->where('school_id', UserConfig::getValue('schoolId'))
             ->where('teacher_id', $teacherId)
-            ->first()->id;
+            ->first();
+        $this->libraryId = $this->library->id;
 
         $this->programs = ['rehearsal-only', 'warm-ups'];
         $this->statuses = ['pulled', 'rehearsed', 'programmed', 'returned'];
@@ -66,7 +70,9 @@ class EnsembleLibraryComponent extends LibraryBasePage
     {
         $this->searchValue = $this->getSearchValue();
         $rows = $this->getRows();
+        $locations = $this->getItemLocations($rows, $this->libraryId);
         $performances = $this::getItemPerformances($rows);
+        $tags = $this->getItemTags($rows);
 
         return view('livewire..ensembles.libraries.ensemble-library-component',
             [
@@ -74,6 +80,8 @@ class EnsembleLibraryComponent extends LibraryBasePage
                 'rows' => $rows,
                 'titleSearchResults' => $this->getTitleSearchResults(),
                 'itemsToPullCount' => count($this->itemsToPull),
+                'locations' => $locations,
+                'tags' => $tags,
             ]);
     }
 

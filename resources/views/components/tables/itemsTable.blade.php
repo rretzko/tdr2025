@@ -10,7 +10,7 @@
     {{-- DISPLAY PULL SHEET BUTTON --}}
     @if($dto['header'] === 'ensemble library')
         <div class="text-right">
-            <button wire:click="downloadPullSheetPdf"
+            <button wire:click="downloadPullSheetPdf({{ $library->id }})"
                     class="text-sm text-blue-500"
             >
                 Pull Sheet (<span id="itemsToPullCount"></span>)
@@ -43,7 +43,7 @@
             @endforeach
                 @if($dto['header'] != 'ensemble library')
                     <th colspan="2" class="border border-transparent px-1">
-                        <button wire:click="downloadPullSheetPdf"
+                        <button wire:click="downloadPullSheetPdf({{ $library->id }})"
                                 class="text-sm text-blue-500"
                         >
                             Pull Sheet (<span id="itemsToPullCount"></span>)
@@ -60,8 +60,11 @@
                 <td class="border border-gray-200 px-1 text-center">
                     {{ $loop->iteration }}
                 </td>
-                <td class="border border-gray-200 px-1 text-center">
-                    {{ $row['item_type'] }}
+                <td class="border border-gray-200 px-1 text-left w-24">
+                    <div>{{ $row['item_type'] }}</div>
+                    <div class="ml-2 text-xs italic">
+                        {{ $locations[$row['libItemId']] }}
+                    </div>
                 </td>
                 <td class="border border-gray-200 px-1 text-left">
                     {{ $row['alpha'] }}

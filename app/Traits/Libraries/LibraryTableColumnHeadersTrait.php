@@ -10,7 +10,7 @@ trait LibraryTableColumnHeadersTrait
     {
         return [
             ['label' => '###', 'sortBy' => null],
-            ['label' => 'type', 'sortBy' => 'type'],
+            ['label' => 'type/location', 'sortBy' => 'type'],
             ['label' => 'title', 'sortBy' => 'title'],
             ['label' => 'artists', 'sortBy' => null],
             ['label' => 'voicing', 'sortBy' => 'voicing'],

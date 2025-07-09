@@ -3,6 +3,7 @@
 namespace App\Livewire\Forms;
 
 use App\Models\Libraries\Items\Components\Artist;
+use App\Models\Libraries\Items\Components\LibItemLocation;
 use App\Models\Libraries\Items\Components\LibTitle;
 use App\Models\Libraries\Items\Components\Voicing;
 use App\Models\Libraries\Items\LibItem;
@@ -37,6 +38,10 @@ class LibraryItemForm extends Form
         'wam' => 0,
         'words' => 0,
     ];
+
+    public int $libraryId = 0;
+
+    public array $locations = ['', '', ''];
 
     public string $itemType = 'sheet music';
 
@@ -87,6 +92,8 @@ class LibraryItemForm extends Form
             : $this->add($libraryId, $itemTypes);
 
         $this->updateTags($libItemId);
+
+        $this->updateLibItemLocations($libItemId);
 
         return (bool)LibStack::updateOrCreate(
             [
@@ -143,6 +150,8 @@ class LibraryItemForm extends Form
         $this->title = '';
 
         $this->tags = [];
+
+        $this->locations = ['', '', ''];
     }
 
     public function setLibItem(LibItem $libItem): void
@@ -171,11 +180,14 @@ class LibraryItemForm extends Form
         //tags
         $this->setTags($libItem);
 
+        //locations
+        $this->setLocations($libItem);
+
     }
 
     private function add(int $libraryId, array $itemTypes): int
     {
-        $service = new CreateLibItemService($this, $itemTypes, $this->tags);
+        $service = new CreateLibItemService($this, $itemTypes, $this->tags, $this->locations, $this->libraryId);
 
         return ($service)
             ? $service->libItemId
@@ -289,6 +301,24 @@ class LibraryItemForm extends Form
         }
     }
 
+    private function setLocations(LibItem $libItem): void
+    {
+        $libItemLocation = LibItemLocation::query()
+            ->where('library_id', $this->libraryId)
+            ->where('lib_item_id', $libItem->id)
+            ->first();
+
+        if (!$libItemLocation) { //reset to default
+            $this->locations = ['', '', ''];
+        } else {
+            $this->locations = [
+                $libItemLocation->location1,
+                $libItemLocation->location2,
+                $libItemLocation->location3
+            ];
+        }
+    }
+
     private function setTags(LibItem $libItem): void
     {
         foreach ($libItem->tags->sortBy('name') as $tag) {
@@ -319,6 +349,21 @@ class LibraryItemForm extends Form
         }
 
         $libItem->save();
+    }
+
+    private function updateLibItemLocations(int $libItemId): void
+    {
+        LibItemLocation::updateOrCreate(
+            [
+                'library_id' => $this->libraryId,
+                'lib_item_id' => $libItemId,
+            ],
+            [
+                'location1' => $this->locations[0],
+                'location2' => $this->locations[1],
+                'location3' => $this->locations[2],
+            ]
+        );
     }
 
     private function updateLibTitle(LibItem $libItem, LibTitle $libTitle): bool

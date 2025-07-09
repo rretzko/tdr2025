@@ -12,7 +12,7 @@
     @include('components.forms.elements.livewire.libraryItem.tags')
 
     {{-- LOCATION --}}
-
+    @include('components.forms.elements.livewire.libraryItem.location')
     {{-- COMMENTS AND RATING --}}
 
 </div>
