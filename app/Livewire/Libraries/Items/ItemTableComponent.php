@@ -23,7 +23,7 @@ class ItemTableComponent extends LibraryBasePage
     public Library $library;
     public bool $displayForm = false;
     public string $globalSearch = '';
-    public string $likeValue = ''; //wrap $globalSearch in %%
+//    public string $likeValue = ''; //wrap $globalSearch in %%
     public bool $hasSearch = true;
 
     public function mount(): void
@@ -36,7 +36,7 @@ class ItemTableComponent extends LibraryBasePage
 
         $this->sortCol = 'lib_titles.alpha';
 
-        $this->updatedGlobalSearch(); //set initial $this->likeValue to "%%"
+//        $this->updatedGlobalSearch(); //set initial $this->likeValue to "%%"
     }
 
     public function render()
@@ -45,7 +45,8 @@ class ItemTableComponent extends LibraryBasePage
         $rows = $this->getLibraryItems(
             $this->library->id,
             0,
-            $this->likeValue,
+//            $this->likeValue,
+            $this->globalSearch,
             $this->sortCol,
             $this->sortAsc,
         );
@@ -117,10 +118,10 @@ class ItemTableComponent extends LibraryBasePage
 
     }
 
-    public function updatedGlobalSearch(): void
-    {
-        $this->likeValue = '%'.$this->globalSearch.'%';
-    }
+//    public function updatedGlobalSearch(): void
+//    {
+//        $this->likeValue = '%'.$this->globalSearch.'%';
+//    }
 
 //    private function getLibItemLocations(array $rows): array
 //    {

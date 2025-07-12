@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Forms;
 
+use App\Models\Libraries\Items\Components\LibItemRating;
 use App\Models\Libraries\Library;
 use App\Models\Libraries\LibStack;
 use App\Models\Libraries\Items\LibItem;
@@ -28,8 +29,11 @@ class ProgramSelectionForm extends Form
     public string $choreographer = '';
     public bool $closer = false;
     public int $choreographerId = 0;
+    #[Validate('required')]
+    public string $comments = '';
     public string $composer = '';
     public int $composerId = 0;
+    public string $difficulty = 'medium';
     public string $email = '';
     public int $ensembleId = 0;
     public string $firstName = '';
@@ -37,7 +41,12 @@ class ProgramSelectionForm extends Form
     public string $headerText = 'Add New Concert Selection';
     public string $itemType = 'sheet music';
     public string $lastName = '';
+    public string $level = 'high-school';
+
+    //placeholder necessary for editProgramSelection.blade.php conditional
+    public int $libItemId = 0;
     public int $libTitleId = 0;
+    public int $libraryId = 0;
     public string $middleName = '';
     public string $music = '';
     public string $office = '';
@@ -46,10 +55,12 @@ class ProgramSelectionForm extends Form
     public int $programId = 0;
     public ProgramSelection $programSelection;
     public int $programSelectionId = 0;
+    public int $rating = 1;
     public int $schoolId = 0;
     public int $schoolYear = 0;
     public int $teacherId = 0;
     public string $title = '';
+    public string $voicing = ''; //synonym for voicingDescr
     public int $voicePartId = 0;
     public string $voicingDescr = '';
     public int $voicingId = 2;
@@ -57,10 +68,12 @@ class ProgramSelectionForm extends Form
     public int $wamId = 0;
     public string $words = '';
     public int $wordsId = 0;
+    public int $sysId = 0;
 
     protected function rules(): array
     {
         return [
+            'comments' => 'required',
             'email' => 'required|email',
             'firstName' => 'required',
             'gradeClassOf' => 'required',
@@ -86,6 +99,8 @@ class ProgramSelectionForm extends Form
         $this->programSelectionId = $this->programSelection->id;
 
         $this->updateProgramAddendums();
+
+        $this->updateRatings($libItemId);
 
         return (bool) $this->programSelection;
     }
@@ -133,6 +148,7 @@ class ProgramSelectionForm extends Form
     public function resetVars(): void
     {
         $this->programSelection = new ProgramSelection();
+        $this->sysId = 0;
 
         $this->artistBlock = '';
         $this->bgColor = 'bg-gray-100';
@@ -155,12 +171,19 @@ class ProgramSelectionForm extends Form
 
         $this->opener = false;
         $this->closer = false;
+
+        $this->rating = 1;
+        $this->level = 'high-school';
+        $this->difficulty = 'medium';
+        $this->comments = '';
     }
 
     public function setVars(int $programSelectionId): void
     {
+        $this->sysId = $programSelectionId; //synonym
         $this->teacherId = Teacher::where('user_id', auth()->id())->first()->id;
         $this->programSelection = ProgramSelection::find($programSelectionId);
+        $this->libItemId = $this->programSelection->lib_item_id;
 
         $this->artistBlock = $this->programSelection->artistBlock;
         $this->bgColor = 'bg-green-100';
@@ -168,16 +191,24 @@ class ProgramSelectionForm extends Form
         $this->headerText = 'Edit "<b>'.$this->programSelection->title.'"</b> Concert Selection';
         $this->performanceOrderBy = $this->programSelection->order_by;
         $this->programSelectionId = $programSelectionId;
-        $this->voicing = $this->programSelection->voicing;
+        $this->voicingDescr = $this->programSelection->voicing;
+        /** @todo reconcile coding difference between this and Libraries add/update item */
+        $this->voicing = $this->voicingDescr;
         $this->opener = $this->programSelection->opener;
         $this->closer = $this->programSelection->closer;
 
         $this->setAddendumVars($programSelectionId);
+
+        $this->setRatingVars($programSelectionId);
     }
 
     public function update(): bool
     {
+        $this->validate();
+
         $this->updateProgramAddendums();
+
+        $this->updateRatings($this->libItemId);
 
         return $this->programSelection->update(
             [
@@ -189,14 +220,14 @@ class ProgramSelectionForm extends Form
         );
     }
 
-    private function addLibItem(): int
-    {
-        $this->setArtistsArray(); //required by CreateLitItemService
-
-        $service = new CreateLibItemService($this, ['sheet music', 'medley']);
-
-        return $service->libItemId;
-    }
+//    private function addLibItem(): int
+//    {
+//        $this->setArtistsArray(); //required by CreateLitItemService
+//
+//        $service = new CreateLibItemService($this, ['sheet music', 'medley']);
+//
+//        return $service->libItemId;
+//    }
 
     private function addLibItemToLibStack(int $libItemId): void
     {
@@ -240,6 +271,24 @@ class ProgramSelectionForm extends Form
         $this->artists['words'] = $this->words;
     }
 
+    private function setRatingVars(int $programSelectionId): void
+    {
+        $libItemId = ProgramSelection::find($programSelectionId)->lib_item_id;
+
+        $libItemRating = LibItemRating::query()
+            ->where('library_id', $this->libraryId)
+            ->where('lib_item_id', $libItemId)
+            ->where('teacher_id', $this->teacherId)
+            ->first();
+
+        if ($libItemRating) {
+            $this->comments = $libItemRating->comments;
+            $this->difficulty = $libItemRating->difficulty;
+            $this->level = $libItemRating->level;
+            $this->rating = $libItemRating->rating;
+        }
+    }
+
     private function updateProgramAddendums(): void
     {
         //remove all current addendums
@@ -264,5 +313,26 @@ class ProgramSelectionForm extends Form
 
         // Insert all addendums in one query
         ProgramAddendum::insert($insertData);
+    }
+
+    private function updateRatings(int $libItemId): void
+    {
+        $teacherId = Teacher::where('user_id', auth()->id())->first()->id;
+
+        LibItemRating::updateOrCreate(
+            [
+                'library_id' => $this->libraryId,
+                'lib_item_id' => $libItemId,
+                'teacher_id' => $teacherId,
+            ],
+            [
+                'rating' => $this->rating,
+                'difficulty' => $this->difficulty,
+                'level' => $this->level,
+                'comments' => $this->comments,
+            ]
+        );
+
+
     }
 }

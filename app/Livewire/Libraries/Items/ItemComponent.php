@@ -16,6 +16,7 @@ use JetBrains\PhpStorm\NoReturn;
 class ItemComponent extends BaseLibraryItemPage
 {
     public array $artistTypes = [];
+    public array $difficulties = [];
     public string $errorMessage = '';
     public array $itemTypes = [];
     public int $libraryId = 0;
@@ -36,6 +37,7 @@ class ItemComponent extends BaseLibraryItemPage
     {
         parent::mount();
 
+        $this->difficulties = $this->setDifficulties();
         $this->libraryId = $this->dto['id'];
         $this->form->libraryId = $this->libraryId;
 
@@ -90,6 +92,7 @@ class ItemComponent extends BaseLibraryItemPage
         if ($saved) {
             $message = '"' . $fTitle . ($updating ? '" updated.' : '" saved.');
             session()->flash('successMessage', $message);
+            $this->reset('tagCsv');
         } else {
             $this->errorMessage = 'Unable to save "' . $fTitle . '" at this time.';
         }
@@ -104,7 +107,13 @@ class ItemComponent extends BaseLibraryItemPage
 
         $this->reset('errorMessage', 'successMessage');
 
-        $service = new CreateLibItemService($this->form, self::ITEMTYPES, $this->form->tags);
+        $service = new CreateLibItemService(
+            $this->form,
+            self::ITEMTYPES,
+            $this->form->tags,
+            $this->form->locations,
+            $this->libraryId
+        );
 
         if ($service->saved) {
             $this->addItemToLibrary($service->libItemId);
@@ -123,6 +132,20 @@ class ItemComponent extends BaseLibraryItemPage
         $this->form->artists[$artistType] = $artist->artist_name;
         $this->form->artistIds[$artistType] = $artistId;
         $this->searchResultsArtists[$artistType] = [];
+    }
+
+    public function setDifficulties(): array
+    {
+        return [
+            'easy',
+            'medium',
+            'hard',
+            'elementary school',
+            'middle school',
+            'high school',
+            'collegiate',
+            'professional'
+        ];
     }
 
     public function updatedFormArtistsArranger($value): void

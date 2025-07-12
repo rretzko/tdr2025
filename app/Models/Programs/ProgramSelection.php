@@ -55,7 +55,6 @@ class ProgramSelection extends Model
             }
         }
 
-
         return $str;
     }
 
@@ -65,9 +64,14 @@ class ProgramSelection extends Model
         return LibTitle::find($libItem->lib_title_id)->title;
     }
 
+    /**
+     * Returns voicing description ex. satb
+     * @return string
+     */
     public function getVoicingAttribute(): string
     {
         $libItem = $this->libItem;
+
         return Voicing::find($libItem->voicing_id)->descr;
     }
 

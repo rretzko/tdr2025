@@ -17,7 +17,8 @@ trait LibraryTableRowsTrait
         string $searchValue = '',
         string $sortCol = 'lib_titles.title',
         bool $sortAsc = true,
-    ): array {
+    ): array
+    {
         $searchFor = '%'.$searchValue.'%';
 
         return LibStack::query()
@@ -30,6 +31,8 @@ trait LibraryTableRowsTrait
             ->leftJoin('artists AS music', 'lib_items.music_id', '=', 'music.id')
             ->leftJoin('artists AS choreographer', 'lib_items.choreographer_id', '=', 'choreographer.id')
             ->leftJoin('voicings', 'lib_items.voicing_id', '=', 'voicings.id')
+            ->leftJoin('taggables', 'lib_items.id', '=', 'taggables.taggable_id')
+            ->leftJoin('tags', 'taggables.tag_id', '=', 'tags.id')
             ->where('lib_stacks.library_id', $libraryId)
             ->when($ensembleId, function ($query) use ($ensembleId) {
                 $query->join('program_selections', 'lib_stacks.lib_item_id', '=', 'program_selections.lib_item_id')
@@ -42,8 +45,10 @@ trait LibraryTableRowsTrait
                     ->orWhere('wam.artist_name', 'LIKE', $searchFor)
                     ->orWhere('words.artist_name', 'LIKE', $searchFor)
                     ->orWhere('music.artist_name', 'LIKE', $searchFor)
-                    ->orWhere('choreographer.artist_name', 'LIKE', $searchFor);
+                    ->orWhere('choreographer.artist_name', 'LIKE', $searchFor)
+                    ->orWhere('tags.name', 'LIKE', $searchFor);
             })
+            ->distinct()
             ->select('lib_stacks.id',
                 'lib_items.id AS libItemId',
                 'lib_titles.title', 'lib_titles.alpha', 'lib_items.item_type',
@@ -66,21 +71,15 @@ trait LibraryTableRowsTrait
         $locations = [];
 
         foreach ($rows as $row) {
+
             $libItemLocation = LibItemLocation::query()
                 ->where('lib_item_id', $row['libItemId'])
                 ->where('library_id', $libraryId)
                 ->first();
 
-            if ($libItemLocation) {
-
-                $fLocation = LibItemLocation::query()
-                    ->where('lib_item_id', $row['libItemId'])
-                    ->where('library_id', $libraryId)
-                    ->first()
-                    ->formatLocation;
-            } else {
-                $fLocation = $row['libItemId'];
-            }
+            $fLocation = ($libItemLocation)
+                ? $libItemLocation->formatLocation
+                : $row['libItemId'];
 
             $locations[$row['libItemId']] = $fLocation;
         }

@@ -24,7 +24,8 @@ class LibItemLocation extends Model
     public function getFormatLocationAttribute(): string
     {
         $locations = [$this->location1, $this->location2, $this->location3];
-        array_filter($locations);
-        return implode('-', $locations);
+        $filtered = array_filter($locations);
+
+        return implode('-', $filtered);
     }
 }

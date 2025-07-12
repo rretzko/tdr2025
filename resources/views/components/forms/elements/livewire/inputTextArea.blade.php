@@ -23,6 +23,9 @@
         ])
     >
         {{ ucwords($label) }}
+        @if($required)
+            <span class="text-red-500">*</span>
+        @endif
     </label>
     <textarea wire:model.blur="{{ $name }}"
               @class([
@@ -32,11 +35,12 @@
                 ])
               placeholder="{{ $placeholder }}"
               @if($autofocus) autofocus @endif
+              @if($required) required @endif
               aria-label="{{ $label }}"
               @error($name)
               aria-invalid="true"
               aria-description="{{ $message }}"
-        @enderror
+              @enderror
     >
         {{ $text }}
     </textarea>

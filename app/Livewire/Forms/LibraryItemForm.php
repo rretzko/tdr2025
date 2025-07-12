@@ -4,10 +4,12 @@ namespace App\Livewire\Forms;
 
 use App\Models\Libraries\Items\Components\Artist;
 use App\Models\Libraries\Items\Components\LibItemLocation;
+use App\Models\Libraries\Items\Components\LibItemRating;
 use App\Models\Libraries\Items\Components\LibTitle;
 use App\Models\Libraries\Items\Components\Voicing;
 use App\Models\Libraries\Items\LibItem;
 use App\Models\Libraries\LibStack;
+use App\Models\Schools\Teacher;
 use App\Models\Tag;
 use App\Services\ArtistIdService;
 use App\Services\ArtistNameService;
@@ -18,9 +20,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
+use App\Traits\Libraries\LibrarySetLocationsTrait;
 
 class LibraryItemForm extends Form
 {
+    use LibrarySetLocationsTrait;
+
     public array $artists = [
         'arranger' => '',
         'choreographer' => '',
@@ -39,9 +44,14 @@ class LibraryItemForm extends Form
         'words' => 0,
     ];
 
+    #[Validate('required')]
+    public string $comments = 'adding item to library';
+    public string $difficulty = 'medium';
+    public string $level = 'high-school';
+
     public int $libraryId = 0;
 
-    public array $locations = ['', '', ''];
+    public array $locations = [];
 
     public string $itemType = 'sheet music';
 
@@ -65,6 +75,7 @@ class LibraryItemForm extends Form
         ],
     ];
 
+    public int $rating = 1;
     public int $sysId = 0;
     public array $tags = [];
     public string $title = '';
@@ -87,6 +98,8 @@ class LibraryItemForm extends Form
 
     public function save(int $libraryId, array $itemTypes): bool
     {
+        $this->validate();
+
         $libItemId = ($this->sysId)
             ? $this->update($libraryId)
             : $this->add($libraryId, $itemTypes);
@@ -94,6 +107,8 @@ class LibraryItemForm extends Form
         $this->updateTags($libItemId);
 
         $this->updateLibItemLocations($libItemId);
+
+        $this->updateLibItemRatings($libItemId);
 
         return (bool)LibStack::updateOrCreate(
             [
@@ -152,6 +167,10 @@ class LibraryItemForm extends Form
         $this->tags = [];
 
         $this->locations = ['', '', ''];
+
+        $this->comments = 'adding item to library';
+        $this->difficulty = 'easy';
+        $this->rating = 1;
     }
 
     public function setLibItem(LibItem $libItem): void
@@ -183,11 +202,20 @@ class LibraryItemForm extends Form
         //locations
         $this->setLocations($libItem);
 
+        //ratings
+        $this->setRatings($libItem);
+
     }
 
     private function add(int $libraryId, array $itemTypes): int
     {
-        $service = new CreateLibItemService($this, $itemTypes, $this->tags, $this->locations, $this->libraryId);
+        $service = new CreateLibItemService(
+            $this,
+            $itemTypes,
+            $this->tags,
+            $this->locations,
+            $this->libraryId
+        );
 
         return ($service)
             ? $service->libItemId
@@ -319,6 +347,22 @@ class LibraryItemForm extends Form
         }
     }
 
+    private function setRatings(LibItem $libItem): void
+    {
+        $teacherId = Teacher::where('user_id', auth()->id())->first()->id;
+        $libItemRating = LibItemRating::query()
+            ->where('library_id', $this->libraryId)
+            ->where('lib_item_id', $libItem->id)
+            ->where('teacher_id', $teacherId)
+            ->first();
+
+        if ($libItemRating) {
+            $this->comments = $libItemRating->comments;
+            $this->difficulty = $libItemRating->difficulty;
+            $this->rating = $libItemRating->rating;
+        }
+    }
+
     private function setTags(LibItem $libItem): void
     {
         foreach ($libItem->tags->sortBy('name') as $tag) {
@@ -332,6 +376,7 @@ class LibraryItemForm extends Form
         $this->updateLibTitle($libItem, LibTitle::find($libItem->lib_title_id));
         $this->updateLibArtists($libItem);
         $this->updateVoicing($libItem);
+        $this->updateLibItemRatings($libItem->id);
 
         return $libItem->id;
     }
@@ -353,15 +398,23 @@ class LibraryItemForm extends Form
 
     private function updateLibItemLocations(int $libItemId): void
     {
-        LibItemLocation::updateOrCreate(
+        $this->setItemLocations($this->libraryId, $libItemId, $this->locations);
+    }
+
+    private function updateLibItemRatings(int $libItemId): void
+    {
+        $teacherId = Teacher::where('user_id', auth()->id())->first()->id;
+
+        LibItemRating::updateOrCreate(
             [
                 'library_id' => $this->libraryId,
                 'lib_item_id' => $libItemId,
+                'teacher_id' => $teacherId,
             ],
             [
-                'location1' => $this->locations[0],
-                'location2' => $this->locations[1],
-                'location3' => $this->locations[2],
+                'rating' => $this->rating,
+                'difficulty' => $this->difficulty,
+                'comments' => $this->comments,
             ]
         );
     }
@@ -474,6 +527,5 @@ class LibraryItemForm extends Form
             }
         }
     }
-
 
 }

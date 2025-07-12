@@ -10,6 +10,7 @@ use App\Models\Ensembles\Members\Member;
 use App\Models\Libraries\Items\Components\Artist;
 use App\Models\Libraries\Items\Components\Voicing;
 use App\Models\Libraries\Items\LibItem;
+use App\Models\Libraries\Library;
 use App\Models\Programs\Program;
 use App\Models\Programs\ProgramAddendum;
 use App\Models\Programs\ProgramSelection;
@@ -29,13 +30,20 @@ use Illuminate\Support\Facades\Log;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Enums\Difficulty;
+use App\Enums\Level;
 
 
 class ProgramViewComponent extends BasePage
 {
+
     use WithFileUploads;
     use WithPagination;
     use MakeUniqueEmailTrait;
+
+    //enums
+    public Difficulty $difficulty;
+    public Level $level;
 
     public Program $program;
     public ProgramSelectionForm $form;
@@ -49,6 +57,7 @@ class ProgramViewComponent extends BasePage
     public array $ensembles = [];
     public $ensembleStudentRoster;
     public $fileUploadMessage = '';
+    public array $levels = [];
     public int|null $nextProgramId = 0;
     public int|null $previousProgramId = 0;
     public array $resultsArranger = [];
@@ -62,6 +71,7 @@ class ProgramViewComponent extends BasePage
     public string $schoolName = '';
     public string $schoolYearLong = '';
     public string $selectionTitle = '';
+    public int $teacherId = 0;
     public $uploadedFileContainer; //used as container for uploaded file
     public int $uploadedMaxFileSize = 400000; //4MB
     public bool $uploadedMaxFileSizeExceeded = false;
@@ -72,6 +82,9 @@ class ProgramViewComponent extends BasePage
     public function mount(): void
     {
         parent::mount();
+
+        $this->difficulty = Difficulty::Easy;
+        $this->level = Level::HighSchool;
 
         $this->artistTypes = [
             'composer',
@@ -85,7 +98,9 @@ class ProgramViewComponent extends BasePage
         $this->ensembles = $this->getEnsembles();
         $this->schoolId = $this->program->school_id;
         $this->schoolName = School::find($this->schoolId)->name;
+        $this->teacherId = $this->getTeacherId();
         $this->form->schoolId = $this->schoolId;
+        $this->form->libraryId = $this->getLibraryId();
 
         //prev/next buttons
         $this->nextProgramId = $this->calcNextPrevProgramId(true);
@@ -494,6 +509,14 @@ class ProgramViewComponent extends BasePage
             ->toArray();
     }
 
+    private function getLibraryId(): int
+    {
+        return Library::query()
+            ->where('school_id', $this->schoolId)
+            ->where('teacher_id', $this->teacherId)
+            ->value('id');
+    }
+
     private function getSchoolYearLong(): string
     {
         $end = $this->program->school_year;
@@ -507,6 +530,13 @@ class ProgramViewComponent extends BasePage
         $service = new ProgramSelectionService($this->dto['programId'], 'default');
 
         return $service->getTable();
+    }
+
+    private function getTeacherId(): int
+    {
+        return Teacher::query()
+            ->where('user_id', auth()->id())
+            ->value('id');
     }
 
     private function getVoicings(): array

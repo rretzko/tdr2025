@@ -12,6 +12,11 @@
     {{-- ADDENDUMS --}}
     @include('components.forms.elements.livewire.programComponents.addendums')
 
+    {{-- COMMENTS AND RATINGS --}}
+    @if($form->programSelectionId)
+        @include('components.forms.elements.livewire.libraryItem.commentsRatings')
+    @endif
+
     {{-- BUTTONS --}}
     <div class="flex flex-col space-y-1">
 

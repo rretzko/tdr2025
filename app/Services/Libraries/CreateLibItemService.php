@@ -14,10 +14,13 @@ use App\Models\Tag;
 use App\Services\ArtistIdService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use App\Traits\Libraries\LibrarySetLocationsTrait;
 
 
 class CreateLibItemService
 {
+    use LibrarySetLocationsTrait;
+
     public int|null $arrangerId = null;
     public int|null $choreographerId = null;
     public int|null $composerId = null;
@@ -241,18 +244,7 @@ class CreateLibItemService
 
     private function updateLocations(): void
     {
-        LibItemLocation::updateOrCreate(
-            [
-                'library_id' => $this->libraryId,
-                'lib_item_id' => $this->libItemId,
-
-            ],
-            [
-                'location1' => $this->locations[0],
-                'location2' => $this->locations[1],
-                'location3' => $this->locations[2],
-            ]
-        );
+        $this->setItemLocations($this->libraryId, $this->libItemId, $this->locations);
     }
 
     private function updateTags(): void
