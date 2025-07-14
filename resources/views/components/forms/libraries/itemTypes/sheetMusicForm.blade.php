@@ -17,5 +17,4 @@
     {{-- LOCATION --}}
     @include('components.forms.elements.livewire.libraryItem.location')
 
-
 </div>

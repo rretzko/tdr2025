@@ -8,17 +8,6 @@ use App\Models\Libraries\Library;
 
 class BaseLibraryItemPage extends BasePage
 {
-    public const ITEMTYPES = [
-        'sheet music' => 'sheet music',
-        'medley' => 'medley',
-        'book' => 'book',
-        'digital' => 'digital',
-        'cd' => 'cd',
-        'dvd' => 'dvd',
-        'cassette' => 'cassette',
-        'vinyl' => 'vinyl',
-    ];
-
     public const ARTISTTYPES = [
         'composer',
         'arranger',

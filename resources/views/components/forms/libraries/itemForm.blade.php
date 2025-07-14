@@ -6,16 +6,17 @@
             <label class="flex flex-row space-x-1">
                 <div>Item type:</div>
                 <div class="flex flex-wrap">
-                    @foreach($itemTypes AS $key => $value)
+                    {{--                    @foreach($itemTypes AS $key => $value)--}}
+                    @foreach(\App\Enums\ItemType::cases() AS $case)
                         <div
-                            class="flex flex-row items-center space-x-2  px-2 mb-1 {{ $loop->odd ? 'bg-gray-300' : 'bg-gray-100' }}">
+                            class="flex flex-row items-center space-x-2  px-2 {{ $loop->odd ? 'bg-gray-300' : 'bg-gray-100' }}">
                             <input
                                 type="radio"
-                                value="{{ $value }}"
+                                value="{{ $case }}"
                                 wire:model.live="form.itemType"
-                                @disabled(isset($form->policies['canEdit']['itemType']) && (! $form->policies['canEdit']['itemType']))
+                                {{-- @disabled(isset($form->policies['canEdit']['itemType']) && (! $form->policies['canEdit']['itemType'])) --}}
                             >
-                            <label>{{ ucwords($key) }}</label>
+                            <label>{{ ucwords($case->value) }}</label>
                         </div>
                     @endforeach
                 </div>

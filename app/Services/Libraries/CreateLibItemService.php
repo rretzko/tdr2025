@@ -15,6 +15,7 @@ use App\Services\ArtistIdService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use App\Traits\Libraries\LibrarySetLocationsTrait;
+use App\Enums\ItemType;
 
 
 class CreateLibItemService
@@ -39,7 +40,6 @@ class CreateLibItemService
 
     public function __construct(
         private readonly LibraryItemForm|ProgramSelectionForm $form,
-        private readonly array $itemTypes,
         private readonly array $tags,
         private readonly array $locations,
         private readonly int $libraryId,
@@ -106,7 +106,7 @@ class CreateLibItemService
 
     private function errorCheck(): void
     {
-        if (!in_array($this->itemType, $this->itemTypes)) {
+        if (ItemType::tryFrom($this->itemType) === null) {
             $this->errors[] = 'Invalid item type.';
         }
 
@@ -117,6 +117,7 @@ class CreateLibItemService
         if (!$this->voicingId) {
             $this->errors[] = 'No voicing found.';
         }
+
     }
 
     private function existingLibItemId(): int

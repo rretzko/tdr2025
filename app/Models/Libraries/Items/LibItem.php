@@ -23,6 +23,7 @@ class LibItem extends Model
         'arranger_id',
         'choreographer_id',
         'composer_id',
+        'item_type',
         'lib_subtitle_id',
         'lib_title_id',
         'music_id',

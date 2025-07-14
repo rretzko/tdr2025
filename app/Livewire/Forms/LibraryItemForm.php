@@ -5,6 +5,7 @@ namespace App\Livewire\Forms;
 use App\Models\Libraries\Items\Components\Artist;
 use App\Models\Libraries\Items\Components\LibItemLocation;
 use App\Models\Libraries\Items\Components\LibItemRating;
+use App\Models\Libraries\Items\Components\LibMedleySelection;
 use App\Models\Libraries\Items\Components\LibTitle;
 use App\Models\Libraries\Items\Components\Voicing;
 use App\Models\Libraries\Items\LibItem;
@@ -53,6 +54,7 @@ class LibraryItemForm extends Form
 
     public array $locations = [];
 
+    public array $medleySelections = [];
     public string $itemType = 'sheet music';
 
     /**
@@ -96,13 +98,13 @@ class LibraryItemForm extends Form
             : $this->itemType;
     }
 
-    public function save(int $libraryId, array $itemTypes): bool
+    public function save(int $libraryId): bool
     {
         $this->validate();
 
         $libItemId = ($this->sysId)
             ? $this->update($libraryId)
-            : $this->add($libraryId, $itemTypes);
+            : $this->add($libraryId);
 
         $this->updateTags($libItemId);
 
@@ -171,6 +173,8 @@ class LibraryItemForm extends Form
         $this->comments = 'adding item to library';
         $this->difficulty = 'easy';
         $this->rating = 1;
+
+        $this->medleySelections = [];
     }
 
     public function setLibItem(LibItem $libItem): void
@@ -205,21 +209,41 @@ class LibraryItemForm extends Form
         //ratings
         $this->setRatings($libItem);
 
+        //medley selections
+        $this->setMedleySelections($libItem);
+
     }
 
-    private function add(int $libraryId, array $itemTypes): int
+    private function add(int $libraryId): int
     {
         $service = new CreateLibItemService(
             $this,
-            $itemTypes,
             $this->tags,
             $this->locations,
             $this->libraryId
         );
 
+        if ($service->libItemId && ($this->itemType == 'medley')) {
+            $this->linkMedleySelections($service->libItemId);
+        }
+
         return ($service)
             ? $service->libItemId
             : 0;
+    }
+
+    private function getLibTitleId(string $title): int
+    {
+        $trimmed = Str::title(trim($title));
+        $teacherId = Teacher::where('user_id', auth()->id())->first()->id;
+
+        return (LibTitle::where('title', $trimmed)->exists())
+            ? LibTitle::where('title', $trimmed)->first()->id
+            : LibTitle::create([
+                'title' => $trimmed,
+                'teacher_id' => $teacherId,
+                'alpha' => MakeAlphaService::alphabetize($trimmed),
+            ])->id;
     }
 
     /**
@@ -314,6 +338,33 @@ class LibraryItemForm extends Form
         return $this->getPolicyArtist('words', $libItem);
     }
 
+    private function linkMedleySelections(int $libItemId): void
+    {
+        //delete current selections
+        LibMedleySelection::where('lib_item_id', $libItemId)->delete();
+
+        $teacherId = Teacher::where('user_id', auth()->id())->first()->id;
+        $titles = array_values(array_filter($this->medleySelections));
+
+        foreach ($titles as $title) {
+
+            $libTitleId = $this->getLibTitleId($title);
+
+            if (!LibMedleySelection::query()
+                ->where('lib_item_id', $libItemId)
+                ->where('lib_title_id', $libTitleId)
+                ->exists()) {
+                LibMedleySelection::create(
+                    [
+                        'lib_item_id' => $libItemId,
+                        'lib_title_id' => $libTitleId,
+                        'teacher_id' => $teacherId,
+                    ]
+                );
+            }
+        }
+    }
+
     private function setArtists(LibItem $libItem): void
     {
         foreach ($this->artists as $artistType => $value) {
@@ -347,6 +398,16 @@ class LibraryItemForm extends Form
         }
     }
 
+    private function setMedleySelections(LibItem $libItem): void
+    {
+        $selections = LibMedleySelection::query()
+            ->where('lib_item_id', $libItem->id)
+            ->get();
+        foreach ($selections as $selection) {
+            $this->medleySelections[] = $selection->title;
+        }
+    }
+
     private function setRatings(LibItem $libItem): void
     {
         $teacherId = Teacher::where('user_id', auth()->id())->first()->id;
@@ -358,6 +419,7 @@ class LibraryItemForm extends Form
 
         if ($libItemRating) {
             $this->comments = $libItemRating->comments;
+            $this->level = $libItemRating->level;
             $this->difficulty = $libItemRating->difficulty;
             $this->rating = $libItemRating->rating;
         }
@@ -373,10 +435,15 @@ class LibraryItemForm extends Form
     private function update(int $libraryId): int
     {
         $libItem = LibItem::find($this->sysId);
+        $libItem->update(['item_type' => $this->itemType]);
         $this->updateLibTitle($libItem, LibTitle::find($libItem->lib_title_id));
         $this->updateLibArtists($libItem);
         $this->updateVoicing($libItem);
         $this->updateLibItemRatings($libItem->id);
+
+        if ($libItem->id && ($this->itemType == 'medley')) {
+            $this->linkMedleySelections($libItem->id);
+        }
 
         return $libItem->id;
     }
@@ -413,6 +480,7 @@ class LibraryItemForm extends Form
             ],
             [
                 'rating' => $this->rating,
+                'level' => $this->level,
                 'difficulty' => $this->difficulty,
                 'comments' => $this->comments,
             ]
