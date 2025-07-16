@@ -50,7 +50,7 @@
                         placeholder="please add some comments here..."
                         required=true
                     />
-                    {{--                    <textarea wire:model="form.comments" class="w-full" required placeholder="please add some comments here..." ></textarea>--}}
+
                 </div>
             </div>
         @endif

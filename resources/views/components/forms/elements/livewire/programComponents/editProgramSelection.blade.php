@@ -6,6 +6,10 @@
         voicing="{{ $form->voicing }}"
     />
 
+    <div>
+        Errors
+    </div>
+
     {{-- OPENER/CLOSER SWITCHES --}}
     @include('components.forms.elements.livewire.programComponents.openerCloser')
 

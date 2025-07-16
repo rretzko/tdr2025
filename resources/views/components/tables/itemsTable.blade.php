@@ -67,7 +67,14 @@
                     </div>
                 </td>
                 <td class="border border-gray-200 px-1 text-left">
-                    {{ $row['alpha'] }}
+                    <div>{{ $row['alpha'] }}</div>
+                    @if(array_key_exists($row['libItemId'], $medleySelections))
+                        <div class="ml-4 text-xs italic">
+                            @foreach($medleySelections[$row['libItemId']] AS $libMedleySelection)
+                                <div>{{ $libMedleySelection->title }}</div>
+                            @endforeach
+                        </div>
+                    @endif
                 </td>
                 <td class="border border-gray-200 px-1 text-left ">
                     @if($row['composerName'])

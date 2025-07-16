@@ -200,11 +200,17 @@ class ProgramSelectionForm extends Form
         $this->setAddendumVars($programSelectionId);
 
         $this->setRatingVars($programSelectionId);
+
+        if (empty($this->programSelection->comments)) {
+            $this->comments = 'add new selection';
+        }
     }
 
     public function update(): bool
     {
-        $this->validate();
+        $this->validate([
+            'comments' => 'required',
+        ]);
 
         $this->updateProgramAddendums();
 

@@ -8,6 +8,7 @@ use App\Models\Libraries\LibStack;
 use App\Models\Programs\Program;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 trait LibraryTableRowsTrait
 {
@@ -33,6 +34,8 @@ trait LibraryTableRowsTrait
             ->leftJoin('voicings', 'lib_items.voicing_id', '=', 'voicings.id')
             ->leftJoin('taggables', 'lib_items.id', '=', 'taggables.taggable_id')
             ->leftJoin('tags', 'taggables.tag_id', '=', 'tags.id')
+            ->leftJoin('lib_medley_selections', 'lib_items.id', '=', 'lib_medley_selections.lib_item_id')
+            ->leftJoin('lib_titles AS medley_titles', 'lib_medley_selections.lib_title_id', '=', 'medley_titles.id')
             ->where('lib_stacks.library_id', $libraryId)
             ->when($ensembleId, function ($query) use ($ensembleId) {
                 $query->join('program_selections', 'lib_stacks.lib_item_id', '=', 'program_selections.lib_item_id')
@@ -46,7 +49,8 @@ trait LibraryTableRowsTrait
                     ->orWhere('words.artist_name', 'LIKE', $searchFor)
                     ->orWhere('music.artist_name', 'LIKE', $searchFor)
                     ->orWhere('choreographer.artist_name', 'LIKE', $searchFor)
-                    ->orWhere('tags.name', 'LIKE', $searchFor);
+                    ->orWhere('tags.name', 'LIKE', $searchFor)
+                    ->orWhere('medley_titles.title', 'LIKE', $searchFor);
             })
             ->distinct()
             ->select('lib_stacks.id',
@@ -59,6 +63,21 @@ trait LibraryTableRowsTrait
                 'music.alpha_name AS musicName',
                 'choreographer.alpha_name AS choreographerName',
                 'voicings.descr AS voicingDescr',
+                DB::raw('GROUP_CONCAT(DISTINCT medley_titles.title ORDER BY medley_titles.alpha SEPARATOR ", ") AS medleyTitles')
+            )
+            ->groupBy(
+                'lib_stacks.id',
+                'lib_titles.title',
+                'lib_titles.alpha',
+                'lib_items.item_type',
+                'composer.alpha_name',
+                'arranger.alpha_name',
+                'wam.alpha_name',
+                'words.alpha_name',
+                'music.alpha_name',
+                'choreographer.alpha_name',
+                'voicingDescr',
+                'lib_items.id'
             )
             ->orderBy($sortCol, $sortAsc ? 'asc' : 'desc')
             ->orderBy('lib_titles.alpha', 'asc')

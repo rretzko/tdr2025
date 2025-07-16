@@ -4,6 +4,7 @@ namespace App\Livewire\Libraries\Items;
 
 use App\Livewire\Libraries\LibraryBasePage;
 use App\Models\Libraries\Items\Components\LibItemLocation;
+use App\Models\Libraries\Items\Components\LibMedleySelection;
 use App\Models\Libraries\Items\LibItem;
 use App\Models\Libraries\Library;
 use App\Models\Libraries\LibStack;
@@ -41,11 +42,9 @@ class ItemTableComponent extends LibraryBasePage
 
     public function render()
     {
-//        $rows = $this->getRows();
         $rows = $this->getLibraryItems(
             $this->library->id,
             0,
-//            $this->likeValue,
             $this->globalSearch,
             $this->sortCol,
             $this->sortAsc,
@@ -53,6 +52,7 @@ class ItemTableComponent extends LibraryBasePage
         $locations = $this->getItemLocations($rows, $this->library->id);
         $performances = $this->getItemPerformances($rows);
         $tags = $this->getItemTags($rows);
+        $medleySelections = $this->getMedleySelections($rows);
 
         return view('livewire..libraries.items.item-table-component',
             [
@@ -60,6 +60,7 @@ class ItemTableComponent extends LibraryBasePage
                 'locations' => $locations,
                 'performances' => $performances,
                 'tags' => $tags,
+                'medleySelections' => $medleySelections,
             ]
         );
     }
@@ -221,4 +222,15 @@ class ItemTableComponent extends LibraryBasePage
 //            ->get()
 //            ->toArray();
 //    }
+    private function getMedleySelections(array $rows): array
+    {
+        $selections = [];
+        foreach ($rows as $row) {
+            if ($row['item_type'] === 'medley') {
+                $selections[$row['libItemId']] = LibMedleySelection::where('lib_item_id', $row['libItemId'])->get();
+            }
+        }
+
+        return $selections;
+    }
 }
