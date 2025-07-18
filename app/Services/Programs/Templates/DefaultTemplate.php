@@ -2,19 +2,24 @@
 
 namespace App\Services\Programs\Templates;
 
+use App\Models\Programs\Program;
 use App\Models\Programs\ProgramAddendum;
 use App\Models\Programs\ProgramSelection;
 use Illuminate\Support\Collection;
 
 class DefaultTemplate
 {
+    private $actId = 0;
     private int $ensembleId = 0;
+    private bool $isOrganizedByEnsemble = true;
     private ProgramSelection $programSelection;
     private Collection $selections;
     private string $table = '';
 
     public function __construct(private readonly int $programId)
     {
+        $program = Program::find($programId);
+        $this->isOrganizedByEnsemble = $program->isOrganizedByEnsemble();
         $this->selections = $this->getSelections();
         $this->table = $this->makeTable();
     }
@@ -62,13 +67,46 @@ class DefaultTemplate
         $str .= '<tbody>';
         foreach ($this->selections as $selection) {
 
-            $str .= $this->setEnsembleHeader($selection);
+            $str .= $this->setHeader($selection);
 
             $str .= $this->setSelectionRow($selection);
         }
 
         $str .= '</tbody>';
         $str .= '</table>';
+
+        return $str;
+    }
+
+    private function setActHeader($selection): string
+    {
+        //switch
+        static $firstHeader = true;
+
+        //early exit
+        if ($selection->act_id == $this->actId) {
+            return '';
+        } else { //reset the target var
+            $this->actId = $selection->act_id;
+        }
+
+        //create the header row
+        $str = '<tr>';
+
+        $str .= '<td colspan="2" class=" w-full text-left font-semibold">'
+            .'Act '.$this->actId;
+//            .'<button wire:click="setDisplayEnsembleStudentRoster('.$this->ensembleId.')">'
+//            .$selection->ensembleName
+//            .'</button>';
+
+//        if ($firstHeader) {
+//            $str .= '<hint class="ml-2 text-xs italic">(Click Ensemble name to display student members.)</hint>';
+//            $firstHeader = false;
+//        }
+
+        $str .= '</td>';
+
+        $str .= '</tr>';
 
         return $str;
     }
@@ -103,6 +141,13 @@ class DefaultTemplate
         $str .= '</tr>';
 
         return $str;
+    }
+
+    private function setHeader($selection): string
+    {
+        return $this->isOrganizedByEnsemble
+            ? $this->setEnsembleHeader($selection)
+            : $this->setActHeader($selection);
     }
 
     private function setSelectionRow($selection): string

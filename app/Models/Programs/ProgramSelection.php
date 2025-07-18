@@ -16,6 +16,7 @@ class ProgramSelection extends Model
     use HasFactory;
 
     protected $fillable = [
+        'act_id',
         'closer',
         'lib_item_id',
         'ensemble_id',

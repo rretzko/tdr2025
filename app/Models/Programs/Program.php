@@ -17,6 +17,7 @@ class Program extends Model
     use HasFactory;
 
     protected $fillable = [
+        'organized_by',
         'performance_date',
         'school_id',
         'school_year',
@@ -34,6 +35,11 @@ class Program extends Model
     {
         return Carbon::parse($this->performance_date)
             ->format('F j, Y');
+    }
+
+    public function isOrganizedByEnsemble(): bool
+    {
+        return $this->organized_by === 'ensemble';
     }
 
     public function programSelection(): HasMany

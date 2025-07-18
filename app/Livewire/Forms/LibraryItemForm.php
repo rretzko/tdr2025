@@ -227,6 +227,10 @@ class LibraryItemForm extends Form
             $this->linkMedleySelections($service->libItemId);
         }
 
+        if ($service->libItemId && ($this->itemType == 'medley')) {
+            $this->linkMedleySelections($service->libItemId);
+        }
+
         return ($service)
             ? $service->libItemId
             : 0;

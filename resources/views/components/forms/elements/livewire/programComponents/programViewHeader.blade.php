@@ -2,6 +2,8 @@
     {{-- HEADER and PREVIOUS/NEXT BUTTONS --}}
     <div class="flex justify-between mb-1">
         <div>{{ $program->school->name . ' ' . ucwords($dto['header']) }}</div>
+
+        {{-- PREVious AND NEXT BUTTONS --}}
         <div class="flex flex-row justify-end space-x-2 text-sm">
             @if($previousProgramId)
                 <button

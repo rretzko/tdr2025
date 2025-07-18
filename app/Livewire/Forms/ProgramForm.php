@@ -11,6 +11,7 @@ use phpDocumentor\Reflection\Types\Integer;
 
 class ProgramForm extends Form
 {
+    public string $organizedBy = 'ensemble';
     public Program $program;
     public string $performanceDate = "";
     public string $programSubtitle = "";
@@ -22,6 +23,7 @@ class ProgramForm extends Form
 
     public function resetVars(): void
     {
+        $this->organizedBy = 'ensemble';
         $this->performanceDate = "";
         $this->programSubtitle = "";
         $this->programTitle = "";
@@ -48,6 +50,7 @@ class ProgramForm extends Form
             'school_id' => $this->schoolId,
             'school_year' => $this->schoolYear,
             'performance_date' => $this->performanceDate,
+            'organized_by' => $this->organizedBy,
         ]);
 
         if ($program && $tags) {
@@ -76,7 +79,6 @@ class ProgramForm extends Form
         } else {
             return false;
         }
-
 
         return true;
     }
@@ -116,6 +118,7 @@ class ProgramForm extends Form
             'school_id' => $this->schoolId,
             'school_year' => $this->schoolYear,
             'performance_date' => $this->performanceDate,
+            'organized_by' => $this->organizedBy,
         ]);
     }
 

@@ -63,23 +63,36 @@
 
                     {{-- ENSEMBLE SELECTION --}}
                     <div class="border border-gray-100 border-b-gray-300 pb-1">
-                        <label>Select an ensemble</label>
-                        @if(count($ensembles))
+                        @if($form->organizedBy === 'act')
                             <div class="flex flex-col">
-                                <select wire:model="form.ensembleId" autofocus>
-                                    @foreach($ensembles AS $key => $ensembleName)
-                                        <option value="{{ $key }}">
-                                            {{ $ensembleName }}
+                                <label>Select an act</label>
+                                <select wire:model="form.actId" class="w-16">
+                                    @for($i=1; $i<6; $i++)
+                                        <option value="{{  $i }}">
+                                            {{ $i }}
                                         </option>
-                                    @endforeach
+                                    @endfor
                                 </select>
-                                {{--                                <label class="">or add a new ensemble.</label>--}}
+                            </div>
+                        @else
+                            {{-- display ensemble drop-down --}}
+                            <label>Select an ensemble</label>
+                            @if(count($ensembles))
+                                <div class="flex flex-col">
+                                    <select wire:model="form.ensembleId" autofocus>
+                                        @foreach($ensembles AS $key => $ensembleName)
+                                            <option value="{{ $key }}">
+                                                {{ $ensembleName }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    {{--                                <label class="">or add a new ensemble.</label>--}}
+                                </div>
+                            @endif
+                            <div class="bg-red-100 text-red-900 w-fit px-2 text-sm italic mt-1 rounded-lg">
+                                {!! $ensembleNameError !!}
                             </div>
                         @endif
-                        {{--                        <x-forms.elements.livewire.programComponents.ensembleName/>--}}
-                        <div class="bg-red-100 text-red-900 w-fit px-2 text-sm italic mt-1 rounded-lg">
-                            {!! $ensembleNameError !!}
-                        </div>
 
                     </div>
 

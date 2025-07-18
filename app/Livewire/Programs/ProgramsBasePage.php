@@ -32,6 +32,7 @@ class ProgramsBasePage extends BasePage
             $this->form->schoolId = $this->program->school_id;
             $this->form->tags = implode(',', $this->program->tags->pluck('name')->toArray());
             $this->form->performanceDate = $this->program->performance_date;
+            $this->form->organizedBy = $this->program->organized_by;
         } else {
             $this->form->schoolId = UserConfig::getValue('schoolId');
         }

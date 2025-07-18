@@ -60,7 +60,7 @@ class ArtistNameService
      */
     private function parseMultiArtistName(string $artistName): void
     {
-        $this->lastName = trim($$artistName);
+        $this->lastName = trim($artistName);
         $this->firstName = '';
         $this->middleName = '';
     }

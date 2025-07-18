@@ -56,6 +56,27 @@
                         type="date"
                     />
 
+                    {{-- PROGRAM ORGANIZATION --}}
+                    <div class="my-2">
+                        <header>This program is organized by:</header>
+                        <div class="ml-4 text-sm">
+                            <div class="flex items-center space-x-1">
+                                <input type="radio" wire:model="form.organizedBy" value="ensemble"/>
+                                <label>Ensemble
+                                    <hint>(ex. spring concert)</hint>
+                                </label>
+                            </div>
+
+                            <div class="flex items-center space-x-1">
+                                <input type="radio" wire:model="form.organizedBy" value="act"/>
+                                <label>Act
+                                    <hint>(ex. cabaret, senior solo recital)</hint>
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+
                     {{-- TAGS --}}
                     <x-forms.elements.livewire.inputTextArea
                         label="tags"

@@ -101,6 +101,7 @@ class ProgramViewComponent extends BasePage
         $this->teacherId = $this->getTeacherId();
         $this->form->schoolId = $this->schoolId;
         $this->form->libraryId = $this->getLibraryId();
+        $this->form->organizedBy = $this->program->organized_by;
 
         //prev/next buttons
         $this->nextProgramId = $this->calcNextPrevProgramId(true);
@@ -257,11 +258,14 @@ class ProgramViewComponent extends BasePage
 
     public function clickTitle(int $libItemId): void
     {
+        $isEnsemble = Program::find($this->form->programId)->isOrganizedByEnsemble();
+
         $programSelection = ProgramSelection::create(
             [
-                'program_id' => $this->dto['programId'],
+                'program_id' => $this->form->programId,
                 'lib_item_id' => $libItemId,
-                'ensemble_id' => $this->form->ensembleId,
+                'ensemble_id' => $isEnsemble ? $this->form->ensembleId : null,
+                'act_id' => $isEnsemble ? null : $this->form->actId,
                 'order_by' => $this->form->performanceOrderBy,
             ]
         );

@@ -6,6 +6,7 @@ use App\Models\Libraries\Items\Components\LibItemRating;
 use App\Models\Libraries\Library;
 use App\Models\Libraries\LibStack;
 use App\Models\Libraries\Items\LibItem;
+use App\Models\Programs\Program;
 use App\Models\Programs\ProgramAddendum;
 use App\Models\Programs\ProgramSelection;
 use App\Models\Schools\School;
@@ -18,6 +19,7 @@ use Livewire\Form;
 
 class ProgramSelectionForm extends Form
 {
+    public int|null $actId = null;
     public string $addendum1 = '';
     public string $addendum2 = '';
     public string $addendum3 = '';
@@ -35,10 +37,10 @@ class ProgramSelectionForm extends Form
     public int $composerId = 0;
     public string $difficulty = 'medium';
     public string $email = '';
-    public int $ensembleId = 0;
+    public int|null $ensembleId = null;
     public string $firstName = '';
     public string $gradeClassOf = '';
-    public string $headerText = 'Add New Concert Selection';
+    public string $headerText = 'Add New Program Selection';
     public string $itemType = 'sheet music';
     public string $lastName = '';
     public string $level = 'high-school';
@@ -51,6 +53,7 @@ class ProgramSelectionForm extends Form
     public string $music = '';
     public string $office = '';
     public bool $opener = false;
+    public string $organizedBy = 'ensemble';
     public int $performanceOrderBy = 1;
     public int $programId = 0;
     public ProgramSelection $programSelection;
@@ -87,11 +90,14 @@ class ProgramSelectionForm extends Form
         $libItemId = $this->addLibItem();
         $this->addLibItemToLibStack($libItemId);
 
+        $isEnsemble = Program::find($this->programId)->isOrganizedByEnsemble();
+
         $this->programSelection = ProgramSelection::create(
             [
                 'program_id' => $this->programId,
                 'lib_item_id' => $libItemId,
-                'ensemble_id' => $this->ensembleId,
+                'ensemble_id' => $isEnsemble ? $this->ensembleId : null,
+                'act_id' => $isEnsemble ? null : $this->actId,
                 'order_by' => $this->performanceOrderBy,
             ]
         );
@@ -153,7 +159,7 @@ class ProgramSelectionForm extends Form
         $this->artistBlock = '';
         $this->bgColor = 'bg-gray-100';
 //        $this->ensembleId = 0;  //persist the currently selected ensembleId
-        $this->headerText = 'Add Concert Selection';
+        $this->headerText = 'Add Program Selection';
         $this->performanceOrderBy = ProgramSelection::where('program_id', $this->programId)->max('order_by') + 1;
         $this->programSelectionId = 0;
         $this->voicingDescr = '';
@@ -176,6 +182,10 @@ class ProgramSelectionForm extends Form
         $this->level = 'high-school';
         $this->difficulty = 'medium';
         $this->comments = '';
+
+        $program = Program::find($this->programId);
+        $this->organizedBy = $program->organized_by;
+        $this->actId = $program->isOrganizedByEnsemble() ? null : $this->actId;
     }
 
     public function setVars(int $programSelectionId): void
@@ -204,6 +214,11 @@ class ProgramSelectionForm extends Form
         if (empty($this->programSelection->comments)) {
             $this->comments = 'add new selection';
         }
+
+        $this->organizedBy = Program::find($this->programSelection->program_id)->organized_by;
+        $this->actId = ($this->organizedBy === 'act')
+            ? $this->actId ?? 1
+            : null;
     }
 
     public function update(): bool
@@ -216,24 +231,18 @@ class ProgramSelectionForm extends Form
 
         $this->updateRatings($this->libItemId);
 
+        $isEnsemble = Program::find($this->programId)->isOrganizedByEnsemble();
+
         return $this->programSelection->update(
             [
-                'ensemble_id' => $this->ensembleId,
+                'act_id' => $isEnsemble ? null : $this->actId,
+                'ensemble_id' => $isEnsemble ? $this->ensembleId : null,
                 'order_by' => $this->performanceOrderBy,
                 'opener' => $this->opener,
                 'closer' => $this->closer,
             ]
         );
     }
-
-//    private function addLibItem(): int
-//    {
-//        $this->setArtistsArray(); //required by CreateLitItemService
-//
-//        $service = new CreateLibItemService($this, ['sheet music', 'medley']);
-//
-//        return $service->libItemId;
-//    }
 
     private function addLibItemToLibStack(int $libItemId): void
     {
@@ -338,7 +347,6 @@ class ProgramSelectionForm extends Form
                 'comments' => $this->comments,
             ]
         );
-
 
     }
 }
