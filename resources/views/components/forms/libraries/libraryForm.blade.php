@@ -17,6 +17,40 @@
             required="true"
         />
 
+        {{-- LIBRARIAN --}}
+        <div class="border border-gray-400 p-2">
+            <header>
+                If you wish to give a student librarian access to this module, please use the following:
+            </header>
+            <div class="ml-4 text-sm">
+                <div class="flex flex-row space-x-2">
+                    <label class="w-24">
+                        Email
+                    </label>
+                    <div class="font-semibold">
+                        {{ $studentLibrarianEmail }}
+                    </div>
+                </div>
+                <div class="flex flex-row space-x-2">
+                    <label class="w-24">
+                        Password
+                    </label>
+                    <div>
+                        <div class="font-semibold">
+                            {{ $studentLibrarianPassword }}
+                        </div>
+                        <button
+                            wire:click="regenerateLibrarianPassword()"
+                            type="button"
+                            class="bg-yellow-800 text-white text-sm px-2 rounded-lg shadow-lg"
+                        >
+                            Reset Librarian Password
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         <div class="flex flex-row space-x-2 items-center">
             <x-buttons.submit value="save"/>
