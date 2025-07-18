@@ -4,7 +4,9 @@ namespace App\Livewire\Libraries;
 
 use App\Livewire\BasePage;
 use App\Livewire\Forms\LibraryForm;
+use App\Models\Libraries\LibLibrarian;
 use App\Models\Schools\Teacher;
+use App\Models\User;
 use App\Services\CoTeachersService;
 use App\Services\MakeLibraryService;
 use App\Services\RemoveLibraryService;
@@ -15,6 +17,8 @@ class LibrariesTableComponent extends BasePage
     public array $columnHeaders = [];
     public bool $displayForm = false;
     public LibraryForm $form;
+    public string $studentLibrarianEmail = '';
+    public string $studentLibrarianPassword = '';
 
     public function mount(): void
     {
@@ -76,15 +80,32 @@ class LibrariesTableComponent extends BasePage
             ->toArray();
     }
 
+    private function hasLibrarian(): bool
+    {
+        return LibLibrarian::where('library_id', $this->form->sysId)->exists();
+    }
+
     public function clickForm(): void
     {
         $this->displayForm = (!$this->displayForm);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function edit(int $libraryId): void
     {
         $this->form->setLibrary($libraryId);
         $this->displayForm = (!$this->displayForm);
+        $this->setLibrarian();
+    }
+
+    public function regenerateLibrarianPassword(): void
+    {
+        $librarian = LibLibrarian::where('library_id', $this->form->sysId)->first();
+        $librarian->regeneratePassword();
+        $this->studentLibrarianPassword = $librarian->password;
+        $this->displayForm = true;
     }
 
     public function remove(int $libraryId): void
@@ -100,5 +121,27 @@ class LibrariesTableComponent extends BasePage
         }
     }
 
+    private function setLibrarian(): void
+    {
+        $maxAttempts = 5;
+        $attempt = 0;
+        while (!$this->hasLibrarian() && ($attempt < $maxAttempts)) {
+            $librarian = new LibLibrarian;
+            $librarian->make($this->form->name, $this->form->schoolId, $this->form->sysId);
+
+            $attempt++;
+        }
+
+        $librarian = LibLibrarian::where('library_id', $this->form->sysId)->first();
+
+        if ($librarian) {
+            $this->studentLibrarianEmail = $librarian->email;
+            $this->studentLibrarianPassword = $librarian->password;
+        } else {
+            // Handle the case where librarian creation failed after retries
+            throw new \Exception('Failed to set librarian after '.$maxAttempts.' attempts.');
+        }
+
+    }
 
 }
