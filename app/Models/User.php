@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Libraries\LibLibrarian;
 use App\Models\Schools\SchoolTeacher;
 use App\Models\Schools\Teacher;
 use App\Models\Students\Student;
@@ -102,6 +103,11 @@ class User extends Authenticatable
         return ($this->email === 'rick@mfrholdings.com');
         //dev
         //return (($this->email === 'rick@mfrholdings.com') || (auth()->id() === 285)); //285 == Matt Lee
+    }
+
+    public function isLibrarian(): bool
+    {
+        return LibLibrarian::where('user_id', auth()->id())->exists();
     }
 
     public function isStudent(): bool

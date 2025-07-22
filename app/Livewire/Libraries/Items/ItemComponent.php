@@ -35,7 +35,7 @@ class ItemComponent extends BaseLibraryItemPage
     {
         parent::mount();
 
-        $this->libraryId = $this->dto['id'];
+        $this->libraryId = auth()->user()->isLibrarian() ? $this->dto['libraryId'] : $this->dto['id'];
         $this->form->libraryId = $this->libraryId;
 
         $this->artistTypes = parent::ARTISTTYPES;

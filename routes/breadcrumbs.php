@@ -203,6 +203,11 @@ Breadcrumbs::for('library item', function (BreadcrumbTrail $trail, $id) {
     $trail->push('Items', route('library.item.new', $id));
 });
 
+Breadcrumbs::for('librarian', function (BreadcrumbTrail $trail) {
+//    $trail->parent('/');
+    $trail->push('Libraries', route('librarian'));
+});
+
 //Libraries end ===================================================================================
 
 //Obligations

@@ -2,6 +2,7 @@
 
 namespace App\Models\Libraries;
 
+use App\Models\Schools\Teacher;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -24,6 +25,13 @@ class LibLibrarian extends Model
         return $this->user->email;
     }
 
+    public function getTeacherUserIdAttribute(): int
+    {
+        $library = Library::find($this->library_id);
+        $teacher = Teacher::find($library->teacher_id);
+        return $teacher->user_id;
+    }
+
     public function make(string $schoolName, int $schoolId, int $libraryId): void
     {
         $user = $this->makeUser($schoolName, $schoolId);
@@ -41,11 +49,11 @@ class LibLibrarian extends Model
         return User::create(
             [
                 'name' => 'Student Librarian',
-                'firstName' => 'Student',
-                'lastName' => 'Librarian',
+                'first_name' => 'Student',
+                'last_name' => 'Librarian',
                 'email' => $this->makeLibrarianEmail($schoolName, $schoolId),
                 'pronoun_id' => 1,
-                'password' => bcrypt($this->newPassword),
+                'password' => $this->newPassword, //bcrypt($this->newPassword),
             ]
         );
     }
@@ -102,6 +110,10 @@ class LibLibrarian extends Model
     {
         $this->password = $this->makeLibrarianPassword();
         $this->save();
+
+        $user = User::find($this->user_id);
+        $user->password = bcrypt($this->password);
+        $user->save();
     }
 
     public function user(): BelongsTo

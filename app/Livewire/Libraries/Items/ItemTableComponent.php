@@ -6,6 +6,7 @@ use App\Livewire\Libraries\LibraryBasePage;
 use App\Models\Libraries\Items\Components\LibItemLocation;
 use App\Models\Libraries\Items\Components\LibMedleySelection;
 use App\Models\Libraries\Items\LibItem;
+use App\Models\Libraries\LibLibrarian;
 use App\Models\Libraries\Library;
 use App\Models\Libraries\LibStack;
 use App\Models\Programs\Program;
@@ -31,7 +32,11 @@ class ItemTableComponent extends LibraryBasePage
     {
         parent::mount();
 
-        $this->library = Library::find($this->dto['id']);
+        $libraryId = auth()->user()->isLibrarian()
+            ? LibLibrarian::where('user_id', auth()->id())->first()->library_id
+            : $this->dto['id'];
+
+        $this->library = Library::find($libraryId);
 
         $this->columnHeaders = $this->getColumnHeaders();
 
@@ -70,7 +75,8 @@ class ItemTableComponent extends LibraryBasePage
      */
     public function clickForm()
     {
-        return $this->redirect("/library/{$this->dto['id']}/item/new");
+        $libraryId = $this->library->id;
+        return $this->redirect("/library/{$libraryId}/item/new");
     }
 
     public function edit(int $libItemId)
@@ -222,7 +228,7 @@ class ItemTableComponent extends LibraryBasePage
 //            ->get()
 //            ->toArray();
 //    }
-    private function getMedleySelections(array $rows): array
+    protected function getMedleySelections(array $rows): array
     {
         $selections = [];
         foreach ($rows as $row) {

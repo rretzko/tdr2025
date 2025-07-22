@@ -102,19 +102,24 @@
                 <td class="border border-gray-200 px-1 text-left text-sm cursor-help">
                     {{ implode(', ', $tags[$row['libItemId']]) }}
                 </td>
-                <td class="border border-gray-200 px-1 text-center text-sm cursor-help w-20">
-                    @forelse($performances[$row['libItemId']] AS $programId => $performanceDate)
-                        <a
-                            href="{{ route('programs.show',['program' => $programId]) }}"
-                            class="text-blue-500"
-                            title="open program"
-                        >
-                            {{ $performanceDate }}
-                        </a>
-                    @empty
-                        none
-                    @endforelse
-                </td>
+
+                {{-- student librarians do not have access to programs module --}}
+                @if(auth()->user()->isTeacher())
+                    <td class="border border-gray-200 px-1 text-center text-sm cursor-help w-20">
+                        @forelse($performances[$row['libItemId']] AS $programId => $performanceDate)
+                            <a
+                                href="{{ route('programs.show',['program' => $programId]) }}"
+                                class="text-blue-500"
+                                title="open program"
+                            >
+                                {{ $performanceDate }}
+                            </a>
+                        @empty
+                            none
+                        @endforelse
+                    </td>
+                @endif
+
                 <td class="relative border border-gray-300">
                     <div class="flex justify-center items-center h-full">
                         <input type="checkbox"
@@ -128,10 +133,13 @@
                     <td class="text-center border border-gray-200 px-1">
                         <x-buttons.edit id="{{ $row['libItemId'] }}" :livewire="true" id="{{ $row['libItemId'] }}"/>
                     </td>
-                    <td class="text-center border border-gray-200 px-1">
-                        <x-buttons.remove id="{{ $row['id'] }}" livewire="1"
-                                          message="Are you sure you want to remove this library item?"/>
-                    </td>
+                    {{-- ONLY TEACHER MAY REMOVE ITEMS --}}
+                    @if(auth()->user()->isTeacher())
+                        <td class="text-center border border-gray-200 px-1">
+                            <x-buttons.remove id="{{ $row['id'] }}" livewire="1"
+                                              message="Are you sure you want to remove this library item?"/>
+                        </td>
+                    @endif
                 @endif
             </tr>
         @empty

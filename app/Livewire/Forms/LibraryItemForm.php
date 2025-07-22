@@ -474,21 +474,24 @@ class LibraryItemForm extends Form
 
     private function updateLibItemRatings(int $libItemId): void
     {
-        $teacherId = Teacher::where('user_id', auth()->id())->first()->id;
+        //student librarians cannot update item ratings
+        if (auth()->user()->isTeacher()) {
+            $teacherId = Teacher::where('user_id', auth()->id())->first()->id;
 
-        LibItemRating::updateOrCreate(
-            [
-                'library_id' => $this->libraryId,
-                'lib_item_id' => $libItemId,
-                'teacher_id' => $teacherId,
-            ],
-            [
-                'rating' => $this->rating,
-                'level' => $this->level,
-                'difficulty' => $this->difficulty,
-                'comments' => $this->comments,
-            ]
-        );
+            LibItemRating::updateOrCreate(
+                [
+                    'library_id' => $this->libraryId,
+                    'lib_item_id' => $libItemId,
+                    'teacher_id' => $teacherId,
+                ],
+                [
+                    'rating' => $this->rating,
+                    'level' => $this->level,
+                    'difficulty' => $this->difficulty,
+                    'comments' => $this->comments,
+                ]
+            );
+        }
     }
 
     private function updateLibTitle(LibItem $libItem, LibTitle $libTitle): bool

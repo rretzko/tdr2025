@@ -27,7 +27,7 @@ class LibraryPolicy
 //     */
     public function view(User $user, Library $library): bool
     {
-        $coTeachers = CoTeachersService::getCoTeachersIds();
+        $coTeachers = CoTeachersService::getCoTeachersIds($user->id);
 
         return in_array($library->teacher_id, $coTeachers);
     }

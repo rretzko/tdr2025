@@ -337,6 +337,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //VERIFIED SIGNED ROUTES
     Route::get('/invite/{version}/{user}', \App\Http\Controllers\Events\Versions\InviteVersionUserController::class)
         ->name('inviteVersionUser');
+
+    //LIBRARIAN
+    Route::get('librarian', \App\Http\Controllers\Libraries\Librarian\LibrarianController::class)
+        ->name('librarian');
 });
 
 require __DIR__.'/auth.php';

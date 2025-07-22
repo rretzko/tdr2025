@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Libraries\LibLibrarian;
 use App\Models\Schools\Teacher;
 use App\Models\Schools\Teachers\Coteacher;
 use App\Models\SchoolStudent;
@@ -10,12 +11,22 @@ use App\Models\UserConfig;
 class CoTeachersService
 {
     /**
+     * added optional int $userId to allow student librarians
+     * access to their sponsoring teacher's co-teacher information.
      * @return array
      */
-    public static function getCoTeachersIds(): array
+    public static function getCoTeachersIds(int $userId = 0): array
     {
         $teacherIds = [];
-        $teacher = Teacher::where('user_id', auth()->id())->first();
+        if (!$userId) {
+            $userId = auth()->id();
+        }
+
+        if (auth()->user()->isLibrarian()) {
+            $userId = LibLibrarian::where('user_id', auth()->id())->first()->teacherUserId;
+        }
+
+        $teacher = Teacher::where('user_id', $userId)->first();
         $myTeacherId = $teacher->id;
         $schoolIds = $teacher->schools()->pluck('schools.id')->toArray();
         $teacherIds[] = $myTeacherId;

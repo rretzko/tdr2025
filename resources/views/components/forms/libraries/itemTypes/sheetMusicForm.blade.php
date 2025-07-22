@@ -12,7 +12,9 @@
     @include('components.forms.elements.livewire.libraryItem.tags')
 
     {{-- COMMENTS AND RATING --}}
-    @include('components.forms.elements.livewire.libraryItem.commentsRatings')
+    @if(auth()->user()->isTeacher())
+        @include('components.forms.elements.livewire.libraryItem.commentsRatings')
+    @endif
 
     {{-- LOCATION --}}
     @include('components.forms.elements.livewire.libraryItem.location')

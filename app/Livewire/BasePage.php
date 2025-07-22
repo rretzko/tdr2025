@@ -8,6 +8,7 @@ use App\Models\Events\Versions\VersionParticipant;
 use App\Models\PageView;
 use App\Models\Schools\School;
 use App\Models\Students\Student;
+use App\Models\User;
 use App\Models\UserConfig;
 use App\Models\UserSort;
 use App\Services\CoTeachersService;
@@ -28,6 +29,7 @@ class BasePage extends Component
     public bool $hasFilters = false;
     public bool $hasSearch = false;
     public string $header = 'header';
+
     public string $pageInstructions = "no instructions found...";
     public array $participatingSchools = [];
     public array $participatingClassOfs = [];
@@ -74,7 +76,7 @@ class BasePage extends Component
         $this->setFirstTimer($this->dto['header']);
 
         //identify non-event-related modules
-        $nonEvents = ['libraries', 'library item', 'library items'];
+        $nonEvents = ['librarian', 'libraries', 'library item', 'library items'];
         if (!in_array($this->header, $nonEvents)) {
             $this->participatingSchools = $this->getParticipatingSchools();
             $this->participatingClassOfs = $this->getParticipatingClassOfs();
@@ -91,7 +93,6 @@ class BasePage extends Component
 
             //$this->schoolCount is used to determine if the schools filter should be displayed
             $this->schoolCount = count($this->schools);
-
 
             $this->school = ($this->schoolCount === 1)
                 ? School::find(array_key_first($this->schools))
@@ -139,6 +140,10 @@ class BasePage extends Component
 
     public function getSchools(): array
     {
+        if (User::find(auth()->id())->isLibrarian()) {
+            return [$this->dto['schoolName']];
+        }
+
         return auth()->user()->teacher->schools()
             ->with('schoolTeacher')
             ->wherePivot('active', 1)

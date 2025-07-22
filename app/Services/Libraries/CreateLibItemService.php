@@ -8,6 +8,7 @@ use App\Models\Libraries\Items\Components\LibItemLocation;
 use App\Models\Libraries\Items\Components\LibTitle;
 use App\Models\Libraries\Items\Components\Voicing;
 use App\Models\Libraries\Items\LibItem;
+use App\Models\Libraries\LibLibrarian;
 use App\Models\Schools\Teacher;
 use App\Models\Libraries\Items\Components\Artist;
 use App\Models\Tag;
@@ -240,7 +241,10 @@ class CreateLibItemService
 
     private function setTeacherId(): int
     {
-        return Teacher::where('user_id', auth()->id())->first()->id;
+        $userId = auth()->user()->isLibrarian()
+            ? LibLibrarian::where('user_id', auth()->id())->first()->teacherUserId
+            : auth()->id();
+        return Teacher::where('user_id', $userId)->first()->id;
     }
 
     private function updateLocations(): void

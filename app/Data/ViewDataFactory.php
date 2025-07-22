@@ -40,7 +40,13 @@ class ViewDataFactory extends aViewData
         //include the count of schools to determine if the breadcrumbs should be included
         //a newly registered user will have NO schools and should not be allowed to do
         //anything else until a school is added
-        $this->dto['schoolCount'] = auth()->user()->teacher->schools->count();
+        //22-Jul-25
+        //added conditional statement to accommodate student librarians access to their
+        //sponsoring teacher's information
+        //student librarians are limited to a single school
+        $this->dto['schoolCount'] = auth()->user()->isTeacher()
+            ? auth()->user()->teacher->schools->count()
+            : 1;
 
         //common variable
         $this->dto['versionId'] = $this->versionId;
