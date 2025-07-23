@@ -62,7 +62,7 @@ class EnsembleMembersImport implements ToModel, WithHeadings
             }
 
             if ($email) {
-
+                Log::info('ensembleId: '.$ensembleId.', schoolYear: '.$row['0']);
                 $service = new AddNewEnsembleMemberService(
                     $schoolId,
                     $ensembleId,

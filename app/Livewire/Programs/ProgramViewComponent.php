@@ -140,7 +140,6 @@ class ProgramViewComponent extends BasePage
 
     public function addConcertSelection(): void
     {
-        dd(__LINE__);
         $added = $this->form->add();
 
         if ($added) {
@@ -209,6 +208,7 @@ class ProgramViewComponent extends BasePage
     public function clickImportNewMembers(): void
     {
         $this->reset('fileUploadMessage', 'uploadedMaxFileSizeExceeded');
+
         //check size
         $fileSize = $this->uploadedFileContainer->getSize();
         Log::info('fileSize: '.$fileSize);

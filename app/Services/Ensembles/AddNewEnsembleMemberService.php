@@ -49,11 +49,13 @@ class AddNewEnsembleMemberService
                 $this->student->update(['class_of' => $this->classOf]);
             }
             $student = $this->student;
+            Log::info('student found'.': '.$student->user->name);
 
             //if student is currently deleted, restore to active
             $this->restoreEnsembleMemberRecord($student->id);
 
         } else {
+            Log::info('* creating new student'.': '.$this->email);
             //   if student is not found:
             //      create new user
             $user = User::create([
@@ -67,6 +69,7 @@ class AddNewEnsembleMemberService
             ]);
             //      create new student if student is not found
             $student = Student::create([
+                'id' => $user->id,
                 'user_id' => $user->id,
                 'voice_part_id' => $this->voicePartId,
                 'class_of' => $this->classOf,
