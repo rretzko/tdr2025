@@ -9,6 +9,7 @@ use App\Models\Libraries\Items\Components\LibMedleySelection;
 use App\Models\Libraries\Items\Components\LibTitle;
 use App\Models\Libraries\Items\Components\Voicing;
 use App\Models\Libraries\Items\LibItem;
+use App\Models\Libraries\LibLibrarian;
 use App\Models\Libraries\LibStack;
 use App\Models\Schools\Teacher;
 use App\Models\Tag;
@@ -227,19 +228,14 @@ class LibraryItemForm extends Form
             $this->linkMedleySelections($service->libItemId);
         }
 
-        if ($service->libItemId && ($this->itemType == 'medley')) {
-            $this->linkMedleySelections($service->libItemId);
-        }
-
         return ($service)
             ? $service->libItemId
             : 0;
     }
 
-    private function getLibTitleId(string $title): int
+    private function getLibTitleId(string $title, int $teacherId): int
     {
         $trimmed = Str::title(trim($title));
-        $teacherId = Teacher::where('user_id', auth()->id())->first()->id;
 
         return (LibTitle::where('title', $trimmed)->exists())
             ? LibTitle::where('title', $trimmed)->first()->id
@@ -347,12 +343,15 @@ class LibraryItemForm extends Form
         //delete current selections
         LibMedleySelection::where('lib_item_id', $libItemId)->delete();
 
-        $teacherId = Teacher::where('user_id', auth()->id())->first()->id;
+        $teacherId = (auth()->user()->isLibrarian())
+            ? LibLibrarian::where('user_id', auth()->id())->first()->teacherUserId
+            : Teacher::where('user_id', auth()->id())->first()->id;
+
         $titles = array_values(array_filter($this->medleySelections));
 
         foreach ($titles as $title) {
 
-            $libTitleId = $this->getLibTitleId($title);
+            $libTitleId = $this->getLibTitleId($title, $teacherId);
 
             if (!LibMedleySelection::query()
                 ->where('lib_item_id', $libItemId)
@@ -412,20 +411,28 @@ class LibraryItemForm extends Form
         }
     }
 
+    /**
+     * student librarians cannot set ratings
+     * this is limited to teachers
+     * @param  LibItem  $libItem
+     * @return void
+     */
     private function setRatings(LibItem $libItem): void
     {
-        $teacherId = Teacher::where('user_id', auth()->id())->first()->id;
-        $libItemRating = LibItemRating::query()
-            ->where('library_id', $this->libraryId)
-            ->where('lib_item_id', $libItem->id)
-            ->where('teacher_id', $teacherId)
-            ->first();
+        if (auth()->user()->isTeacher()) {
+            $teacherId = Teacher::where('user_id', auth()->id())->first()->id;
+            $libItemRating = LibItemRating::query()
+                ->where('library_id', $this->libraryId)
+                ->where('lib_item_id', $libItem->id)
+                ->where('teacher_id', $teacherId)
+                ->first();
 
-        if ($libItemRating) {
-            $this->comments = $libItemRating->comments;
-            $this->level = $libItemRating->level;
-            $this->difficulty = $libItemRating->difficulty;
-            $this->rating = $libItemRating->rating;
+            if ($libItemRating) {
+                $this->comments = $libItemRating->comments;
+                $this->level = $libItemRating->level;
+                $this->difficulty = $libItemRating->difficulty;
+                $this->rating = $libItemRating->rating;
+            }
         }
     }
 

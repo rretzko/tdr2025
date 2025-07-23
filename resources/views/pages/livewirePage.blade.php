@@ -13,8 +13,10 @@
     <div class="py-0.5">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-col md:flex-row">
 
-            {{-- DOMAINS --}}
-            <x-sidebars.domains/>
+            {{-- DOMAINS for non-student-librarians--}}
+            @if(! auth()->user()->isLibrarian())
+                <x-sidebars.domains/>
+            @endif
 
             <div class="bg-white dark:bg-gray-800 py-2 mb-4 overflow-hidden shadow-sm sm:rounded-lg w-full">
 

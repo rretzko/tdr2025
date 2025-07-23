@@ -50,7 +50,9 @@ class ArtistNameService
 
     private function isMultiArtist(string $artistName): bool
     {
-        return Str::contains($artistName, ' and ');
+        $lcArtistName = strtolower($artistName);
+        $delimiters = [' and ', ' & ', '/', ';'];
+        return Str::contains($lcArtistName, $delimiters);
     }
 
     /**

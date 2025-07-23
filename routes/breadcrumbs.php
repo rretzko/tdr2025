@@ -10,7 +10,10 @@ use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
 
 // Home
 Breadcrumbs::for('home', function (BreadcrumbTrail $trail) {
-    $trail->push('Home', route('home'));
+    // don't display 'Home' link for student librarians
+    if (!auth()->user()->isLibrarian()) {
+        $trail->push('Home', route('home'));
+    }
 });
 
 //Attachments
@@ -190,7 +193,10 @@ Breadcrumbs::for('adjudication', function (BreadcrumbTrail $trail, $id) {
 //Libraries start =================================================================================
 Breadcrumbs::for('libraries', function (BreadcrumbTrail $trail) {
     $trail->parent('home');
-    $trail->push('Libraries', route('libraries'));
+    // don't display 'Libraries' link for student librarians
+    if (!auth()->user()->isLibrarian()) {
+        $trail->push('Libraries', route('libraries'));
+    }
 });
 
 Breadcrumbs::for('library items', function (BreadcrumbTrail $trail, $id) {
@@ -204,8 +210,10 @@ Breadcrumbs::for('library item', function (BreadcrumbTrail $trail, $id) {
 });
 
 Breadcrumbs::for('librarian', function (BreadcrumbTrail $trail) {
-//    $trail->parent('/');
-    $trail->push('Libraries', route('librarian'));
+    // don't display 'Libraries' link for student librarians
+    if (!auth()->user()->isLibrarian()) {
+        $trail->push('Libraries', route('librarian'));
+    }
 });
 
 //Libraries end ===================================================================================

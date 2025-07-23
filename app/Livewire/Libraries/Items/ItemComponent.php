@@ -131,16 +131,32 @@ class ItemComponent extends BaseLibraryItemPage
 
     public function updatedFormArtistsArranger($value): void
     {
-        if (strlen($value)) {
+        $this->updatedFormArtistsType($value, 'arranger');
+    }
 
-            $this->searchResultsArtists['arranger'] = ArtistSearchService::getResults($value, 'arranger');
+    public function updatedFormArtistsChoreographer($value): void
+    {
+        $this->updatedFormArtistsType($value, 'choreographer');
+    }
 
-        } else {//user has removed the current value
+    public function updatedFormArtistsComposer($value): void
+    {
+        $this->updatedFormArtistsType($value, 'arranger');
+    }
 
-            $this->form->artists['arranger'] = '';
-            $this->form->artistIds['arranger'] = 0;
-            $this->libItem->update(['arranger_id' => 0]);
-        }
+    public function updatedFormArtistsMusic($value): void
+    {
+        $this->updatedFormArtistsType($value, 'music');
+    }
+
+    public function updatedFormArtistsWam($value): void
+    {
+        $this->updatedFormArtistsType($value, 'wam');
+    }
+
+    public function updatedFormArtistsWords($value): void
+    {
+        $this->updatedFormArtistsType($value, 'words');
     }
 
     public function updatedFormTitle(): void
@@ -150,6 +166,9 @@ class ItemComponent extends BaseLibraryItemPage
 
     public function updatedFormVoicingDescr(): void
     {
+        //clear current stack
+        $this->reset('searchVoicings');
+        //redo search
         $this->searchVoicing();
     }
 
@@ -194,6 +213,21 @@ class ItemComponent extends BaseLibraryItemPage
             ];
         }
 
+    }
+
+    private function updatedFormArtistsType(string $value, string $type): void
+    {
+        if (strlen($value)) {
+
+            $this->searchResultsArtists[$type] = ArtistSearchService::getResults($value, $type);
+
+        } else {//user has removed the current value
+
+            $this->searchResultsArtists[$type] = null;
+            $this->form->artists[$type] = '';
+            $this->form->artistIds[$type] = 0;
+            $this->libItem->update([$type => 0]);
+        }
     }
 
 }
