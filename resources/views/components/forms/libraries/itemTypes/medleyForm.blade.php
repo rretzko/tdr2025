@@ -5,6 +5,9 @@
     {{-- VOICING --}}
     @include('components.forms.elements.livewire.libraryItem.voicings')
 
+    {-- COUNT --}}
+    @include('components.forms.elements.livewire.libraryItem.count')
+
     {{-- ARTISTS --}}
     @include('components.forms.elements.livewire.libraryItem.artistsBlock')
 

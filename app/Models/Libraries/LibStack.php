@@ -11,6 +11,7 @@ class LibStack extends Model
 
     protected $fillable =
         [
+            'count',
             'library_id',
             'lib_item_id',
         ];

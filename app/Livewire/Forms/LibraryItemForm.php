@@ -48,6 +48,9 @@ class LibraryItemForm extends Form
 
     #[Validate('required')]
     public string $comments = 'adding item to library';
+
+    #[Validate('required', 'integer', 'min:0')]
+    public int $count = 1;
     public string $difficulty = 'medium';
     public string $level = 'high-school';
 
@@ -118,7 +121,9 @@ class LibraryItemForm extends Form
                 'library_id' => $libraryId,
                 'lib_item_id' => $libItemId,
             ],
-            []
+            [
+                'count' => $this->count
+            ],
         );
     }
 
@@ -163,6 +168,7 @@ class LibraryItemForm extends Form
         ];
 
         $this->itemType = 'sheet music';
+        $this->count = 1;
 
         $this->sysId = 0;
         $this->title = '';
@@ -212,6 +218,8 @@ class LibraryItemForm extends Form
 
         //medley selections
         $this->setMedleySelections($libItem);
+
+        $this->setCount($libItem);
 
     }
 
@@ -381,6 +389,18 @@ class LibraryItemForm extends Form
                 $this->policies['canEdit'][$artistType] = $this->getPolicy($artistType, $libItem);
             }
         }
+    }
+
+    private function setCount(LibItem $libItem): void
+    {
+        $libStack = LibStack::query()
+            ->where('lib_item_id', $libItem->id)
+            ->where('library_id', $this->libraryId)
+            ->first();
+
+        $this->count = ($libStack)
+            ? $libStack->count
+            : 1;
     }
 
     private function setLocations(LibItem $libItem): void

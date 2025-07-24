@@ -54,6 +54,7 @@ trait LibraryTableRowsTrait
             })
             ->distinct()
             ->select('lib_stacks.id',
+                'lib_stacks.count',
                 'lib_items.id AS libItemId',
                 'lib_titles.title', 'lib_titles.alpha', 'lib_items.item_type',
                 'composer.alpha_name AS composerName',
@@ -77,7 +78,8 @@ trait LibraryTableRowsTrait
                 'music.alpha_name',
                 'choreographer.alpha_name',
                 'voicingDescr',
-                'lib_items.id'
+                'lib_items.id',
+                'lib_stacks.count'
             )
             ->orderBy($sortCol, $sortAsc ? 'asc' : 'desc')
             ->orderBy('lib_titles.alpha', 'asc')

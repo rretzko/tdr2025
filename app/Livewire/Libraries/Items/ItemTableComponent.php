@@ -15,11 +15,13 @@ use Carbon\Carbon;
 use JetBrains\PhpStorm\NoReturn;
 use App\Traits\Libraries\LibraryTableColumnHeadersTrait;
 use App\Traits\Libraries\LibraryTableRowsTrait;
+use Livewire\WithPagination;
 
 class ItemTableComponent extends LibraryBasePage
 {
     use LibraryTableColumnHeadersTrait;
     use LibraryTableRowsTrait;
+    use WithPagination;
 
     public array $columnHeaders;
     public Library $library;
@@ -42,7 +44,6 @@ class ItemTableComponent extends LibraryBasePage
 
         $this->sortCol = 'lib_titles.alpha';
 
-//        $this->updatedGlobalSearch(); //set initial $this->likeValue to "%%"
     }
 
     public function render()

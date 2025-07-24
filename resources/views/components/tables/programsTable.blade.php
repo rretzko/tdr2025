@@ -1,6 +1,6 @@
 <div class="relative overflow-x-auto">
 
-    <table class="px-4 shadow-lg w-full">
+    <table class=" px-4 shadow-lg w-full">
         <thead>
         <tr>
             @foreach($columnHeaders AS $columnHeader)
@@ -12,7 +12,13 @@
                         'text-blue-500' => ($columnHeader['sortBy'])
                         ])
                     >
-                        <div>{{ $columnHeader['label'] }}</div>
+                        <div
+                            @if($columnHeader['label'] === 'count')
+                                title="count of selections"
+                            @endif
+                        >
+                            {{ $columnHeader['label'] }}
+                        </div>
                         @if($sortColLabel === $columnHeader['sortBy'])
                             @if($sortAsc)
                                 <x-heroicons.arrowLongUp/>
@@ -36,25 +42,42 @@
         @forelse($rows AS $row)
 
             <tr class="odd:bg-green-50">
+
+                {{-- ### --}}
                 <td class="border border-gray-200 px-1 text-center">
                     {{ $loop->iteration }}
                 </td>
+
+                {{-- school year --}}
                 <td class="border border-gray-200 px-1 text-center cursor-help" title="">
                     <a href="{{ route('library.items', ['library' => $row->id]) }}"
                        class="text-blue-600 font-bold hover:underline">
                         {{ $row->school_year }}
                     </a>
                 </td>
+
+                {{-- title --}}
                 <td class="border border-gray-200 px-1">
                     <div>{{ $row->title }}</div>
                     <div class="ml-2 text-sm">{{ $row->subtitle }}</div>
                 </td>
+
+                {{-- performance date --}}
                 <td class="border border-gray-200 px-1 text-sm text-right min-w-24 ">
                     {{ $row->humanPerformanceDate }}
                 </td>
+
+                {{-- count --}}
+                <td class="border border-gray-200 px-1 text-sm text-center min-w-24 ">
+                    {{ $row->selectionCount }}
+                </td>
+
+                {{-- tags --}}
                 <td class="border border-gray-200 px-1 text-sm">
                     {{ implode(', ', $row->tags->sortBy('name')->pluck('name')->toArray()) }}
                 </td>
+
+                {{-- view/edit/remove columns --}}
                 <td class="text-center border border-gray-200">
                     <button wire:click="view({{ $row->id }})"
                             type="button"

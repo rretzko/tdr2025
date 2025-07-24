@@ -12,6 +12,7 @@ trait LibraryTableColumnHeadersTrait
             ['label' => '###', 'sortBy' => null],
             ['label' => 'type/location', 'sortBy' => 'type'],
             ['label' => 'title', 'sortBy' => 'title'],
+            ['label' => 'count', 'sortBy' => null],
             ['label' => 'artists', 'sortBy' => null],
             ['label' => 'voicing', 'sortBy' => 'voicing'],
             ['label' => 'tags', 'sortBy' => null],

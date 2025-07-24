@@ -66,6 +66,7 @@
                         {{ $locations[$row['libItemId']] }}
                     </div>
                 </td>
+                {{-- title --}}
                 <td class="border border-gray-200 px-1 text-left">
                     <div>{{ $row['alpha'] }}</div>
                     @if(array_key_exists($row['libItemId'], $medleySelections))
@@ -76,6 +77,11 @@
                         </div>
                     @endif
                 </td>
+                {{-- count --}}
+                <td class="border border-gray-200 px-1 text-center">
+                    {{ $row['count'] }}
+                </td>
+                {{-- artists --}}
                 <td class="border border-gray-200 px-1 text-left ">
                     @if($row['composerName'])
                         <div class="font-bold">{{ $row['composerName'] }}</div>
@@ -96,9 +102,13 @@
                             <div>{{ $row['choreographerName'] }} <span class="text-xs">(choreo)</span></div>
                         @endif
                 </td>
+
+                {{-- voicing --}}
                 <td class="border border-gray-200 px-1 text-center">
                     {{ $row['voicingDescr'] }}
                 </td>
+
+                {{-- tags --}}
                 <td class="border border-gray-200 px-1 text-left text-sm cursor-help">
                     {{ implode(', ', $tags[$row['libItemId']]) }}
                 </td>
@@ -120,6 +130,7 @@
                     </td>
                 @endif
 
+                {{-- pull --}}
                 <td class="relative border border-gray-300">
                     <div class="flex justify-center items-center h-full">
                         <input type="checkbox"
@@ -129,14 +140,18 @@
                         />
                     </div>
                 </td>
+
+                {{-- edit --}}
                 @if($dto['header'] != 'ensemble library')
                     <td class="text-center border border-gray-200 px-1">
                         <x-buttons.edit id="{{ $row['libItemId'] }}" :livewire="true" id="{{ $row['libItemId'] }}"/>
                     </td>
+
+                    {{-- remove --}}
                     {{-- ONLY TEACHER MAY REMOVE ITEMS --}}
                     @if(auth()->user()->isTeacher())
                         <td class="text-center border border-gray-200 px-1">
-                            <x-buttons.remove id="{{ $row['id'] }}" livewire="1"
+                            <x-buttons.remove id="{{ $row['libItemId'] }}" livewire="1"
                                               message="Are you sure you want to remove this library item?"/>
                         </td>
                     @endif

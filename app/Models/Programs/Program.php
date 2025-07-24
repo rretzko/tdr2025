@@ -37,6 +37,13 @@ class Program extends Model
             ->format('F j, Y');
     }
 
+    public function getSelectionCountAttribute(): int
+    {
+        return ProgramSelection::query()
+            ->where('program_id', $this->id)
+            ->count();
+    }
+
     public function isOrganizedByEnsemble(): bool
     {
         return $this->organized_by === 'ensemble';

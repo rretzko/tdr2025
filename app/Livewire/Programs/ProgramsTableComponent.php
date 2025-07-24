@@ -100,6 +100,7 @@ class ProgramsTableComponent extends BasePage
             ['label' => 'schoolYr', 'sortBy' => 'year'],
             ['label' => 'title', 'sortBy' => 'title'],
             ['label' => 'perf.date', 'sortBy' => 'perf_date'],
+            ['label' => 'songs', 'sortBy' => null],
             ['label' => 'tags', 'sortBy' => null],
         ];
     }
