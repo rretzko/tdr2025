@@ -27,8 +27,10 @@ class ItemTableComponent extends LibraryBasePage
     public Library $library;
     public bool $displayForm = false;
     public string $globalSearch = '';
-//    public string $likeValue = ''; //wrap $globalSearch in %%
+
     public bool $hasSearch = true;
+
+    public int $voicingFilterId = 0;
 
     public function mount(): void
     {
@@ -43,7 +45,6 @@ class ItemTableComponent extends LibraryBasePage
         $this->columnHeaders = $this->getColumnHeaders();
 
         $this->sortCol = 'lib_titles.alpha';
-
     }
 
     public function render()
@@ -54,11 +55,13 @@ class ItemTableComponent extends LibraryBasePage
             $this->globalSearch,
             $this->sortCol,
             $this->sortAsc,
+            $this->voicingFilterId,
         );
         $locations = $this->getItemLocations($rows, $this->library->id);
         $performances = $this->getItemPerformances($rows);
         $tags = $this->getItemTags($rows);
         $medleySelections = $this->getMedleySelections($rows);
+        $voicings = $this->getVoicings($rows);
 
         return view('livewire..libraries.items.item-table-component',
             [
@@ -67,6 +70,7 @@ class ItemTableComponent extends LibraryBasePage
                 'performances' => $performances,
                 'tags' => $tags,
                 'medleySelections' => $medleySelections,
+                'voicings' => $voicings,
             ]
         );
     }
@@ -123,112 +127,13 @@ class ItemTableComponent extends LibraryBasePage
         }
 
         $this->sortCol = $properties[$key];
-
     }
 
-//    public function updatedGlobalSearch(): void
-//    {
-//        $this->likeValue = '%'.$this->globalSearch.'%';
-//    }
+    public function updatedVoicingFilterId()
+    {
+        //re-render
+    }
 
-//    private function getLibItemLocations(array $rows): array
-//    {
-//        $locations = [];
-//
-//        foreach ($rows as $row) {
-//            $libItemLocation = LibItemLocation::query()
-//                ->where('lib_item_id', $row['libItemId'])
-//                ->where('library_id', $this->library->id)
-//                ->first();
-//
-//            if($libItemLocation) {
-//
-//                $fLocation = LibItemLocation::query()
-//                    ->where('lib_item_id', $row['libItemId'])
-//                    ->where('library_id', $this->library->id)
-//                    ->first()
-//                    ->formatLocation;
-//            }else{
-//                $fLocation = $row['libItemId'];
-//            }
-//
-//            $locations[$row['libItemId']] = $fLocation;
-//        }
-//
-//        return $locations;
-//    }
-
-//    private function getPerformances(array $rows): array
-//    {
-//        $performances = [];
-//
-//        foreach ($rows as $row) {
-//            $performances[$row['libItemId']] = Program::query()
-//                ->join('program_selections', 'program_selections.program_id', '=', 'programs.id')
-//                ->where('program_selections.lib_item_id', $row['libItemId'])
-//                ->pluck('programs.performance_date', 'programs.id')
-//                ->map(function ($date) {
-//                    return Carbon::parse($date)->format('M-y'); //ex. Jun-20
-//                })
-//                ->toArray();
-//        }
-//
-//        return $performances;
-//    }
-
-//    private function getTags(array $rows): array
-//    {
-//        $tags = [];
-//
-//        foreach ($rows as $row) {
-//            $tags[$row['libItemId']] = LibItem::find($row['libItemId'])->tags()->pluck('name')->toArray();
-//        }
-//
-//        return $tags;
-//    }
-
-//    private function getRows(): array
-//    {
-//        return LibStack::query()
-//            ->join('lib_items', 'lib_stacks.lib_item_id', '=', 'lib_items.id')
-//            ->join('lib_titles', 'lib_items.lib_title_id', '=', 'lib_titles.id')
-//            ->leftJoin('artists AS composer', 'lib_items.composer_id', '=', 'composer.id')
-//            ->leftJoin('artists AS arranger', 'lib_items.arranger_id', '=', 'arranger.id')
-//            ->leftJoin('artists AS wam', 'lib_items.wam_id', '=', 'wam.id')
-//            ->leftJoin('artists AS words', 'lib_items.words_id', '=', 'words.id')
-//            ->leftJoin('artists AS music', 'lib_items.music_id', '=', 'music.id')
-//            ->leftJoin('artists AS choreographer', 'lib_items.choreographer_id', '=', 'choreographer.id')
-//            ->leftJoin('voicings', 'lib_items.voicing_id', '=', 'voicings.id')
-//            ->leftJoin('taggables', 'lib_items.id', '=', 'taggables.taggable_id')
-//            ->leftJoin('tags', 'taggables.tag_id', '=', 'tags.id')
-//            ->where('lib_stacks.library_id', $this->library->id)
-//            ->where(function ($query) {
-//                $query->where('lib_titles.title', 'LIKE', $this->likeValue)
-//                    ->orWhere('composer.artist_name', 'LIKE', $this->likeValue)
-//                    ->orWhere('arranger.artist_name', 'LIKE', $this->likeValue)
-//                    ->orWhere('wam.artist_name', 'LIKE', $this->likeValue)
-//                    ->orWhere('words.artist_name', 'LIKE', $this->likeValue)
-//                    ->orWhere('music.artist_name', 'LIKE', $this->likeValue)
-//                    ->orWhere('choreographer.artist_name', 'LIKE', $this->likeValue)
-//                    ->orWhere('tags.name', 'LIKE', $this->likeValue);
-//            })
-//            ->distinct()
-//            ->select('lib_stacks.id',
-//                'lib_items.id AS libItemId',
-//                'lib_titles.title', 'lib_titles.alpha', 'lib_items.item_type',
-//                'composer.alpha_name AS composerName',
-//                'arranger.alpha_name AS arrangerName',
-//                'wam.alpha_name AS wamName',
-//                'words.alpha_name AS wordsName',
-//                'music.alpha_name AS musicName',
-//                'choreographer.alpha_name AS choreographerName',
-//                'voicings.descr AS voicingDescr',
-//            )
-//            ->orderBy($this->sortCol, $this->sortAsc ? 'asc' : 'desc')
-//            ->orderBy('lib_titles.alpha', 'asc')
-//            ->get()
-//            ->toArray();
-//    }
     protected function getMedleySelections(array $rows): array
     {
         $selections = [];
@@ -239,5 +144,14 @@ class ItemTableComponent extends LibraryBasePage
         }
 
         return $selections;
+    }
+
+    private function getVoicings(): array
+    {
+        $libStack = LibStack::where('library_id', $this->library->id)->first();
+
+        return ($libStack)
+            ? $libStack->voicingsArray
+            : [];
     }
 }

@@ -18,9 +18,14 @@ trait LibraryTableRowsTrait
         string $searchValue = '',
         string $sortCol = 'lib_titles.title',
         bool $sortAsc = true,
+        int $voicingFilterId = 0,
     ): array
     {
         $searchFor = '%'.$searchValue.'%';
+
+        $voicingOperand = ($voicingFilterId > 0)
+            ? '='
+            : '>';
 
         return LibStack::query()
             ->join('lib_items', 'lib_stacks.lib_item_id', '=', 'lib_items.id')
@@ -37,6 +42,7 @@ trait LibraryTableRowsTrait
             ->leftJoin('lib_medley_selections', 'lib_items.id', '=', 'lib_medley_selections.lib_item_id')
             ->leftJoin('lib_titles AS medley_titles', 'lib_medley_selections.lib_title_id', '=', 'medley_titles.id')
             ->where('lib_stacks.library_id', $libraryId)
+            ->where('lib_items.voicing_id', $voicingOperand, $voicingFilterId)
             ->when($ensembleId, function ($query) use ($ensembleId) {
                 $query->join('program_selections', 'lib_stacks.lib_item_id', '=', 'program_selections.lib_item_id')
                     ->where('program_selections.ensemble_id', $ensembleId);

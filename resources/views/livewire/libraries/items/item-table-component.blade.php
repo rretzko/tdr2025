@@ -20,7 +20,23 @@
 
         {{-- HEADER and ADD-NEW BUTTON --}}
         <div class="flex justify-between mb-1">
-            <div>{{ $library->name }} Items</div>
+            <div class="flex flex-row space-x-1 items-center mb-2">
+                <div>{{ $library->name }} Items /</div>
+                <select wire:model.live="voicingFilterId">
+                    <option value="0">All</option>
+                    @forelse($voicings AS $key => $value)
+                        <option value="{{ $key }}">
+                            {{ strtoupper($value) }}
+                        </option>
+                    @empty
+                        {{-- do nothing else --}}
+                    @endforelse
+                </select>
+                {{-- item count --}}
+                <div class="text-xs italic">
+                    ( {{ count($rows) }} items found)
+                </div>
+            </div>
             @if(! $displayForm)
                 <button
                     type="button"
