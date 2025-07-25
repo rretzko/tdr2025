@@ -5,7 +5,7 @@
     {{-- VOICING --}}
     @include('components.forms.elements.livewire.libraryItem.voicings')
 
-    {{-- COUNT --}}
+    {{-- COUNT & PRICE --}}
     @include('components.forms.elements.livewire.libraryItem.count')
 
     {{-- ARTISTS --}}

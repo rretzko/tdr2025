@@ -2,23 +2,34 @@
 
 namespace App\Livewire\Libraries\Items;
 
+use App\Imports\EnsembleMembersImport;
+use App\Imports\LibraryItemsImport;
 use App\Models\Libraries\Items\Components\Artist;
 use App\Models\Libraries\Items\Components\LibTitle;
 use App\Models\Libraries\Items\Components\Voicing;
+use App\Models\Libraries\Library;
 use App\Models\Libraries\LibStack;
 use App\Models\Libraries\Items\LibItem;
 use App\Services\ArtistSearchService;
 use App\Services\Libraries\CreateLibItemService;
 use App\Services\Libraries\LibraryStackSearchService;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use JetBrains\PhpStorm\NoReturn;
+use Maatwebsite\Excel\Facades\Excel;
+use Livewire\WithFileUploads;
 
 class ItemComponent extends BaseLibraryItemPage
 {
+    use WithFileUploads;
     public array $artistTypes = [];
+    public bool $displayFileImportForm = true; //false;
     public string $errorMessage = '';
+    public string $fileUploadMessage = '';
+
     public int $libraryId = 0;
     public LibItem $libItem;
+    public string $libraryName = '';
     public string $searchResults = 'Search Results';
     public array $searchVoicings = [];
     public array $searchResultsArtists = [
@@ -31,11 +42,18 @@ class ItemComponent extends BaseLibraryItemPage
     ];
     public string $tagCsv = '';
 
+    public $uploadedFileContainer; //used as container for uploaded file
+    public int $uploadedMaxFileSize = 400000; //4MB
+    public bool $uploadedMaxFileSizeExceeded = false;
+    public string $uploadedMaxFileSizeExceededMessage = 'The uploaded file exceeds the upload_max_filesize directive in php.ini.';
+    public string $uploadTemplateUrl = '';
+
     public function mount(): void
     {
         parent::mount();
 
         $this->libraryId = auth()->user()->isLibrarian() ? $this->dto['libraryId'] : $this->dto['id'];
+        $this->libraryName = Library::find($this->libraryId)->name;
         $this->form->libraryId = $this->libraryId;
 
         $this->artistTypes = parent::ARTISTTYPES;
@@ -47,6 +65,8 @@ class ItemComponent extends BaseLibraryItemPage
             $this->form->resetVars();
         }
 
+        $this->uploadTemplateUrl = \Storage::disk('s3')->url('templates/libraryItemUploadTemplate.csv');
+
     }
 
     public function render()
@@ -55,6 +75,49 @@ class ItemComponent extends BaseLibraryItemPage
             [
                 'bladeForm' => 'components.forms.libraries.itemTypes.' . $this->form->itemTypeBlade() . 'Form',
             ]);
+    }
+
+    public function clickUploadCsv(): void
+    {
+        $this->reset('fileUploadMessage', 'uploadedMaxFileSizeExceeded');
+
+        //check size
+        $fileSize = $this->uploadedFileContainer->getSize();
+        Log::info('fileSize: '.$fileSize);
+        //early exit if fileSize exceeds maxFileSIze
+        if ($fileSize > $this->uploadedMaxFileSize) {
+            $this->uploadedMaxFileSizeExceeded = true;
+        } else {
+            Log::info('fileSize is good.');
+            //store the file on a s3 disk
+            $s3Path = 'libraries/items';
+            $fileName = 'test'.rand(1000, 3000).'.csv';
+            Log::info('fileName: '.$fileName);
+            $storedFileName = $this->uploadedFileContainer->storePubliclyAs($s3Path, $fileName, 's3');
+            Log::info('storedFileName: '.$storedFileName);
+            if ($storedFileName) {
+                try {
+                    Excel::import(
+                        new LibraryItemsImport,
+                        $storedFileName,
+                        's3',
+                        \Maatwebsite\Excel\Excel::CSV);
+                    Log::info('Import completed successfully, continuing...');
+                } catch (\Exception $e) {
+                    Log::error('Excel import failed: '.$e->getMessage());
+                }
+                $this->reset('uploadedFileContainer');
+                $this->displayFileImportForm = false;
+                $this->redirect("/library/$this->libraryId/items");
+            } else {
+                Log::info('No file was uploaded.');
+            }
+        }
+    }
+
+    #[NoReturn] public function clickImportItems(): void
+    {
+        $this->displayFileImportForm = true;
     }
 
     #[NoReturn] public function clickVoicing(int $voicingId): void

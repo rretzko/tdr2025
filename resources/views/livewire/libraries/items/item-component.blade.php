@@ -13,10 +13,28 @@
     {{-- PAGE CONTENT --}}
     <div class="w-11/12">
 
+        {{-- IMPORT LINK --}}
+        <div class="text-sm text-right">
+            <button
+                type="button"
+                wire:click="importItems"
+                class="text-blue-600"
+            >
+                Import Items via .csv file
+            </button>
+        </div>
+
         {{-- HEADER and ADD-NEW BUTTON --}}
         <div class="flex justify-between mb-1">
             <div>{{ ucwords($dto['header']) }} for <span class="font-bold">{{ $library->name }}</span></div>
         </div>
+
+        {{-- FILE IMPORT FORM --}}
+        @if($displayFileImportForm)
+            <div class="mb-2 ">
+                @include('components.forms.elements.livewire.libraryItem.uploadLibraryItemsForm')
+            </div>
+        @endif
 
         {{-- FORM --}}
         <div class="flex flex-col">

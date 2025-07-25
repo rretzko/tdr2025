@@ -16,6 +16,8 @@ use App\Models\Tag;
 use App\Services\ArtistIdService;
 use App\Services\ArtistNameService;
 use App\Services\ArtistSearchService;
+use App\Services\ConvertToPenniesService;
+use App\Services\ConvertToUsdService;
 use App\Services\Libraries\CreateLibItemService;
 use App\Services\Libraries\MakeAlphaService;
 use Illuminate\Database\Eloquent\Model;
@@ -59,6 +61,8 @@ class LibraryItemForm extends Form
     public array $locations = [];
 
     public array $medleySelections = [];
+    #[Validate('required', 'float', 'min:0', 'max:99')]
+    public float $price = 0;
     public string $itemType = 'sheet music';
 
     /**
@@ -122,7 +126,8 @@ class LibraryItemForm extends Form
                 'lib_item_id' => $libItemId,
             ],
             [
-                'count' => $this->count
+                'count' => $this->count,
+                'price' => ConvertToPenniesService::usdToPennies($this->price),
             ],
         );
     }
@@ -169,6 +174,7 @@ class LibraryItemForm extends Form
 
         $this->itemType = 'sheet music';
         $this->count = 1;
+        $this->price = 0;
 
         $this->sysId = 0;
         $this->title = '';
@@ -220,6 +226,7 @@ class LibraryItemForm extends Form
         $this->setMedleySelections($libItem);
 
         $this->setCount($libItem);
+        $this->setPrice($libItem);
 
     }
 
@@ -429,6 +436,18 @@ class LibraryItemForm extends Form
         foreach ($selections as $selection) {
             $this->medleySelections[] = $selection->title;
         }
+    }
+
+    private function setPrice(LibItem $libItem): void
+    {
+        $libStack = LibStack::query()
+            ->where('lib_item_id', $libItem->id)
+            ->where('library_id', $this->libraryId)
+            ->first();
+
+        $this->price = ($libStack)
+            ? ConvertToUsdService::penniesToUsd($libStack->price)
+            : 0;
     }
 
     /**

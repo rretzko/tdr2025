@@ -17,6 +17,7 @@ class LibStack extends Model
             'count',
             'library_id',
             'lib_item_id',
+            'price',
         ];
 
     public function getVoicingsArrayAttribute(): array
