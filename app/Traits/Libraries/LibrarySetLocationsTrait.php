@@ -4,6 +4,7 @@ namespace App\Traits\Libraries;
 
 use App\Models\Libraries\Items\Components\LibItemLocation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 trait LibrarySetLocationsTrait
 {
@@ -12,6 +13,8 @@ trait LibrarySetLocationsTrait
         int $libItemId,
         array $locations,
     ): void {
+
+        Log::info('setting Item Locations for id: '.$libItemId);
         $locations = array_values(array_filter($locations));
 
         if (count($locations) > 0) {

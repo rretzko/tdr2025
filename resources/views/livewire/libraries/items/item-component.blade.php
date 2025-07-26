@@ -17,7 +17,7 @@
         <div class="text-sm text-right">
             <button
                 type="button"
-                wire:click="importItems"
+                wire:click="clickImportItems"
                 class="text-blue-600"
             >
                 Import Items via .csv file

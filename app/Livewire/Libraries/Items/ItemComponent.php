@@ -2,10 +2,8 @@
 
 namespace App\Livewire\Libraries\Items;
 
-use App\Imports\EnsembleMembersImport;
 use App\Imports\LibraryItemsImport;
 use App\Models\Libraries\Items\Components\Artist;
-use App\Models\Libraries\Items\Components\LibTitle;
 use App\Models\Libraries\Items\Components\Voicing;
 use App\Models\Libraries\Library;
 use App\Models\Libraries\LibStack;
@@ -23,7 +21,7 @@ class ItemComponent extends BaseLibraryItemPage
 {
     use WithFileUploads;
     public array $artistTypes = [];
-    public bool $displayFileImportForm = true; //false;
+    public bool $displayFileImportForm = false;
     public string $errorMessage = '';
     public string $fileUploadMessage = '';
 
@@ -98,7 +96,7 @@ class ItemComponent extends BaseLibraryItemPage
             if ($storedFileName) {
                 try {
                     Excel::import(
-                        new LibraryItemsImport,
+                        new LibraryItemsImport($this->libraryId),
                         $storedFileName,
                         's3',
                         \Maatwebsite\Excel\Excel::CSV);

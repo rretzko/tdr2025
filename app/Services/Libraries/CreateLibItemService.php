@@ -40,7 +40,7 @@ class CreateLibItemService
     public int|null $wordsId = null;
 
     public function __construct(
-        private readonly LibraryItemForm|ProgramSelectionForm $form,
+        private readonly LibraryItemForm|ProgramSelectionForm|\stdClass $form,
         private readonly array $tags,
         private readonly array $locations,
         private readonly int $libraryId,
@@ -62,6 +62,11 @@ class CreateLibItemService
 
         if (!count($this->errors)) {
             $this->add();
+        } else {
+            foreach ($this->errors as $error) {
+                Log::error('*** error for title: '.$this->title);
+                Log::error($error);
+            }
         }
 
     }
@@ -71,9 +76,12 @@ class CreateLibItemService
         //use an existing item
         if ($this->libItemExists()) {
             $this->libItemId = $this->existingLibItemId();
+            Log::info('*** found lib item id: '.$this->libItemId.' for title: '.$this->title);
+
             $this->updateTags();
         } else {
 
+            Log::info('creating new id for title: '.$this->title);
             //or create a new item
             $baseItems = [
                 'item_type' => $this->itemType,
@@ -85,11 +93,14 @@ class CreateLibItemService
             $items = array_merge($baseItems, $artistItems);
 
             $this->libItemId = LibItem::create($items)->id;
+            Log::info('*** created lib item id: '.$this->libItemId);
         }
 
         $this->updateLocations();
 
         $this->saved = (bool) $this->libItemId;
+        Log::info('saved? '.$this->saved);
+        Log::info('***'); //spacer
     }
 
     private function addArtistIds(): array

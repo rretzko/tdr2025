@@ -1,4 +1,4 @@
-<div class=" w-1/2 p-2 bg-orange-100 rounded-lg">
+<div class=" w-full p-2 bg-orange-100 rounded-lg">
     <div class="flex flex-row justify-between mr-4 mb-2">
         <header class="">
             Upload Library Items Form
@@ -37,14 +37,14 @@
                 Voicings should match the published page and DO NOT include accompaniments or any other comments.
                 If the "voicing" column is left blank, the system will default to "satb".
             </li>
-            <li>Artist names should use proper capitalization.</li>
+            <li>Artist names (composer, arranger, etc.) should use proper capitalization.</li>
             </li>
             <li>Artist columns should include the full name as used on the published copy.</li>
-            <li>Artist columns with two artists (ex. Carole Bayer Sager and David Foster) should be separated
+            <li>Artist types with two names (ex. Carole Bayer Sager and David Foster) should be separated
                 with either "and" or an ampersand (&).
             </li>
-            <li>Artist columns with more that two artists (ex. Joe Beal, Jim Boothe, and Johnny Marks) should be
-                separated with commas and then use either "and" or an ampersand (&) for the final artist.
+            <li>Artist types with more that two names (ex. Joe Beal, Jim Boothe, and Johnny Marks) should be
+                separated with commas and then use either "and" or an ampersand (&) for the final name.
             </li>
             <li>
                 Tags are any key words that you might use to search for this kind of song.
@@ -64,6 +64,10 @@
                 You may use these columns to record any method you may currently use.
                 For example, if you currently store your music in file cabinets, you might use the
                 three columns to indicate File Cabinet 1, Drawer 3, file tab G.
+            </li>
+            <li>
+                <b><u>Review your file and remove all duplicate rows!</u></b> Duplicate rows will
+                <u>overwrite</u> any preceding row information.
             </li>
         </ul>
     </div>
@@ -88,7 +92,7 @@
             </div>
             @error('uploadedFileContainer') <span class="error">{{ $message }}</span> @enderror
             <button type="submit" wire:loading.attr="disabled"
-                    class="bg-black text-white rounded-lg px-2 disabled:bg-gray-500"
+                    class="bg-black text-white rounded-lg w-fit px-2 disabled:bg-gray-500"
             >
                 Upload
             </button>
