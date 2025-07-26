@@ -20,8 +20,13 @@ class LibraryItemsImport implements ToModel, WithHeadingRow
 {
     public function __construct(private readonly string $libraryId)
     {
-
     }
+
+    public function chunkSize(): int
+    {
+        return 250;
+    }
+
     /**
      * array:15 [
      * 0 => type,
