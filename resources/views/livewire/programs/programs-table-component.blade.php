@@ -25,6 +25,12 @@
                 <div id="hint" class="text-xs italic">
                     Place song title between double-quotes (ex: "Battle Hymn of the Republic")
                 </div>
+
+                @if($titleSearchResults)
+                    <div id="titleSearchResults">
+                        {!! $titleSearchResults !!}
+                    </div>
+                @endif
             </div>
 
 

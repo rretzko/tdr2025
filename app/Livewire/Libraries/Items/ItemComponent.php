@@ -4,6 +4,7 @@ namespace App\Livewire\Libraries\Items;
 
 use App\Imports\LibraryItemsImport;
 use App\Jobs\ProcessLibraryItemsImport;
+use App\Jobs\TestJobLoggingProcess;
 use App\Models\Libraries\Items\Components\Artist;
 use App\Models\Libraries\Items\Components\Voicing;
 use App\Models\Libraries\Library;
@@ -97,6 +98,7 @@ class ItemComponent extends BaseLibraryItemPage
             $storedFileName = $this->uploadedFileContainer->storePubliclyAs($s3Path, $fileName, 's3');
             Log::info('storedFileName: '.$storedFileName);
             if ($storedFileName) {
+                TestJobLoggingProcess::dispatch();
                 ProcessLibraryItemsImport::dispatch($this->libraryId, $storedFileName, auth()->id());
 //                try {
 //                    Excel::import(

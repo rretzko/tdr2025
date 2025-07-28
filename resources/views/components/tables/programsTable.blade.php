@@ -50,10 +50,7 @@
 
                 {{-- school year --}}
                 <td class="border border-gray-200 px-1 text-center cursor-help" title="">
-                    <a href="{{ route('library.items', ['library' => $row->id]) }}"
-                       class="text-blue-600 font-bold hover:underline">
-                        {{ $row->school_year }}
-                    </a>
+                    {{ $row->school_year }}
                 </td>
 
                 {{-- title --}}

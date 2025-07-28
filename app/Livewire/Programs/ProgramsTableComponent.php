@@ -20,6 +20,8 @@ class ProgramsTableComponent extends BasePage
 
     public int $schoolId = 0;
 
+    public string $titleSearchResults = '';
+
     public function mount(): void
     {
         parent::mount();
@@ -85,7 +87,7 @@ class ProgramsTableComponent extends BasePage
 
     public function updateSearchCriteria(): void
     {
-        $this->getRows();
+        $this->titleSearchResults = $this->setTitleSearchResults();
     }
 
     public function view(int $programId): void
@@ -103,6 +105,29 @@ class ProgramsTableComponent extends BasePage
             ['label' => 'songs', 'sortBy' => null],
             ['label' => 'tags', 'sortBy' => null],
         ];
+    }
+
+    private function getMatchingSongTitles(int $programId, string $songTitle): array
+    {
+        Log::info(
+            Program::query()
+                ->join('program_selections', 'programs.id', '=', 'program_selections.program_id')
+                ->join('lib_items', 'program_selections.lib_item_id', '=', 'lib_items.id')
+                ->join('lib_titles', 'lib_items.lib_title_id', '=', 'lib_titles.id')
+                ->where('programs.id', $programId)
+                ->where('lib_titles.title', 'LIKE', '%'.$songTitle.'%')
+                ->select('lib_titles.title')
+                ->toRawSql()
+        );
+        return Program::query()
+            ->join('program_selections', 'programs.id', '=', 'program_selections.program_id')
+            ->join('lib_items', 'program_selections.lib_item_id', '=', 'lib_items.id')
+            ->join('lib_titles', 'lib_items.lib_title_id', '=', 'lib_titles.id')
+            ->where('programs.id', $programId)
+            ->where('lib_titles.title', 'LIKE', '%'.$songTitle.'%')
+            ->pluck('lib_titles.title')
+            ->toArray();
+
     }
 
     private function getProgramIdsFromLibItemIds($libItemIds): array
@@ -132,17 +157,17 @@ class ProgramsTableComponent extends BasePage
         }
 
         //isolate song title (value between quotes)
-        $songTitle = $this->parseSearchForSongTitle();
+        $songFragment = $this->parseSearchForSongTitle();
 
         //find the libItem->id for the requested song title
-        $libItemIds = (strlen($songTitle))
-            ? $this->parseSearchForLibItemIds($songTitle)
+        $libItemIds = (strlen($songFragment))
+            ? $this->parseSearchForLibItemIds($songFragment)
             : [];
 
         $songTitleProgramIds = $this->getProgramIdsFromLibItemIds($libItemIds);
 
         //remove song title (if any) from $this->search string
-        $search = (strlen($songTitle))
+        $search = (strlen($songFragment))
             ? $this->removeSongTitleFromSearch()
             : $this->search;
 
@@ -169,7 +194,7 @@ class ProgramsTableComponent extends BasePage
             ->get();
     }
 
-    private function parseSearchForLibItemIds(string $songTitle): array
+    private function parseSearchForLibItemIds(string $songFragment): array
     {
 //        $libTitleIds = LibTitle::query()
 //        ->where('title', 'like', "%$songTitle%")
@@ -178,7 +203,7 @@ class ProgramsTableComponent extends BasePage
 
         return LibItem::query()
             ->join('lib_titles', 'lib_items.lib_title_id', '=', 'lib_titles.id')
-            ->where('lib_titles.title', 'like', "%$songTitle%")
+            ->where('lib_titles.title', 'like', "%$songFragment%")
 //            ->whereIn('lib_title_id', $libTitleIds)
             ->pluck('lib_items.id')
             ->toArray();
@@ -238,5 +263,50 @@ class ProgramsTableComponent extends BasePage
         }
 
         return '';
+    }
+
+    private function setTitleSearchResults(): string
+    {
+        $results = '';
+        //isolate the song title from double-quotes
+        $songFragment = $this->parseSearchForSongTitle();
+
+        //find the libItem->id for the requested song title
+        if ($songFragment) {
+            $libItemIds = (strlen($songFragment))
+                ? $this->parseSearchForLibItemIds($songFragment)
+                : [];
+
+            if ($libItemIds) {
+                $songTitleProgramIds = $this->getProgramIdsFromLibItemIds($libItemIds);
+
+                if ($songTitleProgramIds) {
+                    $results .= '<style>';
+                    $results .= '#foundSongsTable td,th{border: 1px solid #ddd; padding: 0 0.25rem;}';
+                    $results .= '</style>';
+                    $results .= '<table id="foundSongsTable" class="text-sm my-2 shadow-lg">';
+                    $results .= '<thead>';
+                    $results .= '<tr><th colspan="3">Song Title Search Results</th></tr>';
+                    $results .= '<tr><th>program</th><th>schoolYr</th><th>song title(s)</th></tr>';
+                    $results .= '</thead>';
+                    foreach ($songTitleProgramIds as $programId) {
+                        $program = Program::find($programId);
+                        $results .= '<tr>';
+                        $results .= '<td class="px-2">'.$program->title.'</td>';
+                        $results .= '<td class="px-2 text-center">'.$program->school_year.'</td>';
+                        $results .= '<td class="px-2">';
+                        $matchingSongTitles = $this->getMatchingSongTitles($programId, $songFragment);
+                        foreach ($matchingSongTitles as $songTitle) {
+                            $results .= '<div class="px-2">'.$songTitle.'</div>';
+                        }
+                        $results .= '</td>';
+                        $results .= '</tr>';
+                    }
+                    $results .= '</table>';
+                }
+            }
+        }
+
+        return $results;
     }
 }
