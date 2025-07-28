@@ -18,7 +18,7 @@ use App\Enums\ItemType;
 
 class LibraryItemsImport implements ToModel, WithHeadingRow
 {
-    public function __construct(private readonly string $libraryId)
+    public function __construct(private readonly string $libraryId, private readonly int $userId = 0)
     {
     }
 
@@ -57,7 +57,7 @@ class LibraryItemsImport implements ToModel, WithHeadingRow
         $form = $this->makeForm($row);
         Log::info('title: '.$form->title);
         //1. Create a new item
-        $service = new CreateLibItemService($form, $form->tags, $form->locations, $this->libraryId);
+        $service = new CreateLibItemService($form, $form->tags, $form->locations, $this->libraryId, $this->userId);
         $libItemId = $service->libItemId;
 
         //2. Add item to libStacks

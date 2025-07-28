@@ -12,6 +12,7 @@ use App\Models\Libraries\LibLibrarian;
 use App\Models\Schools\Teacher;
 use App\Models\Libraries\Items\Components\Artist;
 use App\Models\Tag;
+use App\Models\User;
 use App\Services\ArtistIdService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -44,6 +45,7 @@ class CreateLibItemService
         private readonly array $tags,
         private readonly array $locations,
         private readonly int $libraryId,
+        private readonly int $userId = 0,
     )
     {
         $this->teacherId = $this->setTeacherId();
@@ -252,9 +254,13 @@ class CreateLibItemService
 
     private function setTeacherId(): int
     {
-        $userId = auth()->user()->isLibrarian()
-            ? LibLibrarian::where('user_id', auth()->id())->first()->teacherUserId
-            : auth()->id();
+        $user = (auth()->user())
+            ? auth()->user()
+            : User::find($this->userId);
+
+        $userId = $user->isLibrarian()
+            ? LibLibrarian::where('user_id', $user->id)->first()->teacherUserId
+            : $user->id;
         return Teacher::where('user_id', $userId)->first()->id;
     }
 

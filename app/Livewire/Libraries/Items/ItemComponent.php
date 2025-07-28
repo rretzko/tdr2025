@@ -3,6 +3,7 @@
 namespace App\Livewire\Libraries\Items;
 
 use App\Imports\LibraryItemsImport;
+use App\Jobs\ProcessLibraryItemsImport;
 use App\Models\Libraries\Items\Components\Artist;
 use App\Models\Libraries\Items\Components\Voicing;
 use App\Models\Libraries\Library;
@@ -86,30 +87,33 @@ class ItemComponent extends BaseLibraryItemPage
         if ($fileSize > $this->uploadedMaxFileSize) {
             $this->uploadedMaxFileSizeExceeded = true;
         } else {
-            Log::info('fileSize is good.');
+            $libraryName = Library::find($this->libraryId)->name;
+            $slug = Str::slug($libraryName, '-');
+            Log::info('fileSize is good @ '.$fileSize.'.');
             //store the file on a s3 disk
             $s3Path = 'libraries/items';
-            $fileName = 'test'.rand(1000, 3000).'.csv';
+            $fileName = $slug.rand(1000, 3000).'.csv';
             Log::info('fileName: '.$fileName);
             $storedFileName = $this->uploadedFileContainer->storePubliclyAs($s3Path, $fileName, 's3');
             Log::info('storedFileName: '.$storedFileName);
             if ($storedFileName) {
-                try {
-                    Excel::import(
-                        new LibraryItemsImport($this->libraryId),
-                        $storedFileName,
-                        's3',
-                        \Maatwebsite\Excel\Excel::CSV);
+                ProcessLibraryItemsImport::dispatch($this->libraryId, $storedFileName, auth()->id());
+//                try {
+//                    Excel::import(
+//                        new LibraryItemsImport($this->libraryId),
+//                        $storedFileName,
+//                        's3',
+//                        \Maatwebsite\Excel\Excel::CSV);
                     Log::info('Import completed successfully, continuing...');
-                } catch (\Exception $e) {
-                    Log::error('Excel import failed: '.$e->getMessage());
-                }
-                $this->reset('uploadedFileContainer');
-                $this->displayFileImportForm = false;
-                $this->redirect("/library/$this->libraryId/items");
-            } else {
-                Log::info('No file was uploaded.');
+            } else { //catch (\Exception $e) {
+                Log::error('stored file name is missing in '.__METHOD__.' @ line 97.');
             }
+            $this->reset('uploadedFileContainer');
+            $this->displayFileImportForm = false;
+            $this->redirect("/library/$this->libraryId/items");
+//            } else {
+//                Log::info('No file was uploaded.');
+//            }
         }
     }
 
