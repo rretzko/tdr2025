@@ -34,10 +34,6 @@ Route::middleware('guest')->group(function () {
 
     Route::post('reset-password', [NewPasswordController::class, 'store'])
         ->name('password.store');
-
-    Route::view('tdrLib', 'vendor.tdrLibLandingPage')
-        ->middleware(\Spatie\Honeypot\ProtectAgainstSpam::class)
-        ->name('tdrLib');
 });
 
 Route::middleware('auth')->group(function () {

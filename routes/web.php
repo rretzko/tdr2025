@@ -13,6 +13,11 @@ Route::get('/', function () {
 Route::post('ePaymentReceipt', [\App\Http\Controllers\ePayments\EpaymentReceiptController::class, 'store'])
     ->name('ePaymentReceipt');
 
+//TDR LIBRARY LANDING PAGE
+Route::view('tdrLib', 'tdrLibLandingPage')
+    ->middleware(\Spatie\Honeypot\ProtectAgainstSpam::class)
+    ->name('tdrLib');
+
 Route::middleware(['auth', 'verified'])->group(function () {
 
     //HOME
