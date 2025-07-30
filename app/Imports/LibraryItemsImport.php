@@ -55,7 +55,7 @@ class LibraryItemsImport implements ToModel, WithHeadingRow
 
         //extract $row data into the LibItemForm object
         $form = $this->makeForm($row);
-        Log::info('title: '.$form->title);
+//        Log::info('title: '.$form->title);
         //1. Create a new item
         $service = new CreateLibItemService($form, $form->tags, $form->locations, $this->libraryId, $this->userId);
         $libItemId = $service->libItemId;
@@ -64,8 +64,8 @@ class LibraryItemsImport implements ToModel, WithHeadingRow
         $this->addItemToLibraryStacks($libItemId, $form->count, $form->price);
 
         $counter++;
-        Log::info('libItem: counter: '.$counter);
-        Log::info('libItem: id: '.$libItemId);
+//        Log::info('libItem: counter: '.$counter);
+//        Log::info('libItem: id: '.$libItemId);
 
     }
 
@@ -128,7 +128,7 @@ class LibraryItemsImport implements ToModel, WithHeadingRow
                 'descr' => $voicingDescr,
             ],
             [
-                'created_by' => auth()->id(),
+                'created_by' => $this->userId ?: auth()->id(),
             ]
         )->id;
     }

@@ -4,6 +4,7 @@ namespace App\Livewire\Libraries\Items;
 
 use App\Imports\LibraryItemsImport;
 use App\Jobs\ProcessLibraryItemsImport;
+use App\Jobs\ProcessPodcast;
 use App\Jobs\TestJobLoggingProcess;
 use App\Models\Libraries\Items\Components\Artist;
 use App\Models\Libraries\Items\Components\Voicing;
@@ -98,17 +99,11 @@ class ItemComponent extends BaseLibraryItemPage
             $storedFileName = $this->uploadedFileContainer->storePubliclyAs($s3Path, $fileName, 's3');
             Log::info('storedFileName: '.$storedFileName);
             if ($storedFileName) {
-                TestJobLoggingProcess::dispatch();
+                Log::info('storedFileName: '.$storedFileName.': now processing jobs...');
                 ProcessLibraryItemsImport::dispatch($this->libraryId, $storedFileName, auth()->id());
-//                try {
-//                    Excel::import(
-//                        new LibraryItemsImport($this->libraryId),
-//                        $storedFileName,
-//                        's3',
-//                        \Maatwebsite\Excel\Excel::CSV);
-                    Log::info('Import completed successfully, continuing...');
+                Log::info('Import completed successfully, continuing...');
             } else { //catch (\Exception $e) {
-                Log::error('stored file name is missing in '.__METHOD__.' @ line 97.');
+                Log::error('stored file name is missing in '.__METHOD__.' @ line 99.');
             }
             $this->reset('uploadedFileContainer');
             $this->displayFileImportForm = false;

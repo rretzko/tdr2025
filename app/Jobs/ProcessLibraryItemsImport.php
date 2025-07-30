@@ -24,6 +24,7 @@ class ProcessLibraryItemsImport implements ShouldQueue
      */
     public function __construct(int $libraryId, string $filePath, $userId)
     {
+//        Log::info(__CLASS__ . ': ' . __METHOD__ . ': ' . __LINE__);
         $this->libraryId = $libraryId;
         $this->filePath = $filePath;
         $this->userId = $userId;
@@ -34,6 +35,7 @@ class ProcessLibraryItemsImport implements ShouldQueue
      */
     public function handle(): void
     {
+        Log::info(__METHOD__.' started');
         try {
             Excel::import(
                 new LibraryItemsImport($this->libraryId, $this->userId),
@@ -41,9 +43,11 @@ class ProcessLibraryItemsImport implements ShouldQueue
                 's3',
                 \Maatwebsite\Excel\Excel::CSV
             );
+            Log::info('Excel import completed successfully');
         } catch (\Exception $e) {
             Log::error('Excel import failed: '.$e->getMessage());
             // Optionally, you can add retry or failure handling here
         }
+        Log::info(__METHOD__.' finished');
     }
 }

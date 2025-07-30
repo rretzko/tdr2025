@@ -8,7 +8,7 @@ class ArtistIdService
 {
     private int $id = 0;
 
-    public function __construct(private readonly string $name)
+    public function __construct(private readonly string $name, private readonly int $userId = 0)
     {
         $this->init();
     }
@@ -69,7 +69,7 @@ class ArtistIdService
             'last_name' => $service->lastName,
             'middle_name' => $service->middleName,
             'alpha_name' => $service->alphaName,
-            'created_by' => auth()->id(),
+            'created_by' => $this->userId ?: auth()->id(),
         ]);
 
         $this->id = $artist->id;

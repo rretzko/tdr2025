@@ -173,7 +173,7 @@ class CreateLibItemService
                 return $artist->id;
             }
 
-            $service = new ArtistIdService($artistName);
+            $service = new ArtistIdService($artistName, $this->userId ?: auth()->id());
 
             return $service->getId();
 
