@@ -192,8 +192,8 @@
 <body>
 <div id="headerNav">
     <header>
-        <h1>TheDirectorsRoom.com Choral Library Module</h1>
-        <p>Your Choral Library, Fully Organized and Always Available</p>
+        <h1>TheDirectorsRoom.com</h1>
+        <h2 style="color: white;">Choral Library Module</h2>
     </header>
     <nav style="display: flex; flex-direction: row; justify-content: start;">
         <div style="display: flex; width: 25%; margin: 0 1rem;">
@@ -212,56 +212,63 @@
 
     <section id="overview">
         <h2>Overview</h2>
-        <p>TheDirectorsRoom.com introduces the Library Module, built specifically for choral directors. This module
-            allows you
-            to maintain an on-demand record of your choral library including octavos, medleys, books, DVDs, CDs,
-            cassettes, and vinyl recordings—all in a simple, easy-to-use format you can access anytime from
-            anywhere.</p>
-        <p>Features include fields such as title, composer, arranger, voicing, price, tags, levels, difficulty,
-            comments,
-            rating, physical location, and performance history with many of those fields immediately searchable.</p>
-        <p>You can upload your existing library via CSV file, enter these manually, or delegate the data entry
+        {{-- v2 --}}
+        <p>Introducing the Choral Library Module!</p>
+        <p>This module will allow you to maintain a comprehensive record of your choral library including
+            octavos, medleys, books, DVDs, CDs, cassettes, and vinyl recordings in a simple, easy-to-use
+            format that you can access anytime from anywhere.</p>
+        <p>Features include fields such as title, composer, arranger, voicing, price, tags (your personal search words),
+            levels (high school/middle school/elementary school/college/professional),
+            difficulty (hard/medium/easy),comments, rating, location in your library, and performance history.</p>
+        {{-- v1 --}}
+        {{--        <p>TheDirectorsRoom.com introduces the Library Module, built specifically for choral directors. This module--}}
+        {{--            allows you--}}
+        {{--            to maintain an on-demand record of your choral library including octavos, medleys, books, DVDs, CDs,--}}
+        {{--            cassettes, and vinyl recordings—all in a simple, easy-to-use format you can access anytime from--}}
+        {{--            anywhere.</p>--}}
+        {{--        <p>Features include fields such as title, composer, arranger, voicing, price, tags, levels, difficulty,--}}
+        {{--            comments,--}}
+        {{--            rating, physical location, and performance history with many of those fields immediately searchable.</p>--}}
+        <p>Upload your existing library via CSV file, enter information manually, or delegate the data entry
             to a student librarian using secure limited-access credentials.</p>
-        <p>Filter and sort by various criteria and create “pull sheets” for easy item retrieval. Easily link to ensemble
+        <p>Filter and sort by various criteria. Create “pull sheets” for easy octavo retrieval. Easily link ensemble
             members and performances via the Programs, Ensembles, and Students modules.</p>
-        <p>This system is designed to easily transition you from paper or spreadsheet-based systems to a searchable,
-            sortable, and
-            powerful database-driven interface.</p>
+        <p>Easily transition your present choral library from paper or a spreadsheet-based systems to a searchable,
+            sortable, and powerful database.</p>
     </section>
 
     <section id="keyFeatures">
         <h2>Key Features</h2>
         <ul>
-            <li>Track titles, composers, arrangers, choreographers, etc., voicing, tags, difficulty, ratings,
-                comments, and more
+            <li>Search by titles, composers, arrangers, voicing, tags, and more.</li>
+            <li>Continue to use your own library location codes, or use our numbers to file your music.</li>
+            <li>Upload existing library via CSV or manual entry.</li>
+            <li>Safe and secure student librarian login.</li>
+            <li>Create library item pull sheets which include physical storage location.</li>
+            <li>The Choral Library automatically pairs with TheDirectorsRoom.com Programs, Ensembles, and Students
+                modules.
             </li>
-            <li>Three-part location system for detailed item storage information</li>
-            <li>Upload existing library via CSV or enter manually</li>
-            <li>Student librarian login for safe delegation</li>
-            <li>Search by title, tag, artist; filter by voicing</li>
-            <li>Create detailed library item pull sheets, including physical location</li>
-            <li>Use in conjunction with TheDirectorsRoom.com Program, Ensemble, and Student modules</li>
         </ul>
     </section>
 
     <section id="andThenWhat">
         <h2>...and then what?</h2>
         <div>
-            <p>Transitioning to an always-available, simple, easy-to-use format from a paper or spreadsheet system
-                might be enough, but now that your library is in a database, your ability to use it multiplies!</p>
+            <p>When your library is in a database, your ability to use it multiplies!</p>
             <ul>
-                <li>Using the “Program” module, you can create a roster of your performances including song title,
-                    composer/arranger/etc., performance notes, and ratings.
+                <li>Using the “Program” module, you can create a record of your performances including title,
+                    composer, arranger, performance notes, and ratings.
                 </li>
                 <li>Using the "Students" module, create rosters of your students by school year.</li>
                 <li>Using the “Ensembles” module, create lists of participating student members by year of
                     performance.
                 </li>
             </ul>
-            <p>And all of this is searchable, of course. Can't remember the last time you conducted "Lully, Lulla,
-                Lulley"?
-                Just pop lul into the search bar of the Library module or
-                "lul" (with double-quotes) into the Programs module and you'll have your answer ... in seconds!</p>
+            <p>And all of this is searchable, of course. Can't remember the last time you conducted "O Magnum
+                Mysterium"?
+                Just pop <b><i>O Magnum</i></b> into the search bar of the Library module or
+                <b><i>"O Magnum"</i></b> (with double-quotes) into the Programs module and you'll have your answer ...
+                in seconds!</p>
         </div>
     </section>
 
@@ -323,13 +330,18 @@
     <section id="pricing">
         <h2>Subscription Plans</h2>
         <div id="rationale">
-            <p>These features have taken years of planning and discussion, and required hundreds of hours of
-                programming.
-                From the start, the goal has been to provide you with a tool that could minimally reduce your workload
-                by an hour/month.</p>
-            <p>You'll be the final judge, but we think we’ve done that and hope to continue to build and maintain
-                this effort.<br/>
-                To do that, we are asking for your support by subscribing to one of our plans:</p>
+            {{-- v2 --}}
+            <p>This Choral Library application took years of planning and hundreds of hours of
+                programming with the goal of providing you with a comprehensive organizational tool.</p>
+            <p>Please show your support by subscribing to one of the following plans:</p>
+            {{-- v1 --}}
+            {{--            <p>These features have taken years of planning and discussion, and required hundreds of hours of--}}
+            {{--                programming.--}}
+            {{--                From the start, the goal has been to provide you with a tool that could minimally reduce your workload--}}
+            {{--                by an hour/month.</p>--}}
+            {{--            <p>You'll be the final judge, but we think we’ve done that and hope to continue to build and maintain--}}
+            {{--                this effort.<br/>--}}
+            {{--                To do that, we are asking for your support by subscribing to one of our plans:</p>--}}
         </div>
         <style>
             table.pricing-table {
@@ -359,25 +371,25 @@
                 <td>Pioneer<span style="color: red;">*</span></td>
                 <td style="text-align: right; padding-right: 1rem;">$2.99</td>
                 <td style="text-align: right; padding-right: 1rem;">$27</td>
-                <td>Earliest supporters and beta testers who help shape the platform.</td>
+                <td>Our earliest supporters and beta testers, instrumental in shaping the platform.</td>
             </tr>
             <tr>
                 <td>Early Adopter<span style="color: red;">*</span></td>
                 <td style="text-align: right; padding-right: 1rem;">$4.99</td>
                 <td style="text-align: right; padding-right: 1rem;">$45</td>
-                <td>Join now at the module's launch or be an early subscriber from outside of New Jersey.</td>
+                <td>Sign up at the launch or be among the first subscribers beyond New Jersey.</td>
             </tr>
             <tr class="odd">
                 <td>Patron<span style="color: red;">*</span></td>
                 <td style="text-align: right; padding-right: 1rem;">$6.99</td>
                 <td style="text-align: right; padding-right: 1rem;">$63</td>
-                <td>Wait for the product to mature a bit and then join to enjoy the benefits.</td>
+                <td>Wait for the product to evolve and then join to enjoy the full benefits.</td>
             </tr>
             <tr>
                 <td>Sponsor<span style="color: red;">*</span></td>
                 <td style="text-align: right; padding-right: 1rem;">$10.99</td>
                 <td style="text-align: right; padding-right: 1rem;">$99</td>
-                <td>All-in; I want to influence product direction and support the choral community.</td>
+                <td>I'm here to help shape the future of the product direction and champion the choral community.</td>
             </tr>
             <tr class="odd">
                 <td>Enterprise (School)</td>
@@ -395,31 +407,36 @@
                 <td>Teacher</td>
                 <td style="text-align: right; padding-right: 1rem;">$2.99</td>
                 <td style="text-align: right; padding-right: 1rem;">$27</td>
-                <td>I don't need to keep my programs digitally stored and only want to modernize my library.</td>
+                <td>For now, I only want to use the Library module.</td>
             </tr>
             </tbody>
         </table>
 
-        <p><strong><span style="color: red;">*</span>Community Contribution:</strong> Individual subscriptions
-            (other than Teacher) provide access to the full Library-Ensemble-Program-Student modules' features and
-            benefits. These plans <b><u>include your commitment</u></b> to add at least two programs/year.
-            This commitment will ensure the growth of the Library and provide relevant trending insights to you
-            and your fellow subscribers.</p>
+        <p><strong><span style="color: red;">*</span>Community Contribution:</strong>
+            Individual subscriptions
+            (other than Teacher) provide access to the full Library-Ensemble-Program modules' features and
+            benefits. These plans <b><u>include your commitment</u></b> to add a minimum of two programs per year.
+            This commitment will ensure the growth of the Library and provide relevant trending insights to your
+            community's ensembles.</p>
 
         <div
             style="border: 1px solid darkblue; background-color: cornsilk; padding: 0.5rem; border-radius: 10px; box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3)">
             <h2>SPECIAL NOTICE</h2>
+
+            <p>Our subscription payment link will become available in January, 2026.
             <p>
-                We plan on rolling out our subscription payment module in January, 2026. All teachers who use
-                the Library module and add two new programs will be immediately eligible for the
-                "Early Adopter" tier when the subscription module goes live!
+
+            <p>Until then, <u>all of the features are available</u> for your use and comment!</p>
+
+            <p>NOTE: All teachers who use the Library module and add two new programs will be
+                immediately eligible for the "Early Adopter" tier in January!
             </p>
         </div>
     </section>
 </div><!-- end of id=content -->
 
 <footer>
-    Questions/Comments? Drop us an email:
+    Questions/Comments? Email:
     <a
         href="mailTo: rick@mfrholdings.com?subject=TDR Library&body=Hi, Rick!"
     >

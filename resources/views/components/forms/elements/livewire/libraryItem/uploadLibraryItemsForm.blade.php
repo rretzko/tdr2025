@@ -99,7 +99,7 @@
             <div wire:loading wire:target="uploadedFileContainer" class="text-sm italic">
                 Please wait while we prepare the file...
             </div>
-            <div class="advisory bg-red-100 p-2 w-1/2">
+            <div class="advisory bg-red-100 border border-red-300 my-2 p-2 w-1/2 text-sm rounded-lg shadow-lg">
                 To reduce wait time, you will be returned to your Items page while your file is processed
                 in the background. Please wait one minute and then refresh the Items page to review the
                 results of the upload.
