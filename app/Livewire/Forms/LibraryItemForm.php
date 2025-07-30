@@ -63,7 +63,7 @@ class LibraryItemForm extends Form
     public array $medleySelections = [];
     #[Validate('required', 'float', 'min:0', 'max:99')]
     public float $price = 0;
-    public string $itemType = 'sheet music';
+    public string $itemType = 'octavo';
 
     /**
      * ex: array:1 [▼ // app\Livewire\Forms\LibraryItemForm.php:53
@@ -94,12 +94,14 @@ class LibraryItemForm extends Form
 
     /**
      * Translate $this->itemType into blade file name counterpart
+     * @todo this may be completely unnecessary after refactoring to 'octavo' from 'sheet music
      */
     public function itemTypeBlade(): string
     {
-        $xlats = [
-            'sheet music' => 'sheetMusic',
-        ];
+//        $xlats = [
+//            'octavo' => 'octavo',
+//        ];
+        $xlats = [];
 
         return (array_key_exists($this->itemType, $xlats))
             ? $xlats[$this->itemType]
@@ -172,7 +174,7 @@ class LibraryItemForm extends Form
             ],
         ];
 
-        $this->itemType = 'sheet music';
+        $this->itemType = 'octavo';
         $this->count = 1;
         $this->price = 0;
 

@@ -41,7 +41,7 @@ class ProgramSelectionForm extends Form
     public string $firstName = '';
     public string $gradeClassOf = '';
     public string $headerText = 'Add New Program Selection';
-    public string $itemType = 'sheet music';
+    public string $itemType = 'octavo';
     public string $lastName = '';
     public string $level = 'high-school';
 

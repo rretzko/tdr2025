@@ -4,7 +4,7 @@ namespace App\Enums;
 
 enum ItemType: string
 {
-    case SheetMusic = 'sheet music';
+    case Octavo = 'octavo';
     case Medley = 'medley';
     case Book = 'book';
 

@@ -28,7 +28,7 @@ class CreateLibItemService
     public int|null $choreographerId = null;
     public int|null $composerId = null;
 
-    public string $itemType = 'sheet music';
+    public string $itemType = 'octavo';
     public int $libItemId = 0;
     private array $errors = [];
     private string $libTitleId = '';

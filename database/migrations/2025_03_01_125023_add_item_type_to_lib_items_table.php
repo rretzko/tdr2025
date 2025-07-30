@@ -11,7 +11,9 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('lib_items', function (Blueprint $table) {
-            $table->enum('item_type', ['book', 'cassette', 'cd', 'digital', 'dvd', 'medley', 'sheet music', 'vinyl'])->default('sheet music')->after('id');
+            $table->enum('item_type', ['book', 'cassette', 'cd', 'digital', 'dvd', 'medley', 'octavo', 'vinyl'])
+                ->default('octavo')
+                ->after('id');
         });
     }
 

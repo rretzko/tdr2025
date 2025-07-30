@@ -104,7 +104,7 @@ class LibraryItemsImport implements ToModel, WithHeadingRow
     private function cleanType(string|null $type): string
     {
         if (!$type) {
-            return 'sheet music';
+            return 'octavo';
         }
 
         $lcType = Str::lower($type);
@@ -113,7 +113,7 @@ class LibraryItemsImport implements ToModel, WithHeadingRow
 
         return ($enumCase !== null)
             ? $enumCase->value
-            : 'sheet music'; //default
+            : 'octavo'; //default
     }
 
     private function findVoicingId(string|null $voicingDescr): int

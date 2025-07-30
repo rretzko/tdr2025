@@ -22,7 +22,7 @@
             </li>
             <li>The system recognizes the following types of library items:
                 <ul>
-                    <li>Sheet Music (this is the default if no type is found)</li>
+                    <li>Octavo (this is the default if no type is found)</li>
                     <li>Medley</li>
                     <li>Book</li>
                     <li>Digital</li>
@@ -31,7 +31,7 @@
                     <li>Cassette</li>
                     <li>Vinyl</li>
                 </ul>
-                If the "type" column is left blank, the system will default to "sheet music".
+                If the "type" column is left blank, the system will default to "octavo".
             </li>
             <li>
                 Voicings should match the published page and DO NOT include accompaniments or any other comments.
@@ -98,6 +98,11 @@
             </button>
             <div wire:loading wire:target="uploadedFileContainer" class="text-sm italic">
                 Please wait while we prepare the file...
+            </div>
+            <div class="advisory bg-red-100 p-2 w-1/2">
+                To reduce wait time, you will be returned to your Items page while your file is processed
+                in the background. Please wait one minute and then refresh the Items page to review the
+                results of the upload.
             </div>
         </form>
     </div>
