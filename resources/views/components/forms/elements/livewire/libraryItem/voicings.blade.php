@@ -9,9 +9,9 @@
                 placeholder="SATB, TTB, etc."
             />
             @if(count($searchVoicings))
-                <div class="ml-2 text-sm">
+                <div class="ml-2 flex flex-col text-sm">
                     @foreach($searchVoicings AS $voicing)
-                        <button class="text-blue-500"
+                        <button class="flex justify-start text-blue-500"
                                 type="button"
                                 wire:click="clickVoicing({{ $voicing['id'] }})"
                                 wire:key="voicing_{{ $voicing['id']}} "

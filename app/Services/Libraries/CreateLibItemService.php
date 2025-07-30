@@ -210,7 +210,7 @@ class CreateLibItemService
     private function getVoicingId(): int
     {
         //check for new voicing
-        $descr = strtolower($this->form->voicingDescr) ?? '';
+        $descr = Str::lower($this->form->voicingDescr) ?? '';
 
         //early exit
         if (empty($descr) && $this->form->voicingId) {
@@ -228,10 +228,11 @@ class CreateLibItemService
         }
 
         //else create new voicing object
+        $lcDescr = Str::lower($descr);
         return Voicing::create(
             [
                 'category' => 'choral',
-                'descr' => $descr,
+                'descr' => $lcDescr,
                 'created_by' => auth()->id(),
             ]
         )->id;

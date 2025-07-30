@@ -8,6 +8,7 @@
 
             {{-- COMPOSER, ARRANGER, WAM, WORDS, MUSIC, LYRICIST, CHOREOGRAPHER --}}
             @foreach($artistTypes AS $artistType)
+                {{--@if($searchResultsArtists[$artistType]) @dd($artistType) @endif--}}
                 <x-forms.elements.livewire.libraryItem.artistsBlockItem
                     :artistName="$form->artists[$artistType]"
                     for="{{  $artistType }}"

@@ -203,7 +203,7 @@ class ItemComponent extends BaseLibraryItemPage
 
     public function updatedFormArtistsComposer($value): void
     {
-        $this->updatedFormArtistsType($value, 'arranger');
+        $this->updatedFormArtistsType($value, 'composer');
     }
 
     public function updatedFormArtistsMusic($value): void
@@ -266,12 +266,15 @@ class ItemComponent extends BaseLibraryItemPage
     {
         $searchValue = '%'.strtolower($this->form->voicingDescr).'%';
 
-        $found = Voicing::where('descr', 'LIKE', $searchValue)->get();
+        $found = Voicing::query()
+            ->where('descr', 'LIKE', $searchValue)
+            ->orderBy('descr')
+            ->get();
 
         foreach ($found as $voicing) {
             $this->searchVoicings[] = [
                 'id' => $voicing->id,
-                'descr' => $voicing->descr,
+                'descr' => Str::lower($voicing->descr),
             ];
         }
 
