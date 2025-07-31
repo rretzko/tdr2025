@@ -4,8 +4,6 @@ namespace App\Livewire\Libraries\Items;
 
 use App\Imports\LibraryItemsImport;
 use App\Jobs\ProcessLibraryItemsImport;
-use App\Jobs\ProcessPodcast;
-use App\Jobs\TestJobLoggingProcess;
 use App\Models\Libraries\Items\Components\Artist;
 use App\Models\Libraries\Items\Components\Voicing;
 use App\Models\Libraries\Library;
@@ -219,6 +217,11 @@ class ItemComponent extends BaseLibraryItemPage
     public function updatedFormArtistsWords($value): void
     {
         $this->updatedFormArtistsType($value, 'words');
+    }
+
+    public function updatedFormItemType($value): void
+    {
+        $this->form->setAddToHomeLibraryDefault();
     }
 
     public function updatedFormTitle(): void

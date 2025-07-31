@@ -105,7 +105,7 @@ class LibraryForm extends Form
         }
 
         //add location value choice
-        $attributes['useItemId'] = $this->perusalUseItemId;
+        $attributes['use_item_id'] = $this->perusalUseItemId;
 
         LibPerusalCopy::updateOrCreate(
             [

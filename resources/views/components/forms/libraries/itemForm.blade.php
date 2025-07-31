@@ -36,6 +36,24 @@
             >
                 @include($bladeForm)
 
+                {{-- ADD TO HOME LIBRARY --}}
+                @if($libraryName !== "Home Library")
+                    <div class="flex space-x-2 my-2 px-2 bg-gray-300">
+                        <input type="checkbox" wire:model="form.addToHomeLibrary" id="addToHomeLibrary" class="mt-2"/>
+                        <label for="addToHomeLibrary">
+                            @if($form->sysId)
+                                Update
+                            @else
+                                Add
+                            @endif this {{ $form->itemType }} to my Home Library.<br/>
+                            @if($form->sysId)
+                                NOTE: This will overwrite any changes you've made to this {{ $form->itemType }}
+                                in your Home Library records!
+                            @endif
+                        </label>
+                    </div>
+                @endif
+
                 @if($form->sysId)
                     @include('components.forms.elements.livewire.libraryItem.save')
                 @else

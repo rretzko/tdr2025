@@ -22,7 +22,7 @@ return new class extends Migration {
             $table->boolean('dvd')->default(false);
             $table->boolean('cassette')->default(false);
             $table->boolean('vinyl')->default(false);
-            $table->boolean('useItemId')->nullable()->comment('for location value');
+            $table->boolean('use_item_id')->nullable()->comment('for location value');
             $table->timestamps();
         });
     }

@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Log;
 class LibrariesTableComponent extends BasePage
 {
     public array $columnHeaders = [];
-    public bool $displayForm = true; //false;
+    public bool $displayForm = false;
     public LibraryForm $form;
     public string $studentLibrarianEmail = '';
     public string $studentLibrarianPassword = '';

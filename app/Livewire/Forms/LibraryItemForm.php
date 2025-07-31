@@ -10,6 +10,8 @@ use App\Models\Libraries\Items\Components\LibTitle;
 use App\Models\Libraries\Items\Components\Voicing;
 use App\Models\Libraries\Items\LibItem;
 use App\Models\Libraries\LibLibrarian;
+use App\Models\Libraries\LibPerusalCopy;
+use App\Models\Libraries\Library;
 use App\Models\Libraries\LibStack;
 use App\Models\Schools\Teacher;
 use App\Models\Tag;
@@ -21,6 +23,7 @@ use App\Services\ConvertToUsdService;
 use App\Services\Libraries\CreateLibItemService;
 use App\Services\Libraries\MakeAlphaService;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
@@ -47,6 +50,8 @@ class LibraryItemForm extends Form
         'wam' => 0,
         'words' => 0,
     ];
+
+    public bool $addToHomeLibrary = false;
 
     #[Validate('required')]
     public string $comments = 'adding item to library';
@@ -92,6 +97,29 @@ class LibraryItemForm extends Form
     public string $voicingDescr = '';
     public int $voicingId = 0;
 
+    public function setAddToHomeLibraryDefault(): void
+    {
+        if (auth()->user()->isLibrarian()) {
+            $librarian = LibLibrarian::where('user_id', auth()->user()->id)->first();
+            $teacherId = Teacher::where('user_id', $librarian->teacherUserId)->first()->id;
+        } else {
+            $teacherId = Teacher::where('user_id', auth()->user()->id)->first()->id;
+        }
+
+        $libPerusalCopy = LibPerusalCopy::query()
+            ->where('library_id', $this->libraryId)
+            ->where('teacher_id', $teacherId)
+            ->first();
+
+        $type = $this->itemType;
+
+        $validTypes = ['octavo', 'medley', 'book', 'digital', 'cd', 'dvd', 'cassette', 'vinyl'];
+
+        $this->addToHomeLibrary = (in_array($type, $validTypes))
+            ? optional($libPerusalCopy)->{$type} ?? false
+            : false;
+    }
+
     /**
      * Translate $this->itemType into blade file name counterpart
      * @todo this may be completely unnecessary after refactoring to 'octavo' from 'sheet music
@@ -122,7 +150,7 @@ class LibraryItemForm extends Form
 
         $this->updateLibItemRatings($libItemId);
 
-        return (bool)LibStack::updateOrCreate(
+        $libStack = LibStack::updateOrCreate(
             [
                 'library_id' => $libraryId,
                 'lib_item_id' => $libItemId,
@@ -132,6 +160,12 @@ class LibraryItemForm extends Form
                 'price' => ConvertToPenniesService::usdToPennies($this->price),
             ],
         );
+
+        if ($this->addToHomeLibrary) {
+            $this->addToHomeLibraryStack($libStack);
+        }
+
+        return (bool) $libStack;
     }
 
     public function resetVars(): void
@@ -174,6 +208,8 @@ class LibraryItemForm extends Form
             ],
         ];
 
+        $this->libraryId = 0;
+
         $this->itemType = 'octavo';
         $this->count = 1;
         $this->price = 0;
@@ -190,6 +226,8 @@ class LibraryItemForm extends Form
         $this->rating = 1;
 
         $this->medleySelections = [];
+
+        $this->setAddToHomeLibraryDefault();
     }
 
     public function setLibItem(LibItem $libItem): void
@@ -198,6 +236,7 @@ class LibraryItemForm extends Form
 
         //item type
         $this->itemType = $libItem->item_type;
+        $this->setAddToHomeLibraryDefault();
         $this->policies['canEdit']['itemType'] = false;
 
         //title
@@ -207,6 +246,9 @@ class LibraryItemForm extends Form
         $this->policies['canEdit']['arranger'] = $this->getPolicy('arranger', $libItem);
         $this->policies['canEdit']['composer'] = $this->getPolicy('composer', $libItem);
         $this->policies['canEdit']['words'] = $this->getPolicy('words', $libItem);
+        $this->policies['canEdit']['wam'] = $this->getPolicy('wam', $libItem);
+        $this->policies['canEdit']['music'] = $this->getPolicy('music', $libItem);
+        $this->policies['canEdit']['choreographer'] = $this->getPolicy('choreographer', $libItem);
 
         //voicing
         $this->voicingId = $libItem->voicing_id;
@@ -229,7 +271,6 @@ class LibraryItemForm extends Form
 
         $this->setCount($libItem);
         $this->setPrice($libItem);
-
     }
 
     private function add(int $libraryId): int
@@ -248,6 +289,97 @@ class LibraryItemForm extends Form
         return ($service)
             ? $service->libItemId
             : 0;
+    }
+
+    private function addToHomeLibraryStack(LibStack $libStack): void
+    {
+        if (auth()->user()->isLibrarian()) {
+            $librarian = LibLibrarian::query()
+                ->where('library_id', $this->libraryId)
+                ->where('user_id', auth()->user()->id)
+                ->first();
+            $teacherId = Teacher::where('user_id', $librarian->teacherUserId)->first()->id;
+        } else {
+            $teacherId = Teacher::where('user_id', auth()->id())->first()->id;
+        }
+
+        //determine home library id
+        $homeLibrary = Library::query()
+            ->where('school_id', 0)
+            ->where('teacher_id', $teacherId)
+            ->first();
+
+        // LIBSTACK
+        //add to home library stack
+        LibStack::updateOrCreate(
+            [
+                'library_id' => $homeLibrary->id,
+                'lib_item_id' => $libStack->lib_item_id,
+            ],
+            [
+                'count' => $libStack->count,
+                'price' => $libStack->price,
+            ]
+        );
+
+        //LIBITEM LOCATION
+        //determine location default
+        $libPerusalCopy = LibPerusalCopy::query()
+            ->where('library_id', $homeLibrary->id)
+            ->where('teacher_id', $teacherId)
+            ->first();
+        $useItemId = optional($libPerusalCopy)->use_item_id ?? 0;
+
+        //add to lib_item_locations in not using Item->id as location
+        if ($useItemId) { // early exit
+            return;
+        }
+
+        //determine current location settings
+        $libItemLocation = LibItemLocation::query()
+            ->where('library_id', $libStack->library_id)
+            ->where('lib_item_id', $libStack->lib_item_id)
+            ->first();
+
+        //if found, add row to database
+        if ($libItemLocation) {
+            LibItemLocation::updateOrCreate(
+                [
+                    'library_id' => $homeLibrary->id,
+                    'lib_item_id' => $libStack->lib_item_id,
+                ],
+                [
+                    'location1' => $libItemLocation->location1,
+                    'location2' => $libItemLocation->location2,
+                    'location3' => $libItemLocation->location3,
+                ]
+            );
+        }
+
+        //LIBRATINGS
+        //determine current ratings
+        $libItemRating = LibItemRating::query()
+            ->where('library_id', $libStack->library_id)
+            ->where('lib_item_id', $libStack->lib_item_id)
+            ->where('teacher_id', $teacherId)
+            ->first();
+
+        //if found add row to database
+        if ($libItemRating) {
+            LibItemRating::updateOrCreate(
+                [
+                    'library_id' => $homeLibrary->id,
+                    'lib_item_id' => $libStack->lib_item_id,
+                    'teacher_id' => $teacherId,
+                ],
+                [
+                    'rating' => $libItemRating->rating,
+                    'level' => $libItemRating->level,
+                    'difficulty' => $libItemRating->difficulty,
+                    'comments' => $libItemRating->comments,
+                ]
+            );
+        }
     }
 
     private function getLibTitleId(string $title, int $teacherId): int
