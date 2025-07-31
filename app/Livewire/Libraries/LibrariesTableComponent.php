@@ -11,11 +11,12 @@ use App\Services\CoTeachersService;
 use App\Services\MakeLibraryService;
 use App\Services\RemoveLibraryService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class LibrariesTableComponent extends BasePage
 {
     public array $columnHeaders = [];
-    public bool $displayForm = false;
+    public bool $displayForm = true; //false;
     public LibraryForm $form;
     public string $studentLibrarianEmail = '';
     public string $studentLibrarianPassword = '';
