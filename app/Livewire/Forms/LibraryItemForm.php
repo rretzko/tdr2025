@@ -22,6 +22,7 @@ use App\Services\ConvertToPenniesService;
 use App\Services\ConvertToUsdService;
 use App\Services\Libraries\CreateLibItemService;
 use App\Services\Libraries\MakeAlphaService;
+use App\Traits\Libraries\LibrarianTeacherUserIdTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -31,7 +32,7 @@ use App\Traits\Libraries\LibrarySetLocationsTrait;
 
 class LibraryItemForm extends Form
 {
-    use LibrarySetLocationsTrait;
+    use LibrarySetLocationsTrait, LibrarianTeacherUserIdTrait;
 
     public array $artists = [
         'arranger' => '',
@@ -53,6 +54,9 @@ class LibraryItemForm extends Form
 
     public bool $addToHomeLibrary = false;
 
+    public string $author = 'Arnold Fish and Norman Lloyd';
+    public string $bookType = 'music';
+
     #[Validate('required')]
     public string $comments = 'adding item to library';
 
@@ -68,7 +72,7 @@ class LibraryItemForm extends Form
     public array $medleySelections = [];
     #[Validate('required', 'float', 'min:0', 'max:99')]
     public float $price = 0;
-    public string $itemType = 'octavo';
+    public string $itemType = 'book'; //'octavo';
 
     /**
      * ex: array:1 [▼ // app\Livewire\Forms\LibraryItemForm.php:53
@@ -93,9 +97,9 @@ class LibraryItemForm extends Form
     public int $rating = 1;
     public int $sysId = 0;
     public array $tags = [];
-    public string $title = '';
+    public string $title = 'Fundamentals of sight singing and ear training';
     public string $voicingDescr = '';
-    public int $voicingId = 0;
+    public int|null $voicingId = 0;
 
     public function setAddToHomeLibraryDefault(): void
     {
@@ -139,6 +143,8 @@ class LibraryItemForm extends Form
     public function save(int $libraryId): bool
     {
         $this->validate();
+
+        $this->libraryId = $libraryId;
 
         $libItemId = ($this->sysId)
             ? $this->update($libraryId)
@@ -210,12 +216,12 @@ class LibraryItemForm extends Form
 
         $this->libraryId = 0;
 
-        $this->itemType = 'octavo';
+        $this->itemType = 'book'; //'octavo';
         $this->count = 1;
         $this->price = 0;
 
         $this->sysId = 0;
-        $this->title = '';
+        $this->title = 'fundamentals of sight singing and ear training';
 
         $this->tags = [];
 
@@ -226,6 +232,8 @@ class LibraryItemForm extends Form
         $this->rating = 1;
 
         $this->medleySelections = [];
+
+        $this->bookType = 'music';
 
         $this->setAddToHomeLibraryDefault();
     }
@@ -251,7 +259,7 @@ class LibraryItemForm extends Form
         $this->policies['canEdit']['choreographer'] = $this->getPolicy('choreographer', $libItem);
 
         //voicing
-        $this->voicingId = $libItem->voicing_id;
+        $this->voicingId = $this->needsVoicing() ? $libItem->voicing_id : null;
         $this->voicingDescr = $libItem->voicingDescr;
 
         //artists
@@ -269,6 +277,9 @@ class LibraryItemForm extends Form
         //medley selections
         $this->setMedleySelections($libItem);
 
+        //bookType
+        $this->bookType = $libItem->book_type;
+
         $this->setCount($libItem);
         $this->setPrice($libItem);
     }
@@ -279,7 +290,9 @@ class LibraryItemForm extends Form
             $this,
             $this->tags,
             $this->locations,
-            $this->libraryId
+            $this->libraryId,
+            $this->getTeacherUserId(),
+            $this->bookType,
         );
 
         if ($service->libItemId && ($this->itemType == 'medley')) {
@@ -356,7 +369,7 @@ class LibraryItemForm extends Form
             );
         }
 
-        //LIBRATINGS
+        //LIB RATINGS
         //determine current ratings
         $libItemRating = LibItemRating::query()
             ->where('library_id', $libStack->library_id)
@@ -517,6 +530,11 @@ class LibraryItemForm extends Form
         }
     }
 
+    private function needsVoicing(): bool
+    {
+        return (!($this->itemType === 'book') && ($this->bookType === 'text'));
+    }
+
     private function setArtists(LibItem $libItem): void
     {
         foreach ($this->artists as $artistType => $value) {
@@ -529,6 +547,11 @@ class LibraryItemForm extends Form
                 $this->artistIds[$artistType] = $artist->id;
                 $this->policies['canEdit'][$artistType] = $this->getPolicy($artistType, $libItem);
             }
+        }
+
+        //author for books
+        if ($this->itemType === 'book') {
+            $this->author = Artist::find($libItem->author_id)->artist_name;
         }
     }
 
@@ -619,7 +642,7 @@ class LibraryItemForm extends Form
     private function update(int $libraryId): int
     {
         $libItem = LibItem::find($this->sysId);
-        $libItem->update(['item_type' => $this->itemType]);
+        $libItem->update(['item_type' => $this->itemType, 'book_type' => $this->bookType]);
         $this->updateLibTitle($libItem, LibTitle::find($libItem->lib_title_id));
         $this->updateLibArtists($libItem);
         $this->updateVoicing($libItem);

@@ -36,6 +36,7 @@ trait LibraryTableRowsTrait
             ->leftJoin('artists AS words', 'lib_items.words_id', '=', 'words.id')
             ->leftJoin('artists AS music', 'lib_items.music_id', '=', 'music.id')
             ->leftJoin('artists AS choreographer', 'lib_items.choreographer_id', '=', 'choreographer.id')
+            ->leftJoin('artists AS author', 'lib_items.author_id', '=', 'author.id')
             ->leftJoin('voicings', 'lib_items.voicing_id', '=', 'voicings.id')
             ->leftJoin('taggables', 'lib_items.id', '=', 'taggables.taggable_id')
             ->leftJoin('tags', 'taggables.tag_id', '=', 'tags.id')
@@ -55,6 +56,7 @@ trait LibraryTableRowsTrait
                     ->orWhere('words.artist_name', 'LIKE', $searchFor)
                     ->orWhere('music.artist_name', 'LIKE', $searchFor)
                     ->orWhere('choreographer.artist_name', 'LIKE', $searchFor)
+                    ->orWhere('author.artist_name', 'LIKE', $searchFor)
                     ->orWhere('tags.name', 'LIKE', $searchFor)
                     ->orWhere('medley_titles.title', 'LIKE', $searchFor);
             })
@@ -69,6 +71,7 @@ trait LibraryTableRowsTrait
                 'words.alpha_name AS wordsName',
                 'music.alpha_name AS musicName',
                 'choreographer.alpha_name AS choreographerName',
+                'author.alpha_name AS authorName',
                 'voicings.descr AS voicingDescr',
                 DB::raw('GROUP_CONCAT(DISTINCT medley_titles.title ORDER BY medley_titles.alpha SEPARATOR ", ") AS medleyTitles')
             )
@@ -83,6 +86,7 @@ trait LibraryTableRowsTrait
                 'words.alpha_name',
                 'music.alpha_name',
                 'choreographer.alpha_name',
+                'author.alpha_name',
                 'voicingDescr',
                 'lib_items.id',
                 'lib_stacks.count'

@@ -22,6 +22,7 @@ class ItemComponent extends BaseLibraryItemPage
 {
     use WithFileUploads;
     public array $artistTypes = [];
+    public array $bookTypes = ['music', 'text'];
     public bool $displayFileImportForm = false;
     public string $errorMessage = '';
     public string $fileUploadMessage = '';

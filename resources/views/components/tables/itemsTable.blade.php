@@ -101,6 +101,9 @@
                         @if($row['choreographerName'])
                             <div>{{ $row['choreographerName'] }} <span class="text-xs">(choreo)</span></div>
                         @endif
+                        @if($row['authorName'])
+                            <div>{{ $row['authorName'] }} <span class="text-xs">(author)</span></div>
+                        @endif
                 </td>
 
                 {{-- voicing --}}

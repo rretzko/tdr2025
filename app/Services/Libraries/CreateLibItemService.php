@@ -25,6 +25,7 @@ class CreateLibItemService
     use LibrarySetLocationsTrait;
 
     public int|null $arrangerId = null;
+    public int|null $authorId = null;
     public int|null $choreographerId = null;
     public int|null $composerId = null;
 
@@ -36,16 +37,18 @@ class CreateLibItemService
     public bool $saved = false;
     private int $teacherId = 0;
     private string $title = '';
-    private int $voicingId = 0;
+    private int|null $voicingId = 0;
     public int|null $wamId = null;
     public int|null $wordsId = null;
 
-    public function __construct(
+    public function
+    __construct(
         private readonly LibraryItemForm|ProgramSelectionForm|\stdClass $form,
         private readonly array $tags,
         private readonly array $locations,
         private readonly int $libraryId,
         private readonly int $userId = 0,
+        private readonly string $bookType = '',
     )
     {
         $this->teacherId = $this->setTeacherId();
@@ -57,11 +60,14 @@ class CreateLibItemService
         $this->wamId = $this->getArtistId('wam');
         $this->wordsId = $this->getArtistId('words');
         $this->musicId = $this->getArtistId('music');
+        $this->authorId = $this->getAuthorId();
         $this->choreographerId = $this->getArtistId('choreographer');
         $this->title = $this->form->title;
 
         $this->errorCheck();
-
+        if (!empty($this->errors)) {
+            dump($this->errors);
+        }
         if (!count($this->errors)) {
             $this->add();
         } else {
@@ -114,6 +120,7 @@ class CreateLibItemService
             'words_id' => $this->wordsId,
             'music_id' => $this->musicId,
             'choreographer_id' => $this->choreographerId,
+            'author_id' => $this->authorId,
         ];
 
     }
@@ -128,7 +135,7 @@ class CreateLibItemService
             $this->errors[] = 'No title found.';
         }
 
-        if (!$this->voicingId) {
+        if ($this->needsVoicing() && !$this->voicingId) {
             $this->errors[] = 'No voicing found.';
         }
 
@@ -183,6 +190,28 @@ class CreateLibItemService
 
     }
 
+    private function getAuthorId(): int|null
+    {
+        $artistName = $this->form->author;
+
+        if (strlen($artistName)) {
+
+            $artist = Artist::where('artist_name', $artistName)->first();
+
+            if ($artist) {
+                return $artist->id;
+            }
+
+            $service = new ArtistIdService($artistName, $this->userId ?: auth()->id());
+
+            return $service->getId();
+
+        }
+
+        return null;
+
+    }
+
     private function getLibTitleId(): int
     {
         //ensure title is properly formatted
@@ -207,8 +236,18 @@ class CreateLibItemService
         )->id;
     }
 
-    private function getVoicingId(): int
+    private function isTextBook(): bool
     {
+        return (($this->itemType === 'book') &&
+            ($this->bookType === 'text'));
+    }
+
+    private function getVoicingId(): int|null
+    {
+        if ($this->isTextBook()) {
+            return null;
+        }
+
         //check for new voicing
         $descr = Str::lower($this->form->voicingDescr) ?? '';
 
@@ -251,6 +290,11 @@ class CreateLibItemService
             ->where('music_id', $this->musicId)
             ->where('choreographer_id', $this->choreographerId)
             ->exists();
+    }
+
+    private function needsVoicing(): bool
+    {
+        return !$this->isTextBook();
     }
 
     private function setTeacherId(): int

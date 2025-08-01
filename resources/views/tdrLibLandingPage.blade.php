@@ -233,7 +233,7 @@
             to a student librarian using secure limited-access credentials.</p>
         <p>Filter and sort by various criteria. Create “pull sheets” for easy octavo retrieval. Easily link ensemble
             members and performances via the Programs, Ensembles, and Students modules.</p>
-        <p>Easily transition your present choral library from paper or a spreadsheet-based systems to a searchable,
+        <p>Easily transition your present choral library from paper or spreadsheets to a searchable,
             sortable, and powerful database.</p>
     </section>
 
