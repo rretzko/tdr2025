@@ -36,6 +36,7 @@ class LibraryItemForm extends Form
 
     public array $artists = [
         'arranger' => '',
+        'author' => '',
         'choreographer' => '',
         'composer' => '',
         'music' => '',
@@ -45,6 +46,7 @@ class LibraryItemForm extends Form
 
     public array $artistIds = [
         'arranger' => 0,
+        'author' => 0,
         'choreographer' => 0,
         'composer' => 0,
         'music' => 0,
@@ -54,7 +56,6 @@ class LibraryItemForm extends Form
 
     public bool $addToHomeLibrary = false;
 
-    public string $author = 'Arnold Fish and Norman Lloyd';
     public string $bookType = 'music';
 
     #[Validate('required')]
@@ -72,7 +73,7 @@ class LibraryItemForm extends Form
     public array $medleySelections = [];
     #[Validate('required', 'float', 'min:0', 'max:99')]
     public float $price = 0;
-    public string $itemType = 'book'; //'octavo';
+    public string $itemType = 'octavo'; //book';
 
     /**
      * ex: array:1 [▼ // app\Livewire\Forms\LibraryItemForm.php:53
@@ -85,6 +86,7 @@ class LibraryItemForm extends Form
     public array $policies = [
         'canEdit' => [
             'arranger' => true,
+            'author' => true,
             'choreographer' => true,
             'composer' => true,
             'music' => true,
@@ -97,7 +99,7 @@ class LibraryItemForm extends Form
     public int $rating = 1;
     public int $sysId = 0;
     public array $tags = [];
-    public string $title = 'Fundamentals of sight singing and ear training';
+    public string $title = ''; //'Fundamentals of sight singing and ear training';
     public string $voicingDescr = '';
     public int|null $voicingId = 0;
 
@@ -140,15 +142,17 @@ class LibraryItemForm extends Form
             : $this->itemType;
     }
 
-    public function save(int $libraryId): bool
+    public function save(int $libraryId, string $tagsCsv): bool
     {
         $this->validate();
 
         $this->libraryId = $libraryId;
 
+        $this->parseTagsCsv($tagsCsv);
+
         $libItemId = ($this->sysId)
             ? $this->update($libraryId)
-            : $this->add($libraryId);
+            : $this->add();
 
         $this->updateTags($libItemId);
 
@@ -178,6 +182,7 @@ class LibraryItemForm extends Form
     {
         $this->artists = [
             'arranger' => '',
+            'author' => '',
             'choreographer' => '',
             'composer' => '',
             'music' => '',
@@ -187,6 +192,7 @@ class LibraryItemForm extends Form
 
         $this->artistIds = [
             'arranger' => 0,
+            'author' => 0,
             'choreographer' => 0,
             'composer' => 0,
             'music' => 0,
@@ -205,6 +211,7 @@ class LibraryItemForm extends Form
         $this->policies = [
             'canEdit' => [
                 'arranger' => true,
+                'author' => true,
                 'choreographer' => true,
                 'composer' => true,
                 'music' => true,
@@ -216,12 +223,12 @@ class LibraryItemForm extends Form
 
         $this->libraryId = 0;
 
-        $this->itemType = 'book'; //'octavo';
+        $this->itemType = 'octavo'; //book';
         $this->count = 1;
         $this->price = 0;
 
         $this->sysId = 0;
-        $this->title = 'fundamentals of sight singing and ear training';
+        $this->title = ''; //fundamentals of sight singing and ear training';
 
         $this->tags = [];
 
@@ -252,11 +259,13 @@ class LibraryItemForm extends Form
         $this->title = $libTitle->title;
         $this->policies['canEdit']['title'] = $this->getPolicy('canEdit', $libTitle);
         $this->policies['canEdit']['arranger'] = $this->getPolicy('arranger', $libItem);
+        $this->policies['canEdit']['author'] = $this->getPolicy('author', $libItem);
         $this->policies['canEdit']['composer'] = $this->getPolicy('composer', $libItem);
         $this->policies['canEdit']['words'] = $this->getPolicy('words', $libItem);
         $this->policies['canEdit']['wam'] = $this->getPolicy('wam', $libItem);
         $this->policies['canEdit']['music'] = $this->getPolicy('music', $libItem);
         $this->policies['canEdit']['choreographer'] = $this->getPolicy('choreographer', $libItem);
+        $this->policies['canEdit']['author'] = $this->getPolicy('author', $libItem);
 
         //voicing
         $this->voicingId = $this->needsVoicing() ? $libItem->voicing_id : null;
@@ -284,7 +293,7 @@ class LibraryItemForm extends Form
         $this->setPrice($libItem);
     }
 
-    private function add(int $libraryId): int
+    private function add(): int
     {
         $service = new CreateLibItemService(
             $this,
@@ -295,13 +304,13 @@ class LibraryItemForm extends Form
             $this->bookType,
         );
 
-        if ($service->libItemId && ($this->itemType == 'medley')) {
+        $libItemId = $service->libItemId ?? 0;
+
+        if ($libItemId && ($this->itemType == 'medley')) {
             $this->linkMedleySelections($service->libItemId);
         }
 
-        return ($service)
-            ? $service->libItemId
-            : 0;
+        return $libItemId;
     }
 
     private function addToHomeLibraryStack(LibStack $libStack): void
@@ -462,8 +471,9 @@ class LibraryItemForm extends Form
                 SUM(CASE WHEN wam_id = ? THEN 1 ELSE 0 END) +
                 SUM(CASE WHEN words_id = ? THEN 1 ELSE 0 END) +
                 SUM(CASE WHEN music_id = ? THEN 1 ELSE 0 END) +
-                SUM(CASE WHEN choreographer_id = ? THEN 1 ELSE 0 END) as total_count
-            ", [$artistId, $artistId, $artistId, $artistId, $artistId, $artistId])->value('total_count');
+                SUM(CASE WHEN choreographer_id = ? THEN 1 ELSE 0 END) +
+                SUM(CASE WHEN author_id = ? THEN 1 ELSE 0 END) as total_count
+            ", [$artistId, $artistId, $artistId, $artistId, $artistId, $artistId, $artistId])->value('total_count');
 
         $userIsSoleDependent = ($occurrenceCount < 2);
 
@@ -473,6 +483,11 @@ class LibraryItemForm extends Form
     private function getPolicyArranger(LibItem $libItem): bool
     {
         return $this->getPolicyArtist('arranger', $libItem);
+    }
+
+    private function getPolicyAuthor(LibItem $libItem): bool
+    {
+        return $this->getPolicyArtist('author', $libItem);
     }
 
     private function getPolicyChoreographer(LibItem $libItem): bool
@@ -533,6 +548,16 @@ class LibraryItemForm extends Form
     private function needsVoicing(): bool
     {
         return (!($this->itemType === 'book') && ($this->bookType === 'text'));
+    }
+
+    private function parseTagsCsv(string $tagsCsv): void
+    {
+        if (strlen($tagsCsv)) {
+            $tags = explode(",", $tagsCsv);
+            $this->tags = array_filter(array_map('trim', $tags), fn($tag) => $tag !== '');
+        } else {
+            $this->tags = [];
+        }
     }
 
     private function setArtists(LibItem $libItem): void

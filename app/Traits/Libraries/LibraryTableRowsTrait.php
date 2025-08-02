@@ -9,7 +9,62 @@ use App\Models\Programs\Program;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
+/**
+ * select distinct `lib_stacks`.`id`, `lib_stacks`.`count`, `lib_items`.`id` as `libItemId`, `lib_titles`.`title`, `lib_titles`.`alpha`, `lib_items`.`item_type`,
+ * `composer`.`alpha_name` as `composerName`,
+ * `arranger`.`alpha_name` as `arrangerName`,
+ * `wam`.`alpha_name` as `wamName`,
+ * `words`.`alpha_name` as `wordsName`,
+ * `music`.`alpha_name` as `musicName`,
+ * `choreographer`.`alpha_name` as `choreographerName`, `
+ * author`.`alpha_name` as `authorName`,
+ * `voicings`.`descr` as `voicingDescr`,
+ * GROUP_CONCAT(DISTINCT medley_titles.title ORDER BY medley_titles.alpha SEPARATOR ", ") AS medleyTitles
+ * from `lib_stacks`
+ * inner join `lib_items` on `lib_stacks`.`lib_item_id` = `lib_items`.`id`
+ * inner join `lib_titles` on `lib_items`.`lib_title_id` = `lib_titles`.`id`
+ * left join `artists` as `composer` on `lib_items`.`composer_id` = `composer`.`id`
+ * left join `artists` as `arranger` on `lib_items`.`arranger_id` = `arranger`.`id`
+ * left join `artists` as `wam` on `lib_items`.`wam_id` = `wam`.`id`
+ * left join `artists` as `words` on `lib_items`.`words_id` = `words`.`id`
+ * left join `artists` as `music` on `lib_items`.`music_id` = `music`.`id`
+ * left join `artists` as `choreographer` on `lib_items`.`choreographer_id` = `choreographer`.`id`
+ * left join `artists` as `author` on `lib_items`.`author_id` = `author`.`id`
+ * left join `voicings` on `lib_items`.`voicing_id` = `voicings`.`id`
+ * left join `taggables` on `lib_items`.`id` = `taggables`.`taggable_id`
+ * left join `tags` on `taggables`.`tag_id` = `tags`.`id`
+ * left join `lib_medley_selections` on `lib_items`.`id` = `lib_medley_selections`.`lib_item_id`
+ * left join `lib_titles` as `medley_titles` on `lib_medley_selections`.`lib_title_id` = `medley_titles`.`id`
+ * where `lib_stacks`.`library_id` = 2
+ * and (`lib_items`.`voicing_id` > 0 or `lib_items`.`voicing_id` is null)
+ * and (`lib_titles`.`title` LIKE '%%'
+ * or `composer`.`artist_name` LIKE '%%'
+ * or `arranger`.`artist_name` LIKE '%%'
+ * or `wam`.`artist_name` LIKE '%%'
+ * or `words`.`artist_name` LIKE '%%'
+ * or `music`.`artist_name` LIKE '%%'
+ * or `choreographer`.`artist_name` LIKE '%%'
+ * or `author`.`artist_name` LIKE '%%'
+ * or `tags`.`name` LIKE '%%'
+ * or `medley_titles`.`title` LIKE '%%')
+ * group by `lib_stacks`.`id`,
+ * `lib_titles`.`title`,
+ * `lib_titles`.`alpha`,
+ * `lib_items`.`item_type`,
+ * `composer`.`alpha_name`,
+ * `arranger`.`alpha_name`,
+ * `wam`.`alpha_name`,
+ * `words`.`alpha_name`,
+ * `music`.`alpha_name`,
+ * `choreographer`.`alpha_name`,
+ * `author`.`alpha_name`,
+ * `voicingDescr`,
+ * `lib_items`.`id`,
+ * `lib_stacks`.`count`
+ * order by `lib_titles`.`alpha` asc, `lib_titles`.`alpha` asc
+ */
 trait LibraryTableRowsTrait
 {
     public static function getLibraryItems(
@@ -43,7 +98,10 @@ trait LibraryTableRowsTrait
             ->leftJoin('lib_medley_selections', 'lib_items.id', '=', 'lib_medley_selections.lib_item_id')
             ->leftJoin('lib_titles AS medley_titles', 'lib_medley_selections.lib_title_id', '=', 'medley_titles.id')
             ->where('lib_stacks.library_id', $libraryId)
-            ->where('lib_items.voicing_id', $voicingOperand, $voicingFilterId)
+            ->where(function ($query) use ($voicingOperand, $voicingFilterId) {
+                $query->where('lib_items.voicing_id', $voicingOperand, $voicingFilterId)
+                    ->orWhereNull('lib_items.voicing_id');
+            })
             ->when($ensembleId, function ($query) use ($ensembleId) {
                 $query->join('program_selections', 'lib_stacks.lib_item_id', '=', 'program_selections.lib_item_id')
                     ->where('program_selections.ensemble_id', $ensembleId);

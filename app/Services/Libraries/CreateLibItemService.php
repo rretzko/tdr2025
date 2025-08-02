@@ -60,8 +60,8 @@ class CreateLibItemService
         $this->wamId = $this->getArtistId('wam');
         $this->wordsId = $this->getArtistId('words');
         $this->musicId = $this->getArtistId('music');
-        $this->authorId = $this->getAuthorId();
         $this->choreographerId = $this->getArtistId('choreographer');
+        $this->authorId = $this->getArtistId('author');
         $this->title = $this->form->title;
 
         $this->errorCheck();
@@ -95,6 +95,7 @@ class CreateLibItemService
                 'item_type' => $this->itemType,
                 'lib_title_id' => $this->libTitleId,
                 'voicing_id' => $this->voicingId,
+                'book_type' => $this->bookType,
             ];
             $artistItems = $this->addArtistIds();
 
@@ -171,28 +172,6 @@ class CreateLibItemService
     private function getArtistId(string $artistType): int|null
     {
         $artistName = $this->form->artists[$artistType];
-
-        if (strlen($artistName)) {
-
-            $artist = Artist::where('artist_name', $artistName)->first();
-
-            if ($artist) {
-                return $artist->id;
-            }
-
-            $service = new ArtistIdService($artistName, $this->userId ?: auth()->id());
-
-            return $service->getId();
-
-        }
-
-        return null;
-
-    }
-
-    private function getAuthorId(): int|null
-    {
-        $artistName = $this->form->author;
 
         if (strlen($artistName)) {
 

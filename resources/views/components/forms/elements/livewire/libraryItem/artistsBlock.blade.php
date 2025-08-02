@@ -17,15 +17,12 @@
         <div class="flex flex-col space-y-2">
 
             @if($form->itemType === 'book')
-                <div>
-                    <label class="sm:w-1/6">Author</label>
-                    <input
-                        type="text"
-                        wire:model.live.debounce="form.author"
-                        class="w-11/12"
-                        id="author"
-                    />
-                </div>
+                <x-forms.elements.livewire.libraryItem.artistsBlockItem
+                    :artistName="$form->artists['author']"
+                    for="author"
+                    :searchResults="$searchResultsArtists['author']"
+                    :canEdit="$form->policies['canEdit']['author']"
+                />
             @else
 
                 {{-- COMPOSER, ARRANGER, WAM, WORDS, MUSIC, LYRICIST, CHOREOGRAPHER --}}

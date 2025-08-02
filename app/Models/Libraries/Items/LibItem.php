@@ -21,6 +21,8 @@ class LibItem extends Model
 
     protected $fillable = [
         'arranger_id',
+        'author_id',
+        'book_type',
         'choreographer_id',
         'composer_id',
         'item_type',

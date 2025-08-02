@@ -34,6 +34,7 @@ class ItemComponent extends BaseLibraryItemPage
     public array $searchVoicings = [];
     public array $searchResultsArtists = [
         'arranger' => '',
+        'author' => '',
         'choreographer' => '',
         'composer' => '',
         'music' => '',
@@ -133,17 +134,48 @@ class ItemComponent extends BaseLibraryItemPage
 
     public function save()
     {
+        if ($this->saveWorkflow()) {
+            return $this->redirect("/library/$this->libraryId/items");
+        }
+    }
+
+    public function saveAndStay(): void
+    {
+        $this->saveWorkflow();
+
+        $this->form->resetVars();
+        //parse $tagsCsv & persist in $this->form->tags array
+//        $this->parseTagsCsv();
+
+//        $this->reset('errorMessage', 'successMessage');
+
+//        $service = new CreateLibItemService(
+//            $this->form,
+//            $this->form->tags,
+//            $this->form->locations,
+//            $this->libraryId
+//        );
+
+//        if ($service->saved) {
+//            $this->addItemToLibrary($service->libItemId);
+//            $libItemTitle = LibItem::find($service->libItemId)->title;
+//            $this->successMessage = 'Item "' . $libItemTitle . '" Saved.';
+//            $this->form->resetVars();
+//        } else {
+//            $this->errorMessage = 'Unable to save item.';
+//        }
+
+    }
+
+    private function saveWorkflow(): bool
+    {
         //determine if save = updating or adding
         $updating = (bool)$this->form->sysId;
 
-        //parse $tagsCsv & persist in $this->form->tags array
-        $this->parseTagsCsv();
-
         $this->reset('errorMessage', 'successMessage');
 
-        $saved = $this->form->save($this->libraryId);
+        $saved = $this->form->save($this->libraryId, $this->tagCsv);
 
-        //format title for use in success/error messages
         $fTitle = Str::title($this->form->title);
 
         if ($saved) {
@@ -154,32 +186,7 @@ class ItemComponent extends BaseLibraryItemPage
             $this->errorMessage = 'Unable to save "' . $fTitle . '" at this time.';
         }
 
-        return $this->redirect("/library/$this->libraryId/items");
-    }
-
-    public function saveAndStay(): void
-    {
-        //parse $tagsCsv & persist in $this->form->tags array
-        $this->parseTagsCsv();
-
-        $this->reset('errorMessage', 'successMessage');
-
-        $service = new CreateLibItemService(
-            $this->form,
-            $this->form->tags,
-            $this->form->locations,
-            $this->libraryId
-        );
-
-        if ($service->saved) {
-            $this->addItemToLibrary($service->libItemId);
-            $libItemTitle = LibItem::find($service->libItemId)->title;
-            $this->successMessage = 'Item "' . $libItemTitle . '" Saved.';
-            $this->form->resetVars();
-        } else {
-            $this->errorMessage = 'Unable to save item.';
-        }
-
+        return $saved;
     }
 
     public function setArtist(string $artistType, int $artistId): void
@@ -193,6 +200,11 @@ class ItemComponent extends BaseLibraryItemPage
     public function updatedFormArtistsArranger($value): void
     {
         $this->updatedFormArtistsType($value, 'arranger');
+    }
+
+    public function updatedFormArtistsAuthor($value): void
+    {
+        $this->updatedFormArtistsType($value, 'author');
     }
 
     public function updatedFormArtistsChoreographer($value): void
@@ -249,15 +261,15 @@ class ItemComponent extends BaseLibraryItemPage
         );
     }
 
-    private function parseTagsCsv(): void
-    {
-        if (strlen($this->tagCsv)) {
-            $tags = explode(",", $this->tagCsv);
-            $this->form->tags = array_filter(array_map('trim', $tags), fn($tag) => $tag !== '');
-        } else {
-            $this->form->tags = [];
-        }
-    }
+//    private function parseTagsCsv(): void
+//    {
+//        if (strlen($this->tagCsv)) {
+//            $tags = explode(",", $this->tagCsv);
+//            $this->form->tags = array_filter(array_map('trim', $tags), fn($tag) => $tag !== '');
+//        } else {
+//            $this->form->tags = [];
+//        }
+//    }
 
     private function search(): void
     {

@@ -1,9 +1,9 @@
 <div>
-    {{-- TITLE --}}
-    @include('components.forms.elements.livewire.libraryItem.title')
-
     {{-- BOOK TYPES --}}
     @include('components.forms.elements.livewire.libraryItem.bookTypes')
+
+    {{-- TITLE --}}
+    @include('components.forms.elements.livewire.libraryItem.title')
 
     {{-- VOICING --}}
     @if($form->bookType === 'music')
