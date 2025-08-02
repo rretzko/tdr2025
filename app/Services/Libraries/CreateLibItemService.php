@@ -144,17 +144,6 @@ class CreateLibItemService
 
     private function existingLibItemId(): int
     {
-        Log::info(LibItem::query()
-            ->where('lib_title_id', $this->libTitleId)
-            ->where('item_type', $this->itemType)
-            ->where('voicing_id', $this->voicingId)
-            ->where('composer_id', $this->choreographerId)
-            ->where('arranger_id', $this->arrangerId)
-            ->where('wam_id', $this->wamId)
-            ->where('words_id', $this->wordsId)
-            ->where('music_id', $this->musicId)
-            ->where('choreographer_id', $this->choreographerId)
-            ->toRawSql());
         return LibItem::query()
             ->where('lib_title_id', $this->libTitleId)
             ->where('item_type', $this->itemType)
