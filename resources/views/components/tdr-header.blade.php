@@ -28,18 +28,24 @@
     </div>
 
     <div class="absolute top-0 right-0">
+        <div id="tutorialsLink"
+             class="text-sm font-medium  text-gray-500 dark:text-gray-400 bg-transparent dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
+            <a href="@if(auth()->user()) /tutorials @else / @endif" target="_blank">
+                Tutorials
+            </a>
+        </div>
+        <div class="hidden md:block">{{ __(Auth::user()->name) }}</div>
         <button
-            class="inline-flex items-right border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-transparent dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
+            class="inline-flex items-left bg-white border border-gray-200 text-sm font-medium rounded-md text-gray-500 dark:text-gray-400 bg-transparent dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150 shadow-lg">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
 
                 <x-dropdown-link :href="route('logout')"
                                  onclick="event.preventDefault();
                                                 this.closest('form').submit();"
-                                 class="text-right"
+                                 class=""
                 >
-                    <div class="hidden md:block">{{ __(Auth::user()->name) }}</div>
-                    <div class="text-right">Log Out</div>
+                    <div class="">Log Out</div>
                 </x-dropdown-link>
             </form>
 
