@@ -14,4 +14,7 @@
             </div>
         @endif
     </label>
+    @error('form.title')
+    <x-input-error messages="{{ $message }}" aria-live="polite"/>
+    @enderror
 </div>

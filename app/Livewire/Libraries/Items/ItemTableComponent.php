@@ -62,6 +62,7 @@ class ItemTableComponent extends LibraryBasePage
         $tags = $this->getItemTags($rows);
         $medleySelections = $this->getMedleySelections($rows);
         $voicings = $this->getVoicings($rows);
+        $urls = $this->getItemUrls($rows);
 
         return view('livewire..libraries.items.item-table-component',
             [
@@ -71,6 +72,7 @@ class ItemTableComponent extends LibraryBasePage
                 'tags' => $tags,
                 'medleySelections' => $medleySelections,
                 'voicings' => $voicings,
+                'urls' => $urls,
             ]
         );
     }

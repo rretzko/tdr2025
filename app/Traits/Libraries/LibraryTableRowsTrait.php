@@ -2,6 +2,7 @@
 
 namespace App\Traits\Libraries;
 
+use App\Models\Libraries\Items\Components\LibDigital;
 use App\Models\Libraries\Items\Components\LibItemLocation;
 use App\Models\Libraries\Items\LibItem;
 use App\Models\Libraries\LibStack;
@@ -97,6 +98,7 @@ trait LibraryTableRowsTrait
             ->leftJoin('tags', 'taggables.tag_id', '=', 'tags.id')
             ->leftJoin('lib_medley_selections', 'lib_items.id', '=', 'lib_medley_selections.lib_item_id')
             ->leftJoin('lib_titles AS medley_titles', 'lib_medley_selections.lib_title_id', '=', 'medley_titles.id')
+//            ->leftJoin('lib_digitals', 'lib_items.id', '=', 'lib_digitals.lib_item_id')
             ->where('lib_stacks.library_id', $libraryId)
             ->where(function ($query) use ($voicingOperand, $voicingFilterId) {
                 $query->where('lib_items.voicing_id', $voicingOperand, $voicingFilterId)
@@ -131,6 +133,8 @@ trait LibraryTableRowsTrait
                 'choreographer.alpha_name AS choreographerName',
                 'author.alpha_name AS authorName',
                 'voicings.descr AS voicingDescr',
+//                'lib_digitals.url AS libDigitalUrl',
+//                'lib_digitals.label AS libDigitalUrlLabel',
                 DB::raw('GROUP_CONCAT(DISTINCT medley_titles.title ORDER BY medley_titles.alpha SEPARATOR ", ") AS medleyTitles')
             )
             ->groupBy(
@@ -147,7 +151,9 @@ trait LibraryTableRowsTrait
                 'author.alpha_name',
                 'voicingDescr',
                 'lib_items.id',
-                'lib_stacks.count'
+                'lib_stacks.count',
+//                'lib_digitals.url',
+//                'lib_digitals.label'
             )
             ->orderBy($sortCol, $sortAsc ? 'asc' : 'desc')
             ->orderBy('lib_titles.alpha', 'asc')
@@ -203,5 +209,19 @@ trait LibraryTableRowsTrait
         }
 
         return $tags;
+    }
+
+    public static function getItemUrls(array $rows): array
+    {
+        $urls = [];
+        foreach ($rows as $row) {
+            $urls[$row['libItemId']] = LibDigital::query()
+                ->where('lib_item_id', $row['libItemId'])
+                ->select('url', 'label')
+                ->get()
+                ->toArray();
+        }
+
+        return $urls;
     }
 }

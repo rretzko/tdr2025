@@ -30,6 +30,8 @@ class ItemComponent extends BaseLibraryItemPage
     public int $libraryId = 0;
     public LibItem $libItem;
     public string $libraryName = '';
+
+    public bool $searching = false;
     public string $searchResults = 'Search Results';
     public array $searchVoicings = [];
     public array $searchResultsArtists = [
@@ -127,13 +129,21 @@ class ItemComponent extends BaseLibraryItemPage
         $this->reset('searchVoicings');
     }
 
-    #[NoReturn] public function findItem(int $libItemId): void
+    #[NoReturn] public function findItem(int $libItemId)
     {
+        $this->searching = true;
+
         $this->form->setLibItem(LibItem::find($libItemId));
     }
 
     public function save()
     {
+        //early exit; don't save after a search item is clicked
+        if ($this->searching) {
+            $this->reset('searching');
+            return;
+        }
+
         if ($this->saveWorkflow()) {
             return $this->redirect("/library/$this->libraryId/items");
         }
@@ -259,16 +269,6 @@ class ItemComponent extends BaseLibraryItemPage
             []
         );
     }
-
-//    private function parseTagsCsv(): void
-//    {
-//        if (strlen($this->tagCsv)) {
-//            $tags = explode(",", $this->tagCsv);
-//            $this->form->tags = array_filter(array_map('trim', $tags), fn($tag) => $tag !== '');
-//        } else {
-//            $this->form->tags = [];
-//        }
-//    }
 
     private function search(): void
     {

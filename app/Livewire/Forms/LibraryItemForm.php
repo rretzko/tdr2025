@@ -3,6 +3,7 @@
 namespace App\Livewire\Forms;
 
 use App\Models\Libraries\Items\Components\Artist;
+use App\Models\Libraries\Items\Components\LibDigital;
 use App\Models\Libraries\Items\Components\LibItemLocation;
 use App\Models\Libraries\Items\Components\LibItemRating;
 use App\Models\Libraries\Items\Components\LibMedleySelection;
@@ -64,6 +65,9 @@ class LibraryItemForm extends Form
     #[Validate('required', 'integer', 'min:0')]
     public int $count = 1;
     public string $difficulty = 'medium';
+
+    public string $digitalUrl = '';
+    public string $digitalUrlLabel = '';
     public string $level = 'high-school';
 
     public int $libraryId = 0;
@@ -73,7 +77,7 @@ class LibraryItemForm extends Form
     public array $medleySelections = [];
     #[Validate('required', 'float', 'min:0', 'max:99')]
     public float $price = 0;
-    public string $itemType = 'book'; //'octavo';
+    public string $itemType = 'octavo';
 
     /**
      * ex: array:1 [▼ // app\Livewire\Forms\LibraryItemForm.php:53
@@ -144,35 +148,42 @@ class LibraryItemForm extends Form
 
     public function save(int $libraryId, string $tagsCsv): bool
     {
-        $this->validate();
+        if ($this->itemType == 'digital') {
 
-        $this->libraryId = $libraryId;
+            return $this->updateLibDigital();
 
-        $this->parseTagsCsv($tagsCsv);
+        } else {
 
-        $libItemId = ($this->sysId)
-            ? $this->update($libraryId)
-            : $this->add();
+            $this->validate();
 
-        $this->updateTags($libItemId);
+            $this->libraryId = $libraryId;
 
-        $this->updateLibItemLocations($libItemId);
+            $this->parseTagsCsv($tagsCsv);
 
-        $this->updateLibItemRatings($libItemId);
+            $libItemId = ($this->sysId)
+                ? $this->update($libraryId)
+                : $this->add();
 
-        $libStack = LibStack::updateOrCreate(
-            [
-                'library_id' => $libraryId,
-                'lib_item_id' => $libItemId,
-            ],
-            [
-                'count' => $this->count,
-                'price' => ConvertToPenniesService::usdToPennies($this->price),
-            ],
-        );
+            $this->updateTags($libItemId);
 
-        if ($this->addToHomeLibrary) {
-            $this->addToHomeLibraryStack($libStack);
+            $this->updateLibItemLocations($libItemId);
+
+            $this->updateLibItemRatings($libItemId);
+
+            $libStack = LibStack::updateOrCreate(
+                [
+                    'library_id' => $libraryId,
+                    'lib_item_id' => $libItemId,
+                ],
+                [
+                    'count' => $this->count,
+                    'price' => ConvertToPenniesService::usdToPennies($this->price),
+                ],
+            );
+
+            if ($this->addToHomeLibrary) {
+                $this->addToHomeLibraryStack($libStack);
+            }
         }
 
         return (bool) $libStack;
@@ -223,7 +234,7 @@ class LibraryItemForm extends Form
 
         $this->libraryId = 0;
 
-        $this->itemType = 'book'; //octavo';
+        $this->itemType = 'octavo';
         $this->count = 1;
         $this->price = 0;
 
@@ -243,6 +254,8 @@ class LibraryItemForm extends Form
         $this->bookType = 'music';
 
         $this->setAddToHomeLibraryDefault();
+
+        $this->digitalUrl = '';
     }
 
     public function setLibItem(LibItem $libItem): void
@@ -291,6 +304,8 @@ class LibraryItemForm extends Form
 
         $this->setCount($libItem);
         $this->setPrice($libItem);
+
+        $this->setDigitalUrl($libItem);
     }
 
     private function add(): int
@@ -606,6 +621,18 @@ class LibraryItemForm extends Form
             : 1;
     }
 
+    private function setDigitalUrl(LibItem $libItem): void
+    {
+        $libDigital = LibDigital::query()
+            ->where('lib_item_id', $libItem->id)
+            ->where('user_id', auth()->id())
+            ->first();
+
+        if ($libDigital) {
+            $this->digitalUrl = $libDigital->url;
+        }
+    }
+
     private function setLocations(LibItem $libItem): void
     {
         $libItemLocation = LibItemLocation::query()
@@ -707,6 +734,25 @@ class LibraryItemForm extends Form
         }
 
         $libItem->save();
+    }
+
+    private function updateLibDigital(): bool
+    {
+        $this->validate([
+            'digitalUrl' => 'nullable|url',
+        ]);
+
+        $libDigital = LibDigital::updateOrCreate(
+            [
+                'lib_item_id' => $this->sysId,
+                'user_id' => auth()->id(),
+            ],
+            [
+                'url' => strlen($this->digitalUrl) ? $this->digitalUrl : null,
+            ]
+        );
+
+        return (bool) $libDigital->id;
     }
 
     private function updateLibItemLocations(int $libItemId): void

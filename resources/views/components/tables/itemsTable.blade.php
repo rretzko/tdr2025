@@ -112,9 +112,34 @@
                 </td>
 
                 {{-- tags --}}
-                <td class="border border-gray-200 px-1 text-left text-sm cursor-help">
-                    {{ implode(', ', $tags[$row['libItemId']]) }}
+                <td class="border border-gray-200 px-1 text-left text-sm cursor-help max-w-16">
+                    <style>
+                        #tagsDiv {
+                            word-wrap: break-word;
+                            white-space: normal;
+                            max-width: 100%;
+                        }
+                    </style>
+                    <div id="tagsDiv">
+                        {{ implode(', ', $tags[$row['libItemId']]) }}
+                    </div>
                 </td>
+
+                {{-- digital copies --}}
+                <td class="border border-gray-200 px-1 text-left text-sm cursor-help">
+                    @foreach($urls[$row['libItemId']] AS $url)
+                        <div>
+                            <a href="{{ $url['url'] }}"
+                               class="text-blue-500"
+                               title="{{ $url['label'] }}"
+                               target="_blank"
+                            >
+                                <x-heroicons.speakerWave/>
+                            </a>
+                        </div>
+                    @endforeach
+                </td>
+
 
                 {{-- student librarians do not have access to programs module --}}
                 @if(auth()->user()->isTeacher())
