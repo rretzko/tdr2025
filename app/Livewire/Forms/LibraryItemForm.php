@@ -56,7 +56,7 @@ class LibraryItemForm extends Form
 
     public bool $addToHomeLibrary = false;
 
-    public string $bookType = 'music';
+    public string|null $bookType = 'music';
 
     #[Validate('required')]
     public string $comments = 'adding item to library';
@@ -73,7 +73,7 @@ class LibraryItemForm extends Form
     public array $medleySelections = [];
     #[Validate('required', 'float', 'min:0', 'max:99')]
     public float $price = 0;
-    public string $itemType = 'octavo'; //book';
+    public string $itemType = 'book'; //'octavo';
 
     /**
      * ex: array:1 [▼ // app\Livewire\Forms\LibraryItemForm.php:53
@@ -223,7 +223,7 @@ class LibraryItemForm extends Form
 
         $this->libraryId = 0;
 
-        $this->itemType = 'octavo'; //book';
+        $this->itemType = 'book'; //octavo';
         $this->count = 1;
         $this->price = 0;
 
@@ -306,7 +306,7 @@ class LibraryItemForm extends Form
 
         $libItemId = $service->libItemId ?? 0;
 
-        if ($libItemId && ($this->itemType == 'medley')) {
+        if ($libItemId && $this->canHaveSelections()) {
             $this->linkMedleySelections($service->libItemId);
         }
 
@@ -402,6 +402,20 @@ class LibraryItemForm extends Form
                 ]
             );
         }
+    }
+
+    private function canHaveSelections(): bool
+    {
+        $selectionTypes = ['cd', 'dvd', 'cassette', 'vinyl'];
+        if (in_array($this->itemType, $selectionTypes)) {
+            return true;
+        }
+
+        if (($this->itemType == 'book') && ($this->bookType == 'music')) {
+            return true;
+        }
+
+        return false;
     }
 
     private function getLibTitleId(string $title, int $teacherId): int
@@ -673,7 +687,7 @@ class LibraryItemForm extends Form
         $this->updateVoicing($libItem);
         $this->updateLibItemRatings($libItem->id);
 
-        if ($libItem->id && ($this->itemType == 'medley')) {
+        if ($libItem->id && $this->canHaveSelections()) {
             $this->linkMedleySelections($libItem->id);
         }
 

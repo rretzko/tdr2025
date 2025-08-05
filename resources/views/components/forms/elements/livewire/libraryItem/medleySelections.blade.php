@@ -7,12 +7,29 @@
         <div class="flex flex-col space-y-2">
 
             {{-- COMPOSER, ARRANGER, WAM, WORDS, MUSIC, LYRICIST, CHOREOGRAPHER --}}
-            @for($i=1; $i<6; $i++)
+            @for($i=0; $i<=count($form->medleySelections); $i++)
                 <div class="flex items-center">
-                    <label class="w-20">Song {{ $i }}</label>
-                    <input type="text" wire:model="form.medleySelections.{{ ($i - 1) }}"/>
+                    <label class="w-1/12">Song {{ ($i + 1) }}</label>
+                    <input type="text"
+                           wire:model.blur="form.medleySelections.{{ $i }}"
+                           class="w-5/6"
+                           wire:key="selection_{{ $i }}"
+                           id="selection_{{ $i }}"
+                    />
                 </div>
             @endfor
+            {{-- Add Initial input --}}
+            {{--            @if(! count($form->medleySelections))--}}
+            {{--                <div class="flex">--}}
+            {{--                    <label class="w-1/12">Song {{ (count($form->medleySelections) + 1) }}</label>--}}
+            {{--                    <input type="text"--}}
+            {{--                           wire:model.live.blur="form.medleySelections.{{ (count($form->medleySelections)) }}"--}}
+            {{--                           class="w-5/6"--}}
+            {{--                           wire:key="newInput_{{ count($form->medleySelections) }}"--}}
+            {{--                           id="newInput_{{ count($form->medleySelections) }}"--}}
+            {{--                    />--}}
+            {{--                </div>--}}
+            {{--            @endif--}}
 
         </div>
 

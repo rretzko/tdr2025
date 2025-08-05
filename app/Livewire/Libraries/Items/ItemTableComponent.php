@@ -134,11 +134,27 @@ class ItemTableComponent extends LibraryBasePage
         //re-render
     }
 
+    private function canHaveSelections(string $itemType, $medleyTitles): bool
+    {
+        $hasSelections = ['medley', 'cd', 'dvd', 'cassette', 'vinyl'];
+        if (in_array($itemType, $hasSelections)) {
+            return true;
+        }
+
+        if (($itemType === 'book')
+            && (!is_null($medleyTitles))
+            && (strlen($medleyTitles) > 0)) {
+            return true;
+        }
+
+        return false;
+    }
+
     protected function getMedleySelections(array $rows): array
     {
         $selections = [];
         foreach ($rows as $row) {
-            if ($row['item_type'] === 'medley') {
+            if ($this->canHaveSelections($row['item_type'], $row['medleyTitles'])) {
                 $selections[$row['libItemId']] = LibMedleySelection::where('lib_item_id', $row['libItemId'])->get();
             }
         }

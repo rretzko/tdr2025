@@ -7,7 +7,7 @@
     'searchResults' => '',
 ])
 <div class="flex flex-col sm:flex-row sm:space-x-2 items-center ">
-    <label for="{{ $for }}" class="sm:w-1/6">
+    <label for="{{ $for }}" class="sm:w-1/12">
         {{ ucwords($for) }}
     </label>
     <div class="flex flex-col sm:w-5/6 ">
@@ -15,7 +15,7 @@
             <input
                 type="text"
                 wire:model.live.debounce="form.artists.{{ $for }}"
-                class="w-11/12"
+                class="w-5/6"
                 id="{{ $for }}"
                 placeholder="{{ ucwords($placeholder) }}"
             />

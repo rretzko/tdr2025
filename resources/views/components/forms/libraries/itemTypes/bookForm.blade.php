@@ -33,5 +33,21 @@
     {{-- LOCATION --}}
     @include('components.forms.elements.livewire.libraryItem.location')
 
+    <script>
+
+        document.addEventListener('livewire:load', function () {
+            console.log('event listener added');
+            Livewire.on('focusNewInput', index => {
+                // Use setTimeout to wait for DOM update
+                setTimeout(() => {
+                    const input = document.getElementById(`medley-selection-${index}`);
+                    if (input) {
+                        input.focus();
+                    }
+                }, 50);
+            });
+        });
+    </script>
+
 </div>
 

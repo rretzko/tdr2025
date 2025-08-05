@@ -144,27 +144,6 @@ class ItemComponent extends BaseLibraryItemPage
         $this->saveWorkflow();
 
         $this->form->resetVars();
-        //parse $tagsCsv & persist in $this->form->tags array
-//        $this->parseTagsCsv();
-
-//        $this->reset('errorMessage', 'successMessage');
-
-//        $service = new CreateLibItemService(
-//            $this->form,
-//            $this->form->tags,
-//            $this->form->locations,
-//            $this->libraryId
-//        );
-
-//        if ($service->saved) {
-//            $this->addItemToLibrary($service->libItemId);
-//            $libItemTitle = LibItem::find($service->libItemId)->title;
-//            $this->successMessage = 'Item "' . $libItemTitle . '" Saved.';
-//            $this->form->resetVars();
-//        } else {
-//            $this->errorMessage = 'Unable to save item.';
-//        }
-
     }
 
     private function saveWorkflow(): bool
@@ -235,6 +214,26 @@ class ItemComponent extends BaseLibraryItemPage
     public function updatedFormItemType($value): void
     {
         $this->form->setAddToHomeLibraryDefault();
+    }
+
+    /**
+     * ex. propertyName: form.medleySelections.0 | value: che faro
+     * @param $propertyName
+     * @param $value
+     * @return void
+     */
+    public function updated($propertyName, $value): void
+    {
+        if (str_starts_with($propertyName, 'form.medleySelections.')) {
+            // Extract the index from the property name
+            $index = str_replace('form.medleySelections.', '', $propertyName);
+            Log::info('index: '.$index);
+            if ((int) $index === count($this->form->medleySelections) - 1 && !empty($value)) {
+                Log::info('index is int: '.$index);
+                $this->form->medleySelections[] = '';
+                $this->dispatch('focusNewInput', count($this->form->medleySelections) - 1);
+            }
+        }
     }
 
     public function updatedFormTitle(): void
