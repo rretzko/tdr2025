@@ -66,6 +66,7 @@ class LibraryItemForm extends Form
     public int $count = 1;
     public string $difficulty = 'medium';
 
+    public array $digitalUrls = [];
     public string $digitalUrl = '';
     public string $digitalUrlLabel = '';
     public string $level = 'high-school';
@@ -97,6 +98,7 @@ class LibraryItemForm extends Form
             'wam' => true,
             'words' => true,
             'voicing' => true,
+            'digitalUrl' => true,
         ],
     ];
 
@@ -229,6 +231,7 @@ class LibraryItemForm extends Form
                 'wam' => true,
                 'words' => true,
                 'voicing' => true,
+                'digitalUrl' => true,
             ],
         ];
 
@@ -256,6 +259,7 @@ class LibraryItemForm extends Form
         $this->setAddToHomeLibraryDefault();
 
         $this->digitalUrl = '';
+        $this->digitalUrls = [];
     }
 
     public function setLibItem(LibItem $libItem): void
@@ -263,7 +267,7 @@ class LibraryItemForm extends Form
         $this->sysId = $libItem->id;
 
         //item type
-        $this->itemType = $libItem->item_type;
+        $this->itemType = ($this->itemType === 'digital') ? $this->itemType : $libItem->item_type;
         $this->setAddToHomeLibraryDefault();
         $this->policies['canEdit']['itemType'] = false;
 
@@ -279,6 +283,7 @@ class LibraryItemForm extends Form
         $this->policies['canEdit']['music'] = $this->getPolicy('music', $libItem);
         $this->policies['canEdit']['choreographer'] = $this->getPolicy('choreographer', $libItem);
         $this->policies['canEdit']['author'] = $this->getPolicy('author', $libItem);
+        $this->policies['canEdit']['digitalUrl'] = $this->getPolicy('digitalUrl', $libItem);
 
         //voicing
         $this->voicingId = $this->needsVoicing() ? $libItem->voicing_id : null;
@@ -305,7 +310,7 @@ class LibraryItemForm extends Form
         $this->setCount($libItem);
         $this->setPrice($libItem);
 
-        $this->setDigitalUrl($libItem);
+        $this->setDigitalUrls($libItem);
     }
 
     private function add(): int
@@ -323,6 +328,10 @@ class LibraryItemForm extends Form
 
         if ($libItemId && $this->canHaveSelections()) {
             $this->linkMedleySelections($service->libItemId);
+        }
+
+        if ($this->itemType === 'digital') {
+            $this->updateLibDigital();
         }
 
         return $libItemId;
@@ -419,6 +428,18 @@ class LibraryItemForm extends Form
         }
     }
 
+    private function canAddOrUpdate(array $digitals, int $userId): bool
+    {
+        $url = $digitals['url'];
+
+        $ownedByAnother = LibDigital::query()
+            ->where('url', $url)
+            ->where('user_id', '!=', $userId)
+            ->exists();
+
+        return !$ownedByAnother;
+    }
+
     private function canHaveSelections(): bool
     {
         $selectionTypes = ['cd', 'dvd', 'cassette', 'vinyl'];
@@ -452,7 +473,7 @@ class LibraryItemForm extends Form
      * @param Model $object //ex: libTitle
      * @return bool
      */
-    private function getPolicy(string $type, Model $object): bool
+    private function getPolicy(string $type, Model $object): bool|array
     {
         $method = 'getPolicy' . ucwords($type);
         return $this->$method($object);
@@ -527,6 +548,20 @@ class LibraryItemForm extends Form
     private function getPolicyComposer(LibItem $libItem): bool
     {
         return $this->getPolicyArtist('composer', $libItem);
+    }
+
+    private function getPolicyDigitalUrl(LibItem $libItem): array
+    {
+        $libDigitals = LibDigital::where('lib_item_id', $libItem->id)->get();
+
+        $policies = [];
+        $userId = $this->getTeacherUserId();
+
+        foreach ($libDigitals as $libDigital) {
+            $policies[$libDigital->lib_item_id] = $libDigital->user_id == $userId;
+        }
+
+        return $policies;
     }
 
     private function getPolicyMusic(LibItem $libItem): bool
@@ -621,15 +656,25 @@ class LibraryItemForm extends Form
             : 1;
     }
 
-    private function setDigitalUrl(LibItem $libItem): void
+    private function setDigitalUrls(LibItem $libItem): void
     {
-        $libDigital = LibDigital::query()
+        $libDigitals = LibDigital::query()
             ->where('lib_item_id', $libItem->id)
             ->where('user_id', auth()->id())
-            ->first();
+            ->get();
 
-        if ($libDigital) {
-            $this->digitalUrl = $libDigital->url;
+        if ($libDigitals->count()) {
+            foreach ($libDigitals as $libDigital) {
+                $this->digitalUrls[] = [
+                    'url' => $libDigital->url,
+                    'label' => $libDigital->label,
+                ];
+            }
+        }
+
+        //always add two additional blank entries
+        for ($i = 0; $i < 2; $i++) {
+            $this->digitalUrls[] = ['url' => '', 'label' => ''];
         }
     }
 
@@ -707,17 +752,18 @@ class LibraryItemForm extends Form
 
     private function update(int $libraryId): int
     {
+
         $libItem = LibItem::find($this->sysId);
         $libItem->update(['item_type' => $this->itemType, 'book_type' => $this->bookType]);
         $this->updateLibTitle($libItem, LibTitle::find($libItem->lib_title_id));
         $this->updateLibArtists($libItem);
         $this->updateVoicing($libItem);
         $this->updateLibItemRatings($libItem->id);
+        $this->updateLibDigital();
 
         if ($libItem->id && $this->canHaveSelections()) {
             $this->linkMedleySelections($libItem->id);
         }
-
         return $libItem->id;
     }
 
@@ -738,21 +784,30 @@ class LibraryItemForm extends Form
 
     private function updateLibDigital(): bool
     {
-        $this->validate([
-            'digitalUrl' => 'nullable|url',
-        ]);
+        $userId = $this->getTeacherUserId();
+        $libDigital = false;
 
-        $libDigital = LibDigital::updateOrCreate(
-            [
-                'lib_item_id' => $this->sysId,
-                'user_id' => auth()->id(),
-            ],
-            [
-                'url' => strlen($this->digitalUrl) ? $this->digitalUrl : null,
-            ]
-        );
+        foreach ($this->digitalUrls as $digitals) {
 
-        return (bool) $libDigital->id;
+            if (strlen($digitals['url']) &&
+                strlen($digitals['label']) &&
+                filter_var($digitals['url'], FILTER_VALIDATE_URL) &&
+                $this->canAddOrUpdate($digitals, $userId)
+            ) {
+                $libDigital = (bool) LibDigital::updateOrCreate(
+                    [
+                        'lib_item_id' => $this->sysId,
+                        'user_id' => $userId,
+                        'url' => $digitals['url'],
+                    ],
+                    [
+                        'label' => $digitals['label'],
+                    ]
+                );
+            }
+        }
+
+        return $libDigital;
     }
 
     private function updateLibItemLocations(int $libItemId): void

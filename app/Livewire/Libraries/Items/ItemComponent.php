@@ -237,9 +237,9 @@ class ItemComponent extends BaseLibraryItemPage
         if (str_starts_with($propertyName, 'form.medleySelections.')) {
             // Extract the index from the property name
             $index = str_replace('form.medleySelections.', '', $propertyName);
-            Log::info('index: '.$index);
+
             if ((int) $index === count($this->form->medleySelections) - 1 && !empty($value)) {
-                Log::info('index is int: '.$index);
+
                 $this->form->medleySelections[] = '';
                 $this->dispatch('focusNewInput', count($this->form->medleySelections) - 1);
             }

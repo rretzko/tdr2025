@@ -7,7 +7,7 @@
     'searchResults' => '',
 ])
 <div class="flex flex-col sm:flex-row sm:space-x-2 items-center ">
-    <label for="{{ $for }}" class="sm:w-1/12">
+    <label for="{{ $for }}" class="sm:w-1/6">
         {{ ucwords($for) }}
     </label>
     <div class="flex flex-col sm:w-5/6 ">
