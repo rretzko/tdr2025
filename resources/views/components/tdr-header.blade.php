@@ -36,7 +36,7 @@
         </div>
         <div class="hidden md:block">{{ __(Auth::user()->name) }}</div>
         <button
-            class="inline-flex items-left bg-white border border-gray-200 text-sm font-medium rounded-md text-gray-500 dark:text-gray-400 bg-transparent dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150 shadow-lg">
+            class="inline-flex items-left bg-white  text-sm font-medium text-gray-500 dark:text-gray-400 bg-transparent dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
 

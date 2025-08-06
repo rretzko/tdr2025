@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Libraries\Items;
 
+use App\Exports\LibraryItemsExport;
 use App\Livewire\Libraries\LibraryBasePage;
 use App\Models\Libraries\Items\Components\LibItemLocation;
 use App\Models\Libraries\Items\Components\LibMedleySelection;
@@ -12,10 +13,14 @@ use App\Models\Libraries\LibStack;
 use App\Models\Programs\Program;
 use App\Models\Programs\ProgramSelection;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use JetBrains\PhpStorm\NoReturn;
 use App\Traits\Libraries\LibraryTableColumnHeadersTrait;
 use App\Traits\Libraries\LibraryTableRowsTrait;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\Writer\Exception;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ItemTableComponent extends LibraryBasePage
 {
@@ -92,6 +97,35 @@ class ItemTableComponent extends LibraryBasePage
         $url = DIRECTORY_SEPARATOR.'library'.DIRECTORY_SEPARATOR.$this->library->id.DIRECTORY_SEPARATOR.'edit'.DIRECTORY_SEPARATOR.$libItemId;
 
         return $this->redirect($url);
+    }
+
+    public function export(): BinaryFileResponse|bool
+    {
+        $rows = $this->getLibraryItems(
+            $this->library->id,
+            0,
+            '',
+            $this->sortCol,
+            $this->sortAsc,
+            $this->voicingFilterId);
+
+        $tags = $this->getItemTags($rows);
+
+        $urls = $this->getItemUrls($rows);
+
+        $perfs = $this->getItemPerformances($rows);
+
+        $fileName = 'libraryItems_'.date('Ymd_His').'.csv';
+
+        try {
+            return Excel::download(new LibraryItemsExport($rows, $tags, $urls, $perfs), $fileName);
+        } catch (Exception $e) {
+            Log::info('*** '.$e->getMessage());
+        } catch (\PhpOffice\PhpSpreadsheet\Exception $e) {
+            Log::info('*** PhpSpreadsheet exception: '.$e->getMessage());
+        }
+
+        return false;
     }
 
     public function remove(int $libItemId): void

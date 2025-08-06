@@ -5,14 +5,21 @@
 
     {{-- SEARCH --}}
     @if($hasSearch)
-        <div class="px-4 w-11/12">
+        <div class="flex px-4 w-11/12 justify-between items-center">
             <input
                 wire:model.live.debounce="globalSearch"
                 class="w-3/4"
                 type="text"
                 placeholder="Search title, artist name, or tag"
             />
+
+            <div>
+                <button wire:click="export" class="text-blue-500" title="export library items">
+                    <x-heroicons.arrowDownTray/>
+                </button>
+            </div>
         </div>
+
     @endif
 
     {{-- PAGE CONTENT --}}
