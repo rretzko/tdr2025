@@ -361,6 +361,7 @@
             <thead>
             <tr style="background-color: darkslategray; color: white;">
                 <th>Plan</th>
+                <th>Modules<sup>**</sup></th>
                 <th>Monthly</th>
                 <th>Yearly</th>
                 <th>Description</th>
@@ -369,48 +370,61 @@
             <tbody>
             <tr class="odd">
                 <td>Pioneer<span style="color: red;">*</span></td>
+                <td style="text-align: center;">7</td>
                 <td style="text-align: right; padding-right: 1rem;">$2.99</td>
                 <td style="text-align: right; padding-right: 1rem;">$27</td>
                 <td>Our earliest supporters and beta testers, instrumental in shaping the platform.</td>
             </tr>
             <tr>
                 <td>Early Adopter<span style="color: red;">*</span></td>
+                <td style="text-align: center;">7</td>
                 <td style="text-align: right; padding-right: 1rem;">$4.99</td>
                 <td style="text-align: right; padding-right: 1rem;">$45</td>
                 <td>Sign up at the launch or be among the first subscribers beyond New Jersey.</td>
             </tr>
             <tr class="odd">
                 <td>Patron<span style="color: red;">*</span></td>
+                <td style="text-align: center;">7</td>
                 <td style="text-align: right; padding-right: 1rem;">$6.99</td>
                 <td style="text-align: right; padding-right: 1rem;">$63</td>
                 <td>Wait for the product to evolve and then join to enjoy the full benefits.</td>
             </tr>
             <tr>
                 <td>Sponsor<span style="color: red;">*</span></td>
+                <td style="text-align: center;">7</td>
                 <td style="text-align: right; padding-right: 1rem;">$10.99</td>
                 <td style="text-align: right; padding-right: 1rem;">$99</td>
                 <td>I'm here to help shape the future of the product direction and champion the choral community.</td>
             </tr>
             <tr class="odd">
                 <td>Enterprise (School)</td>
+                <td style="text-align: center;">7</td>
                 <td style="text-align: center">–</td>
                 <td style="text-align: right; padding-right: 1rem;">$399</td>
                 <td>School-wide license through PO.</td>
             </tr>
             <tr>
                 <td>Enterprise (District)</td>
+                <td style="text-align: center;">7</td>
                 <td style="text-align: center">–</td>
                 <td style="text-align: right; padding-right: 1rem;">$799</td>
                 <td>District-wide license through PO.</td>
             </tr>
             <tr class="odd">
                 <td>Teacher</td>
+                <td>
+                    5
+                    <span style="font-size: 0.66rem; font-style: italic;">(excludes Ensembles and Programs</span>
+                </td>
                 <td style="text-align: right; padding-right: 1rem;">$2.99</td>
                 <td style="text-align: right; padding-right: 1rem;">$27</td>
                 <td>For now, I only want to use the Library module.</td>
             </tr>
             </tbody>
         </table>
+        <p>
+            <span>**</span> Modules: Schools, Students, Ensembles, Libraries, Programs, Events, Profile
+        </p>
 
         <p><strong><span style="color: red;">*</span>Community Contribution:</strong>
             Individual subscriptions
