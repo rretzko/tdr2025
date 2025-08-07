@@ -78,7 +78,7 @@ class LibraryItemForm extends Form
     public array $medleySelections = [];
     #[Validate('required', 'float', 'min:0', 'max:99')]
     public float $price = 0;
-    public string $itemType = 'octavo';
+    public string $itemType = 'digital'; //'octavo';
 
     /**
      * ex: array:1 [▼ // app\Livewire\Forms\LibraryItemForm.php:53
@@ -237,7 +237,7 @@ class LibraryItemForm extends Form
 
         $this->libraryId = 0;
 
-        $this->itemType = 'octavo';
+        $this->itemType = 'digital'; //'octavo';
         $this->count = 1;
         $this->price = 0;
 

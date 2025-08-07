@@ -35,6 +35,7 @@ class ItemTableComponent extends LibraryBasePage
 
     public bool $hasSearch = true;
 
+    public int $userId = 0;
     public int $voicingFilterId = 0;
 
     public function mount(): void
@@ -50,6 +51,8 @@ class ItemTableComponent extends LibraryBasePage
         $this->columnHeaders = $this->getColumnHeaders();
 
         $this->sortCol = 'lib_titles.alpha';
+
+        $this->userId = $this->getUserId();
     }
 
     public function render()
@@ -68,6 +71,7 @@ class ItemTableComponent extends LibraryBasePage
         $medleySelections = $this->getMedleySelections($rows);
         $voicings = $this->getVoicings($rows);
         $urls = $this->getItemUrls($rows);
+        $docs = $this->getItemDocs($rows, $this->library->id, $this->userId);
 
         return view('livewire..libraries.items.item-table-component',
             [
@@ -78,6 +82,7 @@ class ItemTableComponent extends LibraryBasePage
                 'medleySelections' => $medleySelections,
                 'voicings' => $voicings,
                 'urls' => $urls,
+                'docs' => $docs,
             ]
         );
     }
@@ -115,10 +120,12 @@ class ItemTableComponent extends LibraryBasePage
 
         $perfs = $this->getItemPerformances($rows);
 
+        $docs = $this->getItemDocs($rows, $this->library->id, $this->userId);
+
         $fileName = 'libraryItems_'.date('Ymd_His').'.csv';
 
         try {
-            return Excel::download(new LibraryItemsExport($rows, $tags, $urls, $perfs), $fileName);
+            return Excel::download(new LibraryItemsExport($rows, $tags, $urls, $perfs, $docs), $fileName);
         } catch (Exception $e) {
             Log::info('*** '.$e->getMessage());
         } catch (\PhpOffice\PhpSpreadsheet\Exception $e) {
@@ -196,6 +203,15 @@ class ItemTableComponent extends LibraryBasePage
         }
 
         return $selections;
+    }
+
+    private function getUserId(): int
+    {
+        if (auth()->user()->isLibrarian()) {
+            return LibLibrarian::where('user_id', auth()->id())->first()->teacherUserId;
+        }
+
+        return auth()->id();
     }
 
     private function getVoicings(): array

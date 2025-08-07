@@ -5,6 +5,7 @@ namespace App\Livewire\Libraries\Items;
 use App\Imports\LibraryItemsImport;
 use App\Jobs\ProcessLibraryItemsImport;
 use App\Models\Libraries\Items\Components\Artist;
+use App\Models\Libraries\Items\Components\LibItemDoc;
 use App\Models\Libraries\Items\Components\Voicing;
 use App\Models\Libraries\Library;
 use App\Models\Libraries\LibStack;
@@ -46,6 +47,7 @@ class ItemComponent extends BaseLibraryItemPage
     public string $tagCsv = '';
 
     public $uploadedFileContainer; //used as container for uploaded file
+    public string $uploadDescr = '';
     public int $uploadedMaxFileSize = 400000; //4MB
     public bool $uploadedMaxFileSizeExceeded = false;
     public string $uploadedMaxFileSizeExceededMessage = 'The uploaded file exceeds the upload_max_filesize directive in php.ini.';
@@ -106,6 +108,56 @@ class ItemComponent extends BaseLibraryItemPage
                 Log::info('Import completed successfully, continuing...');
             } else { //catch (\Exception $e) {
                 Log::error('stored file name is missing in '.__METHOD__.' @ line 99.');
+            }
+            $this->reset('uploadedFileContainer');
+            $this->displayFileImportForm = false;
+            $this->redirect("/library/$this->libraryId/items");
+//            } else {
+//                Log::info('No file was uploaded.');
+//            }
+        }
+    }
+
+    public function clickUploadDoc(): void
+    {
+        $this->reset('fileUploadMessage', 'uploadedMaxFileSizeExceeded');
+
+        $this->validate([
+            'uploadDescr' => 'required',
+        ]);
+
+        //check size
+        $fileSize = $this->uploadedFileContainer->getSize();
+        Log::info('fileSize: '.$fileSize);
+        //early exit if fileSize exceeds maxFileSIze
+        if ($fileSize > $this->uploadedMaxFileSize) {
+            $this->uploadedMaxFileSizeExceeded = true;
+        } else {
+            Log::info('fileSize is good @ '.$fileSize.'.');
+
+            //store the file on a s3 disk
+            $s3Path = 'libraries/items/docs';
+            $fileName = $this->makeLibItemDocFileName($s3Path);
+
+            Log::info('fileName: '.$fileName);
+            $storedFileName = $this->uploadedFileContainer->storePubliclyAs($s3Path, $fileName, 's3');
+            Log::info('storedFileName: '.$storedFileName);
+            if ($storedFileName) {
+                $userId = $this->form->getTeacherUserId();
+                LibItemDoc::updateOrCreate(
+                    [
+                        'library_id' => $this->libraryId,
+                        'lib_item_id' => $this->form->sysId,
+                        'user_id' => $userId,
+                        'url' => $storedFileName,
+                    ],
+                    [
+                        'label' => $this->uploadDescr,
+                    ]
+                );
+
+            } else { //catch (\Exception $e) {
+                Log::error('stored file name is missing in '.__METHOD__.' @ line 143.');
             }
             $this->reset('uploadedFileContainer');
             $this->displayFileImportForm = false;
@@ -268,6 +320,25 @@ class ItemComponent extends BaseLibraryItemPage
             ],
             []
         );
+    }
+
+    private function makeLibItemDocFileName(string $dir): string
+    {
+        $extension = $this->uploadedFileContainer->guessExtension();
+        $libraryName = Library::find($this->libraryId)->name;
+        //initialize $slug
+        $baseSlug = Str::slug($libraryName, '-');
+        //add lib_item_id
+        $baseSlug .= '-'.$this->form->sysId.'-';
+
+        do {
+            //add random number for unique id and extension
+            $tempName = $baseSlug.strtotime('now').'.'.$extension;
+
+            $exists = LibItemDoc::where('url', $dir.'/'.$tempName)->exists();
+        } while ($exists);
+
+        return $tempName;
     }
 
     private function search(): void

@@ -3,6 +3,7 @@
 namespace App\Traits\Libraries;
 
 use App\Models\Libraries\Items\Components\LibDigital;
+use App\Models\Libraries\Items\Components\LibItemDoc;
 use App\Models\Libraries\Items\Components\LibItemLocation;
 use App\Models\Libraries\Items\LibItem;
 use App\Models\Libraries\LibStack;
@@ -159,6 +160,22 @@ trait LibraryTableRowsTrait
             ->orderBy('lib_titles.alpha', 'asc')
             ->get()
             ->toArray();
+    }
+
+    public static function getItemDocs(array $rows, int $libraryId, int $userId): array
+    {
+        $docs = [];
+        foreach ($rows as $row) {
+            $docs[$row['libItemId']] = LibItemDoc::query()
+                ->where('lib_item_id', $row['libItemId'])
+                ->where('library_id', $libraryId)
+                ->where('user_id', $userId)
+                ->select('url', 'label')
+                ->get()
+                ->toArray();
+        }
+
+        return $docs;
     }
 
     public static function getItemLocations(array $rows, int $libraryId): array

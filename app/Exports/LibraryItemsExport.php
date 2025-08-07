@@ -34,6 +34,7 @@ class LibraryItemsExport implements FromArray, WithHeadings
         private readonly array $tags,
         private readonly array $urls,
         private readonly array $perfs, //performances
+        private readonly array $docs, //collateral docs
     )
     {
         $this->buildRows();
@@ -44,6 +45,7 @@ class LibraryItemsExport implements FromArray, WithHeadings
         foreach ($this->items as $item) {
 
             $libItemId = $item['libItemId'];
+            $docs = $this->parseDocs($this->docs[$libItemId]);
             $urls = $this->parseUrls($this->urls[$libItemId]);
 
             $this->rows[] = [
@@ -58,10 +60,29 @@ class LibraryItemsExport implements FromArray, WithHeadings
                 $item['musicName'],
                 $item['choreographerName'],
                 implode(', ', $this->tags[$libItemId]),
+                $docs,
                 $urls,
                 implode(', ', $this->perfs[$libItemId]),
             ];
         }
+    }
+
+    private function parseDocs(array $docs): string
+    {
+        //early exit
+        if (empty($docs)) {
+            return '';
+        }
+
+        $strs = [];
+        $aws = 'https://auditionsuite-production.s3.amazonaws.com/';
+
+        foreach ($docs as $doc) {
+
+            $strs[] = $aws.$doc['url'].' ('.$doc['label'].')';
+        }
+
+        return implode(', ', $strs);
     }
 
     private function parseUrls(array $urls): string
@@ -103,6 +124,7 @@ class LibraryItemsExport implements FromArray, WithHeadings
             'music',
             'choreo',
             'tags',
+            'docs',
             'web',
             'perf',
         ];

@@ -125,10 +125,25 @@
                     </div>
                 </td>
 
+                {{-- docs --}}
+                <td class="border border-gray-200 px-1 text-sm cursor-help">
+                    @foreach($docs[$row['libItemId']] AS $doc)
+                        <div class="flex justify-center">
+                            <a href="{{ \Illuminate\Support\Facades\Storage::disk('s3')->url($doc['url']) }}"
+                               class="text-blue-500"
+                               title="{{ $doc['label'] }}"
+                               target="_blank"
+                            >
+                                <x-heroicons.document/>
+                            </a>
+                        </div>
+                    @endforeach
+                </td>
+
                 {{-- digital copies --}}
-                <td class="border border-gray-200 px-1 text-left text-sm cursor-help">
+                <td class="border border-gray-200 px-1 text-sm cursor-help">
                     @foreach($urls[$row['libItemId']] AS $url)
-                        <div>
+                        <div class="flex justify-center">
                             <a href="{{ $url['url'] }}"
                                class="text-blue-500"
                                title="{{ $url['label'] }}"
@@ -139,7 +154,6 @@
                         </div>
                     @endforeach
                 </td>
-
 
                 {{-- student librarians do not have access to programs module --}}
                 @if(auth()->user()->isTeacher())
