@@ -78,7 +78,7 @@ class LibraryItemForm extends Form
     public array $medleySelections = [];
     #[Validate('required', 'float', 'min:0', 'max:99')]
     public float $price = 0;
-    public string $itemType = 'digital'; //'octavo';
+    public string $itemType = 'octavo';
 
     /**
      * ex: array:1 [▼ // app\Livewire\Forms\LibraryItemForm.php:53
@@ -182,7 +182,7 @@ class LibraryItemForm extends Form
                     'price' => ConvertToPenniesService::usdToPennies($this->price),
                 ],
             );
-
+            Log::info('libStackId: '.$libStack->id);
             if ($this->addToHomeLibrary) {
                 $this->addToHomeLibraryStack($libStack);
             }
@@ -237,7 +237,7 @@ class LibraryItemForm extends Form
 
         $this->libraryId = 0;
 
-        $this->itemType = 'digital'; //'octavo';
+        $this->itemType = 'octavo';
         $this->count = 1;
         $this->price = 0;
 
@@ -266,7 +266,8 @@ class LibraryItemForm extends Form
     {
         $this->sysId = $libItem->id;
 
-        //item type
+        //item type is persisted at digital so that the form doesn't jump when adding
+        //collateral digital information to a selected item
         $this->itemType = ($this->itemType === 'digital') ? $this->itemType : $libItem->item_type;
         $this->setAddToHomeLibraryDefault();
         $this->policies['canEdit']['itemType'] = false;

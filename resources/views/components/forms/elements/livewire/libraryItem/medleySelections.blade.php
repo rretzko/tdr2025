@@ -1,6 +1,6 @@
 <div class="border border-gray-400 p-2 mt-2">
     <div class="font-bold mb-2">
-        Medley Selections
+        {{ ucwords($form->itemType) }} Selections
         <span class="font-normal text-xs italic ">What songs are included in this medley?</span>
     </div>
     @if((! isset($form->policies['canEdit']['medleySelections'])) || $form->policies['canEdit']['medleySelections'])

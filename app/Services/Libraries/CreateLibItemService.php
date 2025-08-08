@@ -65,9 +65,11 @@ class CreateLibItemService
         $this->title = $this->form->title;
 
         $this->errorCheck();
-        if (!empty($this->errors)) {
-            dump($this->errors);
+
+        if (count($this->errors)) {
+            dd($this->errors);
         }
+
         if (!count($this->errors)) {
             $this->add();
         } else {
@@ -212,7 +214,7 @@ class CreateLibItemService
 
     private function getVoicingId(): int|null
     {
-        if ($this->isTextBook()) {
+        if (!$this->needsVoicing()) {
             return null;
         }
 
@@ -262,7 +264,9 @@ class CreateLibItemService
 
     private function needsVoicing(): bool
     {
-        return !$this->isTextBook();
+        $requiresVoicing = ['octavo', 'medley'];
+
+        return in_array($this->itemType, $requiresVoicing);
     }
 
     private function setTeacherId(): int

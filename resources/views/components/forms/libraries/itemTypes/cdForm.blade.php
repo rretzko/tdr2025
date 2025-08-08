@@ -1,28 +1,28 @@
 <div>
-    @php($moduleName="cd items")
-    @include('components.underConstructions.underConstructionApp')
-    {{--    <x-underConstructions.underConstructionApp moduleName="digital library items" libraryId="{{ $form->libraryId }}"/>--}}
     {{-- TITLE --}}
-    {{--    @include('components.forms.elements.livewire.libraryItem.title')--}}
+    @include('components.forms.elements.livewire.libraryItem.title')
 
     {{-- VOICING --}}
-    {{--    @include('components.forms.elements.livewire.libraryItem.voicings')--}}
+    @include('components.forms.elements.livewire.libraryItem.voicings')
 
-    {{-- COUNT & PRICE --}}
-    {{--    @include('components.forms.elements.livewire.libraryItem.count')--}}
+    {{-- COUNT --}}
+    @include('components.forms.elements.livewire.libraryItem.count')
 
     {{-- ARTISTS --}}
-    {{--    @include('components.forms.elements.livewire.libraryItem.artistsBlock')--}}
+    @include('components.forms.elements.livewire.libraryItem.artistsBlock')
+
+    @include('components.forms.elements.livewire.libraryItem.medleySelections')
 
     {{-- TAGS --}}
-    {{--    @include('components.forms.elements.livewire.libraryItem.tags')--}}
+    @include('components.forms.elements.livewire.libraryItem.tags')
 
     {{-- COMMENTS AND RATING --}}
     @if(auth()->user()->isTeacher())
-        {{--        @include('components.forms.elements.livewire.libraryItem.commentsRatings')--}}
+        @include('components.forms.elements.livewire.libraryItem.commentsRatings')
     @endif
 
     {{-- LOCATION --}}
-    {{--    @include('components.forms.elements.livewire.libraryItem.location')--}}
+    @include('components.forms.elements.livewire.libraryItem.location')
 
 </div>
+
