@@ -45,7 +45,6 @@ class ItemComponent extends BaseLibraryItemPage
         'words' => '',
     ];
     public string $tagCsv = '';
-
     public $uploadedFileContainer; //used as container for uploaded file
     public string $uploadDescr = '';
     public int $uploadedMaxFileSize = 400000; //4MB
@@ -71,7 +70,6 @@ class ItemComponent extends BaseLibraryItemPage
         }
 
         $this->uploadTemplateUrl = \Storage::disk('s3')->url('templates/libraryItemUploadTemplate.csv');
-
     }
 
     public function render()

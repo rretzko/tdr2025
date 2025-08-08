@@ -76,6 +76,7 @@ trait LibraryTableRowsTrait
         string $sortCol = 'lib_titles.title',
         bool $sortAsc = true,
         int $voicingFilterId = 0,
+        string $typeFilterDescr = 'all',
     ): array
     {
         $searchFor = '%'.$searchValue.'%';
@@ -83,6 +84,9 @@ trait LibraryTableRowsTrait
         $voicingOperand = ($voicingFilterId > 0)
             ? '='
             : '>';
+
+        $typeFilters = self::calcTypeFilters($typeFilterDescr);
+
 
         return LibStack::query()
             ->join('lib_items', 'lib_stacks.lib_item_id', '=', 'lib_items.id')
@@ -102,8 +106,12 @@ trait LibraryTableRowsTrait
 //            ->leftJoin('lib_digitals', 'lib_items.id', '=', 'lib_digitals.lib_item_id')
             ->where('lib_stacks.library_id', $libraryId)
             ->where(function ($query) use ($voicingOperand, $voicingFilterId) {
-                $query->where('lib_items.voicing_id', $voicingOperand, $voicingFilterId)
-                    ->orWhereNull('lib_items.voicing_id');
+                $query->where('lib_items.voicing_id', $voicingOperand, $voicingFilterId);
+//                    ->orWhereNull('lib_items.voicing_id');
+            })
+            ->where(function ($query) use ($typeFilters) {
+                $query->whereIN('lib_items.item_type', $typeFilters);
+//                    ->orWhereNull('lib_items.voicing_id');
             })
             ->when($ensembleId, function ($query) use ($ensembleId) {
                 $query->join('program_selections', 'lib_stacks.lib_item_id', '=', 'program_selections.lib_item_id')
@@ -240,5 +248,15 @@ trait LibraryTableRowsTrait
         }
 
         return $urls;
+    }
+
+    private static function calcTypeFilters(string $typeDescr): array
+    {
+        return match ($typeDescr) {
+            'all' => ['octavo', 'medley', 'book', 'digital', 'cd', 'dvd', 'cassette', 'vinyl'],
+            'paper' => ['octavo', 'medley', 'book'],
+            'recordings' => ['digital', 'cd', 'dvd', 'cassette', 'vinyl'],
+            $typeDescr => [$typeDescr],
+        };
     }
 }

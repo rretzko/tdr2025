@@ -35,6 +35,9 @@ class ItemTableComponent extends LibraryBasePage
 
     public bool $hasSearch = true;
 
+    public array $typeFilters = [];
+    public int $typeFilterId = 0;
+
     public int $userId = 0;
     public int $voicingFilterId = 0;
 
@@ -53,6 +56,8 @@ class ItemTableComponent extends LibraryBasePage
         $this->sortCol = 'lib_titles.alpha';
 
         $this->userId = $this->getUserId();
+
+        $this->typeFilters = $this->getTypeFilters();
     }
 
     public function render()
@@ -64,6 +69,7 @@ class ItemTableComponent extends LibraryBasePage
             $this->sortCol,
             $this->sortAsc,
             $this->voicingFilterId,
+            $this->typeFilters[$this->typeFilterId],
         );
         $locations = $this->getItemLocations($rows, $this->library->id);
         $performances = $this->getItemPerformances($rows);
@@ -172,11 +178,6 @@ class ItemTableComponent extends LibraryBasePage
         $this->sortCol = $properties[$key];
     }
 
-    public function updatedVoicingFilterId()
-    {
-        //re-render
-    }
-
     private function canHaveSelections(string $itemType, $medleyTitles): bool
     {
         $hasSelections = ['medley', 'cd', 'dvd', 'cassette', 'vinyl'];
@@ -203,6 +204,22 @@ class ItemTableComponent extends LibraryBasePage
         }
 
         return $selections;
+    }
+
+    private function getTypeFilters(): array
+    {
+        return [
+            'all',
+            'paper',
+            'recordings',
+            'octavo',
+            'medley',
+            'digital',
+            'cd',
+            'dvd',
+            'cassette',
+            'vinyl'
+        ];
     }
 
     private function getUserId(): int

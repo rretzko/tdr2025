@@ -30,7 +30,7 @@
             <div class="flex flex-row space-x-1 items-center mb-2">
                 <div>{{ $library->name }} Items /</div>
                 <select wire:model.live="voicingFilterId">
-                    <option value="0">All</option>
+                    <option value="0">ALL</option>
                     @forelse($voicings AS $key => $value)
                         <option value="{{ $key }}">
                             {{ strtoupper($value) }}
@@ -38,6 +38,14 @@
                     @empty
                         {{-- do nothing else --}}
                     @endforelse
+                </select>
+                <div> /</div>
+                <select wire:model.live="typeFilterId">
+                    @foreach($typeFilters AS $key => $typeFilter)
+                        <option value="{{ $key }}">
+                            {{ strtoupper($typeFilter) }}
+                        </option>
+                    @endforeach
                 </select>
                 {{-- item count --}}
                 <div class="text-xs italic">

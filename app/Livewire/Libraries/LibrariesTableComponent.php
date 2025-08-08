@@ -17,6 +17,7 @@ class LibrariesTableComponent extends BasePage
 {
     public array $columnHeaders = [];
     public bool $displayForm = false;
+
     public LibraryForm $form;
     public string $studentLibrarianEmail = '';
     public string $studentLibrarianPassword = '';
