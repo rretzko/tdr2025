@@ -7,9 +7,11 @@ use App\Jobs\ProcessLibraryItemsImport;
 use App\Models\Libraries\Items\Components\Artist;
 use App\Models\Libraries\Items\Components\LibItemDoc;
 use App\Models\Libraries\Items\Components\Voicing;
+use App\Models\Libraries\LibLibrarian;
 use App\Models\Libraries\Library;
 use App\Models\Libraries\LibStack;
 use App\Models\Libraries\Items\LibItem;
+use App\Models\User;
 use App\Services\ArtistSearchService;
 use App\Services\Libraries\CreateLibItemService;
 use App\Services\Libraries\LibraryStackSearchService;
@@ -68,6 +70,8 @@ class ItemComponent extends BaseLibraryItemPage
         } else {
             $this->form->resetVars();
         }
+
+        $this->form->teacherEmail = $this->setTeacherEmail();
 
         $this->uploadTemplateUrl = \Storage::disk('s3')->url('templates/libraryItemUploadTemplate.csv');
     }
@@ -274,6 +278,12 @@ class ItemComponent extends BaseLibraryItemPage
     public function updatedFormItemType($value): void
     {
         $this->form->setAddToHomeLibraryDefault();
+        $this->form->setItemTypeDefault();
+    }
+
+    public function updatedFormBookType(): void
+    {
+        $this->form->setItemTypeDefault();
     }
 
     /**
@@ -362,6 +372,16 @@ class ItemComponent extends BaseLibraryItemPage
             ];
         }
 
+    }
+
+    private function setTeacherEmail(): string
+    {
+        if (auth()->user()->isTeacher()) {
+            return auth()->user()->email;
+        }
+
+        $libLibrarian = LibLibrarian::where('user_id', auth()->id())->first();
+        return User::where('id', $libLibrarian->teacherUserId)->first()->email;
     }
 
     private function updatedFormArtistsType(string $value, string $type): void

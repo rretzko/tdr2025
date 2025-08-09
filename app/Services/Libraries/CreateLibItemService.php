@@ -215,7 +215,7 @@ class CreateLibItemService
     private function getVoicingId(): int|null
     {
         if (!$this->needsVoicing()) {
-            return null;
+            return $this->voicingId ?: 41; //none
         }
 
         //check for new voicing

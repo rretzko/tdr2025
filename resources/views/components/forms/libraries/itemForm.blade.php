@@ -30,7 +30,7 @@
             {{-- FORM --}}
             <div id="inputs"
                 @class([
-                   "w-full bg-gray-100 p-2 rounded-lg",
+                   "w-full $form->backgroundColor p-2 rounded-lg",
                    "sm:w-3/4 " => (!$form->sysId)
                ])
             >

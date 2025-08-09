@@ -56,7 +56,7 @@ class LibraryItemForm extends Form
     ];
 
     public bool $addToHomeLibrary = false;
-
+    public string $backgroundColor = 'bg-gray-100';
     public string|null $bookType = 'music';
 
     #[Validate('required')]
@@ -67,6 +67,7 @@ class LibraryItemForm extends Form
     public string $difficulty = 'medium';
 
     public array $digitalUrls = [];
+
     public string $digitalUrl = '';
     public string $digitalUrlLabel = '';
     public string $level = 'high-school';
@@ -105,6 +106,7 @@ class LibraryItemForm extends Form
     public int $rating = 1;
     public int $sysId = 0;
     public array $tags = [];
+    public string $teacherEmail = '';
     public string $title = ''; //'Fundamentals of sight singing and ear training';
     public string $voicingDescr = '';
     public int|null $voicingId = 0;
@@ -130,6 +132,22 @@ class LibraryItemForm extends Form
         $this->addToHomeLibrary = (in_array($type, $validTypes))
             ? optional($libPerusalCopy)->{$type} ?? false
             : false;
+    }
+
+    public function setItemTypeDefault(): void
+    {
+        $needsVoicings = ['octavo', 'medley'];
+        $isMusicBook = (($this->itemType === 'book') && ($this->bookType === 'music'));
+
+        if (in_array($this->itemType, $needsVoicings) || $isMusicBook) {
+            $this->voicingId = 0;
+            $this->voicingDescr = '';
+        } else {
+            $this->voicingId = 41;
+            $this->voicingDescr = 'none';
+        }
+
+        $this->backgroundColor = $this->setFormBackgroundColor();
     }
 
     /**
@@ -677,6 +695,19 @@ class LibraryItemForm extends Form
         for ($i = 0; $i < 2; $i++) {
             $this->digitalUrls[] = ['url' => '', 'label' => ''];
         }
+    }
+
+    private function setFormBackgroundColor(): string
+    {
+        return match ($this->itemType) {
+            'medley' => 'bg-blue-100',
+            'book' => 'bg-green-100',
+            'digital' => 'bg-indigo-100',
+            'cd' => 'bg-orange-100',
+            'dvd' => 'bg-slate-200',
+            'cassette' => 'bg-red-100',
+            'vinyl' => 'bg-yellow-200'
+        };
     }
 
     private function setLocations(LibItem $libItem): void

@@ -11,7 +11,7 @@ export default {
         './resources/views/**/*.blade.php',
         './resources/**/*.js',
         './resources/**/*.vue',
-        
+
     ],
     safelist: [
         'accent-red-500',
@@ -35,6 +35,8 @@ export default {
         'bg-blue-400',
         'bg-blue-600',
         'bg-blue-800',
+        'bg-slate-100',
+        'bg-slate-200',
         'border-indigo-500',
         'border-b-black',
         'border-b-blue-500',
