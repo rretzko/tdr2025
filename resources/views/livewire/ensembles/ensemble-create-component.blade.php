@@ -97,20 +97,22 @@
                 </div>
 
                 {{-- ENSEMBLE ASSET CHECKBOXES --}}
-                <div class="mt-4 sm:mt-0 sm:ml-4 sm:border border-white border-l-gray-200 sm:px-4">
-                    <h3 class="underline bold">Assets assigned to members</h3>
-                    @foreach($assets AS $asset)
+                @if(auth()->user()->isFounder())
+                    <div class="mt-4 sm:mt-0 sm:ml-4 sm:border border-white border-l-gray-200 sm:px-4">
+                        <h3 class="underline bold">Assets assigned to members</h3>
+                        @foreach($assets AS $asset)
 
-                        <div wire:key="asset-{{ $asset->id }}" class="-mb-4">
-                            <x-forms.elements.livewire.inputCheckbox
-                                label="{{ $asset->name }}"
-                                name="form.ensembleAssets"
-                                value="{{ $asset->id }}"
-                            />
-                        </div>
-                    @endforeach
+                            <div wire:key="asset-{{ $asset->id }}" class="-mb-4">
+                                <x-forms.elements.livewire.inputCheckbox
+                                    label="{{ $asset->name }}"
+                                    name="form.ensembleAssets"
+                                    value="{{ $asset->id }}"
+                                />
+                            </div>
+                        @endforeach
 
-                </div>
+                    </div>
+                @endif
 
             </div>
 

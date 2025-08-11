@@ -10,9 +10,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Traits\Ensembles\QualifyTabsTrait;
 
 class MembersTableComponent extends BasePageMember
 {
+    use QualifyTabsTrait;
     public function mount(): void
     {
         parent::mount();
@@ -43,7 +45,7 @@ class MembersTableComponent extends BasePageMember
             [
                 'columnHeaders' => $this->getColumnHeaders(),
                 'rows' => $this->getMembers(),
-                'tabs' => self::ENSEMBLETABS,
+                'tabs' => $this->qualifyTabs(self::ENSEMBLETABS),
             ]);
     }
 

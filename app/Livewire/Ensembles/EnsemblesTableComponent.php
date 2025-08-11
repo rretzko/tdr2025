@@ -8,9 +8,11 @@ use App\Models\Schools\Teacher;
 use App\Models\UserFilter;
 use Illuminate\Support\Facades\DB;
 use Livewire\Features\SupportRedirects\Redirector;
+use App\Traits\Ensembles\QualifyTabsTrait;
 
 class EnsemblesTableComponent extends BasePageEnsemble
 {
+    use QualifyTabsTrait;
     public EnsembleForm $form;
     public array $ensembleAssetsArray = [];
     public string $selectedTab = 'ensembles';
@@ -24,6 +26,8 @@ class EnsemblesTableComponent extends BasePageEnsemble
 
             $this->hasFilters = true;
         }
+
+        $this->tabs = $this->qualifyTabs($this->tabs);
     }
 
     public function render()
@@ -140,16 +144,4 @@ class EnsemblesTableComponent extends BasePageEnsemble
             ->toArray();
     }
 
-//    private function updateUserFiltersTable(): void
-//    {
-//        UserFilter::create(
-//            [
-//                'user_id' => auth()->id(),
-//                'header' => $this->dto['header'],
-//                'filter' => 'schoolSelectedIds',
-//                'values' => implode(',', $this->filters->schoolsSelectedIds)
-//
-//            ]
-//        );
-//    }
 }

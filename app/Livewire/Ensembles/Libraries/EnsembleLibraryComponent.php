@@ -6,7 +6,9 @@ use App\Livewire\Forms\EnsembleLibraryForm;
 use App\Livewire\Libraries\LibraryBasePage;
 use App\Models\Ensembles\Ensemble;
 use App\Models\Libraries\Items\Components\LibItemLocation;
+use App\Models\Libraries\Items\Components\LibMedleySelection;
 use App\Models\Libraries\Items\LibItem;
+use App\Models\Libraries\LibLibrarian;
 use App\Models\Libraries\Library;
 use App\Models\Programs\Program;
 use App\Models\Schools\Teacher;
@@ -34,6 +36,7 @@ class EnsembleLibraryComponent extends LibraryBasePage
     public string $searchTitle = '';
     public string $searchValue = '';
     public array $statuses = [];
+    public int $userId = 0;
 
     public function mount(): void
     {
@@ -64,6 +67,8 @@ class EnsembleLibraryComponent extends LibraryBasePage
         $this->sortCol = 'lib_titles.title';
         $this->sortColLabel = 'title';
         $this->sortAsc = true;
+
+        $this->userId = $this->getUserId();
     }
 
     public function render()
@@ -73,6 +78,9 @@ class EnsembleLibraryComponent extends LibraryBasePage
         $locations = $this->getItemLocations($rows, $this->libraryId);
         $performances = $this::getItemPerformances($rows);
         $tags = $this->getItemTags($rows);
+        $docs = $this->getItemDocs($rows, $this->libraryId, $this->userId);
+        $urls = $this->getItemUrls($rows);
+        $medleySelections = $this->getMedleySelections($rows);
 
         return view('livewire..ensembles.libraries.ensemble-library-component',
             [
@@ -82,6 +90,9 @@ class EnsembleLibraryComponent extends LibraryBasePage
                 'itemsToPullCount' => count($this->itemsToPull),
                 'locations' => $locations,
                 'tags' => $tags,
+                'docs' => $docs,
+                'urls' => $urls,
+                'medleySelections' => $medleySelections,
             ]);
     }
 
@@ -114,6 +125,44 @@ class EnsembleLibraryComponent extends LibraryBasePage
         $this->sortCol = $map[$value];
         $this->sortAsc = !$this->sortAsc;
     }
+
+    protected function getMedleySelections(array $rows): array
+    {
+        $selections = [];
+        foreach ($rows as $row) {
+            if ($this->canHaveSelections($row['item_type'], $row['medleyTitles'])) {
+                $selections[$row['libItemId']] = LibMedleySelection::where('lib_item_id', $row['libItemId'])->get();
+            }
+        }
+
+        return $selections;
+    }
+
+    private function getUserId(): int
+    {
+        if (auth()->user()->isLibrarian()) {
+            return LibLibrarian::where('user_id', auth()->id())->first()->teacherUserId;
+        }
+
+        return auth()->id();
+    }
+
+    private function canHaveSelections(string $itemType, $medleyTitles): bool
+    {
+        $hasSelections = ['medley', 'cd', 'dvd', 'cassette', 'vinyl'];
+        if (in_array($itemType, $hasSelections)) {
+            return true;
+        }
+
+        if (($itemType === 'book')
+            && (!is_null($medleyTitles))
+            && (strlen($medleyTitles) > 0)) {
+            return true;
+        }
+
+        return false;
+    }
+
 
     private function getRows(): array
     {
