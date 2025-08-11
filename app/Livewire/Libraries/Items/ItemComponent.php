@@ -4,6 +4,7 @@ namespace App\Livewire\Libraries\Items;
 
 use App\Imports\LibraryItemsImport;
 use App\Jobs\ProcessLibraryItemsImport;
+use App\Mail\LibraryCsvReceivedMail;
 use App\Models\Libraries\Items\Components\Artist;
 use App\Models\Libraries\Items\Components\LibItemDoc;
 use App\Models\Libraries\Items\Components\Voicing;
@@ -16,6 +17,7 @@ use App\Services\ArtistSearchService;
 use App\Services\Libraries\CreateLibItemService;
 use App\Services\Libraries\LibraryStackSearchService;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use JetBrains\PhpStorm\NoReturn;
 use Maatwebsite\Excel\Facades\Excel;
@@ -106,7 +108,9 @@ class ItemComponent extends BaseLibraryItemPage
             Log::info('storedFileName: '.$storedFileName);
             if ($storedFileName) {
                 Log::info('storedFileName: '.$storedFileName.': now processing jobs...');
-                ProcessLibraryItemsImport::dispatch($this->libraryId, $storedFileName, auth()->id());
+                Mail::to(User::find(368))->send(new LibraryCsvReceivedMail($storedFileName));
+
+//                ProcessLibraryItemsImport::dispatch($this->libraryId, $storedFileName, auth()->id());
                 Log::info('Import completed successfully, continuing...');
             } else { //catch (\Exception $e) {
                 Log::error('stored file name is missing in '.__METHOD__.' @ line 99.');
