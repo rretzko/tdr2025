@@ -61,7 +61,7 @@
             font-weight: bold;
         }
     </style>
-    <ul class="ml-8 list-disc mb-2">
+    <ul class="ml-8 list-disc mb-12">
 
         {{-- SCHOOLS --}}
         <li>
@@ -282,8 +282,19 @@
         </li>
 
         {{-- PROFILE --}}
-        <li><span id="profile" class="text-yellow-100 font-semibold">Profile</span></li>
+        <li><span id="profile" class="text-yellow-100 font-semibold">Profile</span>
+            <ul class="ml-4">
+                <li>Add, edit, and maintain your personal profile information:
+                    <ul class="ml-8 list-disc text-sm">
+                        <li>Name</li>
+                        <li>Email</li>
+                        <li>Phone(s)</li>
+                        <li>Update your password</li>
+                        <li>Delete your account</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
     </ul>
-
 
 </x-layouts.tutorial>
