@@ -1,6 +1,52 @@
 <x-layouts.tutorial>
     <x-slot name="header">Tutorial Dashboard</x-slot>
 
+    {{-- TABS --}}
+    <div class="sticky top-4 z-50 bg-gray-800">
+        <div id="tabs"
+             class="flex flex-row space-x-1 justify-around sm:justify-start text-sm my-2 "
+        >
+            <a href="#schools"
+               class="flex flex-row space-x-1 border border-yellow-50 text-yellow-100 px-2 py-1 rounded-md inline-flex items-center">
+                <x-heroicons.building/>
+                <div class="hidden lg:block">Schools</div>
+            </a>
+
+            <a href="#students"
+               class="flex flex-row space-x-1 border border-yellow-50 text-yellow-100 px-2 py-1 rounded-md inline-flex items-center">
+                <x-heroicons.mortarBoard/>
+                <div class="hidden lg:block">Students</div>
+            </a>
+
+            <a href="#ensembles"
+               class="flex flex-row space-x-1 border border-yellow-50 text-yellow-100 px-2 py-1 rounded-md inline-flex items-center">
+                <x-heroicons.people/>
+                <div class="hidden lg:block">Ensembles</div>
+            </a>
+
+            <a href="#libraries"
+               class="flex flex-row space-x-1 border border-yellow-50 text-yellow-100 px-2 py-1 rounded-md inline-flex items-center">
+                <x-heroicons.bookOpen/>
+                <div class="hidden lg:block">Libraries</div>
+            </a>
+            <a href="#programs"
+               class="flex flex-row space-x-1 border border-yellow-50 text-yellow-100 px-2 py-1 rounded-md inline-flex items-center">
+                <x-heroicons.ticket/>
+                <div class="hidden lg:block">Programs</div>
+            </a>
+            <a href="#events"
+               class="flex flex-row space-x-1 border border-yellow-50 text-yellow-100 px-2 py-1 rounded-md inline-flex items-center">
+                <x-heroicons.calendar/>
+                <div class="hidden lg:block">Events</div>
+            </a>
+            <a href="#profile"
+               class="flex flex-row space-x-1 border border-yellow-50 text-yellow-100 px-2 py-1 rounded-md inline-flex items-center">
+                <x-heroicons.person/>
+                <div class="hidden lg:block">Profile</div>
+            </a>
+        </div>
+    </div>
+
     <p class="underline mb-2">
         Use the left-hand menu select a specific tutorial.
     </p>
@@ -8,17 +54,18 @@
     <p>
         <a href="https://thedirectorsroom.com">TheDirectorsRoom.com</a> is composed of seven applications:
     </p>
+
+    {{-- CONTENT --}}
     <style>
         .moduleName {
             font-weight: bold;
-            color: blanchedalmond;
         }
     </style>
     <ul class="ml-8 list-disc mb-2">
 
         {{-- SCHOOLS --}}
         <li>
-            <span class="moduleName">Schools</span>
+            <span id="schools" class="text-yellow-100 font-semibold">Schools</span>
             <ul class="ml-4">
                 <li>
                     Add, edit, and maintain information about your school or schools including:
@@ -35,7 +82,7 @@
 
         {{-- STUDENTS --}}
         <li>
-            <span class="moduleName">Students</span>
+            <span class="text-yellow-100 font-semibold">Students</span>
             <ul class="ml-4">
                 <li>
                     Add, edit, and maintain student information including:
@@ -52,7 +99,7 @@
 
         {{-- ENSEMBLES --}}
         <li>
-            <span class="moduleName">Ensembles</span>
+            <span class="text-yellow-100 font-semibold">Ensembles</span>
             <ul class="ml-4">
                 <li>Add, edit, and maintain school ensemble information including:
                     <ul class="ml-8 list-disc text-sm">
@@ -68,7 +115,7 @@
 
         {{--LIBRARIES --}}
         <li>
-            <span class="moduleName">Libraries</span>
+            <span id="libraries" class="text-yellow-100 font-semibold">Libraries</span>
             <ul class="ml-4">
                 <li>Add, edit, and maintain library items:
                     <ul class="ml-8 list-disc text-sm">
@@ -112,7 +159,7 @@
             </ul>
         </li>
         <li>
-            <span class="moduleName">Programs</span>
+            <span id="programs" class="text-yellow-100 font-semibold">Programs</span>
             <ul class="ml-4">
                 <li>Add, edit, and maintain an online version of your concert programs
                     <ul class="ml-8 list-disc text-sm">
@@ -148,8 +195,8 @@
                 </li>
             </ul>
         </li>
-        <li><span class="moduleName">Events</span></li>
-        <li><span class="moduleName">Profile</span></li>
+        <li><span id="events" class="text-yellow-100 font-semibold">Events</span></li>
+        <li><span id="profile" class="text-yellow-100 font-semibold">Profile</span></li>
     </ul>
 
 
