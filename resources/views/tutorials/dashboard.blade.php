@@ -158,6 +158,8 @@
                 </li>
             </ul>
         </li>
+
+        {{-- PROGRAMS --}}
         <li>
             <span id="programs" class="text-yellow-100 font-semibold">Programs</span>
             <ul class="ml-4">
@@ -195,7 +197,91 @@
                 </li>
             </ul>
         </li>
-        <li><span id="events" class="text-yellow-100 font-semibold">Events</span></li>
+
+        {{-- EVENTS --}}
+        <li><span id="events" class="text-yellow-100 font-semibold">Events</span>
+            <ul class="ml-4">
+                <li>Events has two sub-applications:
+                    <ul class="ml-8 list-disc text-sm">
+                        <li>
+                            <b>Event Participation</b>: For teachers who are participating in events managed through
+                            TheDirectorsRoom.com, and
+                            <ul class="ml-8 list-disc text-sm">
+                                <li>Event Participation allows you to edit and update event registration information for
+                                    students interested in a sponsored event.
+                                </li>
+                                <li>Candidate Roster: Update the status of students eligible for participation in a
+                                    selected event.
+                                </li>
+                                <li>Candidate information includes status (eligible, engaged, registered, etc.),</li>
+                                <li>Student bio information: name, grade, auditioning voice part, email, phone(s),
+                                    program name, home address,
+                                </li>
+                                <li>Emergency contact information: name, relationship, phone(s), email,</li>
+                                <li>Sign-offs: student, parent, and teacher,</li>
+                                <li>Registration submissions: audio or video recordings</li>
+                                <li>When the event closes, this section converts to display the student audition
+                                    results.
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <b>Manage Events</b>: For the management of events (ex. regional/All-State/other choral
+                            events).
+                            <ul class="ml-8 list-disc text-sm">
+                                <li>Manage Events has multiple sub-applications depending on event management role
+                                    <ul class="ml-8 list-disc text-sm">
+                                        <li><b>Event Manager</b>
+                                            <ul class="ml-8 list-disc text-sm">
+                                                <li>Version Profile</li>
+                                                <li>Configurations</li>
+                                                <li>Dates</li>
+                                                <li>Participants</li>
+                                                <li>Event Version Roles</li>
+                                                <li>Pitch Files</li>
+                                                <li>Scoring</li>
+                                                <li>Attachments</li>
+                                            </ul>
+                                        </li>
+                                        <li><b>Online Registration Manager</b>
+                                            <ul class="ml-8 list-disc text-sm">
+                                                <li>Student Transfer</li>
+                                            </ul>
+                                        </li>
+                                        <li><b>Registration Manager(s)</b>
+                                            <ul class="ml-8 list-disc text-sm">
+                                                <li>Co-Registration Managers</li>
+                                                <li>Judge Assignment</li>
+                                                <li>School Timeslots</li>
+                                                <li>Registration Reports</li>
+                                            </ul>
+                                        </li>
+                                        <li><b>Tab Room</b>
+                                            <ul class="ml-8 list-disc text-sm">
+                                                <li>Add/Edit Scores</li>
+                                                <li>Adjudication Tracking</li>
+                                                <li>Ensemble Cut-offs</li>
+                                                <li>Tabroom Reports</li>
+                                                <li>Tabroom Close Auditions</li>
+                                            </ul>
+                                        </li>
+                                        <li><b>Rehearsal Manager</b>
+                                            <ul class="ml-8 list-disc text-sm">
+                                                <li>Participation Fees</li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>Please see the Events tutorial for a detailed breakdown of the sub-applications.
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+
+        {{-- PROFILE --}}
         <li><span id="profile" class="text-yellow-100 font-semibold">Profile</span></li>
     </ul>
 
