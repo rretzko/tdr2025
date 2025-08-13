@@ -34,6 +34,7 @@ class LibraryStackSearchService
         $searchString = $this->buildSearchString($this->form->title);
 
         $titleIds = LibTitle::where('title', 'LIKE', $searchString)->pluck('id')->toArray();
+        $itemTypes = $this->getItemTypes();
 
         $this->itemIds = DB::table('lib_items')
             ->join('lib_titles', 'lib_titles.id', '=', 'lib_items.lib_title_id')
@@ -44,6 +45,7 @@ class LibraryStackSearchService
             ->leftJoin('artists as music', 'music.id', '=', 'lib_items.music_id')
             ->leftJoin('artists as choreographer', 'choreographer.id', '=', 'lib_items.choreographer_id')
             ->whereIn('lib_items.lib_title_id', $titleIds)
+            ->whereIn('lib_items.item_type', $itemTypes)
             ->select('lib_items.id',
                 'composer.alpha_name as composer',
                 'arranger.alpha_name as arranger',
@@ -83,6 +85,13 @@ class LibraryStackSearchService
     private function buildSearchString(string $string): string
     {
         return '%' . $string . '%';
+    }
+
+    private function getItemTypes(): array
+    {
+        return ($this->form->itemType === 'digital')
+            ? ['octavo', 'medley', 'cd', 'dvd', 'cassette', 'vinyl']
+            : [$this->form->itemType];
     }
 
     private function setSearchResults(): string

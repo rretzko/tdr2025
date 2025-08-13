@@ -214,8 +214,10 @@ class CreateLibItemService
 
     private function getVoicingId(): int|null
     {
+        $noneVoicingId = Voicing::where('descr', 'none')->first()->id;
+
         if (!$this->needsVoicing()) {
-            return $this->voicingId ?: 41; //none
+            return $this->voicingId ?: $noneVoicingId; //none
         }
 
         //check for new voicing

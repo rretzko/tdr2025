@@ -399,7 +399,9 @@ class ItemComponent extends BaseLibraryItemPage
             $this->searchResultsArtists[$type] = null;
             $this->form->artists[$type] = '';
             $this->form->artistIds[$type] = 0;
-            $this->libItem->update([$type => 0]);
+            if (isset($this->libItem)) {
+                $this->libItem->update([$type => 0]);
+            }
         }
     }
 
