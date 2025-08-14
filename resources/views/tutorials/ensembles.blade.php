@@ -1,5 +1,14 @@
 <x-layouts.tutorial>
-    <x-slot name="header" class="text-gray-100">Ensembles Tutorial</x-slot>
-    <p class="text-gray-100 mt-4">This is the Ensembles tutorial page.</p>
-    <x-underConstructions.underConstruction moduleName="ensembles"/>
+    <x-slot name="header">Ensembles Tutorial</x-slot>
+
+    {{-- TABS --}}
+    <x-tutorials.tabs.tutorialsEnsemblesTabs/>
+
+    {{-- OVERVIEW --}}
+    <x-tutorials.ensembles.overviewEnsembles/>
+
+    {{-- FIRST ENSEMBLE --}}
+    <x-tutorials.ensembles.firstEnsemble/>
+
+
 </x-layouts.tutorial>

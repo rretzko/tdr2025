@@ -1,7 +1,7 @@
 <div id="firstLibrary" class="mt-4 pt-2 border border-transparent border-t-gray-200 mb-12">
     <h3 class="text-yellow-100 font-semibold">Setting Up Your First Library</h3>
     <div class="ml-2 flex flex-col">
-        <p>Clicking on the "Library" card from the Home page will automatically set up your first library, called
+        <p>Clicking on the "Libraries" card from the Home page will automatically set up your first library, called
             "Home Library".</p>
         <p class="mt-2">This library is mandatory, cannot be removed, and is based on the presumption that all
             Choral
@@ -13,10 +13,10 @@
         <div
             class="mt-2 p-2 flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 bg-gray-600 border border-gray-500">
             <div class="flex flex-col">
-                <label>Library card on Home page</label>
-                <div id="libraryCardImage">
+                <label>Libraries card on Home page</label>
+                <div id="librariesCardImage">
                     <img src="{{ Storage::disk('s3')->url('tutorials/libraries/libraryCardFromHomePage.png') }}"
-                         alt="Library card from home page">
+                         alt="Libraries card from home page">
                 </div>
             </div>
             <div class="flex flex-col">

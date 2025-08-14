@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TheDirectorsRoom.com Choral Library Module</title>
+    <title>TheDirectorsRoom.com Choral Library Application</title>
     <style>
         html {
             scroll-padding-top: 200px;
@@ -193,7 +193,7 @@
 <div id="headerNav">
     <header>
         <h1>TheDirectorsRoom.com</h1>
-        <h2 style="color: white;">Choral Library Module</h2>
+        <h2 style="color: white;">Choral Library Application</h2>
     </header>
     <nav style="display: flex; flex-direction: row; justify-content: start;">
         <div style="display: flex; width: 25%; margin: 0 1rem;">
@@ -213,15 +213,15 @@
     <section id="overview">
         <h2>Overview</h2>
         {{-- v2 --}}
-        <p>Introducing the Choral Library Module!</p>
-        <p>This module will allow you to maintain a comprehensive record of your choral library including
+        <p>Introducing the Choral Library Application!</p>
+        <p>This application will allow you to maintain a comprehensive record of your choral library including
             octavos, medleys, books, DVDs, CDs, cassettes, and vinyl recordings in a simple, easy-to-use
             format that you can access anytime from anywhere.</p>
         <p>Features include fields such as title, composer, arranger, voicing, price, tags (your personal search words),
             levels (high school/middle school/elementary school/college/professional),
             difficulty (hard/medium/easy),comments, rating, location in your library, and performance history.</p>
         {{-- v1 --}}
-        {{--        <p>TheDirectorsRoom.com introduces the Library Module, built specifically for choral directors. This module--}}
+        {{--        <p>TheDirectorsRoom.com introduces the Library Application, built specifically for choral directors. This application --}}
         {{--            allows you--}}
         {{--            to maintain an on-demand record of your choral library including octavos, medleys, books, DVDs, CDs,--}}
         {{--            cassettes, and vinyl recordings—all in a simple, easy-to-use format you can access anytime from--}}
@@ -232,7 +232,7 @@
         <p>Upload your existing library via CSV file, enter information manually, or delegate the data entry
             to a student librarian using secure limited-access credentials.</p>
         <p>Filter and sort by various criteria. Create “pull sheets” for easy octavo retrieval. Easily link ensemble
-            members and performances via the Programs, Ensembles, and Students modules.</p>
+            members and performances via the Programs, Ensembles, and Students applications.</p>
         <p>Easily transition your present choral library from paper or spreadsheets to a searchable,
             sortable, and powerful database.</p>
     </section>
@@ -246,7 +246,7 @@
             <li>Safe and secure student librarian login.</li>
             <li>Create library item pull sheets which include physical storage location.</li>
             <li>The Choral Library automatically pairs with TheDirectorsRoom.com Programs, Ensembles, and Students
-                modules.
+                applications.
             </li>
         </ul>
     </section>
@@ -256,18 +256,19 @@
         <div>
             <p>When your library is in a database, your ability to use it multiplies!</p>
             <ul>
-                <li>Using the “Program” module, you can create a record of your performances including title,
+                <li>Using the “Program” application, you can create a record of your performances including title,
                     composer, arranger, performance notes, and ratings.
                 </li>
-                <li>Using the "Students" module, create rosters of your students by school year.</li>
-                <li>Using the “Ensembles” module, create lists of participating student members by year of
+                <li>Using the "Students" application, create rosters of your students by school year.</li>
+                <li>Using the “Ensembles” application, create lists of participating student members by year of
                     performance.
                 </li>
             </ul>
             <p>And all of this is searchable, of course. Can't remember the last time you conducted "O Magnum
                 Mysterium"?
-                Just pop <b><i>O Magnum</i></b> into the search bar of the Library module or
-                <b><i>"O Magnum"</i></b> (with double-quotes) into the Programs module and you'll have your answer ...
+                Just pop <b><i>O Magnum</i></b> into the search bar of the Library application or
+                <b><i>"O Magnum"</i></b> (with double-quotes) into the Programs application and you'll have your answer
+                ...
                 in seconds!</p>
         </div>
     </section>
@@ -331,8 +332,9 @@
         <h2>Subscription Plans</h2>
         <div id="rationale">
             {{-- v2 --}}
-            <p>This Choral Library application took years of planning and hundreds of hours of
-                programming with the goal of providing you with a comprehensive organizational tool.</p>
+            <p>The Choral Library is the result of years of planning and hundreds of
+                programming hours -- bringing you a powerful, all-in-one resource to
+                organize and access your music like never before.</p>
             <p>Please show your support by subscribing to one of the following plans:</p>
             {{-- v1 --}}
             {{--            <p>These features have taken years of planning and discussion, and required hundreds of hours of--}}
@@ -361,7 +363,7 @@
             <thead>
             <tr style="background-color: darkslategray; color: white;">
                 <th>Plan</th>
-                <th>Modules<sup>**</sup></th>
+                <th>Applications<sup>**</sup></th>
                 <th>Monthly</th>
                 <th>Yearly</th>
                 <th>Description</th>
@@ -418,17 +420,17 @@
                 </td>
                 <td style="text-align: right; padding-right: 1rem;">$2.99</td>
                 <td style="text-align: right; padding-right: 1rem;">$27</td>
-                <td>For now, I only want to use the Library module.</td>
+                <td>For now, I only want to use the Library application.</td>
             </tr>
             </tbody>
         </table>
         <p>
-            <span>**</span> Modules: Schools, Students, Ensembles, Libraries, Programs, Events, Profile
+            <span>**</span> Applications: Schools, Students, Ensembles, Libraries, Programs, Events, Profile
         </p>
 
         <p><strong><span style="color: red;">*</span>Community Contribution:</strong>
             Individual subscriptions
-            (other than Teacher) provide access to the full Library-Ensemble-Program modules' features and
+            (other than Teacher) provide access to the full Library-Ensemble-Program applications' features and
             benefits. These plans <b><u>include your commitment</u></b> to add a minimum of two programs per year.
             This commitment will ensure the growth of the Library and provide relevant trending insights to your
             community's ensembles.</p>
@@ -442,7 +444,7 @@
 
             <p>Until then, <u>all of the features are available</u> for your use and comment!</p>
 
-            <p>NOTE: All teachers who use the Library module and add two new programs will be
+            <p>NOTE: All teachers who use the Library application and add two new programs will be
                 immediately eligible for the "Early Adopter" tier in January!
             </p>
         </div>

@@ -2,7 +2,7 @@
     <x-slot name="header">Tutorial Dashboard</x-slot>
 
     {{-- TABS --}}
-    <x-tabs.tutorialsDashboardTabs/>
+    <x-tutorials.tabs.tutorialsDashboardTabs/>
 
     <p class="underline mb-2">
         Use the left-hand menu select a specific tutorial.

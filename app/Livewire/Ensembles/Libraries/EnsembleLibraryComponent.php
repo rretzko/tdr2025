@@ -50,13 +50,16 @@ class EnsembleLibraryComponent extends LibraryBasePage
             ->get()
             ->toArray();
 
-        $this->ensembleId = $this->ensembles[0]['id'];
+        //test if any ensembles have been registered
+        $this->ensembleId = array_key_exists(0, $this->ensembles) ? $this->ensembles[0]['id'] : 0;
 
         $teacherId = Teacher::where('user_id', auth()->id())->first()->id;
+
         $this->library = Library::query()
             ->where('school_id', UserConfig::getValue('schoolId'))
             ->where('teacher_id', $teacherId)
             ->first();
+
         $this->libraryId = $this->library->id;
 
         $this->programs = ['rehearsal-only', 'warm-ups'];
@@ -166,6 +169,11 @@ class EnsembleLibraryComponent extends LibraryBasePage
 
     private function getRows(): array
     {
+        //early exit
+        if (!$this->ensembleId) {
+            return [];
+        }
+
         return $this::getLibraryItems(
             $this->libraryId,
             $this->ensembleId,
