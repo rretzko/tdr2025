@@ -66,11 +66,11 @@
 
         </div>
 
-        <div>
-            <div>member count: {{ count($rows) }}</div>
-            <div>has assets: {{ $hasAssets }}</div>
-            <div>has inventory: {{ $hasInventory }}</div>
-        </div>
+        {{--        <div>--}}
+        {{--            <div>member count: {{ count($rows) }}</div>--}}
+        {{--            <div>has assets: {{ $hasAssets }}</div>--}}
+        {{--            <div>has inventory: {{ $hasInventory }}</div>--}}
+        {{--        </div>--}}
 
         {{-- SUCCESS INDICATOR --}}
         <x-forms.indicators.successIndicator :showSuccessIndicator="$showSuccessIndicator"

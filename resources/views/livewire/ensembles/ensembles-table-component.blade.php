@@ -66,22 +66,33 @@
                                     'text-gray-400, bg-gray-50, odd:bg-gray-50' => (! $row['active']),
                                 ])
                             >
+                                {{-- ENSEMBLE NAME AND SCHOOL --}}
                                 <td class="border border-gray-200 px-1">
-                                    <div>{{ $row['name'] }}</div> {{-- student name --}}
+                                    <div>{{ $row['name'] }}</div> {{-- ensemble name --}}
                                     <div class="ml-2 text-xs italic">{{ $row['schoolName'] }}</div>
                                 </td>
+
+                                {{-- SHORT NAME --}}
                                 <td class="border border-gray-200 px-1 text-center">
                                     {{ $row['short_name'] }}
                                 </td>
+
+                                {{-- ABBREVIATION --}}
                                 <td class="border border-gray-200 px-1 text-center">
                                     {{ $row['abbr'] }}
                                 </td>
+
+                                {{-- DESCRIPTION --}}
                                 <td class="border border-gray-200 px-1 text-center">
                                     {{ $row['description'] }}
                                 </td>
+
+                                {{-- GRADES --}}
                                 <td class="border border-gray-200 px-1 text-center">
                                     {{ $row['grades'] }}
                                 </td>
+
+                                {{-- MEMBER COUNTS --}}
                                 <td class="border border-gray-200 px-1 text-center cursor-help text-indigo-500">
                                     <span title="current active">{{ $memberCounts[$row['id']]['countCurrent'] }}</span>
                                     /
@@ -91,9 +102,15 @@
                                 <td class="border border-gray-200 px-1 text-center">
                                     {{ $row['active'] ? 'Y' : 'N' }}
                                 </td>
+
+                                {{-- ASSETS COLUMN --}}
+                                {{--
                                 <td class="border border-gray-200 px-1 text-center">
                                     {{ array_key_exists($row['id'], $ensembleAssetsArray) ? implode(', ', $ensembleAssetsArray[$row['id']]) : '' }}
                                 </td>
+                                --}}
+
+                                {{-- EDIT BUTTON --}}
                                 <td @class([
                                     "text-center px-2",
                                     "border border-gray-200" => $row['canEdit'],
@@ -103,6 +120,8 @@
                                         <x-buttons.edit id="{{ $row['id'] }}" route="ensemble.edit"/>
                                     @endif
                                 </td>
+
+                                {{-- REMOVE BUTTON --}}
                                 <td @class([
                                     "text-center px-2",
                                     "border border-gray-200" => $row['canRemove'],

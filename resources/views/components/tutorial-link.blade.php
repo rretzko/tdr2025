@@ -11,10 +11,21 @@
         'calendar' => 'M8 7V3M16 7V3M3 11h18M5 19h14a2 2 0 002-2V7H3v10a2 2 0 002 2z',
         'user-circle' => 'M12 14c3.866 0 7 3.134 7 7H5c0-3.866 3.134-7 7-7z M12 8a4 4 0 110-8 4 4 0 010 8z'
     ];
+
+    $colors = [
+       //'academic-cap' => 'text-green-700 dark:text-green-300',
+       'book' => 'text-yellow-700 dark:text-yellow-300',
+       //'calendar' => 'text-red-700 dark:text-red-300',
+      //'building' => 'text-indigo-700 dark:text-indigo-300',
+      //'ticket' => 'text-black dark:text-black',
+      //'user-circle' => 'text-orange-700 dark:text-orange-300',
+      'user-group' => 'text-blue-700 dark:text-blue-300',
+    ];
+    $color = (array_key_exists($icon, $colors)) ? $colors[$icon] : 'text-gray-700 dark:text-gray-300';
 @endphp
 
 <a href="{{ $href }}"
-   class="flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-500 dark:hover:text-yellow-400">
+   class="flex items-center {{ $color }} hover:text-blue-500 dark:hover:text-yellow-400">
     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path d="{{ $icons[$icon] ?? '' }}" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
     </svg>

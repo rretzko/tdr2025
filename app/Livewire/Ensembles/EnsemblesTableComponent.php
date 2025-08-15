@@ -14,6 +14,7 @@ class EnsemblesTableComponent extends BasePageEnsemble
 {
     use QualifyTabsTrait;
     public EnsembleForm $form;
+    public array $columnHeaders = [];
     public array $ensembleAssetsArray = [];
     public string $selectedTab = 'ensembles';
     public array $tabs = self::ENSEMBLETABS;
@@ -21,6 +22,8 @@ class EnsemblesTableComponent extends BasePageEnsemble
     public function mount(): void
     {
         parent::mount();
+
+        $this->columnHeaders = $this->getColumnHeaders();
 
         if (count($this->schools) > 1) {
 
@@ -40,7 +43,6 @@ class EnsemblesTableComponent extends BasePageEnsemble
 
         return view('livewire..ensembles.ensembles-table-component',
             [
-                'columnHeaders' => $this->getColumnHeaders(),
                 'rows' => $rows,
                 'memberCounts' => $memberCounts,
             ]);
@@ -75,7 +77,7 @@ class EnsemblesTableComponent extends BasePageEnsemble
     private function getColumnHeaders(): array
     {
         return [
-            'name/school', 'short name', 'abbr', 'description', 'grades', 'members', 'active', 'assets',
+            'name/school', 'short name', 'abbr', 'description', 'grades', 'members', 'active', //'assets',
         ];
     }
 

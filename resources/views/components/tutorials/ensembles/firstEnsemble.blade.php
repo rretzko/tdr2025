@@ -34,6 +34,20 @@
                          alt="New Ensemble Form">
                 </div>
             </div>
+            <div class="flex flex-col">
+                <label>Completed Ensemble Form</label>
+                <div id="completedEnsembleFormImage">
+                    <img src="{{ Storage::disk('s3')->url('tutorials/ensembles/completedEnsembleForm.png') }}"
+                         alt="Completed Ensemble Form">
+                </div>
+            </div>
+            <div class="flex flex-col">
+                <label>Ensembles Table With Ensemble</label>
+                <div id="ensembleTableWithEnsembleImage">
+                    <img src="{{ Storage::disk('s3')->url('tutorials/ensembles/ensemblesTableWithEnsemble.png') }}"
+                         alt="Ensemble table with ensemble">
+                </div>
+            </div>
         </div>
 
         <ul class="ml-8 mt-2 list-disc">
@@ -61,5 +75,11 @@
                 ensemble is active or needed for historical reference.
             </li>
         </ul>
+        <p class="my-2">
+            Note the "<span class="text-yellow-200">members</span>" column on the ensembles table returns a ratio (0/0).
+            These numbers will
+            represent the total number of ensemble members throughout the years and the current school year's
+            membership numbers.
+        </p>
     </div>
 </div>

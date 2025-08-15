@@ -97,47 +97,47 @@
         </form>
 
         {{-- ASSET ASSIGNMENT FORM --}}
-        @if(count($assets))
-            <div class="my-4 p-4 border border-gray-200 rounded-lg shadow-lg">
+        {{--        @if(count($assets))--}}
+        {{--            <div class="my-4 p-4 border border-gray-200 rounded-lg shadow-lg">--}}
 
-                <h3>Asset Assignments</h3>
-                @forelse($availableAssets AS $label => $inventories)
-                    <div class="flex flex-col py-2">
-                        <label>{{ ucwords($label) }}</label>
-                        {{-- display label if member has asset assigned --}}
-                        @if(array_key_exists($label, $form->memberAssets))
-                            <div class="font-bold">
-                                {{ ucwords($form->memberAssets[$label]['label']) }}
-                                <x-buttons.remove livewire="1" id="{{ $form->memberAssets[$label]['id'] }}"/>
-                            </div>
-                            {{-- else display drop-down select if there are many $inventories --}}
-                        @elseif(count($inventories))
-                            <select wire:model.live="assignedAssetId">
-                                <option value="{{ $inventories[0]['asset_id'] }}-0">- select -</option>
-                                @foreach($inventories as $item)
+        {{--                <h3>Asset Assignments</h3>--}}
+        {{--                @forelse($availableAssets AS $label => $inventories)--}}
+        {{--                    <div class="flex flex-col py-2">--}}
+        {{--                        <label>{{ ucwords($label) }}</label>--}}
+        {{--                        --}}{{-- display label if member has asset assigned --}}
+        {{--                        @if(array_key_exists($label, $form->memberAssets))--}}
+        {{--                            <div class="font-bold">--}}
+        {{--                                {{ ucwords($form->memberAssets[$label]['label']) }}--}}
+        {{--                                <x-buttons.remove livewire="1" id="{{ $form->memberAssets[$label]['id'] }}"/>--}}
+        {{--                            </div>--}}
+        {{--                            --}}{{-- else display drop-down select if there are many $inventories --}}
+        {{--                        @elseif(count($inventories))--}}
+        {{--                            <select wire:model.live="assignedAssetId">--}}
+        {{--                                <option value="{{ $inventories[0]['asset_id'] }}-0">- select -</option>--}}
+        {{--                                @foreach($inventories as $item)--}}
 
-                                    <option value="{{ $item['asset_id'] }}-{{ $item['id'] }}">
-                                        #{{ $item['item_id'] }}
-                                        {{ strlen($item['color']) ? ', ' . $item['color'] : '' }}
-                                        {{ strlen($item['size']) ? ', ' . $item['size'] : '' }}
-                                    </option>
+        {{--                                    <option value="{{ $item['asset_id'] }}-{{ $item['id'] }}">--}}
+        {{--                                        #{{ $item['item_id'] }}--}}
+        {{--                                        {{ strlen($item['color']) ? ', ' . $item['color'] : '' }}--}}
+        {{--                                        {{ strlen($item['size']) ? ', ' . $item['size'] : '' }}--}}
+        {{--                                    </option>--}}
 
-                                @endforeach
-                            </select>
-                            {{-- else, finally, display default 'none found' advisory --}}
-                        @else
-                            <div>No available inventory.</div>
-                        @endif
+        {{--                                @endforeach--}}
+        {{--                            </select>--}}
+        {{--                            --}}{{-- else, finally, display default 'none found' advisory --}}
+        {{--                        @else--}}
+        {{--                            <div>No available inventory.</div>--}}
+        {{--                        @endif--}}
 
-                    </div>
-                @empty
-                    {{-- do nothing --}}
-                @endforelse
+        {{--                    </div>--}}
+        {{--                @empty--}}
+        {{--                    --}}{{-- do nothing --}}
+        {{--                @endforelse--}}
 
-                <x-buttons.fauxSubmit value="assign assets" wireClick="assignAssets"/>
+        {{--                <x-buttons.fauxSubmit value="assign assets" wireClick="assignAssets"/>--}}
 
-            </div>
-        @endif
+        {{--            </div>--}}
+        {{--        @endif--}}
     </div>
 </div>
 
