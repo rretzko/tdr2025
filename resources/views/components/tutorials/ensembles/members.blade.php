@@ -16,7 +16,6 @@
                          alt="Empty members table">
                 </div>
             </div>
-
         </div>
 
         <p class="my-2">

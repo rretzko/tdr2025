@@ -17,7 +17,7 @@
        'book' => 'text-yellow-700 dark:text-yellow-300',
        //'calendar' => 'text-red-700 dark:text-red-300',
       //'building' => 'text-indigo-700 dark:text-indigo-300',
-      //'ticket' => 'text-black dark:text-black',
+      'ticket' => 'text-black dark:text-black',
       //'user-circle' => 'text-orange-700 dark:text-orange-300',
       'user-group' => 'text-blue-700 dark:text-blue-300',
     ];
