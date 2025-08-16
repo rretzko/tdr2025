@@ -46,6 +46,22 @@
                         </li>
                     </ul>
                 </li>
+                <li>
+                    Search
+                    <ul class="ml-8 list-disc text-sm">
+                        <li>
+                            Note the "Search" bar a the top of the page.
+                            <br/>
+                            You can enter any song title (surrounded by quotes), program title,
+                            school year, or tag and the system will fetch that for you.
+                            <br/>
+                            Don't know when or how many times you've performed "Thank God I'm a Country Boy"?
+                            <br/>
+                            Just enter "Thank" in the search bar, click "Search" and let the system do the
+                            work for you!
+                        </li>
+                    </ul>
+                </li>
             </ul>
         </div>
         {{-- IMAGE --}}

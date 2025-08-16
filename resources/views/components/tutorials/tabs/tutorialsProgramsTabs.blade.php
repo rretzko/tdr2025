@@ -14,12 +14,12 @@
 
         <a href="#addRepertoire"
            class="flex flex-row space-x-1 border border-yellow-50 text-yellow-100 px-2 py-1 rounded-md inline-flex items-center">
-            <div class="hidden lg:block">Add Repertoire</div>
+            <div class="hidden lg:block">Repertoire</div>
         </a>
 
-        <a href="#AddMembers "
+        <a href="#addMembers "
            class="flex flex-row space-x-1 border border-yellow-50 text-yellow-100 px-2 py-1 rounded-md inline-flex items-center">
-            <div class="hidden lg:block">Add Members</div>
+            <div class="hidden lg:block">Members</div>
         </a>
 
     </div>
