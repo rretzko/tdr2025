@@ -7,14 +7,9 @@
             <div class="">Overview</div>
         </a>
 
-        <a href="#firstSchool"
+        <a href="#profileForm"
            class="flex flex-row space-x-1 border border-yellow-50 text-yellow-100 px-2 py-1 rounded-md inline-flex items-center">
-            <div class="">First School</div>
-        </a>
-
-        <a href="#schoolTable"
-           class="flex flex-row space-x-1 border border-yellow-50 text-yellow-100 px-2 py-1 rounded-md inline-flex items-center">
-            <div class="">School Table</div>
+            <div class="">Profile Form</div>
         </a>
 
     </div>

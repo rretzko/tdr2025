@@ -15,10 +15,10 @@
                     TDR Tutorials
                 </a>
             </h2>
-            <button onclick="toggleDarkMode()" title="Toggle Dark Mode"
-                    class="text-gray-500 hover:text-yellow-300 dark:hover:text-yellow-400">
-                🌙
-            </button>
+            {{--            <button onclick="toggleDarkMode()" title="Toggle Dark Mode"--}}
+            {{--                    class="text-gray-500 hover:text-yellow-300 dark:hover:text-yellow-400">--}}
+            {{--                🌙--}}
+            {{--            </button>--}}
         </div>
         <nav class="mt-6 space-y-4">
             {{--            <x-tutorial-link href="/tutorial/tdroverview" icon="map" label="TDR Overview" />--}}

@@ -18,7 +18,7 @@
        //'calendar' => 'text-red-700 dark:text-red-300',
       'building' => 'text-indigo-700 dark:text-indigo-300',
       'ticket' => 'text-black dark:text-black',
-      //'user-circle' => 'text-orange-700 dark:text-orange-300',
+      'user-circle' => 'text-orange-700 dark:text-orange-300',
       'user-group' => 'text-blue-700 dark:text-blue-300',
     ];
     $color = (array_key_exists($icon, $colors)) ? $colors[$icon] : 'text-gray-300 dark:text-gray-300';
