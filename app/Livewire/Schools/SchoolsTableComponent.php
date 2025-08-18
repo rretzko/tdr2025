@@ -12,6 +12,7 @@ use App\Models\Schools\Teachers\TeacherSubject;
 use App\Services\SchoolsTableService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Routing\Redirector;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
 class SchoolsTableComponent extends BasePage
@@ -47,7 +48,7 @@ class SchoolsTableComponent extends BasePage
 
         $active = $st->active;
 
-        $st->update(['active' => $active ? 0 : 1]);
+        $st->update(['active' => !$active]);
     }
 
     public function edit(int $schoolId)

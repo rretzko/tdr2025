@@ -36,7 +36,7 @@ class SchoolForm extends Form
     public array $gradesITeach = [];
     public array $gradesTaught = [];
     #[Validate('required', message: 'A school name is required.')]
-    public string $name = 'S';
+    public string $name = '';
     #[Validate('required', message: 'A zip code is required.')]
     public string $postalCode = '';
 
