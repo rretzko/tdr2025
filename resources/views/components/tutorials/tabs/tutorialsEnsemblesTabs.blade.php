@@ -4,22 +4,22 @@
     >
         <a href="#overview"
            class="flex flex-row space-x-1 border border-yellow-50 text-yellow-100 px-2 py-1 rounded-md inline-flex items-center">
-            <div class="hidden lg:block">Overview</div>
+            <div class="">Overview</div>
         </a>
 
         <a href="#firstEnsemble"
            class="flex flex-row space-x-1 border border-yellow-50 text-yellow-100 px-2 py-1 rounded-md inline-flex items-center">
-            <div class="hidden lg:block">First Ensemble</div>
+            <div class="">First Ensemble</div>
         </a>
 
         <a href="#ensembleMembers"
            class="flex flex-row space-x-1 border border-yellow-50 text-yellow-100 px-2 py-1 rounded-md inline-flex items-center">
-            <div class="hidden lg:block">Members</div>
+            <div class="">Members</div>
         </a>
 
         <a href="#ensembleLibrary"
            class="flex flex-row space-x-1 border border-yellow-50 text-yellow-100 px-2 py-1 rounded-md inline-flex items-center">
-            <div class="hidden lg:block">Library</div>
+            <div class="">Library</div>
         </a>
 
     </div>
