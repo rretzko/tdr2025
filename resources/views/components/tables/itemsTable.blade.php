@@ -18,6 +18,22 @@
         </div>
     @endif
 
+    {{-- RECORDS PER PAGE --}}
+    <div class="my-2 mr-4 flex flex-row justify-end items-center">
+        <label for="recordsPerPage" class="mr-2">Items Per Page</label>
+        <select wire:model.live="recordsPerPage">
+            <option value="15">15</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="75">75</option>
+        </select>
+    </div>
+
+    {{-- PAGE LINKS --}}
+    <div class="my-2">
+        {{ $rows->links() }}
+    </div>
+
     <table class="text-sm px-4 shadow-lg w-full">
         <thead>
         <tr>
@@ -58,7 +74,8 @@
 
             <tr class="odd:bg-green-50 hover:bg-green-100">
                 <td class="border border-gray-200 px-1 text-center">
-                    {{ $loop->iteration }}
+                    {{-- $loop->iteration + ($rows->perPage() * ($rows->currentPage() - 1)) --}}
+                    {{ $rows->firstItem() ? $rows->firstItem() + $loop->index : 0 }}
                 </td>
                 <td class="border border-gray-200 px-1 text-left w-24">
                     <div>{{ $row['item_type'] }}</div>
@@ -209,6 +226,13 @@
         </tbody>
 
     </table>
+
+    {{-- PAGE LINKS --}}
+    @if($rows->perPage() > 15)
+        <div class="my-2">
+            {{ $rows->links() }}
+        </div>
+    @endif
 
     {{-- LOADING COMPONENT AND SPINNER --}}
     <x-tables.loadingComponentAndSpinner/>

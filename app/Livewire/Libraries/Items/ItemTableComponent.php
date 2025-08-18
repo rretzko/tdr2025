@@ -22,6 +22,9 @@ use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\Writer\Exception;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
+
 class ItemTableComponent extends LibraryBasePage
 {
     use LibraryTableColumnHeadersTrait;
@@ -58,6 +61,8 @@ class ItemTableComponent extends LibraryBasePage
         $this->userId = $this->getUserId();
 
         $this->typeFilters = $this->getTypeFilters();
+
+        $this->recordsPerPage = 15;
     }
 
     public function render()
@@ -79,9 +84,11 @@ class ItemTableComponent extends LibraryBasePage
         $urls = $this->getItemUrls($rows);
         $docs = $this->getItemDocs($rows, $this->library->id, $this->userId);
 
+        $paginated = $this->getPaginatedData($rows);
+
         return view('livewire..libraries.items.item-table-component',
             [
-                'rows' => $rows,
+                'rows' => $paginated,
                 'locations' => $locations,
                 'performances' => $performances,
                 'tags' => $tags,
@@ -204,6 +211,25 @@ class ItemTableComponent extends LibraryBasePage
         }
 
         return $selections;
+    }
+
+    private function getPaginatedData(array $dataArray): LengthAwarePaginator
+    {
+        $page = Paginator::resolveCurrentPage() ?: 1;
+
+        $total = count($dataArray);
+
+        $results = array_slice($dataArray, ($page - 1) * $this->recordsPerPage, $this->recordsPerPage);
+
+        return new LengthAwarePaginator(
+            $results,
+            $total,
+            $this->recordsPerPage,
+            $page,
+            ['path' => Paginator::resolveCurrentPath()]
+        );
+
+
     }
 
     private function getTypeFilters(): array
