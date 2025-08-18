@@ -17,74 +17,21 @@
                          alt="Empty members sidebar">
                 </div>
             </div>
+            <div class="flex flex-col">
+                <label>Completed Members Side Bar</label>
+                <div id="membersSidebarCompleted">
+                    <img src="{{ Storage::disk('s3')->url('tutorials/programs/completedMembersSidebar.png') }}"
+                         alt="Completed members sidebar">
+                </div>
+            </div>
         </div>
 
         <p class="my-2">
-            There are three ways to add ensemble members:
+            To add new members to an ensemble for a specific school year, click the "Ensembles" link.
+            This will open the "new members" page in the
+            <a href="/tutorial/ensembles#ensembleMembers" class="text-blue-500">Ensembles</a>
+            application.
         </p>
-        <ol class="ml-8 list-decimal">
-            <li>
-                Via the
-                <a href="/tutorial/ensembles#ensembleMembers" class="text-blue-500">Ensembles application</a>.
-            </li>
-            <li>
-                Adding individual members via the side bar link.
-                <ul class="ml-8 list-disc">
-                    <li>
-                        <img src="{{ Storage::disk('s3')->url('tutorials/programs/sidebarLinkIndividualMembers.png') }}"
-                             alt="Sidebar link for adding individual student members"/>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                Using a csv file to perform a mass add action.
-                <ul class="ml-8 list-disc">
-                    <li>
-                        <img src="{{ Storage::disk('s3')->url('tutorials/programs/sidebarLinkMassAdd.png') }}"
-                             alt="Sidebar link for adding students via csv file"/>
-                    </li>
-                </ul>
-            </li>
-        </ol>
 
-
-        {{-- MASS ADD DATA ENTRY --}}
-        <div class="font-semibold">
-            Mass Add
-        </div>
-        <ol class="ml-8 list-decimal">
-            <li>
-                The mass-add method may be a simpler route to add students to an ensemble, although visibly
-                challenging if you have many non-member students. "
-                <ul class="ml-8 list-disc">
-                    <li>
-                        <img src="{{ Storage::disk('s3')->url('tutorials/ensembles/massAddForm.png') }}"
-                             alt="Mass-add form"/>
-                    </li>
-                </ul>
-            </li>
-        </ol>
-        <p class="my-2">
-            The mass-add form has two fields and then as many checkboxes as there are non-member students who
-            are eligible for the selected ensemble in the selected senior year (a proxy for school-year):
-        </p>
-        <ul class="ml-8 mt-2 list-disc">
-            <li>
-                <span class="text-yellow-200">Ensemble</span>: Select the name of the ensemble.
-            </li>
-            <li>
-                <span class="text-yellow-200">Senior Year</span>: Select the appropriate senior year.
-            </li>
-            <li>
-                <span class="text-yellow-200">Checkboxes</span>: Click the check box of any student who
-                is a member of the selected ensemble in the selected senior year.
-            </li>
-        </ul>
-        <p class="my-2">
-            When the "Save New Members" button is clicked, the selected students are saved as members of the
-            ensemble and stays on the Member Mass Add. This is done to assist in cases where there are many
-            non-member students and selecting students in small groups makes the effort a bit more
-            manageable.
-        </p>
     </div>
 </div>

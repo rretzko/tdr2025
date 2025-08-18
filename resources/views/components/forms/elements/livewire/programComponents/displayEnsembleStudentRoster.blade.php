@@ -25,6 +25,14 @@
 
     {{-- ADD NEW MEMBER OPTIONS --}}
     <div class="bg-blue-200 border border-blue-300 rounded-lg p-2 shadow-lg">
+        Student ensemble members can be added through the
+        <a href="/ensembles/members/new" class="text-blue-500">
+            Ensembles
+        </a>
+        application
+    </div>
+    {{--
+    <div class="bg-blue-200 border border-blue-300 rounded-lg p-2 shadow-lg">
         <div>Individual student members can be added by clicking
             <button wire:click="addOneStudent()"
                     class="text-blue-500">
@@ -38,5 +46,7 @@
             </button>
         </div>
     </div>
+
+    --}}
 
 </div>
