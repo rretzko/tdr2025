@@ -7,14 +7,4 @@
     {{-- OVERVIEW --}}
     <x-tutorials.profile.overviewProfile/>
 
-    {{-- FIRST ENSEMBLE --}}
-    {{--    <x-tutorials.schools.firstSchool/>--}}
-
-    {{-- SCHOOL TABLE --}}
-    {{--    <x-tutorials.schools.schoolTable/>--}}
-
-    {{-- LIBRARY --}}
-    {{-- <x-tutorials.ensembles.library/> --}}
-
-
 </x-layouts.tutorial>

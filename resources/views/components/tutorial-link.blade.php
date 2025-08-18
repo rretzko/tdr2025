@@ -13,7 +13,7 @@
     ];
 
     $colors = [
-       //'academic-cap' => 'text-green-700 dark:text-green-300',
+       'academic-cap' => 'text-green-700 dark:text-green-300',
        'book' => 'text-yellow-700 dark:text-yellow-300',
        //'calendar' => 'text-red-700 dark:text-red-300',
       'building' => 'text-indigo-700 dark:text-indigo-300',
