@@ -11,10 +11,10 @@
     <x-tutorials.students.firstStudent/>
 
     {{-- MEMBERS --}}
-    <x-tutorials.ensembles.members/>
+    {{--    <x-tutorials.ensembles.members/>--}}
 
     {{-- LIBRARY --}}
-    <x-tutorials.ensembles.library/>
+    {{--    <x-tutorials.ensembles.library/>--}}
 
 
 </x-layouts.tutorial>

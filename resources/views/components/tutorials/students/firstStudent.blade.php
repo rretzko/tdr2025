@@ -1,85 +1,105 @@
 <div id="firstStudent" class="border border-transparent border-t-gray-200 pt-2 mb-8">
     <h3 class="text-yellow-100 font-semibold">Setting Up Your First Student</h3>
     <div class="ml-2 flex flex-col">
-        <p>Clicking on the "Ensembles" card will display the Ensembles application with an empty table.</p>
-        <p class="my-2">Click the green Plus-sign button to open the Ensemble form.</p>
+        <p>
+            Clicking on the "Students" card will display the Students application with an empty table
+            as shown below.
+        </p>
+
+        {{-- IMAGES --}}
         <div
             class="mt-2 p-2 flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 bg-gray-600 border border-gray-500">
             <div class="flex flex-col">
-                <label>Ensembles card on Home page</label>
-                <div id="ensemblesCardImage">
-                    <img src="{{ Storage::disk('s3')->url('tutorials/ensembles/ensemblesCardFromHomePage.png') }}"
+                <label>Students card on Home page</label>
+                <div id="studentsCardImage">
+                    <img src="{{ Storage::disk('s3')->url('tutorials/students/studentsCardFromHomePage.png') }}"
                          alt="Ensembles card from home page">
                 </div>
             </div>
             <div class="flex flex-col">
-                <label>Empty Ensembles Table</label>
-                <div id="emptyEnsemblesTableImage">
-                    <img src="{{ Storage::disk('s3')->url('tutorials/ensembles/emptyEnsemblesTable.png') }}"
-                         alt="Empty Ensembles table">
+                <label>Empty Students Table</label>
+                <div id="studentsTableEmpty">
+                    <img src="{{ Storage::disk('s3')->url('tutorials/students/emptyStudentsTable.png') }}"
+                         alt="Empty students table">
                 </div>
             </div>
         </div>
 
-        <p class="my-2">
-            The ensemble form has six fields:
-        </p>
+        <p class="mt-4 mb-2">Click the green Plus-sign button from the Students table to open the Student form.</p>
 
+        {{-- IMAGE --}}
         <div
             class="mt-2 p-2 flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 bg-gray-600 border border-gray-500">
             <div class="flex flex-col">
-                <label>New Ensemble Form</label>
-                <div id="newEnsembleFormImage">
-                    <img src="{{ Storage::disk('s3')->url('tutorials/ensembles/newEnsembleForm.png') }}"
-                         alt="New Ensemble Form">
-                </div>
-            </div>
-            <div class="flex flex-col">
-                <label>Completed Ensemble Form</label>
-                <div id="completedEnsembleFormImage">
-                    <img src="{{ Storage::disk('s3')->url('tutorials/ensembles/completedEnsembleForm.png') }}"
-                         alt="Completed Ensemble Form">
-                </div>
-            </div>
-            <div class="flex flex-col">
-                <label>Ensembles Table With Ensemble</label>
-                <div id="ensembleTableWithEnsembleImage">
-                    <img src="{{ Storage::disk('s3')->url('tutorials/ensembles/ensemblesTableWithEnsemble.png') }}"
-                         alt="Ensemble table with ensemble">
+                <label>Empty Student Form</label>
+                <div id="emptyStudentFormImage">
+                    <img src="{{ Storage::disk('s3')->url('tutorials/students/emptyStudentForm.png') }}"
+                         alt="Empty Student form">
                 </div>
             </div>
         </div>
 
-        <ul class="ml-8 mt-2 list-disc">
+        <p class="my-4">
+            When saved, the "edit" version of the student form is displayed with four tabs:
+            <img src="{{ Storage::disk('s3')->url('tutorials/students/studentFormTabs.png') }}" alt="Student form tabs"
+                 class="inline"/>
+        </p>
+
+        <ul class="ml-8 list-disc">
             <li>
-                <span class="text-yellow-200">Name</span>: Enter the name of the ensemble.
+                <span class="text-yellow-200">Bio</span>: containing all of the fields from the "empty
+                student form" shown above <i>except</i> the email and phones which are on the "comms" form.
             </li>
             <li>
-                <span class="text-yellow-200">Short Name</span>: Enter the short name of the ensemble.
-                This is useful when space is cramped.
+                <span class="text-yellow-200">Comms</span>: Email, phones, and home address.
             </li>
             <li>
-                <span class="text-yellow-200">Abbreviation</span>: Enter the abbreviation of the ensemble.
-                This is used on tables and forms to conserve space.
+                <span class="text-yellow-200">Emergency Contact</span>: Name, relationship, email, phones.
+                <ul class="ml-8 list-disc text-sm">
+                    <li>As many emergency contacts as needed may be added.</li>
+                </ul>
             </li>
             <li>
-                <span class="text-yellow-200">Description</span>: This box is small but can contains a
-                very lengthy description of your ensemble.
-            </li>
-            <li>
-                <span class="text-yellow-200">Grades</span>: This series of checkboxes is derived from
-                the "Grades You Teach" in the Schools application.
-            </li>
-            <li>
-                <span class="text-yellow-200">Active</span>: Use this checkbox to indicate if the new
-                ensemble is active or needed for historical reference.
+                <span class="text-yellow-200">Reset Password</span>: A single button used to reset the
+                student's password to the lower-case version of their email address.
             </li>
         </ul>
-        <p class="my-2">
-            Note the "<span class="text-yellow-200">members</span>" column on the ensembles table returns a ratio (0/0).
-            These numbers will
-            represent the total number of ensemble members throughout the years and the current school year's
-            membership numbers.
+
+        <p class="my-4">
+            The completed version of each tab is displayed below.
         </p>
+
+        {{-- IMAGES --}}
+        <div
+            class="mt-4 p-2 flex flex-col space-y-2 bg-gray-600 border border-gray-500">
+            <div class="flex flex-col">
+                <label>Completed Student Bio</label>
+                <div id="studentsBio">
+                    <img src="{{ Storage::disk('s3')->url('tutorials/students/completedStudentBio.png') }}"
+                         alt="Completed student bio form">
+                </div>
+            </div>
+            <div class="flex flex-col">
+                <label>Completed Student Comms</label>
+                <div id="studentsComms">
+                    <img src="{{ Storage::disk('s3')->url('tutorials/students/completedStudentComms.png') }}"
+                         alt="Completed student comms form">
+                </div>
+            </div>
+            <div class="flex flex-col">
+                <label>Completed Student Emergency Contact</label>
+                <div id="studentsEmergencyContact">
+                    <img src="{{ Storage::disk('s3')->url('tutorials/students/completedStudentEmergencyContact.png') }}"
+                         alt="Completed student emergency contact form">
+                </div>
+            </div>
+            <div class="flex flex-col">
+                <label>Completed Student Reset-Password</label>
+                <div id="studentsResetPassword">
+                    <img src="{{ Storage::disk('s3')->url('tutorials/students/completedStudentResetPassword.png') }}"
+                         alt="Completed student reset-password form">
+                </div>
+            </div>
+        </div>
     </div>
 </div>
