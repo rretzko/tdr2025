@@ -17,5 +17,10 @@
             <div class="">School Table</div>
         </a>
 
+        <a href="#coteachers"
+           class="flex flex-row space-x-1 border border-yellow-50 text-yellow-100 px-2 py-1 rounded-md inline-flex items-center">
+            <div class="">Co-Teacher</div>
+        </a>
+
     </div>
 </div>

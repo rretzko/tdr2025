@@ -13,8 +13,8 @@
     {{-- SCHOOL TABLE --}}
     <x-tutorials.schools.schoolTable/>
 
-    {{-- LIBRARY --}}
-    {{-- <x-tutorials.ensembles.library/> --}}
+    {{-- COTEACHER AND SUPERVISOR --}}
+    <x-tutorials.schools.coteacher/>
 
 
 </x-layouts.tutorial>

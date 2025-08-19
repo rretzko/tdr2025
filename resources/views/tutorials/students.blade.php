@@ -5,10 +5,10 @@
     <x-tutorials.tabs.tutorialsStudentsTabs/>
 
     {{-- OVERVIEW --}}
-    <x-tutorials.ensembles.overviewEnsembles/>
+    <x-tutorials.students.overviewStudents/>
 
     {{-- FIRST ENSEMBLE --}}
-    <x-tutorials.ensembles.firstEnsemble/>
+    <x-tutorials.students.firstStudent/>
 
     {{-- MEMBERS --}}
     <x-tutorials.ensembles.members/>
