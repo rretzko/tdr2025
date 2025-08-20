@@ -434,7 +434,8 @@ class ProgramViewComponent extends BasePage
         $operator = ($next) ? '>' : '<';
 
         $query = Program::query()
-            ->where('performance_date', $operator, $dt);
+            ->where('performance_date', $operator, $dt)
+            ->where('school_id', $this->schoolId);
 
         if ($next) {
             // Next program: earliest date greater than $dt
