@@ -13,6 +13,7 @@ class LibItemDoc extends Model
         'label',
         'library_id',
         'lib_item_id',
+        'shareable',
         'url',
         'user_id',
     ];

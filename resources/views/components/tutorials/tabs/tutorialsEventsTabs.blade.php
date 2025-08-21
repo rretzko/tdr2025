@@ -17,5 +17,10 @@
             <div class="">Manage Events</div>
         </a>
 
+        <a href="#pricing"
+           class="flex flex-row space-x-1 border border-yellow-50 text-yellow-100 px-2 py-1 rounded-md inline-flex items-center">
+            <div class="">Pricing</div>
+        </a>
+
     </div>
 </div>

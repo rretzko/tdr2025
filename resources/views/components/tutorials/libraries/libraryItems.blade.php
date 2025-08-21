@@ -1,7 +1,10 @@
 <div id="libraryItems" class="mt-4 pt-2 border border-transparent border-t-gray-200 mb-12">
     <h3 class="text-yellow-100 font-semibold">Library Items</h3>
     <div class="ml-2 flex flex-col">
-        <p>Clicking on the indigo "Edit" button from the Libraries (see image above) page will display
+        <p class="mb-2 flex flex-row">Clicking on the Library name
+            <img src="{{ Storage::disk('s3')->url('tutorials/libraries/fjrSomLibraryLink.png') }}"
+                 alt="Link from FJR School of Music Library" class="inline mx-2">
+            from the Libraries (see image above) page will display
             the following image.
         </p>
 

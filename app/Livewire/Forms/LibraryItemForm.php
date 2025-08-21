@@ -4,6 +4,7 @@ namespace App\Livewire\Forms;
 
 use App\Models\Libraries\Items\Components\Artist;
 use App\Models\Libraries\Items\Components\LibDigital;
+use App\Models\Libraries\Items\Components\LibItemDoc;
 use App\Models\Libraries\Items\Components\LibItemLocation;
 use App\Models\Libraries\Items\Components\LibItemRating;
 use App\Models\Libraries\Items\Components\LibMedleySelection;
@@ -77,8 +78,11 @@ class LibraryItemForm extends Form
     public array $locations = [];
 
     public array $medleySelections = [];
+    public array $previousFileUploads = [];
     #[Validate('required', 'float', 'min:0', 'max:99')]
     public float $price = 0;
+
+    public bool $shareable = true;
     public string $itemType = 'octavo';
 
     /**
@@ -278,6 +282,10 @@ class LibraryItemForm extends Form
 
         $this->digitalUrl = '';
         $this->digitalUrls = [];
+
+        $this->shareable = true;
+
+        $this->previousFileUploads = [];
     }
 
     public function setLibItem(LibItem $libItem): void
@@ -330,6 +338,8 @@ class LibraryItemForm extends Form
         $this->setPrice($libItem);
 
         $this->setDigitalUrls($libItem);
+
+        $this->setPreviousFileUploads($libItem);
     }
 
     private function add(): int
@@ -736,6 +746,15 @@ class LibraryItemForm extends Form
         foreach ($selections as $selection) {
             $this->medleySelections[] = $selection->title;
         }
+    }
+
+    private function setPreviousFileUploads(LibItem $libItem): void
+    {
+        $this->previousFileUploads = LibItemDoc::query()
+            ->where('lib_item_id', $libItem->id)
+            ->where('library_id', $this->libraryId)
+            ->get()
+            ->toArray();
     }
 
     private function setPrice(LibItem $libItem): void

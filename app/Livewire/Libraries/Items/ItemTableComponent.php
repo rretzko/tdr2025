@@ -4,6 +4,7 @@ namespace App\Livewire\Libraries\Items;
 
 use App\Exports\LibraryItemsExport;
 use App\Livewire\Libraries\LibraryBasePage;
+use App\Models\Libraries\Items\Components\LibItemDoc;
 use App\Models\Libraries\Items\Components\LibItemLocation;
 use App\Models\Libraries\Items\Components\LibMedleySelection;
 use App\Models\Libraries\Items\LibItem;
@@ -34,6 +35,8 @@ class ItemTableComponent extends LibraryBasePage
     public array $columnHeaders;
     public Library $library;
     public bool $displayForm = false;
+
+    public bool $global = false;
     public string $globalSearch = '';
 
     public bool $hasSearch = true;
@@ -75,6 +78,7 @@ class ItemTableComponent extends LibraryBasePage
             $this->sortAsc,
             $this->voicingFilterId,
             $this->typeFilters[$this->typeFilterId],
+            $this->global,
         );
         $locations = $this->getItemLocations($rows, $this->library->id);
         $performances = $this->getItemPerformances($rows);
@@ -82,7 +86,7 @@ class ItemTableComponent extends LibraryBasePage
         $medleySelections = $this->getMedleySelections($rows);
         $voicings = $this->getVoicings($rows);
         $urls = $this->getItemUrls($rows);
-        $docs = $this->getItemDocs($rows, $this->library->id, $this->userId);
+        $docs = $this->getItemDocs($rows, $this->library->id, $this->userId, $this->global);
 
         $paginated = $this->getPaginatedData($rows);
 

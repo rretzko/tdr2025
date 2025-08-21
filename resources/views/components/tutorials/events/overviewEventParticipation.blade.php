@@ -1,6 +1,14 @@
 <div id="eventParticipationApplication" class="mb-4 pt-2 border border-transparent border-t-gray-200">
 
-    <h3 class="font-semibold underline">Event Participation</h3>
+    <h3 class="font-semibold underline"></h3>
+    <h3>
+        <span class="font-semibold underline">Event Participation</span>
+        <span class="ml-2 text-sm hover:underline hover:text-yellow-200">
+            <a href="{{ route('tutorial.events.eventParticipationDetail') }}">
+                (click here for Event Participation detail page)
+            </a>
+        </span>
+    </h3>
 
     <div class="mb-2">
         The Event Participation application is used by the overwhelming majority of

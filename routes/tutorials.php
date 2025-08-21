@@ -22,5 +22,9 @@ Route::get('/tutorial/programs', fn() => view('tutorials.programs'))
     ->name('tutorial.programs');
 Route::get('/tutorial/events', fn() => view('tutorials.events'))
     ->name('tutorial.events');
+Route::get('tutorial/events/manageEventsDetail', fn() => view('tutorials.events.manageEventsDetail'))
+    ->name('tutorial.events.manageEventsDetail');
+Route::get('tutorial/events/eventParticipationDetail', fn() => view('tutorials.events.eventParticipationDetail'))
+    ->name('tutorial.events.eventParticipationDetail');
 Route::get('/tutorial/profile', fn() => view('tutorials.profile'))
     ->name('tutorial.profile');

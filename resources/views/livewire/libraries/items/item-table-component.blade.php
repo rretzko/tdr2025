@@ -3,6 +3,29 @@
 
     <x-pageInstructions.instructions instructions="{!! $pageInstructions !!}" firstTimer="{{ $firstTimer }}"/>
 
+    {{-- LIBRARY ID --}}
+    <div class="flex flex-row w-full mb-2 space-x-2 justify-start">
+        <label class="ml-12">Library:</label>
+        <button type="button"
+                wire:click="$set('global',0)"
+            @class([
+                'border border-gray-300 px-2 rounded-md shadow-lg',
+                'bg-gray-200 shadow-none text-gray-400' => $global,
+            ])
+        >
+            {{ $library->name }}
+        </button>
+        <button type="button"
+                wire:click="$set('global',1)"
+            @class([
+                'border border-gray-300 px-2 rounded-md shadow-lg',
+                'bg-gray-200 shadow-none text-gray-400' => ! $global,
+            ])
+        >
+            Global
+        </button>
+    </div>
+
     {{-- SEARCH --}}
     @if($hasSearch)
         <div class="flex px-4 w-11/12 justify-between items-center">
@@ -28,7 +51,13 @@
         {{-- HEADER and ADD-NEW BUTTON --}}
         <div class="flex justify-between mb-1">
             <div class="flex flex-row space-x-1 items-center mb-2">
-                <div>{{ $library->name }} Items /</div>
+                <div>
+                    @if($global)
+                        Global
+                    @else
+                        {{ $library->name }}
+                    @endif Items /
+                </div>
                 <select wire:model.live="voicingFilterId">
                     <option value="0">ALL</option>
                     @forelse($voicings AS $key => $value)
@@ -48,9 +77,9 @@
                     @endforeach
                 </select>
                 {{-- item count --}}
-                <div class="text-xs italic">
-                    ( {{ count($rows) }} items found)
-                </div>
+                {{--                <div class="text-xs italic">--}}
+                {{--                    ( {{ count($rows) }} items found)--}}
+                {{--                </div>--}}
             </div>
             @if(! $displayForm)
                 <button

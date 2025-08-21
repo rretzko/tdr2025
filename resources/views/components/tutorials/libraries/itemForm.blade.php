@@ -259,9 +259,15 @@
             </p>
             <p class="mt-2">
                 Only the title field will initially display. Enter a title and then click an item from the
-                Search Results on the right-hand side of the page. When a title is selected, the File Uploads
-                and Web Links fields will display.
+                Search Results on the right-hand side of the page. When a title is selected, the File Uploads,
+                Previous File Uploads (if any) and Web Links fields will display.
             </p>
+
+            <p class="mt-2">
+                Note that the "Remove" button on the Previous File Uploads section will ONLY display for the
+                teacher. Student librarians are prohibited from removing items.
+            </p>
+
             <p class="mt-2">
                 After uploading, a document icon
                 <img src="{{ Storage::disk('s3')->url('tutorials/libraries/docIcon.png') }}" alt="document icon"

@@ -194,6 +194,13 @@ class ItemComponent extends BaseLibraryItemPage
         $this->form->setLibItem(LibItem::find($libItemId));
     }
 
+    public function removeDoc(int $libItemDocId): void
+    {
+        $libItemDoc = LibItemDoc::find($libItemDocId);
+        $libItemDoc->delete();
+        $this->redirect("/library/$this->libraryId/items");
+    }
+
     public function save()
     {
         //early exit; don't save after a search item is clicked

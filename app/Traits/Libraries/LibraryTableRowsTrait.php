@@ -77,6 +77,7 @@ trait LibraryTableRowsTrait
         bool $sortAsc = true,
         int $voicingFilterId = 0,
         string $typeFilterDescr = 'all',
+        bool $global = false,
     ): array
     {
         $searchFor = '%'.$searchValue.'%';
@@ -86,6 +87,12 @@ trait LibraryTableRowsTrait
             : '>';
 
         $typeFilters = self::calcTypeFilters($typeFilterDescr);
+
+        $libraryIdOperator = '=';
+        if ($global) {
+            $libraryId = 0;
+            $libraryIdOperator = '>';
+        }
 
 
         return LibStack::query()
@@ -104,7 +111,7 @@ trait LibraryTableRowsTrait
             ->leftJoin('lib_medley_selections', 'lib_items.id', '=', 'lib_medley_selections.lib_item_id')
             ->leftJoin('lib_titles AS medley_titles', 'lib_medley_selections.lib_title_id', '=', 'medley_titles.id')
 //            ->leftJoin('lib_digitals', 'lib_items.id', '=', 'lib_digitals.lib_item_id')
-            ->where('lib_stacks.library_id', $libraryId)
+            ->where('lib_stacks.library_id', $libraryIdOperator, $libraryId)
             ->where(function ($query) use ($voicingOperand, $voicingFilterId) {
                 $query->where('lib_items.voicing_id', $voicingOperand, $voicingFilterId);
 //                    ->orWhereNull('lib_items.voicing_id');
@@ -132,6 +139,7 @@ trait LibraryTableRowsTrait
             ->distinct()
             ->select('lib_stacks.id',
                 'lib_stacks.count',
+                'lib_stacks.library_id AS libraryId',
                 'lib_items.id AS libItemId',
                 'lib_titles.title', 'lib_titles.alpha', 'lib_items.item_type',
                 'composer.alpha_name AS composerName',
@@ -161,6 +169,7 @@ trait LibraryTableRowsTrait
                 'voicingDescr',
                 'lib_items.id',
                 'lib_stacks.count',
+                'lib_stacks.library_id',
 //                'lib_digitals.url',
 //                'lib_digitals.label'
             )
@@ -170,14 +179,22 @@ trait LibraryTableRowsTrait
             ->toArray();
     }
 
-    public static function getItemDocs(array $rows, int $libraryId, int $userId): array
+    public static function getItemDocs(array $rows, int $libraryId, int $userId, bool $global): array
     {
         $docs = [];
         foreach ($rows as $row) {
+            //if not global, take any row
+            $shareableOperator = '<';
+            $shareableValue = 2;
+            if ($global) {
+                $shareableOperator = '=';
+                $shareableValue = 1;
+            }
             $docs[$row['libItemId']] = LibItemDoc::query()
                 ->where('lib_item_id', $row['libItemId'])
                 ->where('library_id', $libraryId)
                 ->where('user_id', $userId)
+                ->where('shareable', $shareableOperator, $shareableValue)
                 ->select('url', 'label')
                 ->get()
                 ->toArray();

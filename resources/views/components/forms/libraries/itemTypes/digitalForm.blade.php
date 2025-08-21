@@ -18,6 +18,41 @@
         </div>
     </div>
 
+    {{-- PREVIOUS FILE UPLOADS --}}
+    @if(count($form->previousFileUploads))
+        <div id="previousFileUploads" class="border border-transparent border-t-white pt-2 mb-4">
+            <h3 class="font-semibold">Previous File Uploads</h3>
+            <table class="ml-8 border-collapse">
+                <thead>
+                <tr>
+                    <th class="px-2 border border-gray-400">Description</th>
+                    <th class="px-2 border border-gray-400 sr-only">Remove</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach($form->previousFileUploads AS $doc)
+                    <tr>
+                        <td class="px-2 border border-gray-400">{{ $doc['label'] }}</td>
+                        <td class="px-2 border border-gray-400">
+                            <button
+                                type="button"
+                                @class([
+                                    "px-2 text-sm bg-red-500 text-white rounded-lg",
+                                    'hidden' => ! auth()->user()->isTeacher(),
+                                ])
+                                wire:click="removeDoc({{ $doc['id'] }})"
+                                @disabled(! auth()->user()->isTeacher())
+                            >
+                                Remove
+                            </button>
+                        </td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+        </div>
+    @endif
+
     {{-- WEB LINKS --}}
     <div class="pt-2 border border-transparent border-t-gray-500">
         <h3 class="font-semibold mb-2">Web Links</h3>

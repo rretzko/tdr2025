@@ -37,6 +37,11 @@
     <table class="text-sm px-4 shadow-lg w-full">
         <thead>
         <tr>
+            @if($global)
+                <th class='border border-gray-200 px-1'>
+                    my
+                </th>
+            @endif
             @foreach($columnHeaders AS $columnHeader)
                 <th class='border border-gray-200 px-1'>
                     <button
@@ -70,9 +75,26 @@
         </thead>
         <tbody>
 
+        @php($libraryId = $library->id)
         @forelse($rows AS $row)
-
-            <tr class="odd:bg-green-50 hover:bg-green-100">
+            <tr
+                @class([
+                   "odd:bg-green-50 hover:bg-green-100",
+                   "text-gray-500" => ($global && ($row['libraryId'] != $libraryId))
+                ])
+            >
+                @if($global)
+                    <td
+                        @class([
+                            "border border-gray-200 px-1 text-center",
+//                            'bg-green-100' => ($row['libraryId'] == $libraryId),
+                        ])
+                    >
+                        @if($row['libraryId'] == $libraryId )
+                            *
+                        @endif
+                    </td>
+                @endif
                 <td class="border border-gray-200 px-1 text-center">
                     {{-- $loop->iteration + ($rows->perPage() * ($rows->currentPage() - 1)) --}}
                     {{ $rows->firstItem() ? $rows->firstItem() + $loop->index : 0 }}
@@ -85,11 +107,13 @@
                 </td>
                 {{-- title --}}
                 <td class="border border-gray-200 px-1 text-left">
-                    <div>{{ $row['alpha'] }}</div>
+                    <div title="from library: {{  $row['libraryId'] }}">
+                        {{ $row['alpha'] }}
+                    </div>
                     @if(array_key_exists($row['libItemId'], $medleySelections))
                         <div class="ml-4 text-xs italic">
                             @foreach($medleySelections[$row['libItemId']] AS $libMedleySelection)
-                                <div>{{ $libMedleySelection->title }}</div>
+                                {{ $libMedleySelection->title }}
                             @endforeach
                         </div>
                     @endif
@@ -176,13 +200,18 @@
                 @if(auth()->user()->isTeacher())
                     <td class="border border-gray-200 px-1 text-center text-sm cursor-help w-20">
                         @forelse($performances[$row['libItemId']] AS $programId => $performanceDate)
-                            <a
-                                href="{{ route('programs.show',['program' => $programId]) }}"
-                                class="text-blue-500"
-                                title="open program"
-                            >
+                            {{-- highlight link ONLY for items in $this->library->id --}}
+                            @if($row['libraryId'] == $libraryId)
+                                <a
+                                    href="{{ route('programs.show',['program' => $programId]) }}"
+                                    class="text-blue-500"
+                                    title="open program"
+                                >
+                                    {{ $performanceDate }}
+                                </a>
+                            @else
                                 {{ $performanceDate }}
-                            </a>
+                            @endif
                         @empty
                             none
                         @endforelse
@@ -192,26 +221,32 @@
                 {{-- pull --}}
                 <td class="relative border border-gray-300">
                     <div class="flex justify-center items-center h-full">
-                        <input type="checkbox"
-                               wire:model="itemsToPull"
-                               class="item-checkbox"
-                               value="{{  $row['libItemId'] }}"
-                        />
+                        @if($row['libraryId'] == $libraryId)
+                            <input type="checkbox"
+                                   wire:model="itemsToPull"
+                                   class="item-checkbox"
+                                   value="{{  $row['libItemId'] }}"
+                            />
+                        @endif
                     </div>
                 </td>
 
                 {{-- edit --}}
                 @if($dto['header'] != 'ensemble library')
                     <td class="text-center border border-gray-200 px-1">
-                        <x-buttons.edit id="{{ $row['libItemId'] }}" :livewire="true" id="{{ $row['libItemId'] }}"/>
+                        @if($row['libraryId'] == $libraryId)
+                            <x-buttons.edit id="{{ $row['libItemId'] }}" :livewire="true" id="{{ $row['libItemId'] }}"/>
+                        @endif
                     </td>
 
                     {{-- remove --}}
                     {{-- ONLY TEACHER MAY REMOVE ITEMS --}}
                     @if(auth()->user()->isTeacher())
                         <td class="text-center border border-gray-200 px-1">
-                            <x-buttons.remove id="{{ $row['libItemId'] }}" livewire="1"
+                            @if($row['libraryId'] == $libraryId)
+                                <x-buttons.remove id="{{ $row['libItemId'] }}" livewire="1"
                                               message="Are you sure you want to remove this library item?"/>
+                            @endif
                         </td>
                     @endif
                 @endif

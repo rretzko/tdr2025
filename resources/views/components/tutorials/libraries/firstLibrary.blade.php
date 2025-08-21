@@ -131,5 +131,65 @@
                 </div>
             </div>
         </div>
+
+        {{-- GLOBAL v. LOCAL --}}
+        <div id="globalVLocal" class="mt-4">
+            <h4 class="font-semibold underline mb-2">Global v. Local</h4>
+            <p class="mb-2">
+                <img src="{{ Storage::disk('s3')->url('tutorials/libraries/globalVLocal.png') }}"
+                     alt="Global v. local button" class="inline"/>
+            </p>
+            <p class="mb-2">
+                At the top of the page, you will see the label "Library:" with two option buttons;
+                one with the name of your library and the second named "Global".
+            </p>
+
+            <p class="mb-2">
+                The button with your library's name will display the items in your library.
+            </p>
+            <p class="mb-2">
+                The "global" library is a unique feature of TheDirectorsRoom.com Library to provide you
+                with a view into what other directors are using in their libraries and, by virtue of the
+                number of times a piece is listed, the general popularity of a piece.
+            </p>
+            <p class="mb-2">
+                The button with the Global name will display <u>ALL</u> of the items in the global
+                library, including your library's items. The "global" display differs from your
+                library's display as follows:
+            </p>
+            <ul class="ml-8 list-disc">
+                <li>
+                    A column titled "my" is added to the front of each row.
+                    <ul class="ml-8 list-disc text-sm">
+                        <li>Items from your library will be highlighted with an asterisk (*).</li>
+                    </ul>
+                </li>
+                <li>
+                    Your items will display in black font with all other items in a lighter shade
+                    of gray.
+                </li>
+                <li>
+                    The "perf" date will display, but ONLY your items will link to programs.
+                </li>
+                <li>
+                    The "pull" column checkbox is only displayed on your items.
+                </li>
+                <li>
+                    You are able to edit and remove your items, but these buttons
+                    will be removed from items in other libraries.
+                </li>
+            </ul>
+
+            <div
+                class="mt-2 p-2 flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 bg-gray-600 border border-gray-500">
+                <div class="flex flex-col">
+                    <label>Global Library with "My" Selections Highlighted</label>
+                    <div id="newLibraryImage">
+                        <img src="{{ Storage::disk('s3')->url('tutorials/libraries/mySelections.png') }}"
+                             alt="Global library items with local selections highlighted">
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>{{-- end of firstLibrary content section --}}
 </div> {{-- end of firstLibrary --}}
