@@ -169,6 +169,11 @@
                     of gray.
                 </li>
                 <li>
+                    Only docs marked as "shareable" will display under the "docs" column.
+                    This includes your library's docs which <u>WILL</u> display in your library's view
+                    but will be hidden in the global view.
+                </li>
+                <li>
                     The "perf" date will display, but ONLY your items will link to programs.
                 </li>
                 <li>

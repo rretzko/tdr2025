@@ -156,6 +156,7 @@ class ItemComponent extends BaseLibraryItemPage
                         'lib_item_id' => $this->form->sysId,
                         'user_id' => $userId,
                         'url' => $storedFileName,
+                        'shareable' => $this->form->shareable ? 1 : 0,
                     ],
                     [
                         'label' => $this->uploadDescr,
@@ -328,6 +329,12 @@ class ItemComponent extends BaseLibraryItemPage
         $this->reset('searchVoicings');
         //redo search
         $this->searchVoicing();
+    }
+
+    public function updateShareable(int $libItemDocId): void
+    {
+        $libItemDoc = LibItemDoc::find($libItemDocId);
+        $libItemDoc->update(['shareable' => !$libItemDoc->shareable]);
     }
 
     private function addItemToLibrary(int $libItemId): void

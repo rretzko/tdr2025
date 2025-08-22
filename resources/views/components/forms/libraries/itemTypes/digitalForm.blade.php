@@ -26,6 +26,7 @@
                 <thead>
                 <tr>
                     <th class="px-2 border border-gray-400">Description</th>
+                    <th class="px-2 border border-gray-400">Share?</th>
                     <th class="px-2 border border-gray-400 sr-only">Remove</th>
                 </tr>
                 </thead>
@@ -33,6 +34,10 @@
                 @foreach($form->previousFileUploads AS $doc)
                     <tr>
                         <td class="px-2 border border-gray-400">{{ $doc['label'] }}</td>
+                        <td class="px-2 border border-gray-400 text-center">
+                            <input type="checkbox"
+                                   wire:click="updateShareable({{ $doc['id'] }})" @checked($doc['shareable'])/>
+                        </td>
                         <td class="px-2 border border-gray-400">
                             <button
                                 type="button"
@@ -40,6 +45,7 @@
                                     "px-2 text-sm bg-red-500 text-white rounded-lg",
                                     'hidden' => ! auth()->user()->isTeacher(),
                                 ])
+                                wire:confirm="Are you sure you want to remove this doc?"
                                 wire:click="removeDoc({{ $doc['id'] }})"
                                 @disabled(! auth()->user()->isTeacher())
                             >
