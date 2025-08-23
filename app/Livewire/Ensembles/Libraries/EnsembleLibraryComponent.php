@@ -15,6 +15,8 @@ use App\Models\Schools\Teacher;
 use App\Models\UserConfig;
 use App\Services\CoTeachersService;
 use Carbon\Carbon;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Traits\Libraries\LibraryTableColumnHeadersTrait;
@@ -30,6 +32,11 @@ class EnsembleLibraryComponent extends LibraryBasePage
     public bool $displayForm = false;
     public int $ensembleId = 0;
     public array $ensembles = [];
+    /**
+     * @var bool
+     * @todo this should be refactored up for dual use with ItemTableComponent
+     */
+    public bool $global = false;
     public Library $library;
     public int $libraryId = 0;
     public array $programs = [];
@@ -81,14 +88,16 @@ class EnsembleLibraryComponent extends LibraryBasePage
         $locations = $this->getItemLocations($rows, $this->libraryId);
         $performances = $this::getItemPerformances($rows);
         $tags = $this->getItemTags($rows);
-        $docs = $this->getItemDocs($rows, $this->libraryId, $this->userId);
+        $docs = $this->getItemDocs($rows, $this->libraryId, $this->userId, false);
         $urls = $this->getItemUrls($rows);
         $medleySelections = $this->getMedleySelections($rows);
+
+        $paginated = $this->getPaginatedData($rows);
 
         return view('livewire..ensembles.libraries.ensemble-library-component',
             [
                 'performances' => $performances,
-                'rows' => $rows,
+                'rows' => $paginated, //$rows,
                 'titleSearchResults' => $this->getTitleSearchResults(),
                 'itemsToPullCount' => count($this->itemsToPull),
                 'locations' => $locations,
@@ -166,6 +175,27 @@ class EnsembleLibraryComponent extends LibraryBasePage
         return false;
     }
 
+    /**
+     * @param  array  $dataArray
+     * @return LengthAwarePaginator
+     * @todo this should be refactored with same method in ItemTableComponent
+     */
+    private function getPaginatedData(array $dataArray): LengthAwarePaginator
+    {
+        $page = Paginator::resolveCurrentPage() ?: 1;
+
+        $total = count($dataArray);
+
+        $results = array_slice($dataArray, ($page - 1) * $this->recordsPerPage, $this->recordsPerPage);
+
+        return new LengthAwarePaginator(
+            $results,
+            $total,
+            $this->recordsPerPage,
+            $page,
+            ['path' => Paginator::resolveCurrentPath()]
+        );
+    }
 
     private function getRows(): array
     {

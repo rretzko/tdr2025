@@ -113,7 +113,7 @@
                     @if(array_key_exists($row['libItemId'], $medleySelections))
                         <div class="ml-4 text-xs italic">
                             @foreach($medleySelections[$row['libItemId']] AS $libMedleySelection)
-                                {{ $libMedleySelection->title }}
+                                <div>{{ $libMedleySelection->title }}</div>
                             @endforeach
                         </div>
                     @endif

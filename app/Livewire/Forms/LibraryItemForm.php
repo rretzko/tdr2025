@@ -710,6 +710,7 @@ class LibraryItemForm extends Form
     private function setFormBackgroundColor(): string
     {
         return match ($this->itemType) {
+            'octavo' => 'bg-white',
             'medley' => 'bg-blue-100',
             'book' => 'bg-green-100',
             'digital' => 'bg-indigo-100',

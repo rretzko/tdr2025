@@ -36,6 +36,10 @@ class ItemTableComponent extends LibraryBasePage
     public Library $library;
     public bool $displayForm = false;
 
+    /**
+     * @var bool
+     * @todo this should be refactored up for dual use with EnsembleLibraryComponent
+     */
     public bool $global = false;
     public string $globalSearch = '';
 
@@ -217,6 +221,11 @@ class ItemTableComponent extends LibraryBasePage
         return $selections;
     }
 
+    /**
+     * @param  array  $dataArray
+     * @return LengthAwarePaginator
+     * @todo this should be refactored with same method in EnsembleLibraryComponent
+     */
     private function getPaginatedData(array $dataArray): LengthAwarePaginator
     {
         $page = Paginator::resolveCurrentPage() ?: 1;
@@ -232,8 +241,6 @@ class ItemTableComponent extends LibraryBasePage
             $page,
             ['path' => Paginator::resolveCurrentPath()]
         );
-
-
     }
 
     private function getTypeFilters(): array
