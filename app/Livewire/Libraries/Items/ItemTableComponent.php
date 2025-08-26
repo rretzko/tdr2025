@@ -141,7 +141,7 @@ class ItemTableComponent extends LibraryBasePage
 
         $perfs = $this->getItemPerformances($rows);
 
-        $docs = $this->getItemDocs($rows, $this->library->id, $this->userId);
+        $docs = $this->getItemDocs($rows, $this->library->id, $this->userId, false);
 
         $fileName = 'libraryItems_'.date('Ymd_His').'.csv';
 
