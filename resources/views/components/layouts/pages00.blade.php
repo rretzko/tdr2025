@@ -19,6 +19,7 @@
 </head>
 <body class="font-sans antialiased">
 
+{{-- PAGE HEADER --}}
 <x-tdr-header/>
 
 <div class="min-h-screen bg-white dark:bg-gray-900">
