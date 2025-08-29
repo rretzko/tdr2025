@@ -35,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
         );
 //Log::info('***** app.timezone: ' . config('app.timezone'));
 //Log::info('***** app.locale: ' . config('app.locale'));
-        Carbon::setLocale(config('app.timezone'));
+        Carbon::setLocale(config('app.locale'));
 
         //authorize the founder for all gates
         Gate::before(function (User $user, string $ability) {
