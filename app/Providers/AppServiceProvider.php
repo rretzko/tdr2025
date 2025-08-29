@@ -11,6 +11,7 @@ use App\Policies\LibraryPolicy;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -32,7 +33,8 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(
             SendWorkEmailVerificationListener::class,
         );
-
+//Log::info('***** app.timezone: ' . config('app.timezone'));
+//Log::info('***** app.locale: ' . config('app.locale'));
         Carbon::setLocale(config('app.timezone'));
 
         //authorize the founder for all gates
