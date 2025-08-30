@@ -72,6 +72,8 @@ class SchoolForm extends Form
             ]
         );
 
+        UserConfig::setProperty('schoolId', $school->id);
+
         //set $this variables
         $this->setVars();
 
@@ -103,6 +105,8 @@ class SchoolForm extends Form
                     'subject' => 'chorus',
                 ]
             );
+
+            UserConfig::setProperty('schoolId', $this->school->id);
 
             //verify school email address
             $this->sendVerificationEmailIfNeeded();
@@ -416,7 +420,7 @@ class SchoolForm extends Form
         $schoolId = UserConfig::getValue('schoolId');
         $teacherId = Teacher::where('user_id', auth()->id())->first()->id;
         $supervisorPhone = $this->getSupervisorPhone();
-
+Log::info('schoolId: ' . $schoolId);
         Supervisor::updateOrCreate(
             [
                 'school_id' => $schoolId,
