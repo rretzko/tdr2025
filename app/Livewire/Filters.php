@@ -32,6 +32,8 @@ class Filters extends Form
     public array $ensembleYearsSelectedIds = [];
     public string $header = '';
 
+    public array $honorsChoirsIds = [];
+
     public array $participatingClassOfsSelectedIds = [];
     public array $participatingSchoolsSelectedIds = [];
     public array $participatingVoicePartsSelectedIds = [];
@@ -164,6 +166,8 @@ class Filters extends Form
 
                 $this->pitchFileFileTypesSelectedIds = $fileTypes;
 
+            } elseif($this->header === 'programs'){
+                $this->honorsChoirsIds = [1,2,3];
             } else {
 
                 //            Log::info(__METHOD__.': '.__LINE__);

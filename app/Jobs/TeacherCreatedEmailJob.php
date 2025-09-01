@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Mail\TeacherCreateEmailMail;
 use App\Models\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -15,9 +16,9 @@ class TeacherCreatedEmailJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct($model)
+    public function __construct(public Teacher $teacher)
     {
-        Log::info('*** modelId: ' . $model->id . ' ***');
+
     }
 
     /**
@@ -26,8 +27,7 @@ class TeacherCreatedEmailJob implements ShouldQueue
     public function handle(): void
     {
         $user = User::find(368);
-        $email = 'rick@mfrholdings.com';
-        Log::info('*** email: ' . $email . ' ***');
-        //Mail::to($email)->send(new SendScoringRosterMail($user, storage_path("app/$filePath")));
+
+        Mail::to($email)->send(new TeacherCreateEmailMail($user, $this->teacher, storage_path("app/$filePath")));
     }
 }

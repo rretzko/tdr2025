@@ -5,6 +5,8 @@ namespace App\Livewire\Programs;
 use App\Livewire\BasePage;
 use App\Models\Libraries\Items\Components\LibTitle;
 use App\Models\Libraries\Items\LibItem;
+use App\Models\Programs\HonorChoirs\HcEvent;
+use App\Models\Programs\HonorChoirs\HcOrganization;
 use App\Models\Programs\Program;
 use App\Models\Programs\ProgramSelection;
 use App\Models\UserConfig;
@@ -16,6 +18,7 @@ class ProgramsTableComponent extends BasePage
 {
     public array $columnHeaders = [];
     public bool $displayForm = false;
+    public Collection|null $hcEvents = null; //honor choir events
     public string $primarySort = '';
 
     public int $schoolId = 0;
@@ -64,6 +67,15 @@ class ProgramsTableComponent extends BasePage
         $this->redirect(route('programs.edit', $programId));
     }
 
+    public function njAllStatePrograms(): void
+    {
+        $hcOrganizationId = HcOrganization::where('name', 'NJMEA')->first()->id;
+
+        $this->hcEvents = is_null($this->hcEvents)
+            ? HcEvent::where('hc_organization_id', $hcOrganizationId)->orderBy('year_of', 'desc')->get()
+            : null;
+    }
+
     public function remove(int $programId): void
     {
         $program = Program::find($programId);
@@ -92,7 +104,11 @@ class ProgramsTableComponent extends BasePage
 
     public function view(int $programId): void
     {
-        $this->redirect(route('programs.show', $programId));
+        if(is_null($this->hcEvents)) {
+            $this->redirect(route('programs.show', $programId));
+        }else{
+            $this->redirect(route('hcEvent.show', $programId));
+        }
     }
 
     private function getColumnHeaders(): array

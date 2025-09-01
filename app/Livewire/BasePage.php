@@ -123,6 +123,11 @@ class BasePage extends Component
             ->first();
     }
 
+    public function addHonorsChoirs(): void
+    {
+
+    }
+
     public function getSavedSortColumn(string $default): string
     {
         return UserSort::query()

@@ -82,6 +82,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('events/manage', \App\Http\Controllers\Events\EventsManageController::class)
         ->name('events.manage');
 
+    //HONOR CHOIR PROGRAMS
+    Route::get('honorChoir/programs/{hcEvent}', App\Http\Controllers\Programs\HonorChoirs\HcEventProgramsController::class)
+        ->name('hcEvent.show');
+
     //INVENTORIES
     Route::get('ensembles/inventory', [\App\Http\Controllers\Ensembles\Inventories\InventoryController::class, 'index'])
         ->name('ensembles.inventory');

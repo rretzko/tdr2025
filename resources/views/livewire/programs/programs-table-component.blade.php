@@ -54,13 +54,14 @@
             </button>
         </div>
 
+
         {{-- FILTERS AND TABLE --}}
         <div class="flex flex-row">
 
             {{-- FILTERS --}}
             @if($hasFilters)
                 <div class="flex justify-center">
-                    <x-sidebars.filters :filters="$filters" :methods="['schools']"/>
+                    <x-sidebars.filters :filters="$filters" :methods="['schools']" header="{{ $filters->header }}" :hcEvents="$hcEvents"/>
                 </div>
             @endif
 
@@ -69,7 +70,11 @@
 
                 {{-- TABLE --}}
                 <div>
-                    @include('components.tables.programsTable')
+                    @if($hcEvents)
+                        @include('components.tables.hcEventsProgramsTable')
+                    @else
+                        @include('components.tables.programsTable')
+                    @endif
                 </div>
 
             </div>

@@ -1,10 +1,30 @@
-@props(['filters','methods'])
+@props(['filters','methods','header' => 'none', 'hcEvents' => null])
 
-<div id="filters" class="bg-white p-2 mr-0.5 mt-1 rounded-lg space-y-2 h-full shadow-lg">
+<div id="filters" @class([
+    "bg-white p-2 mr-0.5 mt-1 rounded-lg space-y-2 h-full shadow-lg",
+    'min-w-24' => $header === 'programs',
+])
+
+>
     <div class="flex items-center justify-center space-x-1 w-full underline">
         <x-heroicons.funnelSolidMicro/>
         <span>Filters</span>
     </div>
+
+    {{-- NJ ALL-STATE BUTTON --}}
+    @if($header === 'programs' && auth()->user()->isFounder())
+        <button
+            type="button"
+            wire:click="njAllStatePrograms()"
+            @class([
+                "text-xs px-1 border rounded-lg shadow-lg",
+                "bg-green-100 text-green-800 border-green-500" => is_null($hcEvents),
+                "bg-red-100 text-red-800 border-red-500" => $hcEvents
+                ])
+        >
+            NJ All-State
+        </button>
+    @endif
 
     @forelse($methods AS $method)
         <h3 class="bold underline text-xs">
