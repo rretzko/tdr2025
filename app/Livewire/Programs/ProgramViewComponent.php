@@ -389,15 +389,20 @@ class ProgramViewComponent extends BasePage
 
     public function updatedSelectionTitle(): void
     {
+        $libraryId = $this->getLibraryId();
+        $libraryName = Library::find($libraryId)->name;
+
         $this->resultsSelectionTitle = LibItem::query()
             ->join('lib_titles', 'lib_items.lib_title_id', '=', 'lib_titles.id')
+            ->join('lib_stacks', 'lib_items.id', '=', 'lib_stacks.lib_item_id')
             ->where('lib_titles.title', 'LIKE', '%'.$this->selectionTitle.'%')
+            ->where('lib_stacks.library_id', $libraryId)
             ->select('lib_items.*', 'lib_titles.title')
             ->orderBy('lib_titles.title')
             ->get();
 
         if ($this->resultsSelectionTitle->isEmpty()) {
-            $this->resultsSelectionTitle = '<div>No selection found with a title like "'.$this->selectionTitle.'".</div>';
+            $this->resultsSelectionTitle = '<div>No selection found in ' . $libraryName . ' with a title like "'.$this->selectionTitle.'".</div>';
             $this->resultsSelectionTitle .= '<div>You can add this selection in the ';
             $this->resultsSelectionTitle .= '<a href="/libraries" class="text-blue-500">Libraries</a> ';
             $this->resultsSelectionTitle .= ' module.</div>';
