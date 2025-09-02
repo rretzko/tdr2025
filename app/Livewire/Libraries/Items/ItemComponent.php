@@ -70,7 +70,7 @@ class ItemComponent extends BaseLibraryItemPage
             $this->libItem = $this->dto['libItem'];
             $this->form->setLibItem($this->libItem);
         } else {
-            $this->form->resetVars();
+            $this->form->resetVars($this->libraryId);
         }
 
         $this->form->teacherEmail = $this->setTeacherEmail();

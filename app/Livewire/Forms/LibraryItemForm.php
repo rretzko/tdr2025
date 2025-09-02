@@ -213,7 +213,7 @@ class LibraryItemForm extends Form
         return (bool) $libStack;
     }
 
-    public function resetVars(): void
+    public function resetVars(int $libraryId): void
     {
         $this->artists = [
             'arranger' => '',
@@ -257,7 +257,7 @@ class LibraryItemForm extends Form
             ],
         ];
 
-        $this->libraryId = 0;
+        $this->libraryId = $libraryId;
 
         $this->itemType = 'octavo';
         $this->count = 1;
