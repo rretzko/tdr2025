@@ -2,6 +2,7 @@
 
 namespace App\Models\Libraries;
 
+use App\Jobs\LibraryCreatedEmailJob;
 use App\Models\Schools\School;
 use App\Models\Schools\Teacher;
 use App\Models\User;
@@ -18,6 +19,15 @@ class Library extends Model
         'name',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function($model) {
+            LibraryCreatedEmailJob::dispatch($model);
+        });
+    }
+
     public function school(): BelongsTo
     {
         return $this->belongsTo(School::class);
@@ -26,6 +36,20 @@ class Library extends Model
     public function teacher(): BelongsTo
     {
         return $this->belongsTo(Teacher::class);
+    }
+
+    public function getTeacherEmail(): string
+    {
+        $teacher = Teacher::find($this->teacher_id);
+
+        return $teacher->user->email;
+    }
+
+    public function getTeacherName(): string
+    {
+        $teacher = Teacher::find($this->teacher_id);
+
+        return $teacher->user->name;
     }
 
     public function user(): User
