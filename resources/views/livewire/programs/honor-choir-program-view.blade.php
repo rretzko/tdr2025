@@ -127,8 +127,58 @@
                 </table>
             </div>{{-- end of program selections --}}
 
+            {{-- PARTICIPANTS --}}
             <div id="participants" class="mb-4">
                 <h3 class="font-semibold mb-2">Participants</h3>
+                <div id="participantTables" class="flex flex-wrap ">
+                    @forelse($hcEvent->getParticipantInstrumentOrderBys() AS $orderBy)
+                        <table class="border border-gray-800 w-5/12 ml-4 mb-4 even:bg-gray-300">
+                            <thead>
+                            <tr>
+                                <th colspan="3" class="px-1 border border-gray-600 bg-gray-400">
+                                    {{ $orderBy->instrument_name }}
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="px-1 border border-gray-600 text-center">
+                                    ###
+                                </th>
+                                <th class="px-1 border border-gray-600 text-center">
+                                    Participant
+                                </th>
+                                <th class="px-1 border border-gray-600 text-center">
+                                    School
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($hcEvent->getParticipants($orderBy->instrument_order_by) AS $participant)
+                                <tr>
+                                    <td class="px-1 border border-gray-600 text-center">
+                                        {{ $loop->iteration }}
+                                    </td>
+                                    <td class="px-1 border border-gray-600">
+                                        {{ $participant->full_name }}
+                                    </td>
+                                    <td class="px-1 border border-gray-600">
+                                        {{ $participant->school_name }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    @empty
+                        <table>
+                            <tbody>
+                            <tr>
+                                <th>
+                                    No participants are found for {{ $hcEvent->name }}
+                                </th>
+                            </tr>
+                            </tbody>
+                        </table>
+                    @endforelse
+                </div>
             </div>{{-- end of participants --}}
 
         </div>{{-- end of page content --}}

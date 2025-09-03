@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
@@ -24,6 +25,9 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        //force email into all lower case
+        $request['email'] = Str::lower($request['email']);
+
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
@@ -44,15 +48,15 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        //set user as teacher
+        //set user as teacher prior to School being identified
         Teacher::create(['id' => $user->id, 'user_id' => $user->id]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        //return redirect()->intended(route('home'));
-        return redirect()->intended(route('school.create'));
+        return redirect()->route('school.create');
+//        return redirect()->intended(route('school.create'));
     }
 
     /**
@@ -61,15 +65,5 @@ class RegisteredUserController extends Controller
     public function create(): View
     {
         return view('auth.register');
-    }
-
-    private function parseName(string $name): array
-    {
-        $parts = explode(' ', $name);
-
-        $a['first_name'] = $parts[0];
-        $a['last_name'] = $parts[1];
-
-        return $a;
     }
 }

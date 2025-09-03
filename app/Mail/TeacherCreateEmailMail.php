@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\Schools\Teacher;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -38,7 +39,7 @@ class TeacherCreateEmailMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'mail.teacherCreateEmail',
         );
     }
 

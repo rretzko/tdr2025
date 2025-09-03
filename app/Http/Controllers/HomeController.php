@@ -9,6 +9,7 @@ use App\Models\Schools\Teacher;
 use App\Services\HomeDashboardTestForSchoolsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
 {

@@ -2,6 +2,7 @@
 
 namespace App\Models\Schools;
 
+use App\Jobs\TeacherCreatedEmailJob;
 use App\Models\User;
 use App\ValueObjects\SchoolTeacherValueObject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -24,6 +25,16 @@ class SchoolTeacher extends Model
         'school_id',
         'teacher_id',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function($model) {
+            $teacher = Teacher::find($model->teacher_id);
+            TeacherCreatedEmailJob::dispatch($teacher);
+        });
+    }
 
     public function getGradesTaughtCsvAttribute(): string
     {

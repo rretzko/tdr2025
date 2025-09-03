@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Mail\TeacherCreateEmailMail;
+use App\Models\Schools\Teacher;
 use App\Models\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -26,8 +27,8 @@ class TeacherCreatedEmailJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $user = User::find(368);
+        $founder = User::find(config('app.founderId'));
 
-        Mail::to($email)->send(new TeacherCreateEmailMail($user, $this->teacher, storage_path("app/$filePath")));
+        Mail::to($founder->email)->send(new TeacherCreateEmailMail($founder, $this->teacher));
     }
 }

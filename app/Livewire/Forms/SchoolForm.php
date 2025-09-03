@@ -420,7 +420,7 @@ class SchoolForm extends Form
         $schoolId = UserConfig::getValue('schoolId');
         $teacherId = Teacher::where('user_id', auth()->id())->first()->id;
         $supervisorPhone = $this->getSupervisorPhone();
-Log::info('schoolId: ' . $schoolId);
+
         Supervisor::updateOrCreate(
             [
                 'school_id' => $schoolId,

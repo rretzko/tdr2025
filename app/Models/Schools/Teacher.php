@@ -2,7 +2,6 @@
 
 namespace App\Models\Schools;
 
-use App\Jobs\TeacherCreatedEmailJob;
 use App\Models\Students\Student;
 use App\Models\User;
 use App\Models\Libraries\Library;
@@ -22,15 +21,6 @@ class Teacher extends Model
         'id',
         'user_id',
     ];
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::created(function($model) {
-            TeacherCreatedEmailJob::dispatch($model);
-        });
-    }
 
     public function getGradesITeachArray(School $school): array
     {

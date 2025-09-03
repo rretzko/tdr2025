@@ -5,6 +5,7 @@ namespace App\Models\Programs\HonorChoirs;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class HcEvent extends Model
@@ -41,6 +42,29 @@ class HcEvent extends Model
             ->join('hc_conductor_event', 'hc_conductors.id', '=', 'hc_conductor_event.hc_conductor_id')
             ->where('hc_conductor_event.hc_event_id', '=', $this->id)
             ->pluck('hc_conductors.name')
+            ->toArray() ?? [];
+    }
+
+    public function getParticipantInstrumentOrderBys(): array
+    {
+        return DB::table('hc_participants')
+            ->where('hc_event_id', $this->id)
+            ->select('instrument_order_by', 'instrument_name')
+            ->orderBy('instrument_order_by')
+            ->distinct()
+            ->get()
+            ->toArray() ?? [];
+    }
+
+    public function getParticipants(int $instrumentOrderBy): array
+    {
+        return DB::table('hc_participants')
+            ->where('hc_event_id', $this->id)
+            ->where('instrument_order_by', $instrumentOrderBy)
+            ->select('full_name', 'school_name')
+            ->orderBy('last_name')
+            ->orderBy('first_name')
+            ->get()
             ->toArray() ?? [];
     }
 
