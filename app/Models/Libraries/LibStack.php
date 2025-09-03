@@ -2,6 +2,7 @@
 
 namespace App\Models\Libraries;
 
+use App\Jobs\LibStackCreatedEmailJob;
 use App\Models\Libraries\Items\Components\Voicing;
 use App\Models\Libraries\Items\LibItem;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,6 +20,23 @@ class LibStack extends Model
             'lib_item_id',
             'price',
         ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function ($model) {
+
+            //count items in this libStack
+            $libItemsCount = LibStack::where('library_id', $model->library_id)->count();
+
+            //send advisory email on the first item created in a library
+            if($libItemsCount === 1){
+                LibStackCreatedEmailJob::dispatch($model);
+            }
+        });
+
+    }
 
     public function getVoicingsArrayAttribute(): array
     {

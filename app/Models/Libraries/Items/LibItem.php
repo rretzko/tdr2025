@@ -2,6 +2,7 @@
 
 namespace App\Models\Libraries\Items;
 
+use App\Jobs\LibStackCreatedEmailJob;
 use App\Models\Ensembles\Ensemble;
 use App\Models\Libraries\Items\Components\Artist;
 use App\Models\Libraries\Items\Components\LibItemLocation;
