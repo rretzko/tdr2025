@@ -91,15 +91,16 @@
             <div id="programSelections" class="mb-4 pb-4 border border-transparent border-b-gray-400">
                 <h3 class="font-semibold mb-2">Program Selections</h3>
 
-                <table class="ml-4">
+                {{-- PROGRAM SELECTIONS TABLE --}}
+                <table class="ml-4 w-2/3">
                     <thead>
                     <tr>
-                        <th class="border border-gray-500">###</th>
-                        <th class="border border-gray-500">
+                        <th class="border border-gray-500 w-1/12">###</th>
+                        <th class="border border-gray-500 w-7/12">
                             <div>title</div>
                             <div class="ml-4 text-sm italic">subtitle</div>
                         </th>
-                        <th class="border border-gray-500">
+                        <th class="border border-gray-500 w-4/12">
                             artist(s)
                         </th>
                     </tr>
