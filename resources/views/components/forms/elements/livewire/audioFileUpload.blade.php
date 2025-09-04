@@ -1,5 +1,5 @@
 @props([
-    'accept' => 'audio/mpeg, audio/ogg, audio/wav',
+    'accept' => '.mp3, .m4a, .wav, audio/mpeg, audio/mp4, audio/ogg, audio/wav',
     'autofocus' => false,
     'blur' => true,
     'error' => '',
@@ -21,6 +21,7 @@
             'wide',
             'border border-red-600' => $errors->has($name),
             ])
+               wire:key="{{ $name }}"
            @if($blur)wire:model.blur @else
                wire:model
            @endif ="{{ $name }}"

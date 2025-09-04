@@ -153,7 +153,8 @@ class CandidatesTableComponent extends BasePage
             ->where('version_id', $this->versionId)
             ->where('date_type', 'postmark_deadline')
             ->first()
-            ->postmark_deadline;
+            ->version_date;
+
         $this->pastPostmarkDeadline = Carbon::parse($postmarkDeadline) < Carbon::now();
 
     }

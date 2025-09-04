@@ -4,7 +4,7 @@
     </li>
 
     <li class="mb-2">
-        <<b>If I have students accepted</b> into either the MIDDLE SCHOOL CHORUS or HIGH SCHOOL CHORUS, I have a SECOND
+        <b>If I have students accepted</b> into either the MIDDLE SCHOOL CHORUS or HIGH SCHOOL CHORUS, I have a SECOND
         responsibility
         to assist at a rehearsal (sectionals, testing) or the concert. TWO total duties.
     </li>
