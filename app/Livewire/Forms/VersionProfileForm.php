@@ -33,7 +33,7 @@ class VersionProfileForm extends Form
     public bool $schoolCounty = false;
     public string $shortName = '';
     public bool $shirtSize = false;
-    public int $seniorClassId = 2025;
+    public int $seniorClassId = 0;
     public string $statusId = 'sandbox';
     public bool $student = false;
     public bool $studentHomeAddress = false;
@@ -197,9 +197,12 @@ class VersionProfileForm extends Form
 
     public function setSeniorClassId(): void
     {
-        $service = new CalcSeniorYearService();
+        if(! $this->seniorClassId){
+            $service = new CalcSeniorYearService();
 
-        $this->seniorClassId = $service->getSeniorYear();
+            $this->seniorClassId = $service->getSeniorYear();
+        }
+
     }
 
     private function addParticipant(Version $version): VersionParticipant
