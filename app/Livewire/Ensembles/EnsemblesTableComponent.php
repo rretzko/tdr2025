@@ -48,6 +48,17 @@ class EnsemblesTableComponent extends BasePageEnsemble
             ]);
     }
 
+    public function remove(int $ensembleId): void
+    {
+        $ensemble = Ensemble::find($ensembleId);
+
+        $ensembleName = $ensemble->name;
+
+        if (!$ensemble->countLifetimeMembers()){
+            $ensemble->delete();
+        }
+    }
+
     public function updatedSelectedTab()
     {
         $uri = ($this->selectedTab === 'ensembles')

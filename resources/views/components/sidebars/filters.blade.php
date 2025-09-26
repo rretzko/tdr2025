@@ -12,7 +12,7 @@
     </div>
 
     {{-- NJ ALL-STATE BUTTON --}}
-    @if($header === 'programs' && auth()->user()->isFounder())
+    @if($header === 'programs')
         <button
             type="button"
             wire:click="njAllStatePrograms()"

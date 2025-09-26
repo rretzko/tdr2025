@@ -13,7 +13,7 @@
     {{-- PAGE CONTENT --}}
     <div class="w-11/12">
 
-        {{-- IMPORT LINK --}}
+        {{-- IMPORT LINKS --}}
         <div class="text-sm text-right">
             <button
                 type="button"
@@ -24,10 +24,29 @@
             </button>
         </div>
 
+        @if(auth()->id() === 45) {{-- limited to Barbara Retzko --}}
+            <div class="text-sm text-right">
+                <button
+                    type="button"
+                    wire:click="clickAddViaImageOrPdf"
+                    class="text-blue-600"
+                    >
+                    Add via Image or PDF
+                </button>
+            </div>
+        @endif
+
         {{-- HEADER and ADD-NEW BUTTON --}}
         <div class="flex justify-between mb-1">
             <div>{{ ucwords($dto['header']) }} for <span class="font-bold">{{ $library->name }}</span></div>
         </div>
+
+        {{-- ITEM ADD VIA IMAGE or PDF FORM --}}
+        @if($displayViaImageOrPdf)
+            <div class="mb-2 ">
+                @include('components.forms.elements.livewire.libraryItem.addViaImageOrPdfForm')
+            </div>
+        @endif
 
         {{-- FILE IMPORT FORM --}}
         @if($displayFileImportForm)

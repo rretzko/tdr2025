@@ -127,7 +127,7 @@
                                     "border border-gray-200" => $row['canRemove'],
                                     ])
                                 >
-                                    @if($row['canRemove'])
+                                    @if($row['canRemove'] && (! $memberCounts[$row['id']]['countLifetime'] ))
                                         <x-buttons.remove id="{{ $row['id'] }}" livewire="1"/>
                                     @endif
                                 </td>

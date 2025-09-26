@@ -180,6 +180,8 @@ class LibraryItemForm extends Form
 
             $this->validate();
 
+            Log::info(__METHOD__);
+            Log::info('*** libraryId: ' . $libraryId);
             $this->libraryId = $libraryId;
 
             $this->parseTagsCsv($tagsCsv);
@@ -204,10 +206,13 @@ class LibraryItemForm extends Form
                     'price' => ConvertToPenniesService::usdToPennies($this->price),
                 ],
             );
+            Log::info(__METHOD__ . ': ' . __LINE__);
             Log::info('libStackId: '.$libStack->id);
             if ($this->addToHomeLibrary) {
                 $this->addToHomeLibraryStack($libStack);
             }
+            Log::info(__METHOD__ . ': ' . __LINE__);
+            Log::info('libItemId: '.$libItemId);
         }
 
         return (bool) $libStack;
@@ -368,6 +373,7 @@ class LibraryItemForm extends Form
 
     private function addToHomeLibraryStack(LibStack $libStack): void
     {
+        Log::info(__METHOD__ . ': ' . __LINE__);
         if (auth()->user()->isLibrarian()) {
             $librarian = LibLibrarian::query()
                 ->where('library_id', $this->libraryId)
@@ -455,6 +461,8 @@ class LibraryItemForm extends Form
                 ]
             );
         }
+
+        Log::info(__METHOD__ . ': ' . __LINE__);
     }
 
     private function canAddOrUpdate(array $digitals, int $userId): bool

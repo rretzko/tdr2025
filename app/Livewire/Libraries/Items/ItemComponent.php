@@ -16,8 +16,10 @@ use App\Models\User;
 use App\Services\ArtistSearchService;
 use App\Services\Libraries\CreateLibItemService;
 use App\Services\Libraries\LibraryStackSearchService;
+use App\Services\Libraries\SheetMusicParser;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use JetBrains\PhpStorm\NoReturn;
 use Maatwebsite\Excel\Facades\Excel;
@@ -26,10 +28,14 @@ use Livewire\WithFileUploads;
 class ItemComponent extends BaseLibraryItemPage
 {
     use WithFileUploads;
+
     public array $artistTypes = [];
     public array $bookTypes = ['music', 'text'];
     public bool $displayFileImportForm = false;
+    public bool $displayViaImageOrPdf = false;
     public string $errorMessage = '';
+    public string $fileSize = '0';
+    public string $fFileSize = '0'; //formatted file size
     public string $fileUploadMessage = '';
 
     public int $libraryId = 0;
@@ -51,7 +57,7 @@ class ItemComponent extends BaseLibraryItemPage
     public string $tagCsv = '';
     public $uploadedFileContainer; //used as container for uploaded file
     public string $uploadDescr = '';
-    public int $uploadedMaxFileSize = 400000; //4MB
+    public int $uploadedMaxFileSize = 4000000; //4MB
     public bool $uploadedMaxFileSizeExceeded = false;
     public string $uploadedMaxFileSizeExceededMessage = 'The uploaded file exceeds the upload_max_filesize directive in php.ini.';
     public string $uploadTemplateUrl = '';
@@ -59,6 +65,9 @@ class ItemComponent extends BaseLibraryItemPage
     public function mount(): void
     {
         parent::mount();
+
+        $iniFileSize = ini_get('upload_max_filesize');
+        $iniPostMaxSize = ini_get('post_max_size');
 
         $this->libraryId = auth()->user()->isLibrarian() ? $this->dto['libraryId'] : $this->dto['id'];
         $this->libraryName = Library::find($this->libraryId)->name;
@@ -84,6 +93,12 @@ class ItemComponent extends BaseLibraryItemPage
             [
                 'bladeForm' => 'components.forms.libraries.itemTypes.' . $this->form->itemTypeBlade() . 'Form',
             ]);
+    }
+
+    public function clickAddViaImageOrPdf(): void
+    {
+        $this->reset('displayFileImportForm');
+        $this->displayViaImageOrPdf = true;
     }
 
     public function clickUploadCsv(): void
@@ -175,8 +190,68 @@ class ItemComponent extends BaseLibraryItemPage
         }
     }
 
+    #[NoReturn] public function clickUploadImageOrPdf(): void
+    {
+        $this->reset('fileSize', 'fileUploadMessage', 'uploadedMaxFileSizeExceeded');
+
+        //check size
+        if($this->uploadedFileContainer->isValid()) {
+            $this->fileSize = $this->uploadedFileContainer->getSize();
+        }else{
+            Log::info('uploadedFileContainer is not valid');
+        }
+
+        Log::info('fileSize: '.$this->fileSize);
+        //early exit if fileSize exceeds maxFileSIze
+        if ($this->fileSize && ($this->fileSize > $this->uploadedMaxFileSize)) {
+            $this->uploadedMaxFileSizeExceeded = true;
+            Log::info('fileSize: '.$this->fileSize. ' exceeds uploadedMayFileSize: ' . $this->uploadedMaxFileSize);
+        } else {
+
+            Log::info('fileSize is good @ ' . $this->fileSize . '.');
+
+            //store the file on a s3 disk
+            $s3Path = 'libraries/items/imagesOrPdfs';
+            $fileName = $this->makeLibItemImageOrPdfFileName($s3Path);
+
+            Log::info('fileName: '.$fileName);
+            $storedFileName = $this->uploadedFileContainer->storePubliclyAs($s3Path, $fileName, 's3');
+            Log::info('storedFileName: '.$storedFileName);
+
+            if ($storedFileName) {
+
+                //clear any artifacts
+                $metadata = [];
+
+//                $userId = $this->form->getTeacherUserId();
+                $metadata = SheetMusicParser::fromFile($storedFileName);
+dd($metadata);
+//                LibItemDoc::updateOrCreate(
+//                    [
+//                        'library_id' => $this->libraryId,
+//                        'lib_item_id' => $this->form->sysId,
+//                        'user_id' => $userId,
+//                        'url' => $storedFileName,
+//                        'shareable' => $this->form->shareable ? 1 : 0,
+//                    ],
+//                    [
+//                        'label' => $this->uploadDescr,
+//                    ]
+//                );
+
+            } else { //catch (\Exception $e) {
+                Log::error('stored file name is missing in '.__METHOD__.' @ line 143.');
+            }
+        }
+
+            $this->reset('uploadedFileContainer');
+
+            $this->reset('displayViaImageOrPdf');
+    }
+
     #[NoReturn] public function clickImportItems(): void
     {
+        $this->reset('displayViaImageOrPdf');
         $this->displayFileImportForm = true;
     }
 
@@ -217,9 +292,11 @@ class ItemComponent extends BaseLibraryItemPage
 
     public function saveAndStay(): void
     {
+        Log::info(__METHOD__);
+        Log::info('*** libraryId: ' . $this->libraryId);
         $this->saveWorkflow();
 
-        $this->form->resetVars();
+        $this->form->resetVars($this->libraryId);
     }
 
     private function saveWorkflow(): bool
@@ -331,6 +408,17 @@ class ItemComponent extends BaseLibraryItemPage
         $this->searchVoicing();
     }
 
+    public function updatedUploadedFileContainer(): void
+    {
+        $this->reset('fFileSize');
+
+        if($this->uploadedFileContainer->isValid()) {
+            $this->fFileSize = $this->calcFormattedFileSize();
+        }else{
+            dd($this->uploadedFileContainer->getErrorMessage());
+        }
+    }
+
     public function updateShareable(int $libItemDocId): void
     {
         $libItemDoc = LibItemDoc::find($libItemDocId);
@@ -348,7 +436,39 @@ class ItemComponent extends BaseLibraryItemPage
         );
     }
 
+    private function calcFormattedFileSize(): string
+    {
+        $size = $this->uploadedFileContainer->getSize();
+        $suffix = ($size < 1000000) ? 'KB' : 'MB';
+
+        //formatted size
+        $fsize = ($suffix === 'KB')
+            ? number_format($size / 1000, 0)
+            : number_format($this->uploadedFileContainer->getSize() / 1000000, 1);
+
+        return $fsize . $suffix;
+    }
+
     private function makeLibItemDocFileName(string $dir): string
+    {
+        $extension = $this->uploadedFileContainer->guessExtension();
+        $libraryName = Library::find($this->libraryId)->name;
+        //initialize $slug
+        $baseSlug = Str::slug($libraryName, '-');
+        //add lib_item_id
+        $baseSlug .= '-'.$this->form->sysId.'-';
+
+        do {
+            //add random number for unique id and extension
+            $tempName = $baseSlug.strtotime('now').'.'.$extension;
+
+            $exists = LibItemDoc::where('url', $dir.'/'.$tempName)->exists();
+        } while ($exists);
+
+        return $tempName;
+    }
+
+    private function makeLibItemImageOrPdfFileName(string $dir): string
     {
         $extension = $this->uploadedFileContainer->guessExtension();
         $libraryName = Library::find($this->libraryId)->name;
