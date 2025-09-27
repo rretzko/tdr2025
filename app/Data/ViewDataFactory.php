@@ -372,6 +372,7 @@ class ViewDataFactory extends aViewData
             'obligations' => 'events.versions.participations.obligations-component',
             'pitchfiles' => 'events.versions.participations.pitch-files-component',
 
+            'program dashboard' => 'programs.program-dashboard-component',
             'program edit' => 'programs.program-edit-component',
             'program new' => 'programs.program-create-component',
             'program view' => 'programs.program-view-component',

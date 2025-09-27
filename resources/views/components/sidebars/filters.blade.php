@@ -13,17 +13,30 @@
 
     {{-- NJ ALL-STATE BUTTON --}}
     @if($header === 'programs')
-        <button
-            type="button"
-            wire:click="njAllStatePrograms()"
-            @class([
-                "text-xs px-1 border rounded-lg shadow-lg",
-                "bg-green-100 text-green-800 border-green-500" => is_null($hcEvents),
-                "bg-red-100 text-red-800 border-red-500" => $hcEvents
-                ])
-        >
-            NJ All-State
-        </button>
+        <div class="flex flex-col space-y-2">
+            {{-- DASHBOARD --}}
+            <a href="{{ route('programs.dashboard') }}">
+                <button
+                    type="button"
+                    class="text-xs px-1 border rounded-lg shadow-lg bg-blue-100 text-blue-800 border-blue-500"
+                >
+                    Dashboard
+                </button>
+            </a>
+
+            {{-- NJ ALL-STATE --}}
+            <button
+                type="button"
+                wire:click="njAllStatePrograms()"
+                @class([
+                    "text-xs px-1 border rounded-lg shadow-lg",
+                    "bg-green-100 text-green-800 border-green-500" => is_null($hcEvents),
+                    "bg-red-100 text-red-800 border-red-500" => $hcEvents
+                    ])
+            >
+                NJ All-State
+            </button>
+        </div>
     @endif
 
     @forelse($methods AS $method)

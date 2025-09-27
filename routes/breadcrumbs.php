@@ -254,6 +254,11 @@ Breadcrumbs::for('hcProgramView', function (BreadcrumbTrail $trail) {
     $trail->push('Honor Choir Program', route('programs'));
 });
 
+Breadcrumbs::for('program dashboard', function (BreadcrumbTrail $trail) {
+    $trail->parent('programs');
+    $trail->push('Program Dashboard', route('programs.dashboard'));
+});
+
 Breadcrumbs::for('program edit', function (BreadcrumbTrail $trail, $id) {
     $trail->parent('programs');
     $trail->push('Program Edit', route('programs.edit', $id));

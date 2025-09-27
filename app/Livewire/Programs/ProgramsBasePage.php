@@ -19,6 +19,7 @@ class ProgramsBasePage extends BasePage
 
     public function mount(): void
     {
+        $this->pageInstructions = $this->dto['pageInstructions'];
         $this->schools = $this->getSchools();
         $this->schoolYears = $this->getSchoolYears();
 
