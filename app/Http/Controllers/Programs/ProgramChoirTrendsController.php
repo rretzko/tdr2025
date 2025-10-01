@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Programs;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class ProgramDashboardController extends Controller
+class ProgramChoirTrendsController extends Controller
 {
     /**
      * Handle the incoming request.

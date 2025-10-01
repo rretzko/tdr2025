@@ -18,14 +18,17 @@ class Ensemble extends Model
     use hasFactory;
 
     protected $fillable = [
+        'acappella',
         'active',
         'abbr',
         'description',
         'grades',
+        'jazz',
         'name',
         'school_id',
         'short_name',
         'teacher_id',
+        'voicing',
     ];
 
     public function assets(): BelongsToMany

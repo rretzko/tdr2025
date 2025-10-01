@@ -17,6 +17,8 @@ class EnsembleForm extends Form
     #[Validate('required', message: 'An abbreviation is required.')]
     public string $abbr = '';
     #[Validate('nullable', 'bool')]
+    public bool $acappella = false;
+    #[Validate('nullable', 'bool')]
     public bool $active = false;
     public bool $canEdit = false;
     public bool $canRemove = false;
@@ -24,6 +26,7 @@ class EnsembleForm extends Form
     public string $description = '';
     public array $ensembleAssets = [];
     public array $grades = [];
+    public bool $jazz = true;
     //#[Validate('required', message: 'The ensemble name is required.')]
     public string $name = '';
     public int $schoolId = 0;
@@ -31,6 +34,7 @@ class EnsembleForm extends Form
     #[Validate('required', message: 'A short name is required.')]
     public string $shortName = '';
     public string $sysId = 'new';
+    public string $voicing = 'mixed';
 
     public function rules(): array
     {
@@ -60,6 +64,10 @@ class EnsembleForm extends Form
         }
 
         $this->grades = explode(',', $ensemble->grades);
+
+        $this->voicing = $ensemble->voicing;
+        $this->acappella = $ensemble->acappella;
+        $this->jazz = $ensemble->jazz;
 
         $teacherId = Teacher::where('user_id', auth()->id())->first()->id;
         $this->canEdit = $this->getCanEditGate($ensemble, $teacherId);
@@ -97,6 +105,9 @@ class EnsembleForm extends Form
                 'name' => $this->name,
                 'short_name' => $this->shortName,
                 'abbr' => $this->abbr,
+                'voicing' => $this->voicing,
+                'acappella' => $this->acappella,
+                'jazz' => $this->jazz,
                 'description' => $this->description,
                 'active' => $this->active,
                 'grades' => implode(',', $this->grades),
@@ -141,6 +152,9 @@ class EnsembleForm extends Form
                 'name' => $this->name,
                 'short_name' => $this->shortName,
                 'abbr' => $this->abbr,
+                'voicing' => $this->voicing,
+                'acappella' => $this->acappella,
+                'jazz' => $this->jazz,
                 'description' => $this->description,
                 'active' => $this->active,
                 'grades' => implode(',', $this->grades),

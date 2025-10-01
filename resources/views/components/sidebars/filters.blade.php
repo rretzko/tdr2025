@@ -15,12 +15,12 @@
     @if($header === 'programs')
         <div class="flex flex-col space-y-2">
             {{-- DASHBOARD --}}
-            <a href="{{ route('programs.dashboard') }}">
+            <a href="{{ route('programs.choirTrends') }}">
                 <button
                     type="button"
                     class="text-xs px-1 border rounded-lg shadow-lg bg-blue-100 text-blue-800 border-blue-500"
                 >
-                    Dashboard
+                    Choir Trends
                 </button>
             </a>
 

@@ -58,12 +58,8 @@
                         required
                     />
 
-                    {{-- DESCRIPTION --}}
-                    <x-forms.elements.livewire.inputTextArea
-                        label="description"
-                        name="form.description"
-                        required
-                    />
+                    {{-- ENSEMBLE QUALITITES --}}
+                    @include('components.forms.ensembles.ensembleQualitiesWidget')
 
                     {{-- GRADES --}}
                     <div class="flex flex-col mt-4">
@@ -87,6 +83,13 @@
                             </div>
                         </label>
                     </div>
+
+                    {{-- DESCRIPTION --}}
+                    <x-forms.elements.livewire.inputTextArea
+                        label="description"
+                        name="form.description"
+                        required
+                    />
 
                     {{-- ACTIVE --}}
                     <x-forms.elements.livewire.inputCheckbox
