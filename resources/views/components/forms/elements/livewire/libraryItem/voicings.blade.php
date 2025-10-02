@@ -5,6 +5,7 @@
             <input
                 type="text"
                 wire:model.live.debounce="form.voicingDescr"
+                wire:key="voicingDescr"
                 class="w-5/12 sm:w-3/12"
                 placeholder="SATB, TTB, etc."
             />
@@ -23,7 +24,7 @@
             @endif
         @else
             <div class="border border-gray-600 w-11/12 sm:w-10/12 px-2">
-                {{ $form->title }}
+                {{ $form->voicingDescr }}
             </div>
         @endif
     </label>
