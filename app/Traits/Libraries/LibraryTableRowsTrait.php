@@ -224,7 +224,7 @@ trait LibraryTableRowsTrait
         return $locations;
     }
 
-    public static function getItemPerformances(array $rows): array
+    public static function getItemPerformances(array $rows, bool $global, int $libraryId): array
     {
         $performances = [];
 
@@ -232,6 +232,11 @@ trait LibraryTableRowsTrait
             $performances[$row['libItemId']] = Program::query()
                 ->join('program_selections', 'program_selections.program_id', '=', 'programs.id')
                 ->where('program_selections.lib_item_id', $row['libItemId'])
+                ->when(!$global, function ($query, $libraryId) {
+                    $query
+                        ->join('libraries', 'libraries.school_id', '=', 'programs.school_id')
+                        ->where('libraries.id', $libraryId);
+                })
                 ->pluck('programs.performance_date', 'programs.id')
                 ->map(function ($date) {
                     return Carbon::parse($date)->format('M-y'); //ex. Jun-20

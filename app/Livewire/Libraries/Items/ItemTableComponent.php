@@ -85,7 +85,7 @@ class ItemTableComponent extends LibraryBasePage
             $this->global,
         );
         $locations = $this->getItemLocations($rows, $this->library->id);
-        $performances = $this->getItemPerformances($rows);
+        $performances = $this->getItemPerformances($rows, $this->global, $this->library->id);
         $tags = $this->getItemTags($rows);
         $medleySelections = $this->getMedleySelections($rows);
         $voicings = $this->getVoicings($rows);
