@@ -297,6 +297,7 @@ dd($metadata);
         $this->saveWorkflow();
 
         $this->form->resetVars($this->libraryId);
+        $this->reset('searchResults');
     }
 
     private function saveWorkflow(): bool
