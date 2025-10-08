@@ -26,7 +26,7 @@ class EnsembleForm extends Form
     public string $description = '';
     public array $ensembleAssets = [];
     public array $grades = [];
-    public bool $jazz = true;
+    public bool $jazz = false;
     //#[Validate('required', message: 'The ensemble name is required.')]
     public string $name = '';
     public int $schoolId = 0;
