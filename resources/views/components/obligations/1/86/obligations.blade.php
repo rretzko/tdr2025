@@ -11,10 +11,10 @@
     <div class="font-semibold">
         Once you acknowledge your obligation, your students will have access to StudentFolder.info where they
         will be able to upload their three mp3 recordings – Scales, Solo, Swan – for auditions. The site will be open
-        to your students until Friday November 15th at 11:59p. The site will remain open to you (the Director) to
+        to your students until Wednesday November 19th at 11:59p. The site will remain open to you (the Director) to
         check all uploaded files and <span style="font-size: larger;"><u>approve them for adjudication</u></span> until
         the <u>Director AND Postmark
-            deadline date</u> of Friday November 22, 2024 – 5p.
+            deadline date</u> of Tuesday November 25, 2025 – 5p.
     </div>
 </h2>
 
@@ -33,7 +33,7 @@
     <li>
         I understand that I must be present for the entire day of the auditions.
         A sing-in and sign-out sheet will verify attendance for the day.
-        If I fail to comply with this ruling, may accepted students will be disqualified.
+        If I fail to comply with this ruling, my accepted students will be disqualified.
     </li>
 
     <li>
@@ -45,7 +45,7 @@
     <li>
         <b>I understand</b> that if I have students accepted into either the REGION II MIXED CHORUS or
         TREBLE CHORUS, I have a second responsibility to assist with a rehearsal or at the concert. If I
-        have students accepted into both ensembles, I serve two total duties: once as adjudicator and once
+        have students accepted into both ensembles, I serve two total duties: once at auditions and once
         upon student acceptance. The choices of a second duty include rehearsal assistant at ONE rehearsal
         for either MIXED or TREBLE CHORUS, providing assistance for the entire day of the concert or
         serving as a host school for a rehearsal.
@@ -57,12 +57,12 @@
     </li>
 
     <li>
-        <b>I will</b> sing up for this second Director's Duty on the day of auditions.
+        <b>I will</b> sign up for this second Director's Duty on the day of auditions.
     </li>
 
     <li>
         <b>I understand</b> that if I am serving as both Choral and Band/Orchestra Director in my school,
-        I may choose to serve either the CJMEA CHorus or CJMEA Band or Orchestra.
+        I may choose to serve either the CJMEA Chorus or CJMEA Band or Orchestra.
     </li>
 
     <li>
@@ -73,7 +73,7 @@
     </li>
 
     <li>
-        <b>I understand</b> that if I fail to fulfill the responsibilities to the 2025 REGION II MIXED CHORUS or TREBLE
+        <b>I understand</b> that if I fail to fulfill the responsibilities to the 2026 REGION II MIXED CHORUS or TREBLE
         CHORUS,
         my student participation will be forfeited the following school year.
     </li>
