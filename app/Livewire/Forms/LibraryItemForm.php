@@ -31,10 +31,11 @@ use Illuminate\Support\Str;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
 use App\Traits\Libraries\LibrarySetLocationsTrait;
+use App\Traits\Libraries\UpdateMedleySelectionsTrait;
 
 class LibraryItemForm extends Form
 {
-    use LibrarySetLocationsTrait, LibrarianTeacherUserIdTrait;
+    use LibrarySetLocationsTrait, LibrarianTeacherUserIdTrait, UpdateMedleySelectionsTrait;
 
     public array $artists = [
         'arranger' => '',
@@ -195,6 +196,8 @@ class LibraryItemForm extends Form
             $this->updateLibItemLocations($libItemId);
 
             $this->updateLibItemRatings($libItemId);
+
+            $this->updateMedleySelections($libItemId, $this->getTeacherUserId(), $this->medleySelections);
 
             $libStack = LibStack::updateOrCreate(
                 [

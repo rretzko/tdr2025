@@ -61,6 +61,7 @@ class ItemComponent extends BaseLibraryItemPage
     public bool $uploadedMaxFileSizeExceeded = false;
     public string $uploadedMaxFileSizeExceededMessage = 'The uploaded file exceeds the upload_max_filesize directive in php.ini.';
     public string $uploadTemplateUrl = '';
+    public string $voicingIsRequiredMessage = '';
 
     public function mount(): void
     {
@@ -225,7 +226,7 @@ class ItemComponent extends BaseLibraryItemPage
 
 //                $userId = $this->form->getTeacherUserId();
                 $metadata = SheetMusicParser::fromFile($storedFileName);
-dd($metadata);
+//dd($metadata);
 //                LibItemDoc::updateOrCreate(
 //                    [
 //                        'library_id' => $this->libraryId,
@@ -260,7 +261,7 @@ dd($metadata);
         $voicing = Voicing::find($voicingId);
         $this->form->voicingId = $voicing->id;
         $this->form->voicingDescr = $voicing->descr;
-        $this->reset('searchVoicings');
+        $this->reset('searchVoicings', 'voicingIsRequiredMessage');
     }
 
     #[NoReturn] public function findItem(int $libItemId)
@@ -294,14 +295,20 @@ dd($metadata);
     {
         Log::info(__METHOD__);
         Log::info('*** libraryId: ' . $this->libraryId);
-        $this->saveWorkflow();
 
-        $this->form->resetVars($this->libraryId);
-        $this->reset('searchResults');
+        if ($this->saveWorkflow()){
+            $this->form->resetVars($this->libraryId);
+            $this->reset('searchResults');
+        }
     }
 
     private function saveWorkflow(): bool
     {
+        $this->reset('voicingIsRequiredMessage');
+        if(! $this->form->voicingDescr){
+            $this->voicingIsRequiredMessage = 'Voicing is required';
+            return false;
+        }
         //determine if save = updating or adding
         $updating = (bool)$this->form->sysId;
 

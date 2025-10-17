@@ -5,6 +5,7 @@ namespace App\Services\Libraries;
 use App\Livewire\Forms\LibraryItemForm;
 use App\Livewire\Forms\ProgramSelectionForm;
 use App\Models\Libraries\Items\Components\LibItemLocation;
+use App\Models\Libraries\Items\Components\LibMedleySelection;
 use App\Models\Libraries\Items\Components\LibTitle;
 use App\Models\Libraries\Items\Components\Voicing;
 use App\Models\Libraries\Items\LibItem;
@@ -18,11 +19,13 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use App\Traits\Libraries\LibrarySetLocationsTrait;
 use App\Enums\ItemType;
+use App\Traits\Libraries\UpdateMedleySelectionsTrait;
 
 
 class CreateLibItemService
 {
     use LibrarySetLocationsTrait;
+    use UpdateMedleySelectionsTrait;
 
     public int|null $arrangerId = null;
     public int|null $authorId = null;
@@ -33,6 +36,7 @@ class CreateLibItemService
     public int $libItemId = 0;
     private array $errors = [];
     private string $libTitleId = '';
+    private array $medleySelections = [];
     public int|null $musicId = null;
     public bool $saved = false;
     private int $teacherId = 0;
@@ -63,11 +67,15 @@ class CreateLibItemService
         $this->choreographerId = $this->getArtistId('choreographer');
         $this->authorId = $this->getArtistId('author');
         $this->title = $this->form->title;
+        $this->medleySelections = $this->form->medleySelections;
 
         $this->errorCheck();
 
+        //log errors
         if (count($this->errors)) {
-            dd($this->errors);
+            foreach($this->errors as $error) {
+                Log::error($error);
+            }
         }
 
         if (!count($this->errors)) {
@@ -89,6 +97,9 @@ class CreateLibItemService
             Log::info('*** found lib item id: '.$this->libItemId.' for title: '.$this->title);
 
             $this->updateTags();
+
+            $this->updateMedleySelections($this->libItemId, $this->teacherId, $this->medleySelections);
+
         } else {
 
             Log::info('creating new id for title: '.$this->title);
@@ -98,12 +109,17 @@ class CreateLibItemService
                 'lib_title_id' => $this->libTitleId,
                 'voicing_id' => $this->voicingId,
                 'book_type' => $this->bookType,
+                'medleySelections' => $this->medleySelections,
             ];
             $artistItems = $this->addArtistIds();
 
             $items = array_merge($baseItems, $artistItems);
 
             $this->libItemId = LibItem::create($items)->id;
+
+            //create medley song list
+            $this->updateMedleySelections($this->libItemId, $this->teacherId, $this->medleySelections);
+
             Log::info('*** created lib item id: '.$this->libItemId);
         }
 

@@ -28,4 +28,11 @@
             </div>
         @endif
     </label>
+    <div>
+        @if(isset($voicingIsRequiredMessage) && strlen($voicingIsRequiredMessage))
+            <div class="text-red-500">
+                {{ $voicingIsRequiredMessage }}
+            </div>
+        @endif
+    </div>
 </div>
