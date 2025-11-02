@@ -91,7 +91,8 @@ class PdfEstimateDataFactory
             ->where('county_id', $countyId)
             ->where('version_id', $versionId)
             ->value('version_participant_id');
-        $userId = VersionParticipant::find($versionParticipantId)->user_id;
+
+        $userId = (is_null($versionParticipantId)) ? auth()->id() : VersionParticipant::find($versionParticipantId)->user_id;
         $user = User::find($userId);
         $mailingAddressCsv = CoregistrationManagerMailingAddress::query()
             ->where('version_participant_id', $versionParticipantId)
