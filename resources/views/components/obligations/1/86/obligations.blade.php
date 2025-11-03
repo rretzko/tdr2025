@@ -29,14 +29,16 @@
 
     <li>
         I understand that I must be present for the entire day of the auditions.
-        A sing-in and sign-out sheet will verify attendance for the day.
+        A sign-in and sign-out sheet will verify attendance for the day.
         If I fail to comply with this ruling, my accepted students will be disqualified.
     </li>
 
     <li>
         I understand that if, for any reason, I am unable to serve at the auditions, I will
         provide a substitute who is a current member of NAfME and I will provide a copy of
-        their current NAfME card to the Registration Manager.
+        their current NAfME card to the Registration Manager.  The substitute must complete
+        the necessary background check and online course requirement as outlined in the
+        Director's Packet.
     </li>
 
     <li>
