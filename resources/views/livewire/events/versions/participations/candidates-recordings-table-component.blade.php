@@ -41,7 +41,9 @@
                     <th>voice part</th>
                     <th>scales</th>
                     <th>solo</th>
-                    <th>quintet</th>
+                    @if($hasQuintet)
+                        <th>quintet</th>
+                    @endif
                 </tr>
                 </thead>
                 <tbody>
@@ -136,41 +138,43 @@
                                 Solo file not uploaded.
                             @endif
                         </td>
-                        <td class="text-center">
-                            @if($row->quintetUrl)
-                                <div
-                                    class="flex flex-col text-white px-1 border border-r-gray-600 rounded-lg bg-gray-800"
-                                    wire:key="{{ $row->quintetUrl }}"
-                                >
-                                    <label class="text-center text-xs">{{ $row->quintetFileType }}
-                                        ({{ substr($row->quintetUrl,-3) }})</label>
-                                    <audio id="audioPlayer-{{ $row->quintetFileType }}" class="mx-auto" controls
-                                           style="display: block; justify-self: start; margin-bottom: 0.50rem; width: 250px;">
-                                        <source id="audioSource-{{ $row->quintetFileType }}"
-                                                src="https://auditionsuite-production.s3.amazonaws.com/{{ $row->quintetUrl }}"
-                                                type="audio/mpeg"
-                                        >
-                                        " Your browser does not support the audio element. "
-                                    </audio>
-                                    <label
-                                        @class([
-                                            "text-center text-xs italic pb-1",
-                                            "text-green-500" => strlen($row->quintetApproved),
-                                            "bg-yellow-400 text-black w-fit rounded-full px-2 mx-auto mb-1 " => is_null($row->quintetApproved),
-                                    ])
+                        @if($hasQuintet)
+                            <td class="text-center">
+                                @if($row->quintetUrl)
+                                    <div
+                                        class="flex flex-col text-white px-1 border border-r-gray-600 rounded-lg bg-gray-800"
+                                        wire:key="{{ $row->quintetUrl }}"
                                     >
-                                        @if(strlen($row->quintetApproved))
-                                            Approved: {{ $row->quintetApproved }}
-                                        @else
-                                            Pending...
-                                        @endif
+                                        <label class="text-center text-xs">{{ $row->quintetFileType }}
+                                            ({{ substr($row->quintetUrl,-3) }})</label>
+                                        <audio id="audioPlayer-{{ $row->quintetFileType }}" class="mx-auto" controls
+                                               style="display: block; justify-self: start; margin-bottom: 0.50rem; width: 250px;">
+                                            <source id="audioSource-{{ $row->quintetFileType }}"
+                                                    src="https://auditionsuite-production.s3.amazonaws.com/{{ $row->quintetUrl }}"
+                                                    type="audio/mpeg"
+                                            >
+                                            " Your browser does not support the audio element. "
+                                        </audio>
+                                        <label
+                                            @class([
+                                                "text-center text-xs italic pb-1",
+                                                "text-green-500" => strlen($row->quintetApproved),
+                                                "bg-yellow-400 text-black w-fit rounded-full px-2 mx-auto mb-1 " => is_null($row->quintetApproved),
+                                        ])
+                                        >
+                                            @if(strlen($row->quintetApproved))
+                                                Approved: {{ $row->quintetApproved }}
+                                            @else
+                                                Pending...
+                                            @endif
 
-                                    </label>
-                                </div>
-                            @else
-                                Quintet file not uploaded.
-                            @endif
-                        </td>
+                                        </label>
+                                    </div>
+                                @else
+                                    Quintet file not uploaded.
+                                @endif
+                            </td>
+                        @endif
                     </tr>
                 @empty
                     <tr>

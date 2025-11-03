@@ -22,6 +22,7 @@ class CandidatesRecordingsTableComponent extends BasePage
     public CandidateForm $form;
     public array $ensembleVoiceParts = [];
     public Event $event;
+    public bool $hasQuintet = true;
     public string $pathToRegistration = '';
     public int $schoolId = 0;
     public bool $showRegistered = false;
@@ -71,6 +72,11 @@ class CandidatesRecordingsTableComponent extends BasePage
 
 //        $this->troubleShooting($coTeacherIds, $schoolIds, $this->versionId);
 
+        $this->hasQuintet = \App\Models\Events\Versions\VersionScoring::query()
+            ->where('version_id', $this->versionId)
+            ->where('file_type', 'quintet')
+            ->exists();
+
         $query = DB::table('candidates')
             ->join('students', 'students.id', '=', 'candidates.student_id')
             ->join('users', 'users.id', '=', 'students.user_id')
@@ -83,9 +89,15 @@ class CandidatesRecordingsTableComponent extends BasePage
                 $join->on('candidates.id', '=', 'solo.candidate_id')
                     ->where('solo.file_type', '=', 'solo');
             })
-            ->leftJoin('recordings AS quintet', function ($join) {
-                $join->on('candidates.id', '=', 'quintet.candidate_id')
-                    ->where('quintet.file_type', '=', 'quintet');
+//            ->leftJoin('recordings AS quintet', function ($join) {
+//                $join->on('candidates.id', '=', 'quintet.candidate_id')
+//                    ->where('quintet.file_type', '=', 'quintet');
+//            })
+            ->when($this->hasQuintet, function ($query) {
+                $query->leftJoin('recordings AS quintet', function ($join) {
+                    $join->on('candidates.id', '=', 'quintet.candidate_id')
+                        ->where('quintet.file_type', '=', 'quintet');
+                });
             })
             ->where('candidates.version_id', $this->versionId)
             ->whereIn('candidates.teacher_id', $coTeacherIds)
@@ -98,17 +110,23 @@ class CandidatesRecordingsTableComponent extends BasePage
                 $query->where('solo.file_type', 'solo')
                     ->orWhereNull('solo.file_type');
             })
-            ->where(function ($query) {
-                $query->where('quintet.file_type', 'quintet')
-                    ->orWhereNull('quintet.file_type');
+            ->when($this->hasQuintet, function ($query) {
+                $query->where(function ($query) {
+                    $query->where('quintet.file_type', 'quintet')
+                        ->orWhereNull('quintet.file_type');
+                });
             })
-            ->select('candidates.id AS candidateId', 'candidates.status',
+            ->select(...['candidates.id AS candidateId', 'candidates.status',
                 'users.last_name', 'users.first_name', 'users.middle_name', 'users.suffix_name',
                 'voice_parts.abbr AS voicePart', 'voice_parts.order_by', 'voice_parts.descr AS voicePartDescr',
                 'scales.url AS scalesUrl', 'scales.file_type AS scalesFileType', 'scales.approved AS scalesApproved',
                 'solo.url AS soloUrl', 'solo.file_type AS soloFileType', 'solo.approved AS soloApproved',
-                'quintet.url AS quintetUrl', 'quintet.file_type AS quintetFileType', 'quintet.approved AS quintetApproved',
-            )
+                ...($this->hasQuintet ? [
+                    'quintet.url AS quintetUrl',
+                    'quintet.file_type AS quintetFileType',
+                    'quintet.approved AS quintetApproved',
+                ] : [])
+            ])
             ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
             ->orderBy('users.last_name', 'asc') //secondary sort ALWAYS applied
             ->orderBy('users.first_name', 'asc'); //tertiary sort ALWAYS applied
