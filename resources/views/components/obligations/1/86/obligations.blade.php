@@ -9,12 +9,9 @@
         YOUR STUDENTS CANNOT ACCESS SELF-REGISTRATION UNTIL YOU ACKNOWLEDGE THIS OBLIGATION.
     </div>
     <div class="font-semibold">
-        Once you acknowledge your obligation, your students will have access to StudentFolder.info where they
-        will be able to upload their three mp3 recordings – Scales, Solo, Swan – for auditions. The site will be open
-        to your students until Wednesday November 19th at 11:59p. The site will remain open to you (the Director) to
-        check all uploaded files and <span style="font-size: larger;"><u>approve them for adjudication</u></span> until
-        the <u>Director AND Postmark
-            deadline date</u> of Tuesday November 25, 2025 – 5p.
+        Once you acknowledge your obligation, your students will have access to StudentFolder.info. The site will be open
+        to your students until Wednesday November 19th at 11:59p. The site will remain open to you (the Director) until
+        the <u>Director AND Postmark deadline date</u> of Tuesday November 25, 2025 – 5p.
     </div>
 </h2>
 
