@@ -71,7 +71,10 @@ class MakeCandidateRecordsService
             ->where('version_id', $this->versionId)
             ->pluck('student_id')
             ->toArray();
-
+//dd(Candidate::query()
+//    ->whereIn('teacher_id', $this->coTeachers)
+//    ->where('version_id', $this->versionId)
+//    ->toRawSql());
         return array_filter($studentIds, function ($studentId) use ($candidateStudentIds) {
             return !in_array($studentId, $candidateStudentIds);
         });

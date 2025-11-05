@@ -140,6 +140,8 @@ class CandidateForm extends Form
 
             return $updated;
         }
+
+        return false; //default return value
     }
 
     public function recordingReject(string $fileType): bool
@@ -166,6 +168,8 @@ class CandidateForm extends Form
 
             return $deleted;
         }
+
+        return false; //default return value
     }
 
     public function recordingSave(string $fileType): bool
@@ -416,17 +420,31 @@ class CandidateForm extends Form
     {
         $role = Str::lower(Str::remove('signature', $key)); //i.e. guardian, student, or teacher
 
-        $signature = (bool) Signature::updateOrCreate(
-            [
-                'version_id' => $this->candidate->version_id,
-                'candidate_id' => $this->candidate->id,
+        $exists = Signature::query()
+            ->where('candidate_id', $this->candidate->id)
+            ->exists();
+
+        if($exists) { //teacher is overriding student and guardian inputs from StudentFolder.info or their own previous entry
+            $signature = Signature::where('candidate_id', $this->candidate->id)->first();
+            $updated = (bool)$signature->update([
                 'user_id' => auth()->id(),
-                'role' => $role,
-            ],
-            [
                 'signed' => $value,
-            ]
-        );
+            ]);
+
+            return $updated;
+        }else{
+            $signature = (bool) Signature::create(
+                [
+                    'version_id' => $this->candidate->version_id,
+                    'candidate_id' => $this->candidate->id,
+                    'user_id' => auth()->id(),
+                    'role' => $role,
+                    'signed' => $value,
+                ]
+            );
+            return $signature;
+        }
+
         //Log::info(__METHOD__.': '.__LINE__);
         //Log::info('*** '.$role.' signature: '.$signature.' ***');
         $this->status = CandidateStatusService::getStatus($this->candidate);

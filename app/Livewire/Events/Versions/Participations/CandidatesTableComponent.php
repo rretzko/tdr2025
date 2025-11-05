@@ -515,6 +515,7 @@ class CandidatesTableComponent extends BasePage
             ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
             ->orderBy('users.last_name', 'asc') //secondary sort ALWAYS applied
             ->orderBy('users.first_name', 'asc') //tertiary sort ALWAYS applied
+            ->distinct()
             ->get();
     }
 
