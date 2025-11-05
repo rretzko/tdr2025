@@ -430,7 +430,7 @@ class CandidateForm extends Form
                 'user_id' => auth()->id(),
                 'signed' => $value,
             ]);
-
+Log::info('candidate_id: '.$this->candidate->id.' *** value: ' . $value . ' *** updatedSignature: '.$updated.' *** role: '.$role.' *** signature: '.$signature->signed.' ***');
             return $updated;
         }else{
             $signature = (bool) Signature::create(
