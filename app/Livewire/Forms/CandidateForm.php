@@ -422,6 +422,7 @@ class CandidateForm extends Form
 
         $exists = Signature::query()
             ->where('candidate_id', $this->candidate->id)
+            ->where('role', $role)
             ->exists();
 
         if($exists) { //teacher is overriding student and guardian inputs from StudentFolder.info or their own previous entry
