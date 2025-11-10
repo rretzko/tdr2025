@@ -108,6 +108,7 @@ class ParticipatingSchoolsComponent extends BasePageReports
         $payments = $this->getPayments();
         $paymentsDue = $this->getPaymentsDue();
         $paymentsStatus = $this->getPaymentsStatus($payments, $paymentsDue);
+        $packagedReceiveds = $this->getPackageReceived();
 
         $this->saveSortParameters();
 
@@ -117,6 +118,7 @@ class ParticipatingSchoolsComponent extends BasePageReports
                 'payments' => $payments,
                 'paymentsDue' => $paymentsDue,
                 'paymentsStatus' => $paymentsStatus,
+                'packageReceiveds' => $packagedReceiveds,
             ]);
     }
 
@@ -149,6 +151,15 @@ class ParticipatingSchoolsComponent extends BasePageReports
             ->toArray();
     }
 
+    private function getPackageReceived(): array
+    {
+        return VersionPackageReceived::query()
+            ->where('version_id', $this->versionId)
+            ->whereIn('school_id', $this->schoolIds)
+            ->pluck('received', 'school_id')
+            ->toArray();
+    }
+
     private function getPayments(): array
     {
         $totalPayments = [];
@@ -159,7 +170,7 @@ class ParticipatingSchoolsComponent extends BasePageReports
                 ->selectRaw('SUM(amount) as total')
                 ->where('school_id', $schoolId)
                 ->where('version_id', $this->versionId)
-                ->where('fee_type', 'registration')
+                ->where('fee_type', 'LIKE','%registration%')
                 ->unionAll(
                     DB::table('teacher_payments')
                         ->selectRaw('SUM(amount) as total')
@@ -275,10 +286,13 @@ class ParticipatingSchoolsComponent extends BasePageReports
                     ->where('work.phone_type', '=',
                         'work'); // Assuming there's a type column to distinguish phone types
             })
-            ->leftJoin('version_package_receiveds', 'schools.id', '=', 'version_package_receiveds.school_id')
+//            ->leftJoin('version_package_receiveds', 'schools.id', '=', 'version_package_receiveds.school_id')
+            ->leftJoin('version_package_receiveds', 'candidates.version_id', '=', 'version_package_receiveds.version_id')
             ->where('candidates.version_id', $this->versionId)
             ->where('status', 'registered')
-            ->whereIn('schools.county_id', $registrationManagerCounties)
+            ->when($registrationManagerCounties, function ($query) {
+                $query->whereIn('schools.county_id', $registrationManagerCounties);
+            })
             ->where(function ($query) use ($search) {
                 return $query
                     ->where('users.name', 'LIKE', '%'.$search.'%')

@@ -74,6 +74,7 @@
                 <x-tables.participatingSchoolsTable
                     :columnHeaders="$columnHeaders"
                     :header="$dto['header']"
+                    :packageReceiveds="$packageReceiveds"
                     :payments="$payments"
                     :paymentsDue="$paymentsDue"
                     :paymentsStatus="$paymentsStatus"

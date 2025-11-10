@@ -1,6 +1,7 @@
 @props([
     'columnHeaders',
     'header',
+    'packageReceiveds',
     'payments',
     'paymentsDue',
     'paymentsStatus',
@@ -74,7 +75,8 @@
                 <td class="border border-gray-200 px-1 text-center">
                     <input type="checkbox"
                            wire:click="packageReceived({{ $row->schoolId }})"
-                        @checked($row->received === 1)
+                           wire:key="packageReceived_{{ $row->schoolId }}"
+                        @checked(array_key_exists($row->schoolId, $packageReceiveds) && ($packageReceiveds[$row->schoolId] === 1))
                     />
                 </td>
 
