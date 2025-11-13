@@ -66,6 +66,9 @@
                     <div>No home address found.</div>
                 @endif
                 <hr/>
+                <div>Class of: {{ $student->class_of }}</div>
+                <hr/>
+                <div>Grade: {{ $student->grade }}</div>
                 <div>Profile created on: {{ $profileCreationDateTime }}</div>
             </div>
 

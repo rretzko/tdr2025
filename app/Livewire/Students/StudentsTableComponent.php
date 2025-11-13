@@ -191,7 +191,6 @@ class StudentsTableComponent extends BasePage
                 $join->on('users.id', '=', 'home.user_id')
                     ->where('home.phone_type', '=', 'home');
             })
-//            ->where('student_teacher.teacher_id', auth()->user()->teacher->id)
             ->whereIn('student_teacher.teacher_id', $coteacherIds)
             ->where('users.name', 'LIKE', '%'.$this->search.'%')
             ->tap(function ($query) {

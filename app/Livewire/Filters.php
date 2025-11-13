@@ -173,6 +173,7 @@ class Filters extends Form
                 //            Log::info(__METHOD__.': '.__LINE__);
                 //            Log::info('no filters workflow for header: '.$this->header);
             }
+
         }
 
     }
@@ -337,6 +338,7 @@ class Filters extends Form
     public function filterStudentsByClassOfs($query)
     {
         $this->interpretAggregateClassOfValues();
+
 //Log::info(__METHOD__ . ': ' . __LINE__);
 //Log::info(implode(' | ' , $this->classOfsSelectedIds));
         return $query->whereIn('students.class_of', $this->classOfsSelectedIds);
