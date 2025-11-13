@@ -537,6 +537,12 @@ class CandidatesTableComponent extends BasePage
             ->pluck('school_id')
             ->toArray();
 
+        //charles linnell workaround
+//        @todo Fix this for all teachers
+        if(auth()->id() === 262){
+            return [3344,3346];
+        }
+
         return array_merge($schoolIds, $coTeacherSchoolIds);
     }
 

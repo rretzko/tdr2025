@@ -270,41 +270,52 @@ class BasePage extends Component
      * Placeholder for troubleshooting
      * @return void
      */
-    protected function troubleShooting(array $coteacherIds)
+    protected function troubleShooting($coTeacherIds, $eligibleClassOfs, $schoolIds)
     {
-        Student::query()
-            ->join('school_student', 'students.id', '=', 'school_student.student_id')
-            ->join('student_teacher', 'students.id', '=', 'student_teacher.student_id')
-            ->join('schools', 'school_student.school_id', '=', 'schools.id')
-            ->join('users', 'students.user_id', '=', 'users.id')
-            ->join('voice_parts', 'students.voice_part_id', '=', 'voice_parts.id')
-            ->leftJoin('phone_numbers AS mobile', function ($join) {
-                $join->on('users.id', '=', 'mobile.user_id')
-                    ->where('mobile.phone_type', '=', 'mobile');
-            })
-            ->leftJoin('phone_numbers AS home', function ($join) {
-                $join->on('users.id', '=', 'home.user_id')
-                    ->where('home.phone_type', '=', 'home');
-            })
-//            ->where('student_teacher.teacher_id', auth()->user()->teacher->id)
-            ->whereIn('student_teacher.teacher_id', $coteacherIds)
-            ->where('users.name', 'LIKE', '%'.$this->search.'%')
+        $students = DB::table('candidates')
+            ->join('students', 'students.id', '=', 'candidates.student_id')
+            ->join('users', 'users.id', '=', 'students.user_id')
+            ->join('teachers', 'teachers.id', '=', 'candidates.teacher_id')
+            ->join('users AS tusers', 'tusers.id', '=', 'teachers.user_id')
+            ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
+            ->join('student_teacher', 'student_teacher.student_id', '=', 'students.id')
+            ->join('school_student', 'school_student.student_id', '=', 'students.id')
+            ->leftJoin('signatures AS studentSignature', 'candidates.id', '=', 'studentSignature.candidate_id')
+            ->leftJoin('signatures AS guardianSignature', 'candidates.id', '=', 'guardianSignature.candidate_id')
+            ->leftJoin('signatures AS teacherSignature', 'candidates.id', '=', 'teacherSignature.candidate_id')
+            ->where('candidates.version_id', $this->versionId)
+            ->whereIn('candidates.teacher_id', $coTeacherIds)
+            ->whereIn('candidates.school_id', $schoolIds)
+            ->whereIn('students.class_of', $eligibleClassOfs)
+            ->whereIn('student_teacher.teacher_id', $coTeacherIds)
+            ->whereIn('school_student.school_id', $schoolIds)
+            ->where('school_student.active', 1)
             ->tap(function ($query) {
-                $this->filters->filterStudentsBySchools($query);
-                $this->filters->filterStudentsByClassOfs($query, $this->search);
-                $this->filters->filterStudentsByVoicePartIds($query, $this->search);
+                $this->filters->filterCandidatesByClassOfs($query);
+                $this->filters->filterCandidatesByStatuses($query, $this->search);
             })
-            ->select('users.name', 'users.id AS userId',
-                'schools.name AS schoolName', 'schools.id AS schoolId',
-                'school_student.id AS schoolStudentId', 'school_student.active',
-                'students.class_of AS classOf', 'students.height', 'students.birthday',
-                'students.shirt_size AS shirtSize', 'students.id AS studentId',
-                'voice_parts.descr AS voicePart', 'users.email', 'mobile.phone_number AS phoneMobile',
-                'home.phone_number AS phoneHome', 'users.last_name', 'users.first_name', 'users.middle_name',
-                'users.prefix_name', 'users.suffix_name'
+            ->select('candidates.id AS candidateId', 'candidates.ref', 'candidates.status',
+                'candidates.program_name', 'candidates.emergency_contact_id',
+                'users.last_name', 'users.first_name', 'users.middle_name', 'users.suffix_name',
+                'students.class_of',
+                'voice_parts.abbr AS voicePart',
+                DB::raw('
+                CASE
+                WHEN (studentSignature.signed = 1 AND guardianSignature.signed = 1)
+                OR
+                (teacherSignature.signed = 1)
+                THEN true
+                ELSE false
+                END AS hasSignature
+                ')
             )
             ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
+            ->orderBy('users.last_name', 'asc') //secondary sort ALWAYS applied
+            ->orderBy('users.first_name', 'asc') //tertiary sort ALWAYS applied
+            ->distinct()
             ->get();
+
+//        dd($students);
     }
 
 

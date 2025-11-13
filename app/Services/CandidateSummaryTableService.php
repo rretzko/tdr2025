@@ -55,10 +55,16 @@ class CandidateSummaryTableService
 
     private function getCandidatesArray(): array
     {
+//        @todo Fix this for all teachers
+        if(auth()->id() === 262){
+            $schoolIds = [3344,3346]; //charles linnell
+        }else{
+            $schoolIds = [$this->schoolId];
+        }
         $candidates = Candidate::query()
             ->with('student', 'student.user', 'voicePart')
             ->where('version_id', $this->versionId)
-            ->where('school_id', $this->schoolId)
+            ->whereIn('school_id', $schoolIds)
             ->whereIn('teacher_id', $this->coteacherIds)
             ->get()
             ->map(function ($candidate) {
