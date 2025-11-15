@@ -351,9 +351,7 @@ class TabroomScoringComponent extends BasePage
 
         $this->judgeId = $this->judgeId ?: $this->judges->first()->id;
         $this->judge = Judge::find($this->judgeId);
-//        if ($updated) {
-//            dd($this->judge);
-//        }
+
         $this->form->setCandidate($candidate, $this->room, $this->judges->first());
         $this->form->setRoom($this->room, $this->judge);
     }

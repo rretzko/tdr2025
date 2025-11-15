@@ -6,6 +6,7 @@ use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Participations\Recording;
 use App\Models\Events\Versions\Scoring\Judge;
 use App\Models\Events\Versions\Room;
+use App\Models\Events\Versions\Scoring\RoomScoreCategory;
 use App\Models\Events\Versions\Scoring\Score;
 use App\Models\Events\Versions\Scoring\ScoreCategory;
 use App\Models\Events\Versions\Scoring\ScoreFactor;

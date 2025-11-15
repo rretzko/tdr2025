@@ -8,6 +8,7 @@ use App\Models\Events\Versions\Scoring\Judge;
 use App\Models\Events\Versions\Scoring\RoomScoreCategory;
 use App\Models\Events\Versions\Scoring\RoomVoicePart;
 use App\Models\Events\Versions\Scoring\Score;
+use App\Models\Events\Versions\Scoring\ScoreCategory;
 use App\Models\Events\Versions\Scoring\ScoreFactor;
 use App\Models\Schools\Teacher;
 use App\Models\Students\VoicePart;
@@ -46,7 +47,8 @@ class Room extends Model
     public function judges(): HasMany
     {
         return $this->hasMany(Judge::class)
-            ->with('user');
+            ->with('user')
+            ->where('user_id', '!=', '0');
     }
 
     public function roomScoreCategories(): HasMany
@@ -198,7 +200,11 @@ class Room extends Model
     public function getScores(Candidate $candidate): array
     {
         $a = [];
-        $judges = $this->judges()->with('user')->where('judge_type', 'LIKE', '%judge%')->get()->sortBy(function ($judge
+        $judges = $this->judges()->with('user')
+            ->where('judge_type', 'LIKE', '%judge%')
+            ->where('user_id', '!=', '0')
+            ->get()
+            ->sortBy(function ($judge
         ) {
             return $judge->user->last_name;
         });
