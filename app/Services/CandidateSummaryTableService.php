@@ -102,7 +102,20 @@ class CandidateSummaryTableService
         // Update the emergency contact properties for each candidate
         foreach ($this->candidates as $key => $candidate) {
 
-            if ($candidate['emergencyContactId']) {
+            /** @var @todo ensure that emergency_contact_id is removed from the candidates table when deleted from the emergency_contacts table */
+            //workaround after discovering that emergency contact id can be null if
+            //emergency contact is deleted from the student record but not from the candidate record
+            $testEmergencyContact = EmergencyContact::find($candidate['emergencyContactId']);
+
+            //reset the user's emergency contact if the candidate's emergency contact is no longer valid
+            if(!$testEmergencyContact && $candidate['emergencyContactId']){
+                $errEcCandidate = Candidate::find($candidate['candidateId']);
+                $errEcCandidate->update(['emergency_contact_id' => 0]);
+                $candidate['emergencyContactId'] = 0;
+
+            }
+
+            if ($testEmergencyContact) {
                 $ec = EmergencyContact::find($candidate['emergencyContactId']);
 
                 $this->candidates[$key]['emergencyContactId'] = $candidate['emergencyContactId'];
