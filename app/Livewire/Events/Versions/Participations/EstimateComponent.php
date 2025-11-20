@@ -106,8 +106,16 @@ class EstimateComponent extends BasePage
          * @todo replace hard-coded values below with routine to find the epayment_id linked to directors
          *  - add a boolean student or director value with respective code looking for a version_id and student/director = 0 or 1
          */
-        $this->dataUrl = 'https://square.link/u/sbc7pIXd?src=embed'; //$squareEpaymentCredential->epayment_id; //ex. https://square.link/u/12345678?src=embed
-        $this->href = 'https://square.link/u/sbc7pIXd?src=embed';
+        // CJMEA Student: https://square.link/u/ThgQSAH6
+        // CJMEA Teacher: https://square.link/u/cXu7fc0p
+        $squareTeacherPaymentLinks = [
+            1 => 'https://square.link/u/cXu7fc0p?src=embed',
+            9 => 'https://square.link/u/sbc7pIXd?src=embed',
+        ];
+
+        //previous $this->dataUrl and $this->href hard-coded value: 'https://square.link/u/sbc7pIXd?src=embed'
+        $this->dataUrl = $squareTeacherPaymentLinks[$version->event_id]; //$squareEpaymentCredential->epayment_id; //ex. https://square.link/u/12345678?src=embed
+        $this->href = $squareTeacherPaymentLinks[$version->event_id];
         $squareEpaymentCredential->epayment_id; //ex. https://square.link/u/12345678?src=embed
 
     }
