@@ -25,6 +25,7 @@ class ScoringRosterDataRowsService
         private readonly int    $voicePartId,
         private readonly string $ensembleAbbr = '',
         private readonly int $rowLimit,
+        private readonly string $displayReportData,
     )
     {
         set_time_limit(300);
@@ -35,6 +36,7 @@ class ScoringRosterDataRowsService
     private function init(): void
     {
         $candidateIds = $this->getCandidateIds();
+
         $this->setRows($candidateIds);
         $this->setScores();
     }
@@ -45,6 +47,15 @@ class ScoringRosterDataRowsService
             return $query;
         }
 
+        //return all auditionee results if displayReportData is set to 'allPublic'
+        if($this->displayReportData == 'allPublic'){
+            return $query->leftJoin('audition_results', 'audition_results.candidate_id', '=', 'candidates.id')
+                ->whereIn('audition_results.acceptance_abbr', [$this->ensembleAbbr, 'na', 'inc', 'ns'] )
+                ->whereIn('audition_results.voice_part_id', $this->voicePartIds);
+
+        }
+
+        //return only successful auditionee results
         return $query->leftJoin('audition_results', 'audition_results.candidate_id', '=', 'candidates.id')
             ->where('audition_results.acceptance_abbr', 'LIKE', $this->ensembleAbbr);
     }

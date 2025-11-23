@@ -28,11 +28,13 @@ class PdfScoringRosterDataFactory
     public function __construct(
         private int $versionId,
         private readonly VoicePart|null|array $voicePart = null,
-        private int $eventEnsembleId = 0
+        private int $eventEnsembleId = 0,
+        private bool $private = false
     ) {
         $this->version = Version::find($this->versionId);
         $this->dto['versionName'] = $this->version->name;
         $this->dto['categoryColspans'] = $this->version->scoreCategoriesWithColSpanArray;
+
         $this->dto['factors'] = $this->version->scoreFactors;
         $this->voiceParts = $this->version->event->voiceParts;
         $this->voicePartIds = $this->getVoicePartIds();
@@ -68,6 +70,8 @@ class PdfScoringRosterDataFactory
             ? EventEnsemble::find($this->eventEnsembleId)->abbr
             : '';
 
+        $displayReportData = $this->private ? 'private' : 'allPublic';
+
         $service = new ScoringRosterDataRowsService(
             $this->versionId,
             $this->voicePartIds,
@@ -78,6 +82,7 @@ class PdfScoringRosterDataFactory
             $this->voicePartId,
             $eventEnsembleAbbr,
             900,
+            $displayReportData,
         );
         $this->dto['rows'][$this->voicePartId] = $service->getRows();
         $this->dto['rowsScores'] = $service->getRowsScores();

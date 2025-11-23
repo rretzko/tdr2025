@@ -391,6 +391,7 @@ class TabroomReportComponent extends BasePage
             $this->voicePartId,
             $this->eventEnsembleAbbr,
             $this->rowLimit,
+            $this->displayReportData,
         );
 
         $this->rowsScores = $service->getRowsScores();

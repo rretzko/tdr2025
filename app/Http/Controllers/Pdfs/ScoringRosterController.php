@@ -30,7 +30,7 @@ class ScoringRosterController extends Controller
             ? null
             : $voicePart;
 
-        $data = new PdfScoringRosterDataFactory($versionId, $voicePartTest, $eventEnsembleId);
+        $data = new PdfScoringRosterDataFactory($versionId, $voicePartTest, $eventEnsembleId, $private);
         $dto = $data->getDto();
 
         set_time_limit(300);

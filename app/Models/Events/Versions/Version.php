@@ -152,16 +152,28 @@ class Version extends Model
 
     public function getScoreCategoriesWithColSpanArrayAttribute(): array
     {
-        $categories = ScoreCategory::query()
-            ->where('version_id', $this->id)
-            ->orderBy('order_by')
-            ->get();
+        /**
+         * @todo rework this workflow to manage an event (i.e. MACDA)
+         * @todo hat reconfigures categories to include some old plus new categories
+         * @todo resulting in overcount of categories and colSpan values
+         */
+        //workaround
 
-        if ($categories->isEmpty()) {
+        if($this->event_id === 25){ //MACDA
+            $categories = ScoreCategory::whereIn('id',[19,14])->get();
+        }else{
+
             $categories = ScoreCategory::query()
-                ->where('event_id', $this->event_id)
+                ->where('version_id', $this->id)
                 ->orderBy('order_by')
                 ->get();
+
+            if ($categories->isEmpty()) {
+                $categories = ScoreCategory::query()
+                    ->where('event_id', $this->event_id)
+                    ->orderBy('order_by')
+                    ->get();
+            }
         }
 
         $categorySpans = [];

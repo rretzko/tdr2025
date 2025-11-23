@@ -258,6 +258,14 @@ class PdfCandidateScoresSchoolDataFactory
             ->select('descr', 'order_by')
             ->orderBy('order_by');
 
+        /** WORKAROUND */
+        //@todo rewire this for versions which mix old and new categories, i.e. MACDA
+        if($this->versionId === 85){
+            return $query->whereIn('id', [19,14])
+                ->pluck('descr')
+                ->toArray();
+        }
+
         return (ScoreCategory::where('version_id', $this->versionId)->exists())
             ? $query->where('version_id', $this->versionId)
                 ->pluck('descr')
