@@ -33,6 +33,17 @@ class ScoreFactor extends Model
 
     public function getCountByVersionId(int $versionId): int
     {
+        /**
+         * @todo WORKAROUND for Morris Area Choral Directors
+         * @todo do refactoring to determine how an event which changes its scoring factors should be handled
+         * @todo in the future for mixing previous scoring factors and new scoring factors
+         * @todo i.e. for version 85 score_factor ids: [30,31,32,39,40,41,42] where
+         * @todo [30,31,32] are used by previous versions but [39,40,41,42] are new scoring factors
+         */
+        if($versionId == 85){
+            return 7;
+        }
+
         $scoreCount = $this->where('version_id', $versionId)->count('id');
 
         if (!$scoreCount) {

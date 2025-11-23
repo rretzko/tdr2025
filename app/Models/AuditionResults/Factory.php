@@ -56,6 +56,7 @@ class Factory extends Model
 
     public function setModel($eventEnsembles, $versionConfigAdjudication): void
     {
+
         $scoreType = $versionConfigAdjudication->alternating_scores ? 'AlternatingScores' : 'StackedScores';
         $direction = $versionConfigAdjudication->scores_ascending ? 'Ascending' : 'Descending';
         $ensembleCount = $eventEnsembles->count() === 1 ? 'SingleEnsemble' : 'MultipleEnsembles';

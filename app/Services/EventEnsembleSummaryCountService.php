@@ -33,7 +33,7 @@ class EventEnsembleSummaryCountService
                 $this->buildCounts($voicePart->id, $ensemble);
             }
 
-            $total = array_sum($this->counts[$ensemble->abbr]);
+            $total = $this->countTotals($ensemble);
             $this->counts[$ensemble->abbr]['total'] = $total;
         }
     }
@@ -55,6 +55,17 @@ class EventEnsembleSummaryCountService
 
             $this->counts[$abbr][$voicePartId] = '-';
         }
+    }
+
+    private function countTotals(EventEnsemble $ensemble): int
+    {
+
+        $total = 0;
+        foreach($this->counts[$ensemble->abbr] AS $count) {
+            $total += is_numeric($count) ? $count : 0;
+        }
+
+        return $total;
     }
 
     public function getCounts(): array
