@@ -262,6 +262,7 @@ class PdfCandidateScoresSchoolDataFactory
         //@todo rewire this for versions which mix old and new categories, i.e. MACDA
         if($this->versionId === 85){
             return $query->whereIn('id', [19,14])
+                ->orderBy('order_by')
                 ->pluck('descr')
                 ->toArray();
         }

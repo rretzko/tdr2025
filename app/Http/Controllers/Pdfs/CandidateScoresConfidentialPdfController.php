@@ -26,7 +26,7 @@ class CandidateScoresConfidentialPdfController extends Controller
      * @return Response
      */
     public function __invoke(Request $request)
-    {
+    {dd(__LINE__);
         $version = Version::find(UserConfig::getValue('versionId'));
         $service = new FindPdfPathService;
         $path = $service->findCandidateScoresSchoolPath($version);

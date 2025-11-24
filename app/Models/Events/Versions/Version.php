@@ -160,7 +160,9 @@ class Version extends Model
         //workaround
 
         if($this->event_id === 25){ //MACDA
-            $categories = ScoreCategory::whereIn('id',[19,14])->get();
+            $categories = ScoreCategory::whereIn('id',[19,14])
+                ->orderBy('order_by')
+                ->get();
         }else{
 
             $categories = ScoreCategory::query()
