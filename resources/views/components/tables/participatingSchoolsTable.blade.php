@@ -87,7 +87,7 @@
 
                 {{-- PAYMENT DUE --}}
                 <td class="border border-gray-200 px-1 text-center">
-                    @php($paymentDue = (float)$paymentsDue[$row->schoolId])
+                    @php($paymentDue = (float)is_numeric($paymentsDue[$row->schoolId]) ? $paymentsDue[$row->schoolId] : str_replace(",", "", $paymentsDue[$row->schoolId]))
                     {{ number_format($paymentDue, 2) }}
                 </td>
 
@@ -95,6 +95,21 @@
                 <td
                     @class([
         "border border-gray-200 px-1 text-center",
+//                'bg-red-100' => $paymentsStatus[$row->schoolId] === 'due',
+//                'bg-blue-100' => $paymentsStatus[$row->schoolId] === 'refund',
+//                'bg-green-200' => $paymentsStatus[$row->schoolId] === 'paid',
+//                'bg-red-600' => $paymentsStatus[$row->schoolId] === 'error',
+                ])
+                    title="payment {{ $paymentsStatus[$row->schoolId] }}"
+                >
+                    @php($payment = (float)is_numeric($payments[$row->schoolId]) ? $payments[$row->schoolId] : str_replace(",", "", $payments[$row->schoolId]))
+                    {{ number_format($payment, 2) }}
+                </td>
+
+                {{-- BALANCE DUE --}}
+                <td
+                    @class([
+                "border border-gray-200 px-1 text-center",
                 'bg-red-100' => $paymentsStatus[$row->schoolId] === 'due',
                 'bg-blue-100' => $paymentsStatus[$row->schoolId] === 'refund',
                 'bg-green-200' => $paymentsStatus[$row->schoolId] === 'paid',
@@ -102,8 +117,10 @@
                 ])
                     title="payment {{ $paymentsStatus[$row->schoolId] }}"
                 >
-                    @php($payment = (float)$payments[$row->schoolId])
-                    {{ number_format($payment, 2) }}
+                    @php($paymentDue = is_numeric($paymentsDue[$row->schoolId]) ? $paymentsDue[$row->schoolId] : str_replace(",", "", $paymentsDue[$row->schoolId]))
+                    @php($payment = is_numeric($payments[$row->schoolId]) ? $payments[$row->schoolId] : str_replace(",", "", $payments[$row->schoolId]))
+                    @php($balance = (float)$paymentDue - $payment)
+                    {{ number_format($balance, 2) }}
                 </td>
 
                 {{-- PAYMENT FORM BUTTON --}}

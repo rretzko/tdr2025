@@ -63,6 +63,7 @@ class ParticipatingSchoolsComponent extends BasePageReports
             ['label' => 'registrant#', 'sortBy' => 'count'],
             ['label' => 'due', 'sortBy' => null],
             ['label' => 'paid', 'sortBy' => null],
+            ['label' => 'balance', 'sortBy' => null],
             ['label' => 'payment', 'sortBy' => null],
         ];
     }
