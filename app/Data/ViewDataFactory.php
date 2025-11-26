@@ -160,6 +160,7 @@ class ViewDataFactory extends aViewData
         }
 
         $versionRoles = $this->getVersionRoles();
+        $filteredCards = [];
 
         //founder and version's event manager(s) have access to all cards
         if (auth()->user()->isFounder() || $versionRoles->contains('event manager')) {
@@ -168,25 +169,25 @@ class ViewDataFactory extends aViewData
 
         //filter for coRegistration manager
         if ($versionRoles->contains('coregistration manager')) {
-            return $this->filterCardsForRegistrationManager($cards);
+            $filteredCards = array_merge($filteredCards, $this->filterCardsForRegistrationManager($cards));
         }
 
         //filter for online registration manager
         if ($versionRoles->contains('online registration manager')) {
-            return $this->filterCardsForOnlineRegistrationManager($cards);
+            $filteredCards = array_merge($filteredCards, $this->filterCardsForOnlineRegistrationManager($cards));
         }
 
         //filter for registration manager
         if ($versionRoles->contains('registration manager')) {
-            return $this->filterCardsForRegistrationManager($cards);
+            $filteredCards = array_merge($filteredCards, $this->filterCardsForRegistrationManager($cards));
         }
 
         //filter for tab room
-        if ($versionRoles->contains('online registration manager')) {
-            return $this->filterCardsForTabRoom($cards);
+        if ($versionRoles->contains('tab room')) {
+            $filteredCards = array_merge($filteredCards, $this->filterCardsForTabRoom($cards));
         }
 
-        return [];
+        return $filteredCards;
     }
 
     /**

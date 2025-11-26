@@ -73,6 +73,7 @@ class RoomForm extends Form
     {
         $var = Str::camel($judgeType);
 //dd($this->versionId . ' | ' . $this->sysId . ' | ' . $judgeType . ' | ' . $this->$var . ' | ' );
+
         return (bool) Judge::updateOrCreate(
             [
                 'version_id' => $this->versionId,
@@ -123,6 +124,7 @@ class RoomForm extends Form
             }
 
             $this->sysId = $room->id;
+            $this->versionId = $versionId;
 
             $this->addRoomJudges();
             $this->addRoomScoreCategories();

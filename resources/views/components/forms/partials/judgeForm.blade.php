@@ -23,11 +23,13 @@
                 </option>
             @endforeach
         </select>
-        @if($headJudgeSaved)
+        @if($form->headJudge && $headJudgeSaved)
             <x-save-fade/>
         @endif
         <div class="ml-2 text-xs">
-            {!! $previousHistoryHeadJudge !!}
+            @if($form->headJudge)
+                {!! $previousHistoryHeadJudge !!}
+            @endif
         </div>
     </fieldset>
 
@@ -41,11 +43,13 @@
                 </option>
             @endforeach
         </select>
-        @if($judge2Saved)
+        @if($form->judge2 && $judge2Saved)
             <x-save-fade/>
         @endif
         <div class="ml-2 text-xs">
-            {!! $previousHistoryJudge2 !!}
+            @if($form->judge2)
+                {!! $previousHistoryJudge2 !!}
+            @endif
         </div>
     </fieldset>
 
@@ -59,11 +63,13 @@
                 </option>
             @endforeach
         </select>
-        @if($judge3Saved)
+        @if($form->judge3 && $judge3Saved)
             <x-save-fade/>
         @endif
         <div class="ml-2 text-xs">
-            {!! $previousHistoryJudge3 !!}
+            @if($form->judge3)
+                {!! $previousHistoryJudge3 !!}
+            @endif
         </div>
     </fieldset>
 
@@ -77,11 +83,13 @@
                 </option>
             @endforeach
         </select>
-        @if($judge4Saved)
+        @if($form->judge4 && $judge4Saved)
             <x-save-fade/>
         @endif
         <div class="ml-2 text-xs">
-            {!! $previousHistoryJudge4 !!}
+            @if($form->judge4)
+                {!! $previousHistoryJudge4 !!}
+            @endif
         </div>
     </fieldset>
 
@@ -95,11 +103,13 @@
                 </option>
             @endforeach
         </select>
-        @if($judgeMonitorSaved)
+        @if($form->judgeMonitor && $judgeMonitorSaved)
             <x-save-fade/>
         @endif
         <div class="ml-2 text-xs">
-            {!! $previousHistoryJudgeMonitor !!}
+            @if($form->judgeMonitor)
+                {!! $previousHistoryJudgeMonitor !!}
+            @endif
         </div>
     </fieldset>
 
@@ -113,11 +123,13 @@
                 </option>
             @endforeach
         </select>
-        @if($monitorSaved)
+        @if($form->monitor && $monitorSaved)
             <x-save-fade/>
         @endif
         <div class="ml-2 text-xs">
-            {!! $previousHistoryMonitor !!}
+            @if($form->monitor)
+                {!! $previousHistoryMonitor !!}
+            @endif
         </div>
     </fieldset>
 
