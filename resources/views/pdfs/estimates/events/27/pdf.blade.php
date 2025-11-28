@@ -77,7 +77,7 @@
                                 <th>{{ $registrant->first_name }}</th>
                                 <th>{{ $registrant->voicePartDescr }}</th>
                                 <th>{{ $registrant->grade }}</th>
-                                <th>{{ $dto['registrationFee'] }}</th>
+                                <th>{{ $dto['registrationFee'] * $loop->iteration }}</th>
                             </tr>
                         @empty
                             <tr>

@@ -67,7 +67,7 @@
             {{-- VERSION NAME --}}
             <tr>
                 <td class="cardContentTopRow">
-                    {{ $dto['versionName'] }} ({{ $key }})
+                    {{ $dto['versionName'] }}
                 </td>
                 <td class="cardSpacer">{{-- blank --}}</td>
                 <td class="cardContentTopRow">

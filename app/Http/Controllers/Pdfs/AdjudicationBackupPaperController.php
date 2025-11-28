@@ -23,6 +23,14 @@ class AdjudicationBackupPaperController extends Controller
         $data = new PdfAdjudicationBackupPaperDataFactory($roomId);
         $dto = $data->getDto();
 
+        if(!$roomId) {
+            // Increate memory limit strictly for this heavy operation
+            ini_set('memory_limit', '512M');
+
+            //also increate execution time if the report is too large
+            ini_set('max_execution_time', 300);
+        }
+
         $pdf = PDF::loadView($path, compact('dto'))
             ->setPaper('letter', 'portrait');
 
