@@ -73,6 +73,7 @@ class TabroomReportComponent extends BasePage
 
     public function render()
     {
+
         return view('livewire..events.versions.tabrooms.tabroom-report-component',
             [
                 'rows' => $this->getRows(),
@@ -173,6 +174,7 @@ class TabroomReportComponent extends BasePage
 
     public function updatedEventEnsembleId(): void
     {
+        $this->showEventEnsembleId = $this->eventEnsembleId;
         $this->seniorityParticipation = $this->getParticipantsForSeniority();
         $this->eventEnsembleSeniorYears = $this->getEventEnsembleYears();
     }
@@ -311,7 +313,7 @@ class TabroomReportComponent extends BasePage
             ->orderBy('audition_results.total', ($scoresAscending ? 'asc' : 'desc'))
             ->get()
             ->toArray();
-
+Log::info('participants: ' . count($participants));
         return $participants;
     }
 
