@@ -20,6 +20,7 @@ class VersionRoleComponent extends BasePage
         'on-site registrar',
         'online registration manager',
         'registration manager',
+        'rehearsal manager',
         'tab room',
     ];
     public int $versionId = 0;
@@ -107,6 +108,12 @@ class VersionRoleComponent extends BasePage
             ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
             ->orderBy('users.last_name')
             ->orderBy('users.first_name');
+
+    }
+
+    private function test(): void
+    {
+        //dd();
     }
 
     public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse

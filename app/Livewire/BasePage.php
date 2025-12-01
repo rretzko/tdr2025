@@ -270,52 +270,30 @@ class BasePage extends Component
      * Placeholder for troubleshooting
      * @return void
      */
-    protected function troubleShooting($coTeacherIds, $eligibleClassOfs, $schoolIds)
+    protected function troubleShooting():void
     {
-        $students = DB::table('candidates')
-            ->join('students', 'students.id', '=', 'candidates.student_id')
-            ->join('users', 'users.id', '=', 'students.user_id')
-            ->join('teachers', 'teachers.id', '=', 'candidates.teacher_id')
-            ->join('users AS tusers', 'tusers.id', '=', 'teachers.user_id')
-            ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
-            ->join('student_teacher', 'student_teacher.student_id', '=', 'students.id')
-            ->join('school_student', 'school_student.student_id', '=', 'students.id')
-            ->leftJoin('signatures AS studentSignature', 'candidates.id', '=', 'studentSignature.candidate_id')
-            ->leftJoin('signatures AS guardianSignature', 'candidates.id', '=', 'guardianSignature.candidate_id')
-            ->leftJoin('signatures AS teacherSignature', 'candidates.id', '=', 'teacherSignature.candidate_id')
-            ->where('candidates.version_id', $this->versionId)
-            ->whereIn('candidates.teacher_id', $coTeacherIds)
-            ->whereIn('candidates.school_id', $schoolIds)
-            ->whereIn('students.class_of', $eligibleClassOfs)
-            ->whereIn('student_teacher.teacher_id', $coTeacherIds)
-            ->whereIn('school_student.school_id', $schoolIds)
-            ->where('school_student.active', 1)
-            ->tap(function ($query) {
-                $this->filters->filterCandidatesByClassOfs($query);
-                $this->filters->filterCandidatesByStatuses($query, $this->search);
-            })
-            ->select('candidates.id AS candidateId', 'candidates.ref', 'candidates.status',
-                'candidates.program_name', 'candidates.emergency_contact_id',
-                'users.last_name', 'users.first_name', 'users.middle_name', 'users.suffix_name',
-                'students.class_of',
-                'voice_parts.abbr AS voicePart',
-                DB::raw('
-                CASE
-                WHEN (studentSignature.signed = 1 AND guardianSignature.signed = 1)
-                OR
-                (teacherSignature.signed = 1)
-                THEN true
-                ELSE false
-                END AS hasSignature
-                ')
-            )
+        $query = Event::query()
+            ->join('event_management', 'event_management.event_id', '=', 'events.id')
+            ->leftJoin('versions', 'versions.event_id', '=', 'event_management.event_id')
+            ->where('event_management.user_id', auth()->id())
+            ->whereNull('event_management.deleted_at')
+            ->select('events.id', 'events.name', 'events.short_name', 'events.organization',
+                'events.audition_count', 'events.max_registrant_count', 'events.max_upper_voice_count',
+                'events.ensemble_count', 'events.frequency', 'events.grades', 'events.status',
+                'events.logo_file', 'events.logo_file_alt', 'events.required_height',
+                'events.required_shirt_size', 'events.created_by',
+                DB::raw('COUNT(versions.id) as versionsCount'))
+            ->groupBy([
+                'events.id', 'events.name', 'events.short_name', 'events.organization',
+                'events.audition_count', 'events.max_registrant_count', 'events.max_upper_voice_count',
+                'events.ensemble_count', 'events.frequency', 'events.grades', 'events.status',
+                'events.logo_file', 'events.logo_file_alt', 'events.required_height',
+                'events.required_shirt_size', 'events.created_by'
+            ])
             ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
-            ->orderBy('users.last_name', 'asc') //secondary sort ALWAYS applied
-            ->orderBy('users.first_name', 'asc') //tertiary sort ALWAYS applied
-            ->distinct()
             ->get();
 
-//        dd($students);
+        dd($query);
     }
 
 

@@ -182,6 +182,11 @@ class ViewDataFactory extends aViewData
             $filteredCards = array_merge($filteredCards, $this->filterCardsForRegistrationManager($cards));
         }
 
+        //filter for rehearsal manager
+        if ($versionRoles->contains('rehearsal manager')) {
+            $filteredCards = array_merge($filteredCards, $this->filterCardsForRehearsalManager($cards));
+        }
+
         //filter for tab room
         if ($versionRoles->contains('tab room')) {
             $filteredCards = array_merge($filteredCards, $this->filterCardsForTabRoom($cards));
@@ -220,6 +225,17 @@ class ViewDataFactory extends aViewData
     {
         return array_filter($cards, function ($card) {
             return ($card['role'] === 'registration manager');
+        });
+    }
+
+    /**
+     * @param  array  $cards
+     * @return array
+     */
+    private function filterCardsForRehearsalManager(array $cards): array
+    {
+        return array_filter($cards, function ($card) {
+            return ($card['role'] === 'rehearsal manager');
         });
     }
 
