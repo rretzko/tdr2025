@@ -6,6 +6,7 @@ namespace App\Livewire\Events\Versions\Reports;
 use App\Exports\ParticipatingStudentsExport;
 use App\Livewire\Forms\RoomForm;
 use App\Livewire\Forms\StudentForm;
+use App\Models\EmergencyContact;
 use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Version;
 use App\Models\PhoneNumber;
@@ -103,6 +104,8 @@ class ParticipatingStudentsComponent extends BasePageReports
         $this->addEditPhoneNumber($this->form->phoneHome, 'home', $user->id);
         $this->addEditPhoneNumber($this->form->phoneMobile, 'mobile', $user->id);
 
+        $this->addEditECPhoneMobile($this->form->ecPhoneMobile, $candidate->emergency_contact_id);
+
         //clear vars
         $this->form->first = '';
         $this->form->middle = '';
@@ -111,6 +114,7 @@ class ParticipatingStudentsComponent extends BasePageReports
         $this->form->phoneHome = '';
         $this->form->phoneMobile = '';
         $this->form->studentId = 0;
+        $this->form->ecPhoneMobile = '';
     }
 
     private function addEditPhoneNumber(string $phoneNumber, string $phoneType, int $userId): void
@@ -133,6 +137,12 @@ class ParticipatingStudentsComponent extends BasePageReports
                 $new->save();
             }
         }
+    }
+
+    private function addEditECPhoneMobile($ecPhoneMobile, $emergencyContactId): void
+    {
+        $ec = EmergencyContact::find($emergencyContactId);
+        $ec->update(['phone_mobile' => $ecPhoneMobile]);
     }
 
 

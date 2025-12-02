@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Forms;
 
+use App\Models\EmergencyContact;
 use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\PhoneNumber;
 use App\Models\Schools\School;
@@ -34,6 +35,8 @@ class StudentForm extends Form
     #[Validate('required')]
     public int $classOf = 2028; //9th grade in 2025
     public string $duplicateStudentAdvisory = '';
+    public string $ecName = '';
+    public string $ecPhoneMobile = '';
     #[Validate('email', message: 'An email address is required.')]
     public string $email = '';
     #[Validate('required', message: 'First name is required.')]
@@ -133,6 +136,15 @@ class StudentForm extends Form
 
             }
 
+            //Emergency Contact Phone
+            $versionId = UserConfig::getValue('versionId');
+            $candidate = Candidate::where('student_id', $student->id)->where('version_id', $versionId)->first();
+            if($candidate->emergency_contact_id){
+                $this->ecPhoneMobile = EmergencyContact::where('id', $candidate->emergency_contact_id)->first()->phone_mobile;
+            }else{
+                dd($candidate->id);
+            }
+
         } else { //uncomment for testing
 
             //set default class_of to lowest grade of user's gradesITeach
@@ -173,6 +185,13 @@ class StudentForm extends Form
         $this->shirtSize = $student->shirt_size ?? 1;
         $this->phoneMobile = $student->phoneMobile ?? '';
         $this->phoneHome = $student->phoneHome ?? '';
+        if($candidate->emergency_contact_id){
+            $this->ecPhoneMobile = EmergencyContact::find($candidate->emergency_contact_id)->phone_mobile ?? 'none found';
+            $this->ecName = EmergencyContact::find($candidate->emergency_contact_id)->name ?? 'none found';
+        }else{
+            $this->ecPhoneMobile = 'none found';
+        }
+
 
         $this->studentId = $student->id;
 

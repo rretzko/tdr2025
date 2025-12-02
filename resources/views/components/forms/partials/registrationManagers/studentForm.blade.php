@@ -55,6 +55,15 @@
         @enderror
     </div>
 
+    {{-- EMERGENCY CONTACT --}}
+    <div class="flex flex-col space-y-0.5 mb-2">
+        <label class="font-semibold">Emergency Contact Cell Phone <i class="text-sm">({{ $form->ecName }})</i></label>
+        <input type="text" wire:model="form.ecPhoneMobile"/>
+        @error('ecPhoneMobile')
+        <div>{{ $errors['ecPhoneMobile']->message }}</div>
+        @enderror
+    </div>
+
     <div class=" space-y-0.5 mb-2">
         <button type="button" class="bg-black text-white px-2 rounded shadow-lg" wire:click="saveEdits">
             Save Edits
