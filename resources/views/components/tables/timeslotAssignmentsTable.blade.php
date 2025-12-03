@@ -30,7 +30,10 @@
         @forelse($rows AS $key => $row)
             <tr class=" odd:bg-green-50 ">
                 <td class='border border-gray-200 px-1 text-center'>{{ $loop->iteration }}</td>
-                <td class='border border-gray-200 px-1'>{{ $row['schoolName'] }}</td>
+                <td class='border border-gray-200 px-1'>
+                    {{ $row['schoolName'] }}
+                    <span class="ml-1 text-xs text-gray-400">( {{ date('h:i', \App\Models\Events\Versions\VersionTimeslot::where('version_id', 86)->where('school_id', $row['schoolId'])->first()->timeslot) }} )</span>
+                </td>
                 <td class='border border-gray-200 px-1'>{{ $row['teacherName'] }}</td>
                 @foreach($row AS $itemKey => $item)
                     {{-- voice parts --}}
@@ -52,7 +55,7 @@
                             wire:model.live="assignedTimeslotSelectors.{{ $row['schoolId'] }}">
                         @foreach($timeslots AS $ndx => $value)
 
-                            <option value="{{ $ndx }}">
+                            <option value="{{ $ndx }}" @selected($assignedTimeslotSelectors[$row['schoolId']] == $ndx) >
                                 {{ $value['selector'] }}
                             </option>
 

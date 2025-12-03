@@ -200,8 +200,8 @@ class TimeslotAssignmentComponent extends BasePage
             })
             ->toArray();
 
-        $this->addDefaultTimeslots($timeslots);
-
+//        $this->addDefaultTimeslots($timeslots);
+//        dd($timeslots);
         return $timeslots;
     }
 
@@ -633,10 +633,10 @@ class TimeslotAssignmentComponent extends BasePage
         );
 
         $this->duration = $configs->duration ?? 15;
-        $defaultTime = Carbon::now()->addHours(5);
-        $this->endTime = Carbon::parse($configs->end_time ?? $defaultTime)->subHours(5)->format('Y-m-d H:i:s') ?? '';
+        $defaultTime = Carbon::now()->addHours(0);
+        $this->endTime = Carbon::parse($configs->end_time ?? $defaultTime)->subHours(0)->format('Y-m-d H:i:s') ?? '';
 
-        $this->startTime = Carbon::parse($configs->start_time ?? $defaultTime)->subHours(5)->format('Y-m-d H:i:s') ?? '';
+        $this->startTime = Carbon::parse($configs->start_time ?? $defaultTime)->subHours(0)->format('Y-m-d H:i:s') ?? '';
     }
 
     private function updateVoicePartCounts(
