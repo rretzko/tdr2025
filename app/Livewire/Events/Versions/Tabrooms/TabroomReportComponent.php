@@ -307,7 +307,8 @@ class TabroomReportComponent extends BasePage
                 'emergency_contacts.email AS EcEmail',
                 'emergency_contacts.phone_mobile AS phoneMobileEC',
                 'emergency_contacts.phone_home AS phoneHomeEC',
-                'emergency_contacts.phone_work AS phoneWorkEC'
+                'emergency_contacts.phone_work AS phoneWorkEC',
+                'students.id AS studentId'
             )
             ->orderBy('voice_parts.order_by')
             ->orderBy('audition_results.total', ($scoresAscending ? 'asc' : 'desc'))
