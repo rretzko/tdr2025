@@ -92,6 +92,7 @@ class PdfRegistrationCardVoicePartDataFactory
                 'version_timeslots.timeslot',
                 'voice_parts.descr AS voicePartDescr',
             )
+            ->orderBy('version_timeslots.timeslot')
             ->orderBy('schoolName')
             ->orderBy('users.last_name')
             ->orderBy('users.first_name')

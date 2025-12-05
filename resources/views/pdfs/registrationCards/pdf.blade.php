@@ -155,14 +155,15 @@
             </tr>
 
             {{-- TIMESLOT --}}
+            @php($fDate = \Carbon\Carbon::parse($registrant['timeslot'])->format('M d, Y g:i'))
             <tr>
                 <td class="cardContentCentered">
-                    {{ $registrant['timeslot'] }}
+                    {{ $fDate }}
                 </td>
                 <td class="cardSpacer">{{-- blank --}}</td>
                 <td class="cardContentCentered">
                     @if(array_key_exists(1, $registrant['rooms']))
-                        {{ $registrant['timeslot'] }}
+                        {{ $fDate }}
                     @else
                         <span style="color: rgba(0,0,0,0.3);font-size: 0.8rem;">time</span>
                     @endif {{-- else create "blank" card --}}
@@ -175,7 +176,7 @@
                     {{ $registrant['schoolName'] }}
                 </td>
                 <td class="cardSpacer">{{-- blank --}}</td>
-                <td class="cardContentCentered" style="text-algin: center;  font-size: 0.8rem;">
+                <td class="cardContentCentered" style="text-align: center;  font-size: 0.8rem;">
                     @if(array_key_exists(1, $registrant['rooms']))
                         {{ $registrant['schoolName'] }}
                     @else
