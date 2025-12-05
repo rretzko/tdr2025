@@ -155,7 +155,8 @@
             </tr>
 
             {{-- TIMESLOT --}}
-            @php($fDate = \Carbon\Carbon::parse($registrant['timeslot'])->format('M d, Y g:i'))
+{{--            @php($fDate = \Carbon\Carbon::parse($registrant['timeslot'], 'UTC')->timezone(config('app.timezone'))->format('M d, Y g:i a'))--}}
+            @php($fDate = \Carbon\Carbon::parse($registrant['timeslot'], config('app.timezone'))->format('M d, Y g:i a'))
             <tr>
                 <td class="cardContentCentered">
                     {{ $fDate }}
