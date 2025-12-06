@@ -155,8 +155,7 @@
 
             {{-- TIMESLOT --}}
             @php
-                $carbon = \Carbon\Carbon::parse($registrant['timeslot'], 'UTC')->setTimezone('America/New_York');
-                $fDate = $carbon->format('M d, Y g:i a');
+                $fDate = \Carbon\Carbon::parse($registrant['timeslot'])->addHours(5)->format('M d, Y g:i a');
             @endphp
             <tr>
                 <td class="cardContentCentered">
