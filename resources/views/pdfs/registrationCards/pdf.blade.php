@@ -159,7 +159,7 @@
             @endphp
             <tr>
                 <td class="cardContentCentered">
-                    {{ $fDate }} {{ $registrant['timeslot'] }}
+                    {{ $fDate }}
                 </td>
                 <td class="cardSpacer">{{-- blank --}}</td>
                 <td class="cardContentCentered">
