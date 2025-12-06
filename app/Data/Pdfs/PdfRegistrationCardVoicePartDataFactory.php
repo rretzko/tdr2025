@@ -73,6 +73,8 @@ class PdfRegistrationCardVoicePartDataFactory
 
     private function sql()
     {
+        DB::statement("SET time_zone = '-05:00'");
+
         return DB::table('candidates')
             ->join('students', 'students.id', '=', 'candidates.student_id')
             ->join('users', 'users.id', 'students.user_id')
