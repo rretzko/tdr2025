@@ -154,10 +154,18 @@
             </tr>
 
             {{-- TIMESLOT --}}
-            @php($fDate = \Carbon\Carbon::parse($registrant['timeslot'])->format('M d, Y g:i a'))
+{{--            @php($fDate = \Carbon\Carbon::parse($registrant['timeslot'])->format('M d, Y g:i a'))--}}
+            @php
+                // Parse the date string manually without timezone logic
+                [$date, $time] = explode(' ', $registrant['timeslot']);
+                [$year, $month, $day] = explode('-', $date);
+                [$hour, $minute] = explode(':', $time);
+
+                $fDate = date('M d, Y g:i a', mktime((int)$hour, (int)$minute, 0, (int)$month, (int)$day, (int)$year));
+            @endphp
             <tr>
                 <td class="cardContentCentered">
-                    {{ $fDate }}
+                    {{ $fDate }} {{ $registrant['timeslot'] }}
                 </td>
                 <td class="cardSpacer">{{-- blank --}}</td>
                 <td class="cardContentCentered">
