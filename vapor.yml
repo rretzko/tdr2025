@@ -13,6 +13,7 @@ environments:
     build:
       - 'set COMPOSER_MIRROR_PATH_REPOS=1 && composer install'
       - 'php artisan event:cache'
+      - 'php artisan config:cache'
       - 'npm ci && npm run build && rd /s /q "node_modules"'
     deploy: null
   staging:

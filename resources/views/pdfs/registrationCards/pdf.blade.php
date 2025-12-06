@@ -155,11 +155,13 @@
             </tr>
 
             {{-- TIMESLOT --}}
-{{--            @php($fDate = \Carbon\Carbon::parse($registrant['timeslot'], 'UTC')->timezone(config('app.timezone'))->format('M d, Y g:i a'))--}}
-            @php($fDate = \Carbon\Carbon::parse($registrant['timeslot'], config('app.timezone'))->format('M d, Y g:i a'))
+{{--            @php($fDate = \Carbon\Carbon::parse($registrant['timeslot'], config('app.timezone'))->format('M d, Y g:i a'))--}}
+            @php($fDate = \Carbon\Carbon::parse($registrant['timeslot'], 'America/New_York')->format('M d, Y g:i a'))
+            @php($actualTimezone = config('app.timezone'))
+
             <tr>
                 <td class="cardContentCentered">
-                    {{ $fDate }}
+                    {{ $fDate }} {{ $actualTimezone }}
                 </td>
                 <td class="cardSpacer">{{-- blank --}}</td>
                 <td class="cardContentCentered">
