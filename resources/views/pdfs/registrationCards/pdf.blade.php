@@ -1,5 +1,3 @@
-@php(date_default_timezone_set(config('app.timezone')))
-
 <div>
     <style>
         .card {

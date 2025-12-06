@@ -65,6 +65,7 @@ class RegistrationCardsController extends Controller
         $data = new PdfRegistrationCardVoicePartDataFactory($version, $voicePart);
         $dto = $data->getDto();
 
+        date_default_timezone_set('America/New_York');
         $pdf = PDF::loadView($path, compact('dto'));
 
         $fileName = 'registrationCards_'.$voicePart->abbr.'.pdf';
