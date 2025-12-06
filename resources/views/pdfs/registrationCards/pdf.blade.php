@@ -1,5 +1,6 @@
-<div>
+@php(date_default_timezone_set(config('app.timezone')))
 
+<div>
     <style>
         .card {
             border-collapse: collapse;
@@ -155,13 +156,10 @@
             </tr>
 
             {{-- TIMESLOT --}}
-{{--            @php($fDate = \Carbon\Carbon::parse($registrant['timeslot'], config('app.timezone'))->format('M d, Y g:i a'))--}}
-            @php($fDate = \Carbon\Carbon::parse($registrant['timeslot'], 'America/New_York')->format('M d, Y g:i a'))
-            @php($actualTimezone = config('app.timezone'))
-
+            @php($fDate = \Carbon\Carbon::parse($registrant['timeslot'])->format('M d, Y g:i a'))
             <tr>
                 <td class="cardContentCentered">
-                    {{ $fDate }} {{ $actualTimezone }}
+                    {{ $fDate }}
                 </td>
                 <td class="cardSpacer">{{-- blank --}}</td>
                 <td class="cardContentCentered">
