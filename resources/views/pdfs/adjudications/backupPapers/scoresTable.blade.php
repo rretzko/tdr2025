@@ -36,7 +36,7 @@
 
     @forelse($room['registrants'] AS $registrant)
         @if(! $voicePartAbbr) {{ $voicePartAbbr=$registrant['abbr'] }} @endif
-        @if($lineCounter > 30 || ($voicePartAbbr !== $registrant['abbr']))
+        @if(($lineCounter > 30) || ($voicePartAbbr !== $registrant['abbr']))
             @php($voicePartAbbr = $registrant['abbr'])
             {{-- CLOSE THE TABLE --}}
     </tbody>
