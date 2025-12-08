@@ -109,9 +109,9 @@ class CandidateAdjudicationStatusService
             ->where('version_id', self::$versionId)
             ->value('judge_per_room_count');
 
-        if (self::$room) {
-            return self::getRoomMaxScoreCount($judgeCount);
-        }
+//        if (self::$room) {
+//            return self::getRoomMaxScoreCount($judgeCount);
+//        }
 
         $factorCount = ScoreFactor::query()
             ->where('version_id', self::$versionId)

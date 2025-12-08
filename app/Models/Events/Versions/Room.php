@@ -46,9 +46,11 @@ class Room extends Model
 
     public function judges(): HasMany
     {
+        $excludeJudgeTypes = ['monitor'];
         return $this->hasMany(Judge::class)
             ->with('user')
-            ->where('user_id', '!=', '0');
+            ->where('user_id', '!=', '0')
+            ->whereNotIn('judge_type', $excludeJudgeTypes);
     }
 
     public function roomScoreCategories(): HasMany
@@ -171,6 +173,7 @@ class Room extends Model
             ->whereIn('voice_part_id', $this->voicePartIds)
             ->where('status', 'registered')
             ->select('candidates.id', 'voice_parts.abbr')
+            ->orderBy('candidates.voice_part_id')
             ->orderBy('id')
             ->get();
     }

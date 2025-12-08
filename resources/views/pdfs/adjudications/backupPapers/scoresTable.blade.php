@@ -32,9 +32,12 @@
     <tbody>
     @php($lineCounter=1)
     @php($pageCounter=1)
+    @php($voicePartAbbr='')
 
     @forelse($room['registrants'] AS $registrant)
-        @if($lineCounter > 30)
+        @if(! $voicePartAbbr) {{ $voicePartAbbr=$registrant['abbr'] }} @endif
+        @if($lineCounter > 30 || ($voicePartAbbr !== $registrant['abbr']))
+            @php($voicePartAbbr = $registrant['abbr'])
             {{-- CLOSE THE TABLE --}}
     </tbody>
     </table>

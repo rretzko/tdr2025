@@ -38,12 +38,24 @@ class Judge extends Model
             ->sum('score');
     }
 
+    public function getOrderByAttribute(): int
+    {
+        $orderBys = [
+            'head judge' => 1,
+            'judge 1' => 2,
+            'judge 2' => 3,
+            'judge 3' => 4,
+        ];
+
+        return $orderBys[$this->judge_type];
+    }
+
     public function progress(string $status): array
     {
         $room = $this->room;
         $countRegistrants = $room->getCountRegistrants();
         $candidateIds = $room->getRegistrantIds();
-        $maxScoreCount = $room->getMaxScoreCount() / $room->judges->count();
+        $maxScoreCount = $room->getMaxScoreCount() / $room->judges->count();  //3 = 6 / 2
 
         //ex. getCountCompleted()
         $statusMethod = 'getCount'.ucwords($status);

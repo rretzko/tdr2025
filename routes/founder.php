@@ -16,4 +16,10 @@ Route::middleware(['auth', \App\Http\Middleware\FounderMiddleware::class])
             ->name('founder.paypalManualEntry');
         Route::post('founderEpaymentUpload', \App\Http\Controllers\Founders\EpaymentUploadController::class)
             ->name('founder.epaymentUpload');
+
+        //SCORE CREATION
+        Route::get('founder/create-scores/{version}', \App\Http\Controllers\Founders\CreateScoresController::class)
+            ->name('founder.create-scores');
+        Route::get('founder/find-open-versions-without-scores', \App\Http\Controllers\Founders\FindOpenVersionsWithoutScoresController::class)
+            ->name('founder.find-open-versions-without-scores');
     });

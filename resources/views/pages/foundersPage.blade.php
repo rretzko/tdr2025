@@ -29,6 +29,21 @@
                         @include('components.forms.partials.epayments.ePaymentUploadForm')
                     </div>
 
+                    {{-- TABROOM SCORING TEST --}}
+                    <div class="border border-gray-400 p-2 bg-white flex flex-row space-x-2">
+                        <a href="{{ route('founder.find-open-versions-without-scores') }}" class="text-blue-500">
+                            <button class="bg-green-700 text-white px-2 py-1 rounded ">
+                                Create Fake Scores
+                            </button>
+                        </a>
+
+                        <a href="" class="text-blue-500">
+                            <button class="bg-red-700 text-white px-2 py-1 rounded" >
+                                Delete Fake Scores
+                            </button>
+                        </a>
+                    </div>
+
                     {{-- STUDENT DOSSIER --}}
                     <div class="border border-gray-400 p-2 bg-white">
                         <a href="" class="text-blue-500">

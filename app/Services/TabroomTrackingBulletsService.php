@@ -96,6 +96,7 @@ class TabroomTrackingBulletsService
 
     private function getStatusColors(int $candidateId, Room $room): string
     {
+
         $status = CandidateAdjudicationStatusService::getRoomStatus($candidateId, $room);
 
         return $this->statuses[$status];

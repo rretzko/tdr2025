@@ -4,11 +4,14 @@ namespace App\Models\Events\Versions;
 
 use App\Models\Events\Event;
 use App\Models\Events\EventEnsemble;
+use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Room;
+use App\Models\Events\Versions\Scoring\Score;
 use App\Models\Events\Versions\Scoring\ScoreCategory;
 use App\Models\Events\Versions\Scoring\ScoreFactor;
 use App\Models\Schools\School;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -214,6 +217,11 @@ class Version extends Model
         return $scoreFactors;
     }
 
+    public function scores(): HasMany
+    {
+        return $this->hasMany(Score::class);
+    }
+
     public function showPitchFiles(string $type = ''): bool
     {
         return match ($type) {
@@ -232,5 +240,13 @@ class Version extends Model
     {
         return $this->hasMany(VersionPitchFile::class)
             ->orderBy('order_by');
+    }
+
+    public function versionRegistrants(): Builder
+    {
+        return Candidate::query()
+            ->where('version_id', $this->id)
+            ->where('status', 'registered');
+//            ->get();
     }
 }
