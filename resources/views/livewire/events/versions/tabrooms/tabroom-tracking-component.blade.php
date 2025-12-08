@@ -60,7 +60,7 @@
                 <h4 class="ml-2 font-semibold border border-white border-b-gray-400 mb-2">
                     {{ $room['candidates']['voicePartDescr'] }}
                     <span class="text-xs italic font-normal">
-                        Float over button for details: judge name: score count/room factor (total score)
+                        Float over button for details: judge name: score count/room tolerance (total score)
                     </span>
                 </h4>
 

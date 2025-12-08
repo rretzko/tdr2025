@@ -92,6 +92,11 @@ class CandidateAdjudicationStatusService
             ->count() ?? 0;
     }
 
+    /**
+     * @todo Review lines 112/114 when running \App\Services\ScoreSeederService and \App\Services\AuditionResultService
+     * @return int
+     *
+     */
     private static function getScoreCount(): int
     {
         if (self::$room) {
@@ -109,9 +114,9 @@ class CandidateAdjudicationStatusService
             ->where('version_id', self::$versionId)
             ->value('judge_per_room_count');
 
-//        if (self::$room) {
-//            return self::getRoomMaxScoreCount($judgeCount);
-//        }
+        if (self::$room) {
+            return self::getRoomMaxScoreCount($judgeCount);
+        }
 
         $factorCount = ScoreFactor::query()
             ->where('version_id', self::$versionId)

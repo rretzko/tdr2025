@@ -19,27 +19,18 @@ class ScoreSeederService
     public function seedScores(bool $calculateResults = true): array
     {
         $resultsSummary = [];
-        $scoreFactors = $this->version->scoreFactors;
 
         Log::info('Starting seed scores', [
             'version_id' => $this->version->id,
-            'score_factors_count' => $scoreFactors->count(),
         ]);
-
-        if ($scoreFactors->isEmpty()) {
-            return [
-                'success' => false,
-                'message' => 'No score factors found'
-            ];
-        }
 
         $totalProcessed = 0;
         $totalInserted = 0;
 
         // Use chunk to avoid memory issues
         $this->version->versionRegistrants()
-            ->chunk(self::CHUNK_SIZE, function ($registrants) use ($scoreFactors, &$totalProcessed, &$totalInserted) {
-                $inserted = $this->processRegistrantChunk($registrants, $scoreFactors);
+            ->chunk(self::CHUNK_SIZE, function ($registrants) use (&$totalProcessed, &$totalInserted) {
+                $inserted = $this->processRegistrantChunk($registrants);
                 $totalProcessed += $registrants->count();
                 $totalInserted += $inserted;
 
@@ -77,55 +68,81 @@ class ScoreSeederService
         ];
     }
 
-    private function processRegistrantChunk($registrants, $scoreFactors): int
+    private function processRegistrantChunk($registrants): int
     {
         $scoresToInsert = [];
         $now = now();
 
         foreach ($registrants as $registrant) {
-            // Get the room for this registrant's voice part
-            $room = $this->getRoomForVoicePart($registrant->voice_part_id);
+            // Get ALL rooms that handle this voice part
+            $rooms = $this->getRoomsForVoicePart($registrant->voice_part_id);
 
-            if (!$room) {
-                Log::warning('No room found for registrant', [
+            if ($rooms->isEmpty()) {
+                Log::warning('No rooms found for registrant', [
                     'candidate_id' => $registrant->id,
                     'voice_part_id' => $registrant->voice_part_id
                 ]);
                 continue;
             }
 
-            // Get judges for this specific room (excluding monitors)
-            $judges = $this->getJudgesForRoom($room);
+            // Process each room separately
+            foreach ($rooms as $room) {
+                // Get judges for this specific room (excluding monitors)
+                $judges = $this->getJudgesForRoom($room);
 
-            if ($judges->isEmpty()) {
-                Log::warning('No judges found for room', [
+                if ($judges->isEmpty()) {
+                    Log::warning('No judges found for room', [
+                        'room_id' => $room->id,
+                        'room_name' => $room->room_name,
+                        'candidate_id' => $registrant->id
+                    ]);
+                    continue;
+                }
+
+                // Get score factors assigned to THIS room
+                $scoreFactors = $room->scoringFactors;
+
+                if ($scoreFactors->isEmpty()) {
+                    Log::warning('No score factors found for room', [
+                        'room_id' => $room->id,
+                        'room_name' => $room->room_name,
+                        'candidate_id' => $registrant->id
+                    ]);
+                    continue;
+                }
+
+                Log::debug('Processing room for candidate', [
+                    'candidate_id' => $registrant->id,
                     'room_id' => $room->id,
-                    'candidate_id' => $registrant->id
+                    'room_name' => $room->room_name,
+                    'judges_count' => $judges->count(),
+                    'score_factors_count' => $scoreFactors->count(),
+                    'expected_scores' => $judges->count() * $scoreFactors->count()
                 ]);
-                continue;
-            }
 
-            foreach ($judges as $judge) {
-                foreach ($scoreFactors as $scoreFactor) {
-                    $randScore = rand($scoreFactor->best, $scoreFactor->worst);
+                // Create scores for this room's judges × this room's score factors
+                foreach ($judges as $judge) {
+                    foreach ($scoreFactors as $scoreFactor) {
+                        $randScore = rand($scoreFactor->best, $scoreFactor->worst);
 
-                    $scoresToInsert[] = [
-                        'version_id' => $this->version->id,
-                        'candidate_id' => $registrant->id,
-                        'student_id' => $registrant->student_id,
-                        'school_id' => $registrant->school_id,
-                        'judge_id' => $judge->id,
-                        'judge_order_by' => $judge->order_by ?? 0,
-                        'score_factor_id' => $scoreFactor->id,
-                        'score_factor_order_by' => $scoreFactor->order_by,
-                        'score_category_id' => $scoreFactor->score_category_id,
-                        'score_category_order_by' => $scoreFactor->scoreCategory->order_by,
-                        'voice_part_id' => $registrant->voice_part_id,
-                        'voice_part_order_by' => $registrant->voicePart->order_by,
-                        'score' => $randScore,
-                        'created_at' => $now,
-                        'updated_at' => $now,
-                    ];
+                        $scoresToInsert[] = [
+                            'version_id' => $this->version->id,
+                            'candidate_id' => $registrant->id,
+                            'student_id' => $registrant->student_id,
+                            'school_id' => $registrant->school_id,
+                            'judge_id' => $judge->id,
+                            'judge_order_by' => $judge->order_by ?? 0,
+                            'score_factor_id' => $scoreFactor->id,
+                            'score_factor_order_by' => $scoreFactor->order_by,
+                            'score_category_id' => $scoreFactor->score_category_id,
+                            'score_category_order_by' => $scoreFactor->scoreCategory->order_by,
+                            'voice_part_id' => $registrant->voice_part_id,
+                            'voice_part_order_by' => $registrant->voicePart->order_by,
+                            'score' => $randScore,
+                            'created_at' => $now,
+                            'updated_at' => $now,
+                        ];
+                    }
                 }
             }
         }
@@ -141,15 +158,17 @@ class ScoreSeederService
     }
 
     /**
-     * Get the room that handles a specific voice part
+     * Get ALL rooms that handle a specific voice part
+     * A voice part can be judged in multiple rooms
      */
-    private function getRoomForVoicePart(int $voicePartId): ?Room
+    private function getRoomsForVoicePart(int $voicePartId)
     {
         return Room::where('version_id', $this->version->id)
             ->whereHas('roomVoiceParts', function ($query) use ($voicePartId) {
                 $query->where('voice_part_id', $voicePartId);
             })
-            ->first();
+            ->with(['roomVoiceParts', 'roomScoreCategories'])
+            ->get();
     }
 
     /**

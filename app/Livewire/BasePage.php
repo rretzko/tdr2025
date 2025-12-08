@@ -51,6 +51,7 @@ class BasePage extends Component
     public const BARFORMATS = [
         'completed' => 'bg-green-500 text-white',
         'error' => 'bg-red-500 text-yellow-400',
+        'errors' => 'bg-red-500 text-yellow-400',
         'pending' => 'bg-black text-white',
         'wip' => 'bg-yellow-400 text-black',
     ];

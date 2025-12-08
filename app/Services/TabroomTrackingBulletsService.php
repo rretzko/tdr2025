@@ -56,9 +56,24 @@ class TabroomTrackingBulletsService
 
     private function getCandidateScores(int $candidateId): array
     {
+//        dd(Score::query()
+//            ->where('candidate_id', $candidateId)
+//            ->when($this->roomId, function ($query) {
+//                $room = Room::find($this->roomId);
+//                $judgeIds = $room->judges->pluck('id')->toArray();
+//                return $query->whereIn('judge_id', $judgeIds);
+//            })
+//            ->selectRaw('SUM(score) as total_score')
+//            ->groupBy('judge_id')
+//            ->pluck('total_score')
+//            ->toArray());
         return Score::query()
             ->where('candidate_id', $candidateId)
-            //->select('judge_id')
+            ->when($this->roomId, function ($query) {
+                $room = Room::find($this->roomId);
+                $judgeIds = $room->judges->pluck('id')->toArray();
+                return $query->whereIn('judge_id', $judgeIds);
+            })
             ->selectRaw('SUM(score) as total_score')
             ->groupBy('judge_id')
             ->pluck('total_score')
