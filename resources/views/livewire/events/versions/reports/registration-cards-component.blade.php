@@ -59,7 +59,7 @@
             </div>
 
             <div class="border border-white border-t-gray-300 mt-2 pt-2">
-                <a href="{{ route('pdf.registrationCardAuditReport', ['version'=> $versionId]) }}" class="text-blue-500 hover:underline hover:text-blue-700">
+                <a href="{{ route('pdf.registrationCardAuditReport', ['version'=> $versionId]) }}" class="text-blue-500 hover:underline hover:text-blue-700" target="_blank">
                     Registration Card Audit Report
                 </a>
             </div>
