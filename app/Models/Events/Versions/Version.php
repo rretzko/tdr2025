@@ -65,6 +65,9 @@ class Version extends Model
      */
     public function eventEnsembles(): Collection
     {
+        //confirm or make version_event_ensemble_orders rows
+        $this->hasEventEnsembleOrders();
+
         return EventEnsemble::query()
             ->join('version_event_ensemble_orders', 'event_ensembles.id', '=',
                 'version_event_ensemble_orders.event_ensemble_id')
@@ -248,5 +251,32 @@ class Version extends Model
             ->where('version_id', $this->id)
             ->where('status', 'registered');
 //            ->get();
+    }
+
+    /**
+     * If VersionEventEnsembleOrders doesn't exist, create these
+     * @return void
+     */
+    private function hasEventEnsembleOrders(): void
+    {
+        $eventEnsembleIds = EventEnsemble::where('event_id', $this->event_id)->pluck('id')->toArray();
+
+        $eventEnsembleOrders = VersionEventEnsembleOrder::whereIn('event_ensemble_id', $eventEnsembleIds)
+            ->where('version_id', $this->id)
+            ->get();
+
+        if(! $eventEnsembleOrders->count() == count($eventEnsembleIds)){
+            foreach($eventEnsembleIds AS $key => $id){
+                VersionEventEnsembleOrder::create(
+                    [
+                        'version_id' => $this->id,
+                        'event_ensemble_id' => $id,
+                        'order_by' => ($key + 1),
+                    ]
+                );
+            }
+        }
+
+
     }
 }

@@ -44,7 +44,7 @@
                     {{ $registrant->timeslot }}
                 </td>
                 <td colspan="3">
-                    {{ $registrant->schoolName }}
+                    {{ $registrant->schoolName }}: {{ strtoupper($registrant->teacherName) }}: {{ $registrant->teacherMobile }} (c)
                 </td>
             </tr>
         @endif
@@ -57,7 +57,7 @@
                         {{ $registrant->timeslot }}
                     </td>
                     <td colspan="3">
-                        {{ $registrant->schoolName }}
+                        {{ $registrant->schoolName }}: {{ strtoupper($registrant->teacherName) }}: {{ $registrant->teacherMobile }} (c)
                     </td>
                 </tr>
             @endif
@@ -69,6 +69,7 @@
             <td>
                 <div>{{ $registrant->alphaName }}</div>
                 <div class="email">{{ $registrant->email }}</div>
+                <div class="email">{{ $registrant->studentMobile }} (c)</div>
             </td>
             <td class="text-align: center">{{ $registrant->voicePartAbbr }}</td>
         </tr>

@@ -4,6 +4,7 @@ namespace App\Models\AuditionResults;
 
 use App\Models\Events\Versions\VersionConfigAdjudication;
 use App\Models\Events\Versions\VersionEventEnsembleDistinction;
+use App\Models\Events\Versions\Version;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
@@ -84,6 +85,9 @@ class Factory extends Model
             return $distinctions;
         }
 
+        //create default distinctions if none exist
+        $this->hasVersionEventEnsembleDistinction($versionId);
+
         $versionEventEnsembleDistinctions = VersionEventEnsembleDistinction::query()
             ->where('version_id', $versionId)
             ->first();
@@ -101,5 +105,28 @@ class Factory extends Model
         }
 
         return $distinctions;
+    }
+
+    private function hasVersionEventEnsembleDistinction(int $versionId): void
+    {
+        $veed = VersionEventEnsembleDistinction::where('version_id', $versionId)->first();
+
+        if(! $veed){
+            $eventId = Version::find($versionId)->event_id;
+            $versions = Version::where('event_id', $eventId)->whereNot('id', $versionId)->orderByDesc('senior_class_of')->get();
+            //isolate the last version
+            if($versions->count()){
+                $lastVersion = $versions->first();
+            }
+            $lastVeed = VersionEventEnsembleDistinction::where('version_id', $lastVersion->id)->first();
+            VersionEventEnsembleDistinction::create(
+                [
+                    'version_id' => $versionId,
+                    'by_grade' => $lastVeed->by_grade,
+                    'by_score' => $lastVeed->by_score,
+                    'by_voice_part_id' => $lastVeed->by_voice_part_id,
+                ]
+            );
+        }
     }
 }
