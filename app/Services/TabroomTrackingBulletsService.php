@@ -8,8 +8,10 @@ use App\Models\Events\Versions\Scoring\RoomVoicePart;
 use App\Models\Events\Versions\Scoring\Score;
 use App\Models\Events\Versions\Scoring\ScoreFactor;
 use App\Models\Events\Versions\VersionConfigAdjudication;
+use App\Models\Events\Versions\VersionTimeslot;
 use App\Models\Schools\Teacher;
 use App\Models\Students\VoicePart;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
@@ -43,6 +45,7 @@ class TabroomTrackingBulletsService
                 $voicePartDescr = VoicePart::where('id', $voicePartId)->first()->descr;
                 $this->candidates[] = [
                     'roomName' => $room->room_name,
+                    'tolerance' => $room->tolerance,
                     'candidates' => [
                         'voicePartDescr' => $voicePartDescr,
                         'candidates' => $this->getVoicePartCandidates($voicePartId, $room),
@@ -56,17 +59,6 @@ class TabroomTrackingBulletsService
 
     private function getCandidateScores(int $candidateId): array
     {
-//        dd(Score::query()
-//            ->where('candidate_id', $candidateId)
-//            ->when($this->roomId, function ($query) {
-//                $room = Room::find($this->roomId);
-//                $judgeIds = $room->judges->pluck('id')->toArray();
-//                return $query->whereIn('judge_id', $judgeIds);
-//            })
-//            ->selectRaw('SUM(score) as total_score')
-//            ->groupBy('judge_id')
-//            ->pluck('total_score')
-//            ->toArray());
         return Score::query()
             ->where('candidate_id', $candidateId)
             ->when($this->roomId, function ($query) {
@@ -78,6 +70,18 @@ class TabroomTrackingBulletsService
             ->groupBy('judge_id')
             ->pluck('total_score')
             ->toArray();
+    }
+
+    private function getCandidateTimeslot(int $candidateId): string
+    {
+        $candidate = Candidate::find($candidateId);
+        $schoolId = $candidate->school_id;
+        $versionId = $candidate->version_id;
+
+        return VersionTimeslot::where('school_id', $schoolId)
+            ->where('version_id', $versionId)
+            ->first()
+            ->timeslot;
     }
 
     private function getRooms(): Collection
@@ -94,6 +98,7 @@ class TabroomTrackingBulletsService
             ->where('version_id', $this->versionId)
             ->where('status', 'registered')
             ->where('voice_part_id', $voicePartId)
+            ->orderBy('candidates.id')
             ->select('candidates.id AS candidateId', 'voice_parts.descr AS voicePartDescr')
             ->get()
             ->toArray();
@@ -104,6 +109,7 @@ class TabroomTrackingBulletsService
             $candidates[$key]['statusColors'] = $this->getStatusColors($candidateId, $room);
             $candidates[$key]['title'] = $this->getTitle(Candidate::find($candidateId), $room, $candidateId);
             $candidates[$key]['tolerance'] = $this->getTolerance($candidateId, $room);
+            $candidates[$key]['timeslot'] = $this->getCandidateTimeslot($candidateId);
         }
 
         return $candidates;
@@ -141,6 +147,14 @@ class TabroomTrackingBulletsService
                 .$judgeTotalScore.')'
                 .$crlf;
         }
+
+        $timeslot = VersionTimeslot::where('school_id', $candidate->school_id)
+            ->where('version_id', $candidate->version_id)
+            ->first()
+            ->timeslot;
+
+        $str .= Carbon::parse($timeslot)->subHour(5)->format('h:i A')
+            .$crlf;
 
         return $str;
     }

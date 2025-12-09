@@ -57,6 +57,12 @@
                     </div>
                 </fieldset>
             </div>
+
+            <div class="border border-white border-t-gray-300 mt-2 pt-2">
+                <a href="{{ route('pdf.registrationCardAuditReport', ['version'=> $versionId]) }}" class="text-blue-500 hover:underline hover:text-blue-700">
+                    Registration Card Audit Report
+                </a>
+            </div>
         </div>
 
     </div>{{-- END OF ID=CONTAINER --}}

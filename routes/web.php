@@ -168,6 +168,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('pdf.registrationCards.voiceParts');
     Route::get('pdf/pullSheet', PullSheetController::class)
         ->name('pdf.pullSheet');
+    Route::get('pdf/registrationCardAuditReport/{version}', \App\Http\Controllers\Pdfs\RegistrationCardAuditReportController::class)
+        ->name('pdf.registrationCardAuditReport');
 
     //PARTICIPATION.PITCHFILES
     Route::get('pitchFiles', \App\Http\Controllers\Events\Versions\Participations\PitchFileController::class)

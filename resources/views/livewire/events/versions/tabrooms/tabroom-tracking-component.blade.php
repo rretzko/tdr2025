@@ -17,6 +17,7 @@
         @forelse($rooms AS $room)
             <div class="bg-green-100 rounded-lg px-2 font-semibold">
                 {{ $room['roomName'] }}
+                <span class="text-xs italic font-normal mr-2">(tolerance: {{ $room['tolerance'] }})</span>
             </div>
 
             {{-- JUDGE STATUS BARS --}}
@@ -60,7 +61,7 @@
                 <h4 class="ml-2 font-semibold border border-white border-b-gray-400 mb-2">
                     {{ $room['candidates']['voicePartDescr'] }}
                     <span class="text-xs italic font-normal">
-                        Float over button for details: judge name: score count/room tolerance (total score)
+                        Float over button for details: judge name: score count/factor count (total score)
                     </span>
                 </h4>
 
