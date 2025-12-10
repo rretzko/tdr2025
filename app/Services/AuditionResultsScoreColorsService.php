@@ -38,7 +38,7 @@ class AuditionResultsScoreColorsService
                 ->where('accepted', 1)
                 ->select('acceptance_abbr')
                 ->value('acceptance_abbr');
-
+if($total == 80){dd($acceptanceAbbr);}
             //manually key color scheme to event ensemble abbreviation
             $colorSchemes = [
                 'mx' => 'bg-blue-100 text-black hover:bg-blue-400 hover:text-white',
@@ -55,7 +55,7 @@ class AuditionResultsScoreColorsService
                 'score' => $total,
                 'colors' => $colorScheme,
             ];
-
+if($total == 80){dd($colors);}
         }
 
         return $colors;

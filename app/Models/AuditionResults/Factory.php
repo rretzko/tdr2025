@@ -39,7 +39,7 @@ class Factory extends Model
         $this->alternatingScores = (bool) $this->versionConfigAdjudication->alternating_scores;
     }
 
-    #[NoReturn] public function setScore(
+    public function setScore(
         $eventEnsembles,
         $versionConfigAdjudication,
         int $score,

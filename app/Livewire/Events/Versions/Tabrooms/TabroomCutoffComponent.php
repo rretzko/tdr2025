@@ -13,13 +13,14 @@ use App\Models\UserConfig;
 use App\Services\AuditionResultsScoreColorsService;
 use App\Services\EventEnsembleSummaryCountService;
 use App\Services\MaxScoreCountService;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Log;
 
 class TabroomCutoffComponent extends BasePage
 {
-    public Factory $factory;
+//    public Factory $factory;
     public SupportCollection $eventEnsembles;
     public array $ensemblesArray;
     public Event $event;
@@ -58,13 +59,15 @@ class TabroomCutoffComponent extends BasePage
 
     public function clickScore($score, $voicePartId): void
     {
+        $factory = new Factory();
         //register score and update auditionResults
-        $this->factory->setScore(
-        //$this->eventEnsembles,
+        $factory->setScore(
             $this->version->eventEnsembles(),
             $this->versionConfigAdjudication,
             $score,
             $voicePartId);
+
+        $this->eventEnsembles = $this->version->eventEnsembles();
     }
 
     /** END OF PUBLIC FUNCTIONS **************************************************/
@@ -97,7 +100,7 @@ class TabroomCutoffComponent extends BasePage
     private function getScores(): array
     {
         $scores = [];
-
+Log::info(Carbon::now()->format('Y-m-d H:i:s') . ' getScores()');
         foreach ($this->event->voiceParts as $voicePart) {
 
             $scores[] = [
