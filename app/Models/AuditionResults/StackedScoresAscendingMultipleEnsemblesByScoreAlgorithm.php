@@ -20,10 +20,12 @@ use JetBrains\PhpStorm\NoReturn;
 class StackedScoresAscendingMultipleEnsemblesByScoreAlgorithm extends Model implements AlgorithmInterface
 {
 
+    private array $altVoicePartIds = [];
     private array|SupportCollection $cutoffs = [];
     private int $eventEnsembleId = 0;
     private array $eventEnsembleIds = [];
     private string $eventEnsembleAbbr = 'xx';
+    private array $leadVoicePartIds = [];
     private int $maxScoreCount = 0;
 
     public function acceptParticipants(
@@ -73,7 +75,7 @@ class StackedScoresAscendingMultipleEnsemblesByScoreAlgorithm extends Model impl
 
             $accepted = $this->isAccepted($result->total, $score, $result->voice_part_id, $result->version_id);
 
-            $acceptedAbbr = $this->determineAcceptanceAbbr($result->score_count, $accepted, $result->total);
+            $acceptedAbbr = $this->determineAcceptanceAbbr($result->score_count, $accepted, $result->total, $result->voice_part_id);
 
             $result->update(
                 [
@@ -120,7 +122,8 @@ class StackedScoresAscendingMultipleEnsemblesByScoreAlgorithm extends Model impl
     private function determineAcceptanceAbbr(
         int $scoreCount,
         bool $accepted,
-        int $score
+        int $score,
+        int $voicePartId
     ): string {
 
         //no-show
@@ -143,8 +146,10 @@ class StackedScoresAscendingMultipleEnsemblesByScoreAlgorithm extends Model impl
         $altAbbr = $altEventEnsemble->abbr;
         $altCutoff = $this->cutoffs[$this->eventEnsembleIds[1]];
         $cutoffAbbr = 'na'; //default to not-accepted
-//Log::info("score: $score, altCutoff: $altCutoff, accepted: $accepted");
-        if (($scoreCount == $this->maxScoreCount) && $accepted && ($score <= $altCutoff)) {
+        $altVoicings = explode(',',$altEventEnsemble->voice_part_ids);
+
+Log::info("score: $score, altCutoff: $altCutoff, accepted: $accepted, altVoicings: " . implode(',',$altVoicings) . " voicePartId: $voicePartId");
+        if (($scoreCount == $this->maxScoreCount) && $accepted && ($score <= $altCutoff) && (in_array($voicePartId, $altVoicings))) {
             $cutoffAbbr = $altAbbr;
         }
 
@@ -152,10 +157,13 @@ class StackedScoresAscendingMultipleEnsemblesByScoreAlgorithm extends Model impl
         $leadEventEnsemble = EventEnsemble::find($this->eventEnsembleIds[0]);
         $leadAbbr = $leadEventEnsemble->abbr;
         $leadCutoff = $this->cutoffs[$this->eventEnsembleIds[0]];
+        $leadVoicings = explode(',',$leadEventEnsemble->voice_part_ids);
+
 //Log::info("score: $score, leadCutoff: $leadCutoff, accepted: $accepted");
-        if (($scoreCount == $this->maxScoreCount) && $accepted && ($score <= $leadCutoff)) {
+        if (($scoreCount == $this->maxScoreCount) && $accepted && ($score <= $leadCutoff) && (in_array($voicePartId, $leadVoicings))) {
             $cutoffAbbr = $leadAbbr;
         }
+
 //Log::info('scoreCount == $this->maxScoreCount: ' .  ($scoreCount == $this->maxScoreCount));
 //Log::info('score: ' . $score);
 //Log::info('accepted: ' . $accepted);
@@ -173,32 +181,44 @@ class StackedScoresAscendingMultipleEnsemblesByScoreAlgorithm extends Model impl
     {
         //current cutoff for lead ensemble
         $leadCutoff = $this->cutoffs[$this->eventEnsembleIds[0]] ?? 0;
-//Log::info('score: ' . $score . ' leadCutoff: ' . $leadCutoff);
+
         //current cutoff for alternate ensemble
         $alternateCutoff = $this->cutoffs[$this->eventEnsembleIds[1]] ?? 0;
-//Log::info(' alternateCutoff: ' . $alternateCutoff);
-//Log::info('+++++++++++++++++++++++++++++++++++++++');
+
         // Determine which ensemble to update
-        if ($leadCutoff === 0 || $score <= $leadCutoff) {
+        if (in_array($voicePartId, $this->leadVoicePartIds) && ($leadCutoff === 0 || $score <= $leadCutoff)) {
             // No cutoff exists or score beats lead cutoff
             $ensembleId = $this->eventEnsembleIds[0];
             $this->updateVersionCutoff($score, $voicePartId, $ensembleId, $versionConfigAdjudication);
 
-        } elseif ($alternateCutoff === 0 || $score > $alternateCutoff) {
+        } elseif (in_array($voicePartId, $this->altVoicePartIds) && ($alternateCutoff === 0 || $score > $alternateCutoff)) {
             // LeadCutoff exists, alternativeCutoff is missing and score is greater than leadCutoff
             $ensembleId = $this->eventEnsembleIds[1];
             $this->updateVersionCutoff($score, $voicePartId, $ensembleId, $versionConfigAdjudication);
 
-        }elseif (($score > $leadCutoff) && ($score < $alternateCutoff)) {
+        } elseif (in_array($voicePartId, $this->leadVoicePartIds) && ($score > $leadCutoff) && ($score < $alternateCutoff)) {
             // score is greater than lead and less than alternate cutoff
             // user is making the lead ensemble larger
             $ensembleId = $this->eventEnsembleIds[0];
             $this->updateVersionCutoff($score, $voicePartId, $ensembleId, $versionConfigAdjudication);
-        } else {
-            // Score didn't beat either cutoff, promote alternate to lead
-            $ensembleId = $this->eventEnsembleIds[0];
-            $score = $alternateCutoff;
+
+        } elseif (in_array($voicePartId, $this->altVoicePartIds) && (! in_array($voicePartId, $this->leadVoicePartIds)) && ($score < $alternateCutoff)) {
+            // voicePartId ONLY exists in alternative ensemble and score is less than alternate cutoff
+            $ensembleId = $this->eventEnsembleIds[1];
             $this->updateVersionCutoff($score, $voicePartId, $ensembleId, $versionConfigAdjudication);
+
+        } elseif (in_array($voicePartId, $this->leadVoicePartIds) && (! in_array($voicePartId, $this->altVoicePartIds)) && ($score < $leadCutoff)) {
+            // voicePartId ONLY exists in lead ensemble and score is less than lead cutoff
+            $ensembleId = $this->eventEnsembleIds[0];
+            $this->updateVersionCutoff($score, $voicePartId, $ensembleId, $versionConfigAdjudication);
+
+        } else {
+            if(in_array($voicePartId, $this->leadVoicePartIds)) {
+                // Score didn't beat either cutoff, promote alternate to lead
+                $ensembleId = $this->eventEnsembleIds[0];
+                $score = $alternateCutoff;
+                $this->updateVersionCutoff($score, $voicePartId, $ensembleId, $versionConfigAdjudication);
+            }
         }
 
         //reset local $this->cutoffs
@@ -229,21 +249,32 @@ class StackedScoresAscendingMultipleEnsemblesByScoreAlgorithm extends Model impl
                 ->where('version_id', $versionId)
                 ->where('voice_part_id', $voicePartId)
                 ->where('event_ensemble_id', $eventEnsembleId)
-                ->value('score');
+                ->value('score') ?? 0;
         }
+
+        //set Voice Part Ids
+        $this->leadVoicePartIds = explode(',', EventEnsemble::find($this->eventEnsembleIds[0])->voice_part_ids);
+        $this->altVoicePartIds = explode(',', EventEnsemble::find($this->eventEnsembleIds[1])->voice_part_ids);
+
     }
 
     private function updateVersionCutoff(int $score, int $voicePartId, int $ensembleId, VersionConfigAdjudication $versionConfigAdjudication)
     {
-        VersionCutoff::updateOrCreate(
-            [
-                'version_id' => $versionConfigAdjudication->version_id,
-                'voice_part_id' => $voicePartId,
-                'event_ensemble_id' => $ensembleId,
-            ],
-            [
-                'score' => $score
-            ]
-        );
+        $eventEnsemble = EventEnsemble::find($ensembleId);
+        $voicings = explode(',',$eventEnsemble->voice_part_ids);
+
+        if (in_array($voicePartId, $voicings)) {
+
+            VersionCutoff::updateOrCreate(
+                [
+                    'version_id' => $versionConfigAdjudication->version_id,
+                    'voice_part_id' => $voicePartId,
+                    'event_ensemble_id' => $ensembleId,
+                ],
+                [
+                    'score' => $score
+                ]
+            );
+        }
     }
 }
