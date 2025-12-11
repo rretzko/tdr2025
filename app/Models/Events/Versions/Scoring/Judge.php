@@ -42,9 +42,9 @@ class Judge extends Model
     {
         $orderBys = [
             'head judge' => 1,
-            'judge 1' => 2,
-            'judge 2' => 3,
-            'judge 3' => 4,
+            'judge 2' => 2,
+            'judge 3' => 3,
+            'judge 4' => 4,
         ];
 
         return $orderBys[$this->judge_type];

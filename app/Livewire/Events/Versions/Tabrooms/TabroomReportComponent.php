@@ -402,25 +402,6 @@ Log::info('participants: ' . count($participants));
         return $service->getRows();
     }
 
-//    private function getScores(array &$candidates): void
-//    {
-//        foreach ($candidates as $candidate) {
-//
-//            for ($i = 1; $i <= $this->judgeCount; $i++) {
-//
-//                foreach ($this->factors as $factor) {
-//
-//                    $candidate->scores[] = Score::query()
-//                        ->where('candidate_id', $candidate->id)
-//                        ->where('judge_order_by', $i)
-//                        ->where('score_factor_order_by', $factor->order_by)
-//                        ->select('score')
-//                        ->value('score') ?? 0;
-//                }
-//            }
-//        }
-//    }
-
     private function getShowEnsembleVoicePartIds(): array
     {
         $ensembles = $this->eventEnsembles;
