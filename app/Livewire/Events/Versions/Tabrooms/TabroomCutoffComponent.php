@@ -64,7 +64,7 @@ class TabroomCutoffComponent extends BasePage
         $factory->setScore(
             $this->version->eventEnsembles(),
             $this->versionConfigAdjudication,
-            $score,
+            $score, //score selected by user
             $voicePartId);
 
         $this->eventEnsembles = $this->version->eventEnsembles();
@@ -100,7 +100,7 @@ class TabroomCutoffComponent extends BasePage
     private function getScores(): array
     {
         $scores = [];
-Log::info(Carbon::now()->format('Y-m-d H:i:s') . ' getScores()');
+
         foreach ($this->event->voiceParts as $voicePart) {
 
             $scores[] = [

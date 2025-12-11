@@ -42,7 +42,7 @@ class Factory extends Model
     public function setScore(
         $eventEnsembles,
         $versionConfigAdjudication,
-        int $score,
+        int $score, //score selected by user
         int $voicePartId
     ): void {
         //evaluate ensemble assignment (ex: StackedScoresDescendingSingleEnsembleAlgorithm )

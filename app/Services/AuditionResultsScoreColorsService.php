@@ -38,7 +38,15 @@ class AuditionResultsScoreColorsService
                 ->where('accepted', 1)
                 ->select('acceptance_abbr')
                 ->value('acceptance_abbr');
-if($total == 80){dd($acceptanceAbbr);}
+
+//            dd(AuditionResult::query()
+//                ->where('version_id', $this->versionConfigAdjudication->version_id)
+//                ->where('voice_part_id', $this->voicePartId)
+//                ->where('total', $total)
+//                ->where('accepted', 1)
+//                ->select('acceptance_abbr')
+//                ->toRawSql());
+
             //manually key color scheme to event ensemble abbreviation
             $colorSchemes = [
                 'mx' => 'bg-blue-100 text-black hover:bg-blue-400 hover:text-white',
@@ -55,7 +63,7 @@ if($total == 80){dd($acceptanceAbbr);}
                 'score' => $total,
                 'colors' => $colorScheme,
             ];
-if($total == 80){dd($colors);}
+//if($total == 80){dd($colors);}
         }
 
         return $colors;
