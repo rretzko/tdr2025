@@ -22,6 +22,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ResultsTableComponent extends BasePage
 {
+    public bool $collectParticipationFee = false;
     public array $ensembleVoiceParts = [];
     public Event $event;
     public Collection $eventEnsembles;
@@ -56,6 +57,9 @@ class ResultsTableComponent extends BasePage
         //separated results
         $this->eventEnsembles = $this->version->event->eventEnsembles;
         $this->separatedResults = $this->hasSeparatedResults();
+
+        //flag for collection of participation fee within TDR
+        $this->collectParticipationFee = ($this->version->event_id == 25); //MACDA
     }
 
     private function getEnsembleVoiceParts(): array
@@ -90,7 +94,7 @@ class ResultsTableComponent extends BasePage
             $a[] = ['label' => 'contract', 'sortBy' => null];
         }
 
-        if ($this->version->fee_participation) {
+        if ($this->version->fee_participation && $this->collectParticipationFee) {
             $a[] = ['label' => 'fee', 'sortBy' => null];
         }
 

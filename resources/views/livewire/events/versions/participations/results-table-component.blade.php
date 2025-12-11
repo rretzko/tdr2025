@@ -103,6 +103,7 @@
                         :rows="$rows"
                         :sortAsc="$sortAsc"
                         :sortColLabel="$sortColLabel"
+                        :collectParticipationFee="$collectParticipationFee"
                     />
 
                     {{-- LINKS:BOTTOM --}}

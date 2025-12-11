@@ -7,6 +7,7 @@
     'rows',
     'sortAsc',
     'sortColLabel',
+    'collectParticipationFee',
 ])
 <div class="relative">
 
@@ -89,7 +90,7 @@
                     </td>
                 @endif
 
-                @if($feeParticipation)
+                @if($feeParticipation && $collectParticipationFee)
                     <td
                         @class([
                 "border border-gray-200 px-1 text-center",
