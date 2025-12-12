@@ -179,11 +179,6 @@ class TabroomReportComponent extends BasePage
         $this->eventEnsembleSeniorYears = $this->getEventEnsembleYears();
     }
 
-//    public function updatedShowEventEnsembleId(): void
-//    {
-//        //rerender
-//    }
-
     /** END OF PUBLIC FUNCTIONS **************************************************/
 
     private function addParticipationYears(array &$participants)

@@ -106,6 +106,7 @@
                     </div>
                 </td>
                 <td>{{ $row->voicePartAbbr }}</td>
+
                 @if(isset($rowsScores[$row->id]))
                     @forelse($rowsScores[$row->id] AS $score)
                         <td class=" @if($score === 0) text-gray-300 @endif ">

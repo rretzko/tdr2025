@@ -58,6 +58,7 @@
         </tr>
         </thead>
         <tbody>
+
         @forelse($rows AS $row)
             <tr>
                 <td style="text-align: left;">{{ $row->id }}</td>

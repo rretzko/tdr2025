@@ -3,9 +3,12 @@
 namespace App\Livewire\Events\Versions\Tabrooms;
 
 use App\Livewire\BasePage;
+use App\Models\Events\EventEnsemble;
 use App\Models\Events\Versions\Version;
 use App\Models\UserConfig;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class TabroomCloseAuditionsComponent extends BasePage
 {
@@ -43,11 +46,22 @@ class TabroomCloseAuditionsComponent extends BasePage
             $this->version->update(['status' => 'closed']);
             $this->auditionCloseDateTime = $this->getAuditionCloseDateTime();
             $this->buttonLabel = 'Re-open Event';
+
+            $this->storePublicResults();
         }
     }
 
-    private function setAuditionCloseDateTime(): void
+    private function storePublicResults()
     {
+        $versionId = UserConfig::where('user_id', auth()->id())
+            ->where('property', 'versionId')
+            ->first()
+            ->value;
 
+        // Generate and store the public results PDF
+        \App\Jobs\GenerateAndStorePublicResultsPdf::dispatch($versionId);
+
+        session()->flash('message', 'The public report is processing and will be available shortly...');
     }
+
 }
