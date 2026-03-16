@@ -164,7 +164,7 @@
             Emergency Contact information can be added/edited from the Students->edit->emergencyContact page.
         </hint>
         @forelse($form->emergencyContacts AS $emergencyContact)
-            <div class="flex flex-row space-x-1">
+            <div class="flex flex-row space-x-1 items-center">
                 <div class="flex flex-col space-y-2 w-1/2 text-left">
                     <div class="">
                         {{ $emergencyContact['emergencyContactName'] }}
@@ -173,7 +173,7 @@
                         {{ $emergencyContact['emergencyContactEmail'] }}
                     </div>
                 </div>
-                <div class="flex flex-col w-1/2 text-left">
+                <div class="flex flex-col w-1/3 text-left">
                     <div
                         class=" @if($emergencyContact['emergencyContactBestPhone'] === 'mobile') font-semibold @endif">
                         {{ $emergencyContact['emergencyContactPhoneMobile'] }} (c)
@@ -186,6 +186,18 @@
                         class=" @if($emergencyContact['emergencyContactBestPhone'] === 'work') font-semibold @endif">
                         {{ $emergencyContact['emergencyContactPhoneWork'] }} (w)
                     </div>
+                </div>
+                <div class="w-1/6 text-center">
+                    @if($form->candidate->emergency_contact_id === $emergencyContact['emergencyContactId'])
+                        <span class="text-xs text-green-600 font-semibold">Selected</span>
+                    @else
+                        <button type="button"
+                                class="bg-blue-100 px-2 text-xs text-blue-800 border border-gray-600 rounded-full shadow-lg"
+                                wire:click="emergencyContactSelect({{ $emergencyContact['emergencyContactId'] }})"
+                        >
+                            Use this contact
+                        </button>
+                    @endif
                 </div>
             </div>
         @empty

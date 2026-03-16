@@ -178,6 +178,20 @@ class CandidatesTableComponent extends BasePage
             ]);
     }
 
+    public function emergencyContactSelect(int $emergencyContactId): void
+    {
+        $this->reset('showSuccessIndicator', 'successMessage');
+
+        $this->form->candidate->update(['emergency_contact_id' => $emergencyContactId]);
+
+        $this->showSuccessIndicator = true;
+        $this->successMessage = 'Emergency contact updated.';
+
+        $this->pathToRegistration = PathToRegistrationService::getPath($this->form->candidate->id);
+
+        $this->form->status = CandidateStatusService::getStatus($this->form->candidate);
+    }
+
     public function recordingApprove(string $fileType): void
     {
         $this->reset('showSuccessIndicator', 'successMessage');
