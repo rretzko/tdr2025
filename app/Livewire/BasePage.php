@@ -271,59 +271,42 @@ class BasePage extends Component
      * Placeholder for troubleshooting
      * @return void
      */
-    protected function troubleShooting($s, $versionId, $sortCol, $sortAsc):void
+    protected function troubleShooting($coteacherIds):void
     {
         $search = '%neg%';
-        $query = DB::table('candidates')
-            ->join('schools', 'schools.id', '=', 'candidates.school_id')
-            ->join('teachers', 'teachers.id', '=', 'candidates.teacher_id')
-            ->join('users AS teacher', 'teacher.id', '=', 'teachers.user_id')
-            ->join('students', 'students.id', '=', 'candidates.student_id')
-            ->join('users AS student', 'student.id', '=', 'students.user_id')
-            ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
-            ->leftJoin('phone_numbers as mobile', function ($join) {
-                $join->on('mobile.user_id', '=', 'teachers.user_id')
-                    ->where('mobile.phone_type', '=',
-                        'mobile'); // Assuming there's a type column to distinguish phone types
-            })
-            ->leftJoin('phone_numbers as work', function ($join) {
-                $join->on('work.user_id', '=', 'teachers.user_id')
-                    ->where('work.phone_type', '=',
-                        'work'); // Assuming there's a type column to distinguish phone types
-            })
-            ->where('candidates.version_id', $versionId)
-            ->where('candidates.status', 'registered')
-            ->where(function ($query) use ($search) {
-                return $query->where('schools.name', 'LIKE', '%'.$search.'%')
-                    ->orWhere('teacher.last_name', 'LIKE', '%'.$search.'%')
-                    ->orWhere('student.last_name', 'LIKE', '%'.$search.'%');
-            })
-            ->tap(function ($query) {
-                $this->filters->filterCandidatesByParticipatingSchools($query);
-                $this->filters->filterCandidatesByParticipatingClassOfs($query);
-                $this->filters->filterCandidatesByParticipatingVoiceParts($query);
-            })
-            ->select('candidates.id', 'candidates.voice_part_id',
-                'schools.name as schoolName',
-                DB::raw("CONCAT(teacher.last_name, ', ', teacher.first_name, ' ', teacher.middle_name) AS teacherFullName"),
-                'teacher.prefix_name', 'teacher.first_name', 'teacher.middle_name', 'teacher.last_name',
-                'teacher.suffix_name', 'teacher.email',
-                'student.first_name AS studentFirstName', 'student.middle_name AS studentMiddleName',
-                'student.last_name AS studentLastName', 'student.suffix_name AS studentSuffix',
-                'voice_parts.descr AS voicePartDescr', 'voice_parts.order_by',
-                'students.class_of',
-                DB::raw("((12 - (students.class_of - 2025))) AS grade"),
-                'mobile.phone_number AS phoneMobile',
-                'work.phone_number AS phoneWork'
+        $query =Student::query()
+//            ->join('school_student', 'students.id', '=', 'school_student.student_id')
+            ->join('student_teacher', 'students.id', '=', 'student_teacher.student_id')
+//            ->join('schools', 'school_student.school_id', '=', 'schools.id')
+            ->join('users', 'students.user_id', '=', 'users.id')
+//            ->join('voice_parts', 'students.voice_part_id', '=', 'voice_parts.id')
+//            ->leftJoin('phone_numbers AS mobile', function ($join) {
+//                $join->on('users.id', '=', 'mobile.user_id')
+//                    ->where('mobile.phone_type', '=', 'mobile');
+//            })
+//            ->leftJoin('phone_numbers AS home', function ($join) {
+//                $join->on('users.id', '=', 'home.user_id')
+//                    ->where('home.phone_type', '=', 'home');
+//            })
+            ->whereIn('student_teacher.teacher_id', $coteacherIds)
+            ->where('users.name', 'LIKE', '%'.$this->search.'%')
+//            ->tap(function ($query) {
+//                $this->filters->filterStudentsBySchools($query);
+//                $this->filters->filterStudentsByClassOfs($query, $this->search);
+//                $this->filters->filterStudentsByVoicePartIds($query, $this->search);
+//            })
+            ->select('users.name', 'users.id AS userId',
+//                'schools.name AS schoolName', 'schools.id AS schoolId',
+//                'school_student.id AS schoolStudentId', 'school_student.active',
+//                'students.class_of AS classOf', 'students.height', 'students.birthday',
+//                'students.shirt_size AS shirtSize', 'students.id AS studentId',
+//                'voice_parts.descr AS voicePart', 'users.email', 'mobile.phone_number AS phoneMobile',
+//                'home.phone_number AS phoneHome', 'users.last_name', 'users.first_name', 'users.middle_name',
+//                'users.prefix_name', 'users.suffix_name'
             )
-            ->orderBy($sortCol, ($sortAsc ? 'asc' : 'desc'))
-            ->orderBy('schools.name')
-            ->orderBy('studentLastName')
-            ->orderBy('studentFirstName')
-            ->orderBy('voice_parts.order_by')
-            ->get();
+            ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'));
 
-        dd($query);
+        dd($query->get());//->where('userId', 19299)->first());
     }
 
 

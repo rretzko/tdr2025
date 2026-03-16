@@ -51,6 +51,13 @@
                         </a>
                     </div>
 
+                    {{-- STATUS EMAIL --}}
+                    <div id="statusEmail" class="border border-gray-400 p-2 bg-white">
+                        <a href="{{ route('founder.send-status-email') }}" class="text-blue-500">
+                            Send Status Email
+                        </a>
+                    </div>
+
                 </div>{{-- end of container --}}
 
             </div>

@@ -139,10 +139,10 @@ class StudentForm extends Form
             //Emergency Contact Phone
             $versionId = UserConfig::getValue('versionId');
             $candidate = Candidate::where('student_id', $student->id)->where('version_id', $versionId)->first();
-            if($candidate->emergency_contact_id){
+            if($candidate?->emergency_contact_id){
                 $this->ecPhoneMobile = EmergencyContact::where('id', $candidate->emergency_contact_id)->first()->phone_mobile;
             }else{
-                dd($candidate->id);
+                $this->ecPhoneMobile = 'No emergency Contact id for candidate: '.$candidate?->id;
             }
 
         } else { //uncomment for testing

@@ -61,6 +61,30 @@ class CandidateSummaryTableService
         }else{
             $schoolIds = [$this->schoolId];
         }
+
+//        $test = Candidate::query()
+//            ->with('student', 'student.user', 'voicePart')
+//            ->where('version_id', $this->versionId)
+//            ->whereIn('school_id', $schoolIds)
+//            ->whereIn('teacher_id', $this->coteacherIds)
+//            ->get()
+//            ->map(function ($candidate) {
+//                return [
+//                    'lastName' => $candidate->student->user->last_name,
+//                    'firstName' => $candidate->student->user->first_name,
+//                    'candidateId' => $candidate->id,
+//                    'studentId' => $candidate->student->id,
+//                    'userId' => $candidate->student->user->id,
+//                    'programName' => $candidate->program_name,
+//                    'voicePartAbbr' => $candidate->voicePart ? $candidate->voicePart->abbr : 'none',
+//                ];
+//            });
+//        dd($test->where('voicePartAbbr', 'none'));
+
+        /**
+         * @todo The following works UNLESS the candidate->voicePart is missing (candidates.voice_part_id == 0)
+         * @todo testing needs to be added and workflow reverse-engineered to ensure that candidate has a valid (default?) voice_part_id at all times.
+         */
         $candidates = Candidate::query()
             ->with('student', 'student.user', 'voicePart')
             ->where('version_id', $this->versionId)
@@ -75,7 +99,8 @@ class CandidateSummaryTableService
                     'studentId' => $candidate->student->id,
                     'userId' => $candidate->student->user->id,
                     'programName' => $candidate->program_name,
-                    'voicePartAbbr' => $candidate->voicePart->abbr,
+                    /** workaround! */
+                    'voicePartAbbr' => $candidate->voicePart ? $candidate->voicePart->abbr : 'none',
                     'emergencyContactId' => $candidate->emergency_contact_id,
                 ];
             })

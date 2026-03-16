@@ -3,8 +3,10 @@
 namespace App\Services;
 
 use App\Models\PhoneNumber;
+use App\Models\Schools\School;
 use App\Models\Students\Student;
 use App\Models\User;
+use App\Models\UserConfig;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 
@@ -61,29 +63,38 @@ class FindMatchingStudentService
         return $a;
     }
 
-    private function emailMatch(string $email): Collection|null
+    private function emailMatch(string $email): Collection|\Illuminate\Support\Collection
     {
+        if (empty($email)) {
+            return collect();
+        }
+
         return User::where('email', $email)->get();
     }
 
     private function nameMatch(string $first, string $last): \Illuminate\Support\Collection|Collection
     {
-        $matches = collect();
-
-        $lastMatches = User::where('name', 'LIKE', '%'.$last.'%')->get();
-
-        if ($lastMatches && $lastMatches->count()) {
-
-            $matches = $lastMatches->merge(User::where('name', 'LIKE', '%'.$first.'%')->get());
+        if (empty($first) || empty($last)) {
+            return collect();
         }
 
-        return $matches;
+        return User::where('name', 'LIKE', '%'.$first.'%')
+            ->where('name', 'LIKE', '%'.$last.'%')
+            ->get();
     }
 
     private function phoneMobileMatch(string $phoneMobile): Collection|\Illuminate\Support\Collection
     {
+        if (empty($phoneMobile)) {
+            return collect();
+        }
+
         $service = new FormatPhoneService();
         $phoneNumber = $service->getPhoneNumber($phoneMobile);
+
+        if (empty($phoneNumber)) {
+            return collect();
+        }
 
         return User::whereHas('phoneNumbers', function ($query) use ($phoneNumber) {
             $query->where('phone_number', $phoneNumber)
@@ -114,11 +125,21 @@ class FindMatchingStudentService
 
             foreach ($matches as $user) {
                 $student = Student::where('user_id', $user->id)->first();
+
+                if (!$student) {
+                    continue;
+                }
+
+                $school = $student->schools->first();
+                $schoolName = $school
+                    ? $school->name
+                    : (School::find(UserConfig::getValue('schoolId'))?->name ?? 'Unknown');
+
                 $this->matches[] = [
                     'name' => $user->name,
                     'email' => $user->email,
                     'classOf' => $student->class_of,
-                    'schoolName' => $student->schools->first()->name,
+                    'schoolName' => $schoolName,
                 ];
             }
         }

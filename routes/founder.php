@@ -22,4 +22,8 @@ Route::middleware(['auth', \App\Http\Middleware\FounderMiddleware::class])
             ->name('founder.create-scores');
         Route::get('founder/find-open-versions-without-scores', \App\Http\Controllers\Founders\FindOpenVersionsWithoutScoresController::class)
             ->name('founder.find-open-versions-without-scores');
+
+        //STATUS EMAIL
+        Route::get('founder/send-status-email', \App\Http\Controllers\Founders\SendStatusEmailController::class)
+            ->name('founder.send-status-email');
     });

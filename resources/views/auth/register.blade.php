@@ -4,6 +4,13 @@
 
         @honeypot
 
+        <div id="advisory" style="font-size: 18px; margin: 1rem 0; border: 1px solid black; padding: 1rem; background-color: lightgoldenrodyellow;">
+            If you are a <strong>STUDENT</strong>, you are at the wrong site!<br />
+            <a href="https://studentfolder.info/register" style="color:blue; ">Please click here to register on
+                <strong>StudentFolder.info</strong>
+            </a>!
+        </div>
+
         <!-- Name -->
         <div>
             <x-input-label for="name" :value="__('Name')"/>

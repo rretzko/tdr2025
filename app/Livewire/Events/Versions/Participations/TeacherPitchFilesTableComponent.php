@@ -19,6 +19,10 @@ class TeacherPitchFilesTableComponent extends BasePage
         //default values
         $this->hasFilters = false;
 
+        $this->sortCol = 'version_pitch_files.order_by';
+        $this->sortAsc = true;
+        $this->sortColLabel = 'orderBy';
+
         $this->recordsPerPage = 100;
 
         //filters
@@ -69,6 +73,24 @@ class TeacherPitchFilesTableComponent extends BasePage
         ];
     }
 
+    public function sortBy(string $key): void
+    {
+        $this->sortColLabel = $key;
+
+        $properties = [
+            'voicePart' => 'voice_parts.order_by',
+            'fileType' => 'version_pitch_files.file_type',
+        ];
+
+        $requestedSort = $properties[$key];
+
+        if ($requestedSort === $this->sortCol) {
+            $this->sortAsc = (!$this->sortAsc);
+        }
+
+        $this->sortCol = $properties[$key];
+    }
+
     private function getRows(): Builder
     {
 //        $this->test();
@@ -89,6 +111,7 @@ class TeacherPitchFilesTableComponent extends BasePage
                 'version_pitch_files.url', 'version_pitch_files.description',
                 'version_pitch_files.order_by',
                 'voice_parts.descr as voicePartDescr', 'voice_parts.order_by')
+            ->orderBy($this->sortCol, ($this->sortAsc ? 'asc' : 'desc'))
             ->orderBy('version_pitch_files.order_by', 'asc');
     }
 }

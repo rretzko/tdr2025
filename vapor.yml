@@ -3,6 +3,7 @@ name: tdr2025
 environments:
   production:
     domain: thedirectorsroom.com
+    scheduler: true
     storage: auditionsuite-production
     memory: 1024
     cli-timeout: 900
