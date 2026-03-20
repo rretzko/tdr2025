@@ -56,8 +56,10 @@ class CandidateSummaryTableService
     private function getCandidatesArray(): array
     {
 //        @todo Fix this for all teachers
-        if(auth()->id() === 262){
-            $schoolIds = [3344,3346]; //charles linnell
+        if(auth()->id() === 262) {
+            $schoolIds = [3344, 3346]; //charles linnell
+        }elseif(auth()->id() === 16643){
+            $schoolIds = [6156,8902];
         }else{
             $schoolIds = [$this->schoolId];
         }

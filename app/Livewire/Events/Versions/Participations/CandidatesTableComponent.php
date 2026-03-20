@@ -557,6 +557,11 @@ class CandidatesTableComponent extends BasePage
             return [3344,3346];
         }
 
+        //emily fencik workaround
+        if(auth()->id() === 16643){
+            return [6156,8902];
+        }
+
         return array_merge($schoolIds, $coTeacherSchoolIds);
     }
 
