@@ -73,6 +73,10 @@ Log::info("Sending registration status email for version {$version->short_name} 
                 'candidatesWithRecordings' => Recording::where('version_id', $versionId)
                     ->distinct('candidate_id')
                     ->count('candidate_id'),
+                'schoolsWithRecordings' => Recording::where('recordings.version_id', $versionId)
+                    ->join('candidates', 'candidates.id', '=', 'recordings.candidate_id')
+                    ->distinct('candidates.school_id')
+                    ->count('candidates.school_id'),
                 'schoolsWithRegistrants' => Candidate::where('version_id', $versionId)
                     ->where('status', 'registered')
                     ->distinct('school_id')

@@ -12,6 +12,7 @@
     <div>Candidates paid: {{ $stats['candidatesPaid'] }} (${{ number_format($stats['candidatesPaidAmount'], 2) }})</div>
     <div>Total Recordings: {{ $stats['totalRecordings'] }}</div>
     <div>Candidates with recordings: {{ $stats['candidatesWithRecordings'] }}</div>
+    <div>Schools with recordings: {{ $stats['schoolsWithRecordings'] }}</div>
     <div>Schools with registrants: {{ $stats['schoolsWithRegistrants'] }}</div>
     <br>
     <table border="1" cellpadding="4" cellspacing="0">
