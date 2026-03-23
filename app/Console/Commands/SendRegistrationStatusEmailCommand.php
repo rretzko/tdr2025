@@ -43,6 +43,18 @@ class SendRegistrationStatusEmailCommand extends Command
                 ])
                 ->toArray();
 
+/***********************************************************************************************************************
+ * FJR 2026-03-18 10:51
+ * troubleshooting and adding Founder to mix
+ */
+$recipients[] = [
+  'name' => 'Rick Retzko',
+  'email' => config('mail.from.address'),
+  'role' => 'founder',
+];
+Log::info("Sending registration status email for version {$version->short_name} (id: {$versionId}) to " . implode(', ', array_column($recipients, 'email')));
+/** end troubleshooting ***********************************************************************************************/
+
             $stats = [
                 'shortName' => $version->short_name,
                 'invitedTeachers' => VersionParticipant::where('version_id', $versionId)->count(),
@@ -61,6 +73,10 @@ class SendRegistrationStatusEmailCommand extends Command
                 'candidatesWithRecordings' => Recording::where('version_id', $versionId)
                     ->distinct('candidate_id')
                     ->count('candidate_id'),
+                'schoolsWithRegistrants' => Candidate::where('version_id', $versionId)
+                    ->where('status', 'registered')
+                    ->distinct('school_id')
+                    ->count('school_id'),
                 'voiceParts' => $this->getVoiceParts($versionId),
                 'schoolCandidates' => $this->getSchoolCandidates($versionId),
                 'recipients' => $recipients,

@@ -12,6 +12,7 @@
     <div>Candidates paid: {{ $stats['candidatesPaid'] }} (${{ number_format($stats['candidatesPaidAmount'], 2) }})</div>
     <div>Total Recordings: {{ $stats['totalRecordings'] }}</div>
     <div>Candidates with recordings: {{ $stats['candidatesWithRecordings'] }}</div>
+    <div>Schools with registrants: {{ $stats['schoolsWithRegistrants'] }}</div>
     <br>
     <table border="1" cellpadding="4" cellspacing="0">
         <thead>
@@ -25,6 +26,15 @@
             </tr>
         </thead>
         <tbody>
+            <tr style="font-weight: bold;">
+                <td>Totals</td>
+                <td style="text-align: right;">{{ collect($stats['schoolCandidates'])->sum('engaged') }}</td>
+                <td style="text-align: right;">{{ collect($stats['schoolCandidates'])->sum('registered') }}</td>
+                @foreach($stats['voiceParts'] as $vpId => $abbr)
+                    @php $vpTotal = collect($stats['schoolCandidates'])->sum(fn($c) => $c['voiceParts'][$vpId] ?? 0); @endphp
+                    <td style="text-align: right;">{{ $vpTotal ?: '-' }}</td>
+                @endforeach
+            </tr>
             @foreach($stats['schoolCandidates'] as $school => $counts)
                 <tr>
                     <td>{{ $school }}</td>
