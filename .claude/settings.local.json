@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la \"C:\\\\Users\\\\RickRetzko\\\\PhpstormProjects\\\\tdr2025\\\\app\\\\Console\\\\\" 2>/dev/null || echo \"Directory not found\")",
+      "Bash(find /c/Users/RickRetzko/PhpstormProjects/tdr2025/app -name \"*.php\" -path \"*Console*\" -type f 2>/dev/null | head -20)",
+      "Bash(find /c/Users/RickRetzko/PhpstormProjects/tdr2025/app/Jobs -type f -name \"*.php\" 2>/dev/null | head -20)",
+      "Bash(composer dump-autoload:*)",
+      "Bash(grep:*)",
+      "Bash(php artisan:*)"
+    ]
+  }
+}

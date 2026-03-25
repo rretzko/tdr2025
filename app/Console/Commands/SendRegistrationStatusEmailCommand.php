@@ -14,6 +14,7 @@ use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionParticipant;
 use App\Models\Events\Versions\VersionRole;
 use App\Models\Students\VoicePart;
+use App\Services\RegistrationStatsChartService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -69,6 +70,11 @@ Log::info("Sending registration status email for version {$version->short_name} 
                     ->distinct('candidate_id')
                     ->count('candidate_id'),
                 'candidatesPaidAmount' => Epayment::where('version_id', $versionId)->sum('amount') / 100,
+                'duplicatePayments' => Epayment::where('version_id', $versionId)
+                    ->selectRaw('candidate_id')
+                    ->groupBy('candidate_id')
+                    ->havingRaw('COUNT(*) > 1')
+                    ->count(),
                 'totalRecordings' => Recording::where('version_id', $versionId)->count(),
                 'candidatesWithRecordings' => Recording::where('version_id', $versionId)
                     ->distinct('candidate_id')
@@ -84,6 +90,18 @@ Log::info("Sending registration status email for version {$version->short_name} 
                 'voiceParts' => $this->getVoiceParts($versionId),
                 'schoolCandidates' => $this->getSchoolCandidates($versionId),
                 'recipients' => $recipients,
+            ];
+
+            // Build chart image URLs for the email
+            $chartService = new RegistrationStatsChartService($versionId);
+            $candidatesChartUrl = $chartService->getCandidatesChartUrl();
+            $schoolsChartUrl = $chartService->getSchoolsChartUrl();
+            $voicePartsChartUrl = $chartService->getVoicePartsChartUrl();
+
+            $stats['chartUrls'] = [
+                'candidates' => $candidatesChartUrl,
+                'schools' => $schoolsChartUrl,
+                'voiceParts' => $voicePartsChartUrl,
             ];
 
             if ($this->option('test')) {
@@ -131,7 +149,7 @@ Log::info("Sending registration status email for version {$version->short_name} 
                 $registered = $rows->where('status', 'registered');
 
                 $voicePartCounts = [];
-                foreach ($rows as $row) {
+                foreach ($registered as $row) {
                     $vpId = $row->voice_part_id;
                     $voicePartCounts[$vpId] = ($voicePartCounts[$vpId] ?? 0) + $row->count;
                 }
@@ -142,7 +160,7 @@ Log::info("Sending registration status email for version {$version->short_name} 
                     'voiceParts' => $voicePartCounts,
                 ];
             })
-            ->filter(fn ($counts) => $counts['engaged'] > 0)
+            ->filter(fn ($counts) => $counts['engaged'] > 0 || $counts['registered'] > 0)
             ->toArray();
     }
 }

@@ -50,6 +50,11 @@
                     <x-heroicons.pencilSquare/>
                 </div>
             </th>
+            <th title="payment status">
+                <div class="flex items-center justify-center">
+                    <x-heroicons.currencyDollar class="w-6 h-6"/>
+                </div>
+            </th>
             @if(array_key_exists(0, $summaryTable) && in_array($summaryTable[0]['recordings'][0]['uploadType'], ['audio','video']))
                 <th title="recordings">
                     <div class="flex items-center justify-center">
@@ -123,6 +128,15 @@
                     </div>
 
                 </td>
+
+                <td>
+                    <div class="flex items-center justify-center {{ $row['paymentStatusColor'] }}"
+                         title="{{ $row['paymentStatusTitle'] }}"
+                    >
+                        <x-heroicons.currencyDollar class="w-6 h-6"/>
+                    </div>
+                </td>
+
                 @if(array_key_exists(0, $summaryTable) && in_array($summaryTable[0]['recordings'][0]['uploadType'], ['audio','video']))
                     @if(count($row['recordings']))
                         <td>

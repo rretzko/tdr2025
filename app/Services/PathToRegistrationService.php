@@ -11,6 +11,7 @@ use App\Models\Events\Versions\VersionConfigAdjudication;
 use App\Models\Events\Versions\VersionConfigRegistrant;
 use App\Models\Students\Student;
 use App\Models\Students\VoicePart;
+use App\ValueObjects\TotalStudentRegistrationPayments;
 
 /**
  * Return a <ul></ul> block with <li></li> elements that define the
@@ -39,6 +40,7 @@ class PathToRegistrationService
             $str .= self::recordingsUploaded();
             $str .= self::recordingsApproved();
         }
+        $str .= self::paymentStatus();
         $str .= '</ul>';
 
         return $str;
@@ -141,6 +143,24 @@ class PathToRegistrationService
         return ($expected === $found)
             ? '<li class="text-green-600">Recordings approved.</li>'
             : '<li class="text-red-600">'.$found.' out of '.$expected.' approved recordings found.</li>';
+    }
+
+    private static function paymentStatus(): string
+    {
+        $fee = self::$version->fee_registration;
+        $paid = (new TotalStudentRegistrationPayments())->getPayment(self::$candidate->id);
+        $balance = $fee - $paid;
+        $balanceUsd = ConvertToUsdService::penniesToUsd(abs($balance));
+
+        if ($balance > 0) {
+            return '<li class="text-red-600">Payment Status: $'.$balanceUsd.' outstanding.</li>';
+        }
+
+        if ($balance < 0) {
+            return '<li class="text-blue-600">Payment Status: $'.$balanceUsd.' overpaid.</li>';
+        }
+
+        return '<li class="text-green-600">Payment Status: Paid in full.</li>';
     }
 
 }

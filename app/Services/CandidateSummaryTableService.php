@@ -9,6 +9,7 @@ use App\Models\Events\Versions\Participations\Signature;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionConfigAdjudication;
 use App\Models\Events\Versions\VersionConfigRegistrant;
+use App\ValueObjects\TotalStudentRegistrationPayments;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
@@ -51,6 +52,8 @@ class CandidateSummaryTableService
         $this->getSignatureStatus();
 
         $this->getRecordingStatus();
+
+        $this->getPaymentStatus();
     }
 
     private function getCandidatesArray(): array
@@ -203,6 +206,31 @@ class CandidateSummaryTableService
             }
 
 
+        }
+    }
+
+    private function getPaymentStatus(): void
+    {
+        $fee = $this->version->fee_registration;
+        $paymentService = new TotalStudentRegistrationPayments();
+
+        foreach ($this->candidates as $key => $candidate) {
+            $paid = $paymentService->getPayment($candidate['candidateId']);
+            $balance = $fee - $paid;
+
+            if ($balance > 0) {
+                $this->candidates[$key]['paymentStatus'] = 'due';
+                $this->candidates[$key]['paymentStatusColor'] = 'text-red-600';
+                $this->candidates[$key]['paymentStatusTitle'] = 'Balance due: $' . ConvertToUsdService::penniesToUsd($balance);
+            } elseif ($balance < 0) {
+                $this->candidates[$key]['paymentStatus'] = 'overpaid';
+                $this->candidates[$key]['paymentStatusColor'] = 'text-blue-600';
+                $this->candidates[$key]['paymentStatusTitle'] = 'Overpaid: $' . ConvertToUsdService::penniesToUsd(abs($balance));
+            } else {
+                $this->candidates[$key]['paymentStatus'] = 'paid';
+                $this->candidates[$key]['paymentStatusColor'] = 'text-green-600';
+                $this->candidates[$key]['paymentStatusTitle'] = 'Paid in full';
+            }
         }
     }
 

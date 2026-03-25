@@ -8,4 +8,5 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote')->hourly();
 
+Schedule::command('stats:snapshot-daily-registration')->dailyAt('06:30');
 Schedule::command('email:registration-status')->dailyAt('11:00');

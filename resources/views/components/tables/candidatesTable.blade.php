@@ -59,6 +59,9 @@
                 <td class="border border-gray-200 px-1 text-center">
                     {{ $row->voicePart }} {{-- ex. SI --}}
                 </td>
+                <td class="border border-gray-200 px-1 text-center {{ $row->paymentStatusColor }}" title="{{ $row->paymentStatusTitle }}">
+                    <x-heroicons.currencyDollar class="w-4 h-4 mx-auto" />
+                </td>
                 <td class="text-center border border-gray-200">
                     <x-buttons.showEditForm id="{{ $row->candidateId }}"/>
                 </td>

@@ -9,7 +9,7 @@
             {{ $status }}={{ $count }}{{ $loop->last ? '' : ', ' }}
         @endforeach
     </div>
-    <div>Candidates paid: {{ $stats['candidatesPaid'] }} (${{ number_format($stats['candidatesPaidAmount'], 2) }})</div>
+    <div>Candidates paid: {{ $stats['candidatesPaid'] }} (${{ number_format($stats['candidatesPaidAmount'], 2) }}) with {{ $stats['duplicatePayments'] }} duplicate payment{{ $stats['duplicatePayments'] !== 1 ? 's' : '' }}</div>
     <div>Total Recordings: {{ $stats['totalRecordings'] }}</div>
     <div>Candidates with recordings: {{ $stats['candidatesWithRecordings'] }}</div>
     <div>Schools with recordings: {{ $stats['schoolsWithRecordings'] }}</div>
@@ -49,6 +49,30 @@
         </tbody>
     </table>
     <br>
+
+    @if(! empty($stats['chartUrls']['candidates']) || ! empty($stats['chartUrls']['schools']) || ! empty($stats['chartUrls']['voiceParts']))
+        <div style="font-weight: bold; margin-bottom: 8px;">Registration Trends:</div>
+
+        @if(! empty($stats['chartUrls']['candidates']))
+            <div style="margin-bottom: 12px;">
+                <img src="{{ $stats['chartUrls']['candidates'] }}" alt="Registered Candidates Chart" style="max-width: 600px; width: 100%;" />
+            </div>
+        @endif
+
+        @if(! empty($stats['chartUrls']['schools']))
+            <div style="margin-bottom: 12px;">
+                <img src="{{ $stats['chartUrls']['schools'] }}" alt="Schools with Registered Candidates Chart" style="max-width: 600px; width: 100%;" />
+            </div>
+        @endif
+
+        @if(! empty($stats['chartUrls']['voiceParts']))
+            <div style="margin-bottom: 12px;">
+                <img src="{{ $stats['chartUrls']['voiceParts'] }}" alt="Registrations by Voice Part Chart" style="max-width: 600px; width: 100%;" />
+            </div>
+        @endif
+        <br>
+    @endif
+
     <div>If there are other statistics you would like to see added to this email, please let Rick know (rick@mfrholdings.com)!</div>
     <br>
     <div>Status emails are sent daily at 7:00 am to:</div>

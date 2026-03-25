@@ -175,7 +175,7 @@ class StudentsTableComponent extends BasePage
     {
         $coteacherIds = CoTeachersService::getCoTeachersIds();
 //        $this->logSql($coteacherIds);
-//        $this->troubleShooting($coteacherIds);
+//        $this->troubleShooting($coteacherIds, $this->filters);
 
         return Student::query()
             ->join('school_student', 'students.id', '=', 'school_student.student_id')

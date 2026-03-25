@@ -82,6 +82,12 @@
 
                 </div>
             </div>
+
+            @if($dto['header'] === 'participation dashboard')
+                <div class="bg-white dark:bg-gray-800 py-2 mb-4 overflow-hidden shadow-sm sm:rounded-lg">
+                    @livewire('events.versions.registration-stats-chart-component', ['versionId' => $dto['id']])
+                </div>
+            @endif
         </div>
     </div>
 

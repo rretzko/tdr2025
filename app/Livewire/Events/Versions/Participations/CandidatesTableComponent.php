@@ -27,7 +27,9 @@ use App\Services\CoTeachersService;
 use App\Services\EventEnsemblesVoicePartsArrayService;
 use App\Services\FindPdfPathService;
 use App\Services\MakeCandidateRecordsService;
+use App\Services\ConvertToUsdService;
 use App\Services\PathToRegistrationService;
+use App\ValueObjects\TotalStudentRegistrationPayments;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
@@ -441,6 +443,7 @@ class CandidatesTableComponent extends BasePage
             ['label' => 'status', 'sortBy' => 'status'],
             ['label' => 'grade', 'sortBy' => 'classOf'],
             ['label' => 'voice part', 'sortBy' => 'voicePart'],
+            ['label' => '$', 'sortBy' => null],
         ];
     }
 
@@ -530,7 +533,28 @@ class CandidatesTableComponent extends BasePage
             ->orderBy('users.last_name', 'asc') //secondary sort ALWAYS applied
             ->orderBy('users.first_name', 'asc') //tertiary sort ALWAYS applied
             ->distinct()
-            ->get();
+            ->get()
+            ->map(function ($row) {
+                $fee = $this->version->fee_registration;
+                $paid = (new TotalStudentRegistrationPayments())->getPayment($row->candidateId);
+                $balance = $fee - $paid;
+
+                if ($balance > 0) {
+                    $row->paymentStatus = 'due';
+                    $row->paymentStatusColor = 'text-red-600';
+                    $row->paymentStatusTitle = 'Balance due: $' . ConvertToUsdService::penniesToUsd($balance);
+                } elseif ($balance < 0) {
+                    $row->paymentStatus = 'overpaid';
+                    $row->paymentStatusColor = 'text-blue-600';
+                    $row->paymentStatusTitle = 'Overpaid: $' . ConvertToUsdService::penniesToUsd(abs($balance));
+                } else {
+                    $row->paymentStatus = 'paid';
+                    $row->paymentStatusColor = 'text-green-600';
+                    $row->paymentStatusTitle = 'Paid in full';
+                }
+
+                return $row;
+            });
     }
 
     private function getRowsSummaryTable(): array

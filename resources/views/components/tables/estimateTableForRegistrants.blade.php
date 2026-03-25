@@ -12,18 +12,18 @@
 ])
 <div class="relative w-11/12 mt-2">
 
-    <div class="py-2 w-full flex justify-end">
+    <div class="py-2 w-full flex items-center justify-center space-x-4 mb-4">
 
         {{-- Coregistration mail-to address --}}
         @if($coregistrationManagerAddress)
-            <div class="flex text-sm items-center">
-                Send estimate form to: {{ $coregistrationManagerAddress }}
-            </div>
+            <span class="text-sm">
+                Send the estimate form to: {{ $coregistrationManagerAddress }}
+            </span>
         @endif
 
         {{-- pdf link --}}
-        <a href="{{ route('pdf.estimate', $versionId) }}" class="text-blue-500" title="Download estimate form">
-            <x-heroicons.document/>
+        <a href="{{ route('pdf.estimate', $versionId) }}" class="flex items-center space-x-1 text-blue-500" title="Download estimate form (pdf)">
+            <x-heroicons.arrowDownTray/> <span class="text-xs mt-1">(PDF)</span>
         </a>
 
     </div>
