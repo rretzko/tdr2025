@@ -98,11 +98,11 @@ class CandidateSummaryTableService
             ->get()
             ->map(function ($candidate) {
                 return [
-                    'lastName' => $candidate->student->user->last_name,
-                    'firstName' => $candidate->student->user->first_name,
+                    'lastName' => $candidate->student->user->last_name ?? 'none',
+                    'firstName' => $candidate->student->user->first_name ?? $candidate->id,
                     'candidateId' => $candidate->id,
-                    'studentId' => $candidate->student->id,
-                    'userId' => $candidate->student->user->id,
+                    'studentId' => $candidate->student->id ?? 0,
+                    'userId' => $candidate->student->user->id ?? 0,
                     'programName' => $candidate->program_name,
                     /** workaround! */
                     'voicePartAbbr' => $candidate->voicePart ? $candidate->voicePart->abbr : 'none',

@@ -291,7 +291,7 @@ class ParticipatingSchoolsComponent extends BasePageReports
             ->leftJoin('version_package_receiveds', 'candidates.version_id', '=', 'version_package_receiveds.version_id')
             ->where('candidates.version_id', $this->versionId)
             ->where('status', 'registered')
-            ->when($registrationManagerCounties, function ($query) {
+            ->when($registrationManagerCounties, function ($query, $registrationManagerCounties) {
                 $query->whereIn('schools.county_id', $registrationManagerCounties);
             })
             ->where(function ($query) use ($search) {
