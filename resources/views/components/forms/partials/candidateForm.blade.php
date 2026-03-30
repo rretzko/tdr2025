@@ -307,7 +307,7 @@
                                        wire:key="player-{{ $uploadType }}"
                                 >
                                     <source id="audioSource-{{ $uploadType }}"
-                                            src="https://auditionsuite-production.s3.amazonaws.com/{{ $form->recordings[$uploadType]['url'] }}"
+                                            src="https://auditionsuite-production.s3.amazonaws.com/{{ $form->recordings[$uploadType]['url'] }}?v={{ $form->recordings[$uploadType]['updated_at'] }}"
                                             type="audio/mpeg"
                                             wire:key="src-{{ $uploadType }}"
                                     >

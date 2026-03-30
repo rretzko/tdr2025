@@ -368,6 +368,7 @@ class CandidateForm extends Form
         foreach ($recordings as $recording) {
 
             $this->recordings[$recording->file_type]['url'] = $recording->url;
+            $this->recordings[$recording->file_type]['updated_at'] = $recording->updated_at->timestamp;
             $this->recordings[$recording->file_type]['approved'] =
                 ($recording->approved)
                     ? Carbon::parse($recording->approved)->format('D, M d, y g:i a')

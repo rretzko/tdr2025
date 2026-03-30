@@ -16,6 +16,7 @@ use App\Models\Events\Versions\VersionRole;
 use App\Models\Students\VoicePart;
 use App\Services\RegistrationStatsChartService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
@@ -91,6 +92,9 @@ Log::info("Sending registration status email for version {$version->short_name} 
                 'schoolCandidates' => $this->getSchoolCandidates($versionId),
                 'recipients' => $recipients,
             ];
+
+            // Refresh the daily snapshot so chart totals match the live candidateStatuses above
+            Artisan::call('stats:snapshot-daily-registration');
 
             // Build chart image URLs for the email
             $chartService = new RegistrationStatsChartService($versionId);
