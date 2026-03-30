@@ -75,7 +75,7 @@
 
     <div>If there are other statistics you would like to see added to this email, please let Rick know (rick@mfrholdings.com)!</div>
     <br>
-    <div>Status emails are sent daily at 7:00 am to:</div>
+    <div>Status emails are sent daily at 11:00 am to:</div>
     @foreach($stats['recipients'] as $recipient)
         <div style="margin-left: 1rem;">{{ $recipient['name'] }} ({{ $recipient['email'] }}), {{ $recipient['role'] }}</div>
     @endforeach
