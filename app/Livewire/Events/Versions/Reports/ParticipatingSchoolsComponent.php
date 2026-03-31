@@ -287,8 +287,10 @@ class ParticipatingSchoolsComponent extends BasePageReports
                     ->where('work.phone_type', '=',
                         'work'); // Assuming there's a type column to distinguish phone types
             })
-//            ->leftJoin('version_package_receiveds', 'schools.id', '=', 'version_package_receiveds.school_id')
-            ->leftJoin('version_package_receiveds', 'candidates.version_id', '=', 'version_package_receiveds.version_id')
+            ->leftJoin('version_package_receiveds', function ($join) {
+                $join->on('schools.id', '=', 'version_package_receiveds.school_id')
+                    ->on('candidates.version_id', '=', 'version_package_receiveds.version_id');
+            })
             ->where('candidates.version_id', $this->versionId)
             ->where('status', 'registered')
             ->when($registrationManagerCounties, function ($query, $registrationManagerCounties) {
