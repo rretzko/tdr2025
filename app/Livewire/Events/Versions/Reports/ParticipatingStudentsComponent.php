@@ -141,6 +141,8 @@ class ParticipatingStudentsComponent extends BasePageReports
 
     private function addEditECPhoneMobile($ecPhoneMobile, $emergencyContactId): void
     {
+        if($emergencyContactId == 0) return;
+
         $ec = EmergencyContact::find($emergencyContactId);
         $ec->update(['phone_mobile' => $ecPhoneMobile]);
     }
