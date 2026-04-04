@@ -79,6 +79,14 @@
         {{-- FILTERS and TABLE --}}
         @if($obligationAccepted && $hasTeacherPhoneReqs && $hasSupervisorReqs)
 
+        {{-- TEACHER LOCKED GATE --}}
+        @if($teacherLocked)
+            <div class="my-2 p-4 bg-red-100 border border-red-400 rounded-lg text-center text-red-800 text-lg font-semibold">
+                Registration is closed.
+            </div>
+            @include('components.tables.candidateSummaryStatusTable')
+        @else
+
         <div class="flex flex-row">
                 @if(count($ensembleVoiceParts))
                     {{-- FILTERS --}}
@@ -171,6 +179,8 @@
             {{-- SUCCESS INDICATOR --}}
             <x-forms.indicators.successIndicator :showSuccessIndicator="$showSuccessIndicator"
                                                  message="{{  $successMessage }}"/>
+
+        @endif {{-- end teacherLocked --}}
 
         @endif
     </div>

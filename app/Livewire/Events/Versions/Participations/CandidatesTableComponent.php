@@ -9,6 +9,7 @@ use App\Livewire\Filters;
 use App\Livewire\Forms\CandidateForm;
 use App\Models\EpaymentCredentials;
 use App\Models\Events\Event;
+use App\Models\Events\EventManagement;
 use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Participations\Obligation;
 use App\Models\Events\Versions\Version;
@@ -58,6 +59,7 @@ class CandidatesTableComponent extends BasePage
     public array $heights = [];
     public bool $obligationAccepted = false;
     public string $pathToRegistration = '';
+    public bool $pastFinalTeacherChanges = false;
     public bool $pastPostmarkDeadline = false;
     public int $schoolId = 0;
     public int $seniorYear = 0;
@@ -71,6 +73,7 @@ class CandidatesTableComponent extends BasePage
     public array $supervisorRequiredInfoTypes = [];
     public bool $supervisorInfoRequired = false;
     public bool $supervisorInfoPreferred = false;
+    public bool $teacherLocked = false;
     public bool $teacherEpaymentStudent = false;
     public string $teacherEpaymentStudentLastUpdated = '';
     public array $teachers = [];
@@ -158,6 +161,24 @@ class CandidatesTableComponent extends BasePage
             ->version_date;
 
         $this->pastPostmarkDeadline = Carbon::parse($postmarkDeadline) < Carbon::now();
+
+        //check if final_teacher_changes deadline has passed for teacher lock
+        $finalTeacherChangesDate = VersionConfigDate::query()
+            ->where('version_id', $this->versionId)
+            ->where('date_type', 'final_teacher_changes')
+            ->value('version_date');
+
+        if ($finalTeacherChangesDate) {
+            $this->pastFinalTeacherChanges = Carbon::parse($finalTeacherChangesDate) < Carbon::now();
+        }
+
+        //lock teachers (not directors/event managers) after final_teacher_changes deadline
+        $isEventManager = EventManagement::query()
+            ->where('event_id', $this->event->id)
+            ->where('user_id', auth()->id())
+            ->exists();
+
+        $this->teacherLocked = $this->pastFinalTeacherChanges && !$isEventManager;
 
     }
 

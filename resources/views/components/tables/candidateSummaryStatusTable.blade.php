@@ -86,9 +86,15 @@
                 </td>
 
                 <td class="text-left">
-                    <div wire:click="selectCandidate({{ $row['candidateId'] }})" class="text-blue-500 cursor-pointer">
-                        {{ $row['programName'] }}
-                    </div>
+                    @if($teacherLocked ?? false)
+                        <div>
+                            {{ $row['programName'] }}
+                        </div>
+                    @else
+                        <div wire:click="selectCandidate({{ $row['candidateId'] }})" class="text-blue-500 cursor-pointer">
+                            {{ $row['programName'] }}
+                        </div>
+                    @endif
                 </td>
 
                 <td class="text-center">
