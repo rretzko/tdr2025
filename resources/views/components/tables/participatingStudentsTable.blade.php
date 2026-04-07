@@ -106,12 +106,21 @@
 
                 {{-- Edit button --}}
                 <td class="border border-gray-200 px-1 ">
-                    <button type="button"
-                            wire:click="clickEdit({{ $row->id }})"
-                            class="bg-indigo-600 text-white text-xs px-2 rounded-full hover:bg-indigo-700"
-                    >
-                        Edit
-                    </button>
+                    <div class="flex space-x-1">
+                        <button type="button"
+                                wire:click="clickEdit({{ $row->id }})"
+                                class="bg-indigo-600 text-white text-xs px-2 rounded-full hover:bg-indigo-700"
+                        >
+                            Edit
+                        </button>
+                        <button type="button"
+                                wire:click="withdraw({{ $row->id }})"
+                                wire:confirm="Are you sure you want to withdraw this student?"
+                                class="bg-red-600 text-white text-xs px-2 rounded-full hover:bg-red-700"
+                        >
+                            Withdraw
+                        </button>
+                    </div>
                 </td>
             </tr>
 

@@ -76,6 +76,18 @@ class ParticipatingStudentsComponent extends BasePageReports
         $this->form->setStudentForRegistrationManager($candidateId);
     }
 
+    public function withdraw(int $candidateId): void
+    {
+        $candidate = Candidate::find($candidateId);
+
+        if ($candidate && $candidate->version_id === $this->versionId) {
+            $candidate->update(['status' => 'withdrew']);
+
+            $this->showSuccessIndicator = true;
+            $this->successMessage = $candidate->program_name.' has been withdrawn.';
+        }
+    }
+
     #[NoReturn] public function saveEdits(): void
     {
         $validated = $this->validate([
