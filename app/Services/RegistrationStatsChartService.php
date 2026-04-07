@@ -9,8 +9,24 @@ use App\Models\Students\VoicePart;
 
 class RegistrationStatsChartService
 {
+    private ?int $liveRegisteredCandidates = null;
+    private ?int $liveRegisteredSchools = null;
+    private ?int $liveRegisteredVoicePartTotal = null;
+
     public function __construct(private readonly int $versionId)
     {
+    }
+
+    /**
+     * Set live totals so chart titles match the email text stats.
+     */
+    public function setLiveTotals(int $registeredCandidates, int $registeredSchools, int $registeredVoicePartTotal): self
+    {
+        $this->liveRegisteredCandidates = $registeredCandidates;
+        $this->liveRegisteredSchools = $registeredSchools;
+        $this->liveRegisteredVoicePartTotal = $registeredVoicePartTotal;
+
+        return $this;
     }
 
     /**
@@ -125,7 +141,7 @@ class RegistrationStatsChartService
                 ],
             ],
             'options' => [
-                'title' => ['display' => true, 'text' => 'Registered Candidates: ' . end($data['candidates']['cumulative'])],
+                'title' => ['display' => true, 'text' => 'Registered Candidates: ' . ($this->liveRegisteredCandidates ?? end($data['candidates']['cumulative']))],
                 'scales' => [
                     'yAxes' => [
                         ['id' => 'y-daily', 'position' => 'left', 'scaleLabel' => ['display' => true, 'labelString' => 'Daily'], 'ticks' => ['beginAtZero' => true]],
@@ -171,7 +187,7 @@ class RegistrationStatsChartService
                 ],
             ],
             'options' => [
-                'title' => ['display' => true, 'text' => end($data['schools']['cumulative']) . ' Schools with Registered Candidates'],
+                'title' => ['display' => true, 'text' => ($this->liveRegisteredSchools ?? end($data['schools']['cumulative'])) . ' Schools with Registered Candidates'],
                 'scales' => [
                     'yAxes' => [
                         ['id' => 'y-daily', 'position' => 'left', 'scaleLabel' => ['display' => true, 'labelString' => 'Daily'], 'ticks' => ['beginAtZero' => true]],
@@ -218,7 +234,7 @@ class RegistrationStatsChartService
                 ],
             ],
             'options' => [
-                'title' => ['display' => true, 'text' => array_sum($counts) . ' Registrations by Voice Part'],
+                'title' => ['display' => true, 'text' => ($this->liveRegisteredVoicePartTotal ?? array_sum($counts)) . ' Registrations by Voice Part'],
                 'scales' => [
                     'xAxes' => [['scaleLabel' => ['display' => true, 'labelString' => 'Count'], 'ticks' => ['beginAtZero' => true]]],
                 ],

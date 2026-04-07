@@ -96,8 +96,13 @@ Log::info("Sending registration status email for version {$version->short_name} 
             // Refresh the daily snapshot so chart totals match the live candidateStatuses above
             Artisan::call('stats:snapshot-daily-registration');
 
-            // Build chart image URLs for the email
+            // Build chart image URLs for the email, using live totals for chart titles
             $chartService = new RegistrationStatsChartService($versionId);
+            $chartService->setLiveTotals(
+                $stats['candidateStatuses']['registered'] ?? 0,
+                $stats['schoolsWithRegistrants'],
+                collect($stats['schoolCandidates'])->sum('registered'),
+            );
             $candidatesChartUrl = $chartService->getCandidatesChartUrl();
             $schoolsChartUrl = $chartService->getSchoolsChartUrl();
             $voicePartsChartUrl = $chartService->getVoicePartsChartUrl();
