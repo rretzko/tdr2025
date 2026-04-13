@@ -6,7 +6,13 @@
       "Bash(find /c/Users/RickRetzko/PhpstormProjects/tdr2025/app/Jobs -type f -name \"*.php\" 2>/dev/null | head -20)",
       "Bash(composer dump-autoload:*)",
       "Bash(grep:*)",
-      "Bash(php artisan:*)"
+      "Bash(php artisan:*)",
+      "Bash(find C:/Users/RickRetzko/PhpstormProjects/tdr2025 -type f -path */app/Livewire/* -name *.php)",
+      "Bash(find C:/Users/RickRetzko/PhpstormProjects/tdr2025 -type f -path */app/Filament/* -name *.php)",
+      "Bash(./vendor/bin/phpstan analyse:*)",
+      "Bash(php vendor/bin/phpstan analyse app/Services/RegistrationStatsChartService.php app/Console/Commands/SendRegistrationStatusEmailCommand.php --memory-limit=512M)",
+      "Bash(php -l app/Services/RegistrationStatsChartService.php)",
+      "Bash(php -l app/Console/Commands/SendRegistrationStatusEmailCommand.php)"
     ]
   }
 }
