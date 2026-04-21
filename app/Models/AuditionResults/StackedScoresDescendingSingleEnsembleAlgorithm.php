@@ -21,7 +21,7 @@ class StackedScoresDescendingSingleEnsembleAlgorithm extends Model implements Al
         VersionConfigAdjudication $versionConfigAdjudication,
         int $score,
         int $voicePartId
-    ) {
+    ): void {
 
         $this->maxScoreCount = MaxScoreCountService::getMaxScoreCount($versionConfigAdjudication);
 

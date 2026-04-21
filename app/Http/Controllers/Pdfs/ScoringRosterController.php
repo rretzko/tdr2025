@@ -36,7 +36,7 @@ class ScoringRosterController extends Controller
         set_time_limit(300);
         $rows = $dto['rows'];
         $rowsScores = $dto['rowsScores'];
-        Log::info(count($rows[0]).' | '.count($rowsScores));
+//        Log::info(count($rows[0]).' | '.count($rowsScores));
         $fileNameRoot = '_ScoringRoster_' . Carbon::now()->format('Ymd_His') . '.pdf';
         $fileName = $voicePart->abbr . $fileNameRoot;
 
@@ -48,10 +48,11 @@ class ScoringRosterController extends Controller
         /**
          * @todo Reprogram process for sending report via email when processing exceed time-out limits
          */
-        if (count($rows[0]) < 1001) { //return pdf directly to user
 
-            Log::info('*** count($rows[0] < 4401');
-            Log::info('*** rows = '.count($rows[0]).' | rowsScores = '.count($rowsScores));
+        if (count($rows) < 1001) { //return pdf directly to user
+
+            Log::info('*** count($rows) < 4401');
+            Log::info('*** rows = '.count($rows).' | rowsScores = '.count($rowsScores));
             $pdf = PDF::loadView($path, compact('dto', 'rows', 'rowsScores'))
                 ->setPaper('letter', 'landscape');
 
