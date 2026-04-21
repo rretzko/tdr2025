@@ -81,7 +81,7 @@ class TabroomTrackingBulletsService
         return VersionTimeslot::where('school_id', $schoolId)
             ->where('version_id', $versionId)
             ->first()
-            ->timeslot;
+            ?->timeslot ?? '';
     }
 
     private function getRooms(): Collection
@@ -151,10 +151,12 @@ class TabroomTrackingBulletsService
         $timeslot = VersionTimeslot::where('school_id', $candidate->school_id)
             ->where('version_id', $candidate->version_id)
             ->first()
-            ->timeslot;
+            ?->timeslot;
 
-        $str .= Carbon::parse($timeslot)->subHour(5)->format('h:i A')
-            .$crlf;
+        if ($timeslot) {
+            $str .= Carbon::parse($timeslot)->subHour(5)->format('h:i A')
+                .$crlf;
+        }
 
         return $str;
     }
