@@ -10,6 +10,8 @@ use App\Models\Events\Versions\Participations\Application;
 use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Participations\Obligation;
 use App\Models\Events\Versions\Participations\Recording;
+use App\Models\Events\Versions\Scoring\Judge;
+use App\Models\Events\Versions\Scoring\Score;
 use App\Models\Events\Versions\Version;
 use App\Models\Events\Versions\VersionParticipant;
 use App\Models\Events\Versions\VersionRole;
@@ -90,6 +92,11 @@ Log::info("Sending registration status email for version {$version->short_name} 
                     ->count('school_id'),
                 'voiceParts' => $this->getVoiceParts($versionId),
                 'schoolCandidates' => $this->getSchoolCandidates($versionId),
+                'judgesAssigned' => Judge::where('version_id', $versionId)->count(),
+                'judgesEngaged' => Score::where('version_id', $versionId)
+                    ->where('score', '>', 0)
+                    ->distinct('judge_id')
+                    ->count('judge_id'),
                 'recipients' => $recipients,
             ];
 
