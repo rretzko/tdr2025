@@ -14,6 +14,12 @@
     <div>Candidates with recordings: {{ $stats['candidatesWithRecordings'] }}</div>
     <div>Schools with recordings: {{ $stats['schoolsWithRecordings'] }}</div>
     <div>Schools with registrants: {{ $stats['schoolsWithRegistrants'] }}</div>
+
+    <div id="judging stats" style="margin-top: 1rem; border-top: 1px solid #ccc; padding-top: 1rem;border-bottom: 1px solid #ccc; padding-bottom: 1rem;">
+        <div>Judges assigned: {{ $stats['judgesAssigned'] }}</div>
+        <div>Judges engaged: {{ $stats['judgesEngaged'] }}</div>
+    </div>
+
     <br>
     <table border="1" cellpadding="4" cellspacing="0">
         <thead>
