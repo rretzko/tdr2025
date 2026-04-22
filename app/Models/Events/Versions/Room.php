@@ -79,25 +79,138 @@ class Room extends Model
      */
     public function getAdjudicationButtonsAllArrayAttribute(): array
     {
-        $candidates = $this->candidatesSql();
-
-        $status = $this->addStatusCoding($candidates);
-
-        $scoring = $this->addScoringCompleted($status);
-
-        return $this->addToleranceCoding($scoring);
-
+        return $this->buildAdjudicationSnapshot(false)['buttons'];
     }
 
     public function getAdjudicationButtonsIncompleteArrayAttribute(): array
     {
-        $candidates = $this->candidatesSql(true);
+        return $this->buildAdjudicationSnapshot(true)['buttons'];
+    }
 
-        $status = $this->addStatusCoding($candidates);
+    /**
+     * Single-pass replacement for candidatesSql + addStatusCoding + addScoringCompleted +
+     * addToleranceCoding + the four progress-bar count queries. Uses ~4 aggregated queries
+     * regardless of room size (vs ~7N previously, N = candidate count).
+     *
+     * Returns:
+     *   [
+     *     'buttons' => [ stdClass{id, ref, descr, abbr, order_by, status, scoringCompleted, tolerance}, ... ],
+     *     'counts'  => ['completed' => int, 'wip' => int, 'error' => int, 'pending' => int, 'total' => int],
+     *   ]
+     *
+     * Counts always reflect the full registrant set for the room even when $incompleteOnly
+     * filters the buttons list.
+     */
+    public function buildAdjudicationSnapshot(bool $incompleteOnly = false, ?int $currentJudgeId = null): array
+    {
+        $voicePartIds = $this->roomVoiceParts->pluck('voice_part_id')->toArray();
+        $judgeIds = $this->judges->pluck('id')->toArray();
+        $judgeCount = count($judgeIds);
+        $factorCount = $this->scoringFactors->count();
+        $maxScoreCount = $judgeCount * $factorCount;
+        $tolerance = $this->tolerance;
 
-        $scoring = $this->addScoringCompleted($status);
+        $currentJudgeId ??= Judge::query()
+            ->where('room_id', $this->id)
+            ->where('user_id', auth()->id())
+            ->value('id');
 
-        return $this->addToleranceCoding($scoring);
+        $candidates = DB::table('candidates')
+            ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
+            ->where('candidates.version_id', $this->version_id)
+            ->whereIn('candidates.voice_part_id', $voicePartIds)
+            ->where('candidates.status', 'registered')
+            ->select('candidates.id', 'candidates.ref', 'voice_parts.descr', 'voice_parts.abbr', 'voice_parts.order_by')
+            ->orderBy('voice_parts.order_by')
+            ->orderBy('candidates.id')
+            ->get();
+
+        $candidateIds = $candidates->pluck('id')->all();
+
+        $emptyCounts = ['completed' => 0, 'wip' => 0, 'error' => 0, 'pending' => 0, 'total' => count($candidateIds)];
+
+        if (empty($candidateIds) || $judgeCount === 0 || $factorCount === 0) {
+            return [
+                'buttons' => $candidates->map(function ($c) {
+                    $c->status = 'pending';
+                    $c->scoringCompleted = false;
+                    $c->tolerance = '';
+                    return $c;
+                })->values()->all(),
+                'counts' => array_merge($emptyCounts, ['pending' => count($candidateIds)]),
+            ];
+        }
+
+        $scoreCountByCandidate = DB::table('scores')
+            ->whereIn('candidate_id', $candidateIds)
+            ->whereIn('judge_id', $judgeIds)
+            ->selectRaw('candidate_id, COUNT(*) AS cnt')
+            ->groupBy('candidate_id')
+            ->pluck('cnt', 'candidate_id')
+            ->all();
+
+        $judgeScoreCountByCandidate = $currentJudgeId
+            ? DB::table('scores')
+                ->whereIn('candidate_id', $candidateIds)
+                ->where('judge_id', $currentJudgeId)
+                ->selectRaw('candidate_id, COUNT(*) AS cnt')
+                ->groupBy('candidate_id')
+                ->pluck('cnt', 'candidate_id')
+                ->all()
+            : [];
+
+        $judgeTotals = DB::table('scores')
+            ->whereIn('candidate_id', $candidateIds)
+            ->whereIn('judge_id', $judgeIds)
+            ->selectRaw('candidate_id, judge_id, SUM(score) AS total')
+            ->groupBy('candidate_id', 'judge_id')
+            ->get();
+
+        $totalsByCandidate = [];
+        foreach ($judgeTotals as $row) {
+            $totalsByCandidate[$row->candidate_id][$row->judge_id] = (int) $row->total;
+        }
+
+        $buttons = [];
+        $counts = $emptyCounts;
+
+        foreach ($candidates as $candidate) {
+            $sc = (int) ($scoreCountByCandidate[$candidate->id] ?? 0);
+
+            if ($sc === 0) {
+                $status = 'pending';
+            } elseif ($sc === $maxScoreCount) {
+                $status = 'completed';
+            } elseif ($sc < $maxScoreCount) {
+                $status = 'wip';
+            } else {
+                $status = 'errors';
+            }
+
+            $counts[$status === 'errors' ? 'error' : $status]++;
+
+            if ($incompleteOnly && $status === 'completed') {
+                continue;
+            }
+
+            $judgeSc = (int) ($judgeScoreCountByCandidate[$candidate->id] ?? 0);
+
+            $totals = $totalsByCandidate[$candidate->id] ?? [];
+            $inTolerance = empty($totals)
+                ? true
+                : (max($totals) - min($totals)) <= $tolerance;
+
+            $candidate->status = $status;
+            $candidate->scoringCompleted = ($judgeSc === $factorCount);
+            $candidate->tolerance = $inTolerance ? '' : '*';
+
+            $buttons[] = $candidate;
+        }
+
+        return [
+            'buttons' => $buttons,
+            'counts' => $counts,
+        ];
     }
 
     public function getCountRegistrants(): int

@@ -52,20 +52,60 @@ class TabroomTrackingComponent extends BasePage
     private function getJudgeProgress(): array
     {
         $room = Room::find($this->roomId);
+        if (!$room) {
+            return [];
+        }
+
         $judges = $room->judges;
+        $candidateIds = $room->getRegistrantIds();
+        $countRegistrants = count($candidateIds);
+        $factorCount = $room->scoringFactors->count();
+        $judgeIds = $judges->pluck('id')->all();
+
+        $countsByJudge = [];
+        if (!empty($candidateIds) && !empty($judgeIds)) {
+            $rawCounts = DB::table('scores')
+                ->whereIn('candidate_id', $candidateIds)
+                ->whereIn('judge_id', $judgeIds)
+                ->selectRaw('candidate_id, judge_id, COUNT(*) AS cnt')
+                ->groupBy('candidate_id', 'judge_id')
+                ->get();
+
+            foreach ($rawCounts as $row) {
+                $countsByJudge[$row->judge_id][$row->candidate_id] = (int) $row->cnt;
+            }
+        }
 
         $progress = [];
         foreach ($judges as $judge) {
+            $rows = $countsByJudge[$judge->id] ?? [];
+            $completed = 0;
+            $wip = 0;
+            foreach ($rows as $cnt) {
+                if ($cnt === $factorCount) {
+                    $completed++;
+                } elseif ($cnt < $factorCount) {
+                    $wip++;
+                }
+            }
+            $pending = $countRegistrants - $completed - $wip;
+
             $progress[] = [
                 'judgeName' => $judge->user->name,
                 'judgeShortName' => $judge->user->last_name.','.substr($judge->user->first_name, 0, 1),
-                'completed' => $judge->progress('completed'),
-                'pending' => $judge->progress('pending'),
-                'wip' => $judge->progress('wip'),
+                'completed' => $this->formatProgress($completed, $countRegistrants),
+                'pending' => $this->formatProgress($pending, $countRegistrants),
+                'wip' => $this->formatProgress($wip, $countRegistrants),
             ];
         }
 
         return $progress;
+    }
+
+    private function formatProgress(int $count, int $total): array
+    {
+        $pct = $total ? floor(($count / $total) * 100).'%' : '0%';
+        return ['count' => $count, 'pct' => $pct];
     }
 
     private function getProgress(): array

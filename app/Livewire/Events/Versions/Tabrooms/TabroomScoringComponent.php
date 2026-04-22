@@ -16,6 +16,7 @@ use App\Models\Events\Versions\Scoring\ScoreFactor;
 use App\Models\Events\Versions\Version;
 use App\Models\Students\VoicePart;
 use App\Models\UserConfig;
+use App\Services\SetAveragedScoresService;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
@@ -164,12 +165,17 @@ class TabroomScoringComponent extends BasePage
             'judge monitor' => 5,
         ];
 
-        foreach ($this->form->scores as $factorId => $score) {
+        $judge = Judge::find($this->judgeId);
+        $voicePart = VoicePart::find($this->form->candidate->voice_part_id);
 
-            $scoreFactor = ScoreFactor::find($factorId);
-            $scoreCategory = ScoreCategory::find($scoreFactor->score_category_id);
-            $judge = Judge::find($this->judgeId);
-            $voicePart = VoicePart::find($this->form->candidate->voice_part_id);
+        $factorIds = array_keys($this->form->scores);
+        $scoreFactors = ScoreFactor::whereIn('id', $factorIds)->get()->keyBy('id');
+        $categoryIds = $scoreFactors->pluck('score_category_id')->unique()->all();
+        $scoreCategories = ScoreCategory::whereIn('id', $categoryIds)->get()->keyBy('id');
+
+        foreach ($this->form->scores as $factorId => $score) {
+            $scoreFactor = $scoreFactors[$factorId];
+            $scoreCategory = $scoreCategories[$scoreFactor->score_category_id];
 
             Score::updateOrCreate(
                 [
@@ -191,6 +197,8 @@ class TabroomScoringComponent extends BasePage
                 ]
             );
         }
+
+        new SetAveragedScoresService($this->form->room, $this->form->candidate);
 
         $this->form->roomScores = $this->form->getRoomScores();
 

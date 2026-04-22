@@ -1,4 +1,4 @@
-<div>
+<div x-data>
     <label>Adjudication Form for: <span class="text-lg font-semibold">{{ $form->ref }}</span></label>
 
     {{-- HEADER --}}
@@ -43,7 +43,7 @@
                                     {{ $factor->abbr }}
                                 </label>
                                 <select id="factor_{{ $factor->id }}"
-                                        wire:model.live="form.scores.{{ $factor->id }}"
+                                        wire:model="form.scores.{{ $factor->id }}"
                                         wire:key="factor_{{ $factor->id }}"
                                         class="w-fit">
                                     @for($i = $start; (($start > $end) ? $i >= $end : $i <= $end); $i += $interval)
@@ -58,7 +58,8 @@
 
             <div class="flex flex-row space-x-4 items-center">
                 <div class="mt-4 justify-center">
-                    Total: <span class="ml-2 font-semibold">{{ array_sum($form->scores) }}</span>
+                    Total: <span class="ml-2 font-semibold"
+                                 x-text="Object.values($wire.form.scores).reduce((a, b) => a + Number(b), 0)">{{ array_sum($form->scores) }}</span>
                 </div>
                 <input type="submit"
                        class="bg-black text-white rounded-lg px-2 shadow-lg cursor-pointer hover:bg-gray-300 hover:text-black focus:bg-gray-300 focus:text-black"

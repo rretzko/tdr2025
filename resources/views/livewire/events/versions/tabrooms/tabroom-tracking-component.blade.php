@@ -1,4 +1,4 @@
-<div class="px-4">
+<div class="px-4" wire:poll.60s>
     <h2>{{ ucwords($header) }}</h2>
 
     <x-pageInstructions.instructions instructions="{!! $pageInstructions !!}" firstTimer="{{ $firstTimer }}"/>

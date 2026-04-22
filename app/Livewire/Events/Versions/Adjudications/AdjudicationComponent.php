@@ -48,6 +48,8 @@ class AdjudicationComponent extends BasePage
     public array $staff = [];
     public int $versionId = 0;
 
+    private ?array $snapshotCache = null;
+
     public function mount(): void
     {
         parent::mount();
@@ -73,8 +75,6 @@ class AdjudicationComponent extends BasePage
 
     public function render()
     {
-        $this->setProgressBarCounts();
-
         return view('livewire..events.versions.adjudications.adjudication-component',
             [
                 'rows' => $this->getRows(),
@@ -132,13 +132,17 @@ class AdjudicationComponent extends BasePage
         $this->reset('scoreUpdatedMssg');
 
         $judgeOrderBys = $this->calcJudgeOrderBys();
+        $judge = $this->room->judges()->where('user_id', auth()->id())->first();
+        $voicePart = VoicePart::find($this->form->candidate->voice_part_id);
+
+        $factorIds = array_keys($this->form->scores);
+        $scoreFactors = ScoreFactor::whereIn('id', $factorIds)->get()->keyBy('id');
+        $categoryIds = $scoreFactors->pluck('score_category_id')->unique()->all();
+        $scoreCategories = ScoreCategory::whereIn('id', $categoryIds)->get()->keyBy('id');
 
         foreach ($this->form->scores as $factorId => $score) {
-
-            $scoreFactor = ScoreFactor::find($factorId);
-            $scoreCategory = ScoreCategory::find($scoreFactor->score_category_id);
-            $judge = $this->room->judges()->where('user_id', auth()->id())->first();
-            $voicePart = VoicePart::find($this->form->candidate->voice_part_id);
+            $scoreFactor = $scoreFactors[$factorId];
+            $scoreCategory = $scoreCategories[$scoreFactor->score_category_id];
 
             Score::updateOrCreate(
                 [
@@ -172,11 +176,6 @@ class AdjudicationComponent extends BasePage
         event(new UpdateAuditionResultsEvent($this->form->candidate));
 
         $this->scoreUpdatedMssg = 'Last update: '.Carbon::now('America/New_York')->format('D, M d @ g:i:s a');
-    }
-
-    public function updatedFormScores($value, $key)
-    {
-        $scoreCount = $this->form->updateScores($value, $key);
     }
 
     private function calcJudgeOrderBys(): array
@@ -230,9 +229,17 @@ class AdjudicationComponent extends BasePage
 
     private function getRows(): array
     {
-        return ($this->showAllButtons)
-            ? $this->room->adjudicationButtonsAllArray
-            : $this->room->adjudicationButtonsIncompleteArray;
+        if ($this->snapshotCache !== null) {
+            return $this->snapshotCache['buttons'];
+        }
+
+        $this->snapshotCache = $this->room->buildAdjudicationSnapshot(
+            incompleteOnly: !$this->showAllButtons,
+        );
+
+        $this->applyProgressBarCounts($this->snapshotCache['counts']);
+
+        return $this->snapshotCache['buttons'];
     }
 
     private function getStaff(): array
@@ -298,19 +305,18 @@ class AdjudicationComponent extends BasePage
         }
     }
 
-    private function setProgressBarCounts(): void
+    private function applyProgressBarCounts(array $counts): void
     {
-        $registeredCount = $this->room->getCountRegistrants();
-        $this->countError = $this->room->getCountError();
-        $this->countCompleted = $this->room->getCountCompleted();
-        $this->countWip = $this->room->getCountWip();
-        $this->countPending = ($registeredCount - ($this->countCompleted + $this->countWip + $this->countError));
+        $total = $counts['total'];
+        $this->countError = $counts['error'];
+        $this->countCompleted = $counts['completed'];
+        $this->countWip = $counts['wip'];
+        $this->countPending = $counts['pending'];
 
-        $this->pctError = $this->calculatePercentage($this->countError, $registeredCount);
-        $this->pctCompleted = $this->calculatePercentage($this->countCompleted, $registeredCount);
-        $this->pctPending = $this->calculatePercentage($this->countPending, $registeredCount);
-        $this->pctWip = $this->calculatePercentage($this->countWip, $registeredCount);
-
+        $this->pctError = $this->calculatePercentage($this->countError, $total);
+        $this->pctCompleted = $this->calculatePercentage($this->countCompleted, $total);
+        $this->pctPending = $this->calculatePercentage($this->countPending, $total);
+        $this->pctWip = $this->calculatePercentage($this->countWip, $total);
     }
 
     private function calculatePercentage(int $count, int $total): int

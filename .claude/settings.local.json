@@ -12,7 +12,11 @@
       "Bash(./vendor/bin/phpstan analyse:*)",
       "Bash(php vendor/bin/phpstan analyse app/Services/RegistrationStatsChartService.php app/Console/Commands/SendRegistrationStatusEmailCommand.php --memory-limit=512M)",
       "Bash(php -l app/Services/RegistrationStatsChartService.php)",
-      "Bash(php -l app/Console/Commands/SendRegistrationStatusEmailCommand.php)"
+      "Bash(php -l app/Console/Commands/SendRegistrationStatusEmailCommand.php)",
+      "Bash(php -l \"C:/Users/RickRetzko/PhpstormProjects/tdr2025/app/Models/Events/Versions/Room.php\")",
+      "Bash(php -l \"C:/Users/RickRetzko/PhpstormProjects/tdr2025/app/Livewire/Events/Versions/Adjudications/AdjudicationComponent.php\")",
+      "Bash(php -l \"C:/Users/RickRetzko/PhpstormProjects/tdr2025/app/Livewire/Forms/AdjudicationForm.php\")",
+      "Bash(php *)"
     ]
   }
 }

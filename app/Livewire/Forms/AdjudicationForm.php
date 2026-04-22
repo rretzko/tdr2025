@@ -141,40 +141,6 @@ class AdjudicationForm extends Form
         $this->scoreTolerance = $this->room->checkScoreTolerance($this->candidate);
     }
 
-    public function updateScores($value, $key): int
-    {
-        foreach ($this->scores as $key => $score) {
-
-            $scoreFactor = ScoreFactor::find($key);
-            $scoreCategory = ScoreCategory::find($scoreFactor->score_category_id);
-            $judge = Judge::where('version_id', $this->candidate->version_id)->where('user_id', auth()->id())->first();
-            $judgeOrderBy = ['head judge' => 1, 'judge 2' => 2, 'judge 3' => 3, 'judge 4' => 4, 'judge monitor' => 5];
-            $voicePart = VoicePart::find($this->candidate->voice_part_id);
-            Score::updateOrCreate(
-                [
-                    'candidate_id' => $this->candidate->id,
-                    'version_id' => $this->candidate->version_id,
-                    'student_id' => $this->candidate->student_id,
-                    'school_id' => $this->candidate->school_id,
-                    'score_category_id' => $scoreFactor->score_category_id,
-                    'score_category_order_by' => $scoreCategory->order_by,
-                    'score_factor_id' => $scoreFactor->id,
-                    'judge_id' => $judge->id,
-                    'judge_order_by' => $judgeOrderBy[$judge['role']],
-                    'voice_part_id' => $this->candidate->voice_part_id,
-                    'voice_part_order_by' => $voicePart->order_by,
-                ],
-                [
-                    'score' => $score,
-                ]
-            );
-        }
-
-        $this->roomScores = $this->getRoomScores();
-
-        return count($this->roomScores);
-    }
-
     private function setHasNonMp3RecordingsSwitch(): void
     {
         $this->hasNonMp3Recording = array_reduce($this->recordings, function ($carry, $recording) {
