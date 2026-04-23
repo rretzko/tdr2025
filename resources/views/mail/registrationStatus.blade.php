@@ -15,9 +15,16 @@
     <div>Schools with recordings: {{ $stats['schoolsWithRecordings'] }}</div>
     <div>Schools with registrants: {{ $stats['schoolsWithRegistrants'] }}</div>
 
-    <div id="judging stats" style="margin-top: 1rem; border-top: 1px solid #ccc; padding-top: 1rem;border-bottom: 1px solid #ccc; padding-bottom: 1rem;">
+    @php
+        $judgesPending = $stats['judgesAssigned'] - $stats['judgesEngaged'];
+        $judgesPendingPct = $stats['judgesAssigned'] > 0
+            ? (int) round(($judgesPending / $stats['judgesAssigned']) * 100)
+            : 0;
+    @endphp
+    <div id="judging-stats" style="margin-top: 1rem; border-top: 1px solid #ccc; padding-top: 1rem;border-bottom: 1px solid #ccc; padding-bottom: 1rem;">
         <div>Judges assigned: {{ $stats['judgesAssigned'] }}</div>
         <div>Judges engaged: {{ $stats['judgesEngaged'] }}</div>
+        <div>Judges pending: {{ $judgesPending }} ({{ $judgesPendingPct }}%)</div>
     </div>
 
     <br>

@@ -33,6 +33,10 @@ class SendRegistrationStatusEmailCommand extends Command
         $versions = Version::where('status', 'active')->get();
 
         foreach ($versions as $version) {
+            if ($version->status !== 'active') {
+                continue;
+            }
+
             $versionId = $version->id;
 
             $recipients = VersionRole::where('version_id', $versionId)
@@ -129,6 +133,12 @@ Log::info("Sending registration status email for version {$version->short_name} 
                     $toAddresses = [config('mail.from.address')];
                     Log::warning("No recipients found for version {$version->short_name} (id: {$versionId}). Sending to fallback: " . config('mail.from.address'));
                 }
+            }
+
+            $version->refresh();
+            if ($version->status !== 'active') {
+                $this->info("Skipping {$version->short_name} — status changed to '{$version->status}' before send.");
+                continue;
             }
 
             Mail::to($toAddresses)->send(new RegistrationStatusMail($stats));
