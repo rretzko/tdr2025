@@ -40,7 +40,7 @@
             <div class=" ml-4 text-red-600">
                 @if($form->hasNonMp3Recording)
                     An uploaded file is not in mp3 format.<br/>
-                    If you are on an Apple or mobile device, you may not be able to play this file.<br/>
+                    m4a files should play on Apple and mobile devices.<br/>
                     If you are unable to play this file, please try again on a desktop or PC device.
                 @endif
             </div>

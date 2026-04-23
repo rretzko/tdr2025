@@ -1,6 +1,17 @@
 <div id="recordings"
      class="flex flex-col md:flex-row md:ml-2 w-full space-y-1 sm:space-y-0 sm:space-x-1 justify-start rounded-lg mb-2">
     @forelse($form->recordings AS $type => $url)
+        @php
+            $ext = strtolower(pathinfo($url, PATHINFO_EXTENSION));
+            $mimeType = match($ext) {
+                'mp3'        => 'audio/mpeg',
+                'm4a', 'mp4' => 'audio/mp4',
+                'aac'        => 'audio/aac',
+                'wav'        => 'audio/wav',
+                'ogg'        => 'audio/ogg',
+                default      => 'audio/mpeg',
+            };
+        @endphp
         <div class="flex flex-col text-white px-1 border border-r-gray-600 rounded-lg bg-gray-800"
              wire:key="{{ $url }}"
         >
@@ -11,7 +22,7 @@
             >
                 <source id="audioSource-{{ $type }}"
                         src="https://auditionsuite-production.s3.amazonaws.com/{{ $url }}"
-                        type="audio/mpeg"
+                        type="{{ $mimeType }}"
                         wire:key="{{ substr($url,11,-4) }}"
                 >
                 " Your browser does not support the audio element. "
