@@ -10,11 +10,14 @@ use App\Models\Events\Versions\Participations\Application;
 use App\Models\Events\Versions\Participations\Candidate;
 use App\Models\Events\Versions\Participations\Obligation;
 use App\Models\Events\Versions\Participations\Recording;
+use App\Models\Events\Versions\Participations\AuditionResult;
 use App\Models\Events\Versions\Scoring\Judge;
 use App\Models\Events\Versions\Scoring\Score;
 use App\Models\Events\Versions\Version;
+use App\Models\Events\Versions\VersionConfigAdjudication;
 use App\Models\Events\Versions\VersionParticipant;
 use App\Models\Events\Versions\VersionRole;
+use App\Models\Events\Versions\VersionScoring;
 use App\Models\Students\VoicePart;
 use App\Services\RegistrationStatsChartService;
 use Illuminate\Console\Command;
@@ -101,6 +104,14 @@ Log::info("Sending registration status email for version {$version->short_name} 
                     ->where('score', '>', 0)
                     ->distinct('judge_id')
                     ->count('judge_id'),
+                'registrantCount' => Candidate::where('version_id', $versionId)
+                    ->where('status', 'registered')
+                    ->count(),
+                'registrantsScored' => AuditionResult::where('version_id', $versionId)
+                    ->where('score_count', '>', 0)
+                    ->count(),
+                'registrantsUnscored' => $this->getRegistrantsUnscored($versionId),
+                'registrantsCompleted' => $this->getRegistrantsCompleted($versionId),
                 'recipients' => $recipients,
             ];
 
@@ -145,6 +156,47 @@ Log::info("Sending registration status email for version {$version->short_name} 
 
             $this->info("Status email sent for {$version->short_name} to " . implode(', ', $toAddresses));
         }
+    }
+
+    private function getRegistrantsUnscored(int $versionId): array
+    {
+        $rows = Candidate::where('candidates.version_id', $versionId)
+            ->where('candidates.status', 'registered')
+            ->leftJoin('audition_results', function ($join) use ($versionId) {
+                $join->on('audition_results.candidate_id', '=', 'candidates.id')
+                    ->where('audition_results.version_id', '=', $versionId);
+            })
+            ->where(function ($q) {
+                $q->whereNull('audition_results.score_count')
+                    ->orWhere('audition_results.score_count', 0);
+            })
+            ->join('voice_parts', 'voice_parts.id', '=', 'candidates.voice_part_id')
+            ->selectRaw('voice_parts.abbr, COUNT(candidates.id) as count')
+            ->groupBy('voice_parts.abbr')
+            ->orderBy('voice_parts.abbr')
+            ->pluck('count', 'abbr')
+            ->toArray();
+
+        return [
+            'total' => array_sum($rows),
+            'byVoicePart' => $rows,
+        ];
+    }
+
+    private function getRegistrantsCompleted(int $versionId): int
+    {
+        $criteriaCount = VersionScoring::where('version_id', $versionId)->count();
+        $judgePerRoom = (int) VersionConfigAdjudication::where('version_id', $versionId)
+            ->value('judge_per_room_count');
+        $target = $criteriaCount * $judgePerRoom;
+
+        if ($target === 0) {
+            return 0;
+        }
+
+        return AuditionResult::where('version_id', $versionId)
+            ->where('score_count', $target)
+            ->count();
     }
 
     private function getVoiceParts(int $versionId): array

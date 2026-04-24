@@ -25,6 +25,14 @@
         <div>Judges assigned: {{ $stats['judgesAssigned'] }}</div>
         <div>Judges engaged: {{ $stats['judgesEngaged'] }}</div>
         <div>Judges pending: {{ $judgesPending }} ({{ $judgesPendingPct }}%)</div>
+        <div style="margin-top: 0.5rem;">Registrant count: {{ $stats['registrantCount'] }}</div>
+        <div>Registrants scored: {{ $stats['registrantsScored'] }}</div>
+        @php
+            $unscored = $stats['registrantsUnscored'];
+            $unscoredBreakdown = collect($unscored['byVoicePart'])->map(fn($count, $abbr) => "{$abbr}: {$count}")->implode(', ');
+        @endphp
+        <div>Registrants unscored: {{ $unscored['total'] }}{{ $unscoredBreakdown ? ' — ' . $unscoredBreakdown : '' }}</div>
+        <div>Registrants completed: {{ $stats['registrantsCompleted'] }}</div>
     </div>
 
     <br>
