@@ -436,6 +436,7 @@ class ViewDataFactory extends aViewData
             //tab room
             'tabroom cutoff' => 'events.versions.tabrooms.tabroom-cutoff-component',
             'tabroom reports' => 'events.versions.tabrooms.tabroom-report-component',
+            'tabroom summary report' => 'events.versions.tabrooms.tabroom-summary-report-component',
             'tabroom sandbox' => 'events.versions.tabrooms.tabroom-sandbox-component',
             'tabroom scoring' => 'events.versions.tabrooms.tabroom-scoring-component',
             'tabroom tracking' => 'events.versions.tabrooms.tabroom-tracking-component',

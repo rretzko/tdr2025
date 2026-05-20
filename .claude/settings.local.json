@@ -16,7 +16,9 @@
       "Bash(php -l \"C:/Users/RickRetzko/PhpstormProjects/tdr2025/app/Models/Events/Versions/Room.php\")",
       "Bash(php -l \"C:/Users/RickRetzko/PhpstormProjects/tdr2025/app/Livewire/Events/Versions/Adjudications/AdjudicationComponent.php\")",
       "Bash(php -l \"C:/Users/RickRetzko/PhpstormProjects/tdr2025/app/Livewire/Forms/AdjudicationForm.php\")",
-      "Bash(php *)"
+      "Bash(php *)",
+      "Bash(git *)",
+      "Bash(composer show *)"
     ]
   }
 }

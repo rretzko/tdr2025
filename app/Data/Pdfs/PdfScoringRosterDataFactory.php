@@ -81,7 +81,7 @@ class PdfScoringRosterDataFactory
             $this->dto['factors']->count(),
             $this->voicePartId,
             $eventEnsembleAbbr,
-            900,
+            0,
             $displayReportData,
         );
         $this->dto['rows'][$this->voicePartId] = $service->getRows();

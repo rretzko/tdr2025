@@ -364,6 +364,12 @@ Breadcrumbs::for('tabroom reports', function (BreadcrumbTrail $trail, int $id) {
     $trail->push('Tabroom reports', route('version.tabroom.reports'));
 });
 
+//Tabroom:summary report
+Breadcrumbs::for('tabroom summary report', function (BreadcrumbTrail $trail, int $id) {
+    $trail->parent('version dashboard', $id);
+    $trail->push('Summary Report', route('version.tabroom.summaryReport'));
+});
+
 //Tabroom:sandbox
 Breadcrumbs::for('tabroom sandbox', function (BreadcrumbTrail $trail, int $id) {
     $trail->parent('version dashboard', $id);

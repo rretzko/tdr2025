@@ -302,6 +302,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('version/tabroom/reports',
         \App\Http\Controllers\Events\Versions\Tabrooms\TabroomReportController::class)
         ->name('version.tabroom.reports');
+    //VERSIONS.TABROOM.SUMMARY-REPORT
+    Route::get('version/tabroom/summaryReport',
+        \App\Http\Controllers\Events\Versions\Tabrooms\TabroomSummaryReportController::class)
+        ->name('version.tabroom.summaryReport');
+    //VERSIONS.TABROOM.SUMMARY-REPORT.PDF
+    Route::get('pdf/summaryReport/{version}',
+        \App\Http\Controllers\Pdfs\SummaryReportPdfController::class)
+        ->name('pdf.summary.report');
     //VERSIONS.TABROOM.REPORTS.SCORES-BY-VOICE-PART
     Route::get('versions/tabroom/reports/byVoicePart/{voicePart}/{private}/{eventEnsembleId}',
         \App\Http\Controllers\Pdfs\ScoringRosterController::class)
