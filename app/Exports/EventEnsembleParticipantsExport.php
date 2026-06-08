@@ -30,6 +30,8 @@ class EventEnsembleParticipantsExport implements FromArray, WithHeadings
         return [
             'name',
             'lastName',
+            'class of',
+            'grade',
             'school',
             'teacher',
             'vp',

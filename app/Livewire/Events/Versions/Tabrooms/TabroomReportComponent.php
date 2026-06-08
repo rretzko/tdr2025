@@ -253,6 +253,7 @@ class TabroomReportComponent extends BasePage
         $versionId = $this->versionId;
         $scoresAscending = Version::find($this->versionId)->scores_ascending;
         $voicePartsIn = $this->getShowEnsembleVoicePartIds();
+        $seniorYear = (new CalcSeniorYearService())->getSeniorYear();
 
         $participants = DB::table('audition_results')
             ->join('candidates', 'audition_results.candidate_id', '=', 'candidates.id')
@@ -287,6 +288,8 @@ class TabroomReportComponent extends BasePage
             ->distinct()
             ->select('candidates.program_name AS programName',
                 'users.last_name',
+                'students.class_of',
+                DB::raw("(12 - (students.class_of - $seniorYear)) AS grade"),
                 'schools.name AS schoolName',
                 'usersT.name AS teacherName',
                 'voice_parts.abbr AS voicePartAbbr',

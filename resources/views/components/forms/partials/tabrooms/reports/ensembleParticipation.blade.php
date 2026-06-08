@@ -62,6 +62,7 @@
                         <div class="ml-2">{{ $row->email }}</div>
                         <div class="ml-2">{{ $row->phoneMobile }} (c)</div>
                         <div class="ml-2">{{ $row->phoneHome }} (h)</div>
+                        <div class="ml-2">Class/Grade: {{ $row->class_of }}/{{ $row->grade }}</div>
                     </td>
                     <td>
                         <div class="font-semibold">{{ $row->schoolName }}</div>
