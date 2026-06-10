@@ -18,7 +18,8 @@
       "Bash(php -l \"C:/Users/RickRetzko/PhpstormProjects/tdr2025/app/Livewire/Forms/AdjudicationForm.php\")",
       "Bash(php *)",
       "Bash(git *)",
-      "Bash(composer show *)"
+      "Bash(composer show *)",
+      "WebFetch(domain:docs.vapor.build)"
     ]
   }
 }
